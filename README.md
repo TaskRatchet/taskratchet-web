@@ -2,8 +2,8 @@
 
 - [Install Elm](https://guide.elm-lang.org/install.html)
 - `npm install -g elm-format`
-- `elm reactor`
-- Open [localhost:8000](http://localhost:8000)
+- `elm make src/App.elm --output=app.js`
+- Open `index.html` in a browser
 
 ## Running the Tests
 
