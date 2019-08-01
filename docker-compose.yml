@@ -1,0 +1,12 @@
+version: '3.3'
+
+services:
+  angular:
+    build: .
+    ports:
+      - "4200:4200"
+    working_dir: /home/node/app
+    volumes:
+      - .:/home/node/app
+      - ./transfer:/transfer
+    command: "/transfer/startup.sh"
