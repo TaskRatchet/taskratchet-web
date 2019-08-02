@@ -28,12 +28,23 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 ## Docker
 
+### Usage
+
 ```
 docker-compose up
 open http://localhost:4200
 ```
 
-More Docker commands:
+### CLI Access
+
+```
+chmod +x ng.sh
+./ng.sh --version
+```
+
+The CLI wrapper creates a temporary container on each run.
+
+### Commands
 
 - `docker-compose build`
 - `docker-compose up --build`
