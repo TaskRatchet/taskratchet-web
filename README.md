@@ -48,5 +48,6 @@ The CLI wrapper creates a temporary container on each run.
 
 - `docker-compose build`
 - `docker-compose up --build`
-- `docker exec -it taskratchet-web_angular_1 bash`
+- `docker-compose run angular /bin/bash`
 - `docker-compose logs -ft angular`
+- `ng generate component components/dir/Name`
