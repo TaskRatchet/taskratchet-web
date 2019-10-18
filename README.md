@@ -72,6 +72,7 @@ This section has moved here: https://facebook.github.io/create-react-app/docs/tr
 ### Development
 
 ```bash
+chmod +x in.sh
 docker-compose up
 open http://localhost:3000/
 ```
@@ -79,11 +80,11 @@ open http://localhost:3000/
 ### Production
 
 ```bash
-docker-compose run node npm run build
+./in.sh npm run build
 ```
 
 ### Tests
 
 ```bash
-docker-compose run node npm run test
+./in.sh npm run test
 ```
