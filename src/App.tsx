@@ -43,6 +43,19 @@ class App extends React.Component<AppProps, {}> {
         event.preventDefault();
 
         console.log('logging in', this.state.loginForm);
+
+        this.clearMessages();
+        this.validateLoginForm();
+    };
+
+    validateLoginForm = () => {
+        if (!this.state.loginForm.email) {
+            this.pushMessage('Email required')
+        }
+
+        if (!this.state.loginForm.password) {
+            this.pushMessage('Password required')
+        }
     };
 
     setLoginEmail = (event: any) => {
