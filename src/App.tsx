@@ -21,6 +21,8 @@ interface AppState {
         email: string,
         password: string,
         password2: string,
+        timezones: string[],
+        timezone: string,
     }
 }
 
@@ -35,9 +37,22 @@ class App extends React.Component<AppProps, {}> {
         registerForm: {
             email: '',
             password: '',
-            password2: ''
+            password2: '',
+            timezones: [],
+            timezone: '',
         }
     };
+
+    componentDidMount(): void {
+        fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/timezones')
+            .then(res => res.json())
+            .then((data) => {
+                this.setState((prev: AppState) => {
+                    prev.registerForm.timezones = data;
+                    return prev;
+                });
+            });
+    }
 
     login = (event: any) => {
         event.preventDefault();
@@ -94,6 +109,14 @@ class App extends React.Component<AppProps, {}> {
         const t = event.target;
         this.setState((prev: AppState) => {
             prev.registerForm.password2 = t.value;
+            return prev;
+        })
+    };
+
+    setRegisterTimezone = (event: any) => {
+        const t = event.target;
+        this.setState((prev: AppState) => {
+            prev.registerForm.timezone = t.value;
             return prev;
         })
     };
@@ -161,9 +184,12 @@ class App extends React.Component<AppProps, {}> {
                 email={this.state.registerForm.email}
                 password={this.state.registerForm.password}
                 password2={this.state.registerForm.password2}
+                timezones={this.state.registerForm.timezones}
+                timezone={this.state.registerForm.timezone}
                 onEmailChange={this.setRegisterEmail}
                 onPasswordChange={this.setRegisterPassword}
                 onPassword2Change={this.setRegisterPassword2}
+                onTimezoneChange={this.setRegisterTimezone}
                 onSubmit={this.register}
             />
         </div>

@@ -11,13 +11,11 @@ interface LoginProps {
 
 class Login extends React.Component<LoginProps, {}> {
     render() {
-        return <div>
-            <form onSubmit={this.props.onSubmit}>
-                <input type="email" value={this.props.email} onChange={this.props.onEmailChange} name={'email'} placeholder={'Email'} /><br/>
-                <input type="password" value={this.props.password} onChange={this.props.onPasswordChange} name={'password'} placeholder={'Password'} /><br/>
-                <input type="submit" value={'Submit'} />
-            </form>
-        </div>
+        return <form onSubmit={this.props.onSubmit}>
+            <input type="email" value={this.props.email} onChange={this.props.onEmailChange} name={'email'} placeholder={'Email'} /><br/>
+            <input type="password" value={this.props.password} onChange={this.props.onPasswordChange} name={'password'} placeholder={'Password'} /><br/>
+            <input type="submit" value={'Submit'} />
+        </form>
     }
 }
 
