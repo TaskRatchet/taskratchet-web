@@ -18,6 +18,7 @@ interface AppState {
         password: string
     },
     registerForm: {
+        name: string,
         email: string,
         password: string,
         password2: string,
@@ -35,6 +36,7 @@ class App extends React.Component<AppProps, {}> {
             password: ''
         },
         registerForm: {
+            name: '',
             email: '',
             password: '',
             password2: '',
@@ -49,6 +51,7 @@ class App extends React.Component<AppProps, {}> {
             .then((data) => {
                 this.setState((prev: AppState) => {
                     prev.registerForm.timezones = data;
+                    prev.registerForm.timezone = data[0];
                     return prev;
                 });
             });
@@ -85,6 +88,14 @@ class App extends React.Component<AppProps, {}> {
         const t = event.target;
         this.setState((prev: AppState) => {
             prev.loginForm.password = t.value;
+            return prev;
+        })
+    };
+
+    setRegisterName = (event: any) => {
+        const t = event.target;
+        this.setState((prev: AppState) => {
+            prev.registerForm.name = t.value;
             return prev;
         })
     };
@@ -128,6 +139,23 @@ class App extends React.Component<AppProps, {}> {
 
         this.clearMessages();
         this.validateRegistrationForm();
+
+        if (this.state.messages.length > 0) return;
+
+        console.log('posting registration');
+
+        fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/account/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                'name': this.state.registerForm.name,
+                'email': this.state.registerForm.email,
+                'password': this.state.registerForm.password,
+                'timezone': this.state.registerForm.timezone
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => res.json()).then(res => console.log(res));
     };
 
     clearMessages = () => {
@@ -181,11 +209,13 @@ class App extends React.Component<AppProps, {}> {
 
             <h1>Register</h1>
             <RegisterForm
+                name={this.state.registerForm.name}
                 email={this.state.registerForm.email}
                 password={this.state.registerForm.password}
                 password2={this.state.registerForm.password2}
                 timezones={this.state.registerForm.timezones}
                 timezone={this.state.registerForm.timezone}
+                onNameChange={this.setRegisterName}
                 onEmailChange={this.setRegisterEmail}
                 onPasswordChange={this.setRegisterPassword}
                 onPassword2Change={this.setRegisterPassword2}
