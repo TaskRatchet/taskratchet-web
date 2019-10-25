@@ -46,6 +46,11 @@ class App extends React.Component<AppProps, {}> {
     };
 
     componentDidMount(): void {
+        document.title = 'TaskRatchet';
+        this.populateTimezones();
+    }
+
+    populateTimezones = () => {
         fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/timezones')
             .then(res => res.json())
             .then((data) => {
@@ -55,7 +60,7 @@ class App extends React.Component<AppProps, {}> {
                     return prev;
                 });
             });
-    }
+    };
 
     login = (event: any) => {
         event.preventDefault();
