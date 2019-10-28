@@ -68,17 +68,43 @@ class App extends React.Component<AppProps, {}> {
         console.log('logging in', this.state.loginForm);
 
         this.clearMessages();
-        this.validateLoginForm();
+        const passes = this.validateLoginForm();
+
+        if (!passes) return;
+
+        fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/account/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                'email': this.state.registerForm.email,
+                'password': this.state.registerForm.password,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }).then(res => {
+            console.log(res);
+            if (res.status === 403) {
+                this.pushMessage('Login failed');
+            } else {
+                this.pushMessage('Login successful');
+            }
+        });
     };
 
     validateLoginForm = () => {
+        let passes = true;
+
         if (!this.state.loginForm.email) {
             this.pushMessage('Email required')
+            passes = false;
         }
 
         if (!this.state.loginForm.password) {
             this.pushMessage('Password required')
+            passes = false;
         }
+
+        return passes;
     };
 
     setLoginEmail = (event: any) => {
@@ -143,9 +169,9 @@ class App extends React.Component<AppProps, {}> {
         console.log('registering', this.state.registerForm);
 
         this.clearMessages();
-        this.validateRegistrationForm();
+        const passes = this.validateRegistrationForm();
 
-        if (this.state.messages.length > 0) return;
+        if (!passes) return;
 
         console.log('posting registration');
 
@@ -171,24 +197,31 @@ class App extends React.Component<AppProps, {}> {
     };
 
     validateRegistrationForm = () => {
+        let passes = true;
+
         if (!this.state.registerForm.email) {
-            this.pushMessage("Email missing")
+            this.pushMessage("Email missing");
+            passes = false;
         }
 
         if (!this.state.registerForm.password || !this.state.registerForm.password2) {
-            this.pushMessage("Please enter password twice")
+            this.pushMessage("Please enter password twice");
+            passes = false;
         }
 
         if (this.state.registerForm.password !== this.state.registerForm.password2) {
-            this.pushMessage("Passwords don't match")
+            this.pushMessage("Passwords don't match");
+            passes = false;
         }
+
+        return passes;
     };
 
     pushMessage = (msg: string) => {
         this.setState((prev: AppState) => {
             prev.messages.push(msg);
             return prev;
-        })
+        });
     };
 
     logout = () => {
