@@ -75,8 +75,8 @@ class App extends React.Component<AppProps, {}> {
         fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/account/login', {
             method: 'POST',
             body: JSON.stringify({
-                'email': this.state.registerForm.email,
-                'password': this.state.registerForm.password,
+                'email': this.state.loginForm.email,
+                'password': this.state.loginForm.password,
             }),
             headers: {
                 'Content-Type': 'application/json'
