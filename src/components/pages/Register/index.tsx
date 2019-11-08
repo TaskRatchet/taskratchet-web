@@ -149,6 +149,8 @@ class Register extends React.Component<{}, RegisterState> {
 
     render() {
         return <form onSubmit={this.register}>
+            <h1>Register</h1>
+
             {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
             <input

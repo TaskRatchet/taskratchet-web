@@ -105,6 +105,8 @@ class Login extends React.Component<{}, LoginState> {
 
     render() {
         return <form onSubmit={this.login}>
+            <h1>Login</h1>
+
             {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
             <input
