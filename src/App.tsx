@@ -1,7 +1,8 @@
-import React, {FormEvent} from 'react';
+import React from 'react';
 import './App.css';
 import LoginForm from './components/pages/Login'
 import RegisterForm from './components/pages/Register';
+import Tasks from './components/pages/Tasks';
 import Cookies from 'universal-cookie';
 import {
     BrowserRouter as Router,
@@ -9,48 +10,63 @@ import {
     Route,
     Link
 } from "react-router-dom";
-import Register from './components/pages/Register';
 
 const cookies = new Cookies();
-
-type User = {
-    email: string
-}
 
 interface AppProps {
 }
 
 interface AppState {
-    user: User | null,
+    session: Session | null,
 }
 
 class App extends React.Component<AppProps, {}> {
     state: AppState = {
-        user: null,
+        session: null,
     };
 
     componentDidMount(): void {
         document.title = 'TaskRatchet';
 
-        console.log(cookies.get('tr_session'));
+        this.updateSession()
     }
 
-    render() {
-        return <Router>
-            <nav>
-                <ul>
-                    <li><Link to={'/'}>Home</Link></li>
-                    <li><Link to={'/login'}>Login</Link></li>
-                    <li><Link to={'/register'}>Register</Link></li>
-                </ul>
-            </nav>
+    updateSession = () => {
+        this.setState({
+            session: cookies.get('tr_session')
+        })
+    };
 
-            <Switch>
-                <Route path={'/login'}><LoginForm /></Route>
-                <Route path={'/register'}><RegisterForm /></Route>
-                <Route path={'/'}><h1>Home</h1></Route>
-            </Switch>
-        </Router>
+    logOut = () => {
+        cookies.remove('tr_session');
+        this.updateSession();
+    };
+
+    render() {
+        return <div>
+            <Router>
+                <p>
+                    {this.state.session ? this.state.session.email + ' - ' : ''}
+                    {this.state.session ? this.state.session.token + ' - ' : ''}
+                    {
+                        this.state.session ?
+                            <button onClick={this.logOut}>Logout</button> :
+                            <span>
+                                <Link to={'/login'}>Login</Link> -&nbsp;
+                                <Link to={'/register'}>Register</Link>
+                            </span>
+                    }
+                </p>
+
+                <h2><Link to={'/'}>TaskRatchet</Link></h2>
+
+                <Switch>
+                    <Route path={'/login'}><LoginForm onLogin={this.updateSession}/></Route>
+                    <Route path={'/register'}><RegisterForm/></Route>
+                    <Route path={'/'}><Tasks session={this.state.session} /></Route>
+                </Switch>
+            </Router>
+        </div>
     }
 }
 

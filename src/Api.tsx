@@ -1,0 +1,51 @@
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
+
+class Api {
+    baseRoute: string = 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
+
+    login(email: string, password: string) {
+        return fetch(this.baseRoute + 'account/login', {
+            method: 'POST',
+            body: JSON.stringify({
+                'email': email,
+                'password': password,
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+    }
+
+    register(name: string, email: string, password: string, timezone: string) {
+        return fetch(this.baseRoute + 'account/register', {
+            method: 'POST',
+            body: JSON.stringify({
+                'name': name,
+                'email': email,
+                'password': password,
+                'timezone': timezone
+            }),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+    }
+
+    getTimezones() {
+        return fetch(this.baseRoute + 'timezones')
+    }
+
+    // Requires that user be authenticated.
+    getTasks() {
+        return fetch(this.baseRoute + 'me/tasks', {
+           method: 'GET',
+           headers: {
+               'X-Taskratchet-Token': cookies.get('tr_session').token
+           }
+        });
+    }
+}
+
+export default Api;

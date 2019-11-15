@@ -1,4 +1,5 @@
 import React from 'react';
+import Api from '../../../Api';
 
 interface RegisterState {
     messages: string[],
@@ -21,12 +22,14 @@ class Register extends React.Component<{}, RegisterState> {
         timezone: '',
     };
 
+    api: Api = new Api();
+
     componentDidMount(): void {
         this.populateTimezones();
     }
 
     populateTimezones = () => {
-        fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/timezones')
+        this.api.getTimezones()
             .then(res => res.json())
             .then((data) => {
                 this.setState((prev: RegisterState) => {
@@ -89,27 +92,23 @@ class Register extends React.Component<{}, RegisterState> {
 
         console.log('posting registration');
 
-        fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/account/register', {
-            method: 'POST',
-            body: JSON.stringify({
-                'name': this.state.name,
-                'email': this.state.email,
-                'password': this.state.password,
-                'timezone': this.state.timezone
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }).then(res => {
-            if (res.ok) {
-                this.pushMessage('Registration successful')
-            } else {
-                this.pushMessage('Registration failed')
-            }
-            return res.json()
-        }).then(res => {
-            console.log(res);
-        });
+        this.api.register(
+            this.state.name,
+            this.state.email,
+            this.state.password,
+            this.state.timezone
+        )
+            .then(res => {
+                if (res.ok) {
+                    this.pushMessage('Registration successful')
+                } else {
+                    this.pushMessage('Registration failed')
+                }
+                return res.json()
+            })
+            .then(res => {
+                console.log(res);
+            });
     };
 
     pushMessage = (msg: string) => {
@@ -189,7 +188,7 @@ class Register extends React.Component<{}, RegisterState> {
                 {this.state.timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
             </select><br/>
 
-            <input type="submit" value={'Register'} />
+            <input type="submit" value={'Register'}/>
         </form>
     }
 }

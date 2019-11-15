@@ -1,7 +1,12 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
+import Api from '../../../Api';
 
 const cookies = new Cookies();
+
+interface LoginProps {
+    onLogin: () => void
+}
 
 interface LoginState {
     messages: string[],
@@ -9,12 +14,14 @@ interface LoginState {
     password: string
 }
 
-class Login extends React.Component<{}, LoginState> {
+class Login extends React.Component<LoginProps, LoginState> {
     state: LoginState = {
         messages: [],
         email: '',
         password: ''
     };
+
+    api: Api = new Api();
 
     login = (event: any) => {
         event.preventDefault();
@@ -26,16 +33,7 @@ class Login extends React.Component<{}, LoginState> {
 
         if (!passes) return;
 
-        fetch('https://us-central1-taskratchet.cloudfunctions.net/api1/account/login', {
-            method: 'POST',
-            body: JSON.stringify({
-                'email': this.state.email,
-                'password': this.state.password,
-            }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
+        this.api.login(this.state.email, this.state.password)
             .then((res: any) => {
                 if (res.status === 403) {
                     this.pushMessage('Login failed');
@@ -46,7 +44,11 @@ class Login extends React.Component<{}, LoginState> {
             })
             .then((res: any) => {
                 console.log(res);
-                cookies.set('tr_session', res);
+                cookies.set('tr_session', {
+                    'token': res,
+                    'email': this.state.email
+                });
+                this.props.onLogin()
             });
     };
 
@@ -96,13 +98,6 @@ class Login extends React.Component<{}, LoginState> {
         });
     };
 
-    logout = () => {
-        // this.setState((prev: LoginState) => {
-        //     prev.user = null;
-        //     return prev;
-        // });
-    };
-
     render() {
         return <form onSubmit={this.login}>
             <h1>Login</h1>
@@ -125,7 +120,7 @@ class Login extends React.Component<{}, LoginState> {
                 placeholder={'Password'}
             /><br/>
 
-            <input type="submit" value={'Submit'} />
+            <input type="submit" value={'Submit'}/>
         </form>
     }
 }
