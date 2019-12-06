@@ -1,14 +1,7 @@
 import React from 'react';
 import Api from '../../../Api';
 import './style.css'
-
-type Task = {
-    complete: boolean,
-    due: string,
-    id: number,
-    stakes: number,
-    task: string
-}
+import Task from '../../molecules/Task'
 
 interface TasksProps {
     session: Session | null
@@ -50,14 +43,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
             <h1>Tasks</h1>
             {
                 this.props.session ?
-                    <ul>
-                        {
-                            this.state.tasks.map(t => <li key={t.id}>
-                                <input type="checkbox" checked={t.complete}/>&nbsp;
-                                {t.task} by {t.due} or pay ${t.stakes}
-                            </li>)
-                        }
-                    </ul>
+                    <ul>{this.state.tasks.map(t => <li key={t.id}><Task task={t} /></li>)}</ul>
                     :
                     <p>Please login to view your tasks.</p>
             }
