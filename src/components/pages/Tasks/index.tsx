@@ -1,5 +1,6 @@
 import React from 'react';
 import Api from '../../../Api';
+import './style.css'
 
 type Task = {
     complete: boolean,

@@ -1,6 +1,7 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
 import Api from '../../../Api';
+import './style.css'
 
 const cookies = new Cookies();
 
@@ -99,7 +100,7 @@ class Login extends React.Component<LoginProps, LoginState> {
     };
 
     render() {
-        return <form onSubmit={this.login}>
+        return <form className={'page-login'} onSubmit={this.login}>
             <h1>Login</h1>
 
             {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
@@ -110,7 +111,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                 onChange={this.setLoginEmail}
                 name={'email'}
                 placeholder={'Email'}
-            /><br/>
+            />
 
             <input
                 type="password"
@@ -118,7 +119,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                 onChange={this.setLoginPassword}
                 name={'password'}
                 placeholder={'Password'}
-            /><br/>
+            />
 
             <input type="submit" value={'Submit'}/>
         </form>
