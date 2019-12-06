@@ -26,9 +26,10 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     api: Api = new Api();
 
     componentDidMount(): void {
-        if (!this.props.session) {
-            return;
-        }
+        // pass
+    }
+
+    updateTasks = () => {
         console.log('getting tasks');
         this.api.getTasks()
             .then((res: any) => res.json())
@@ -38,9 +39,13 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                     tasks: data
                 })
             })
-    }
+    };
 
     render() {
+        if (this.props.session && this.state.tasks.length === 0) {
+            this.updateTasks()
+        }
+
         return <div>
             <h1>Tasks</h1>
             {
