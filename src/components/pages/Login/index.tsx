@@ -6,7 +6,8 @@ import './style.css'
 const cookies = new Cookies();
 
 interface LoginProps {
-    onLogin: () => void
+    onLogin: () => void,
+    session: Session | null
 }
 
 interface LoginState {
@@ -100,29 +101,36 @@ class Login extends React.Component<LoginProps, LoginState> {
     };
 
     render() {
-        return <form className={'page-login'} onSubmit={this.login}>
+        return <div className={'page-login'}>
             <h1>Login</h1>
 
             {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
-            <input
-                type="email"
-                value={this.state.email}
-                onChange={this.setLoginEmail}
-                name={'email'}
-                placeholder={'Email'}
-            />
+            {
+                this.props.session ?
+                    <p>You are logged in as {this.props.session.email}</p>
+                    :
+                    <form onSubmit={this.login}>
+                        <input
+                            type="email"
+                            value={this.state.email}
+                            onChange={this.setLoginEmail}
+                            name={'email'}
+                            placeholder={'Email'}
+                        />
 
-            <input
-                type="password"
-                value={this.state.password}
-                onChange={this.setLoginPassword}
-                name={'password'}
-                placeholder={'Password'}
-            />
+                        <input
+                            type="password"
+                            value={this.state.password}
+                            onChange={this.setLoginPassword}
+                            name={'password'}
+                            placeholder={'Password'}
+                        />
 
-            <input type="submit" value={'Submit'}/>
-        </form>
+                        <input type="submit" value={'Submit'}/>
+                    </form>
+            }
+        </div>
     }
 }
 

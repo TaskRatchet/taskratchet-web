@@ -10,6 +10,7 @@ import {
     Route,
     Link
 } from "react-router-dom";
+import SessionWidget from './components/molecules/SessionWidget'
 
 const cookies = new Cookies();
 
@@ -45,23 +46,14 @@ class App extends React.Component<AppProps, {}> {
     render() {
         return <div>
             <Router>
-                <p>
-                    {this.state.session ? this.state.session.email + ' - ' : ''}
-                    {this.state.session ? this.state.session.token + ' - ' : ''}
-                    {
-                        this.state.session ?
-                            <button onClick={this.logOut}>Logout</button> :
-                            <span>
-                                <Link to={'/login'}>Login</Link> -&nbsp;
-                                <Link to={'/register'}>Register</Link>
-                            </span>
-                    }
-                </p>
+                <SessionWidget session={this.state.session} logOutHandler={this.logOut} />
 
                 <h2><Link to={'/'}>TaskRatchet</Link></h2>
 
                 <Switch>
-                    <Route path={'/login'}><LoginForm onLogin={this.updateSession}/></Route>
+                    <Route path={'/login'}>
+                        <LoginForm onLogin={this.updateSession} session={this.state.session} />
+                    </Route>
                     <Route path={'/register'}><RegisterForm/></Route>
                     <Route path={'/'}><Tasks session={this.state.session} /></Route>
                 </Switch>
