@@ -25,11 +25,14 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     api: Api = new Api();
 
     componentDidMount(): void {
+        if (!this.props.session) {
+            return;
+        }
         console.log('getting tasks');
         this.api.getTasks()
-            .then(res => res.json())
-            .then(data => {
-                console.log(data)
+            .then((res: any) => res.json())
+            .then((data: any) => {
+                console.log(data);
                 this.setState({
                     tasks: data
                 })
@@ -39,14 +42,20 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     render() {
         return <div>
             <h1>Tasks</h1>
-            <ul>
-                {
-                    this.state.tasks.map(t => <li key={t.id}>
-                        <input type="checkbox" checked={t.complete} />&nbsp;
-                        {t.task} by {t.due} or pay ${t.stakes}
-                    </li>)
-                }
-            </ul>
+            {
+                this.props.session ?
+                    <ul>
+                        {
+                            this.state.tasks.map(t => <li key={t.id}>
+                                <input type="checkbox" checked={t.complete}/>&nbsp;
+                                {t.task} by {t.due} or pay ${t.stakes}
+                            </li>)
+                        }
+                    </ul>
+                    :
+                    <p>Please login to view your tasks.</p>
+            }
+
         </div>
     }
 }

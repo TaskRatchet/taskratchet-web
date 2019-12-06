@@ -39,10 +39,18 @@ class Api {
 
     // Requires that user be authenticated.
     getTasks() {
+        const session = cookies.get('tr_session');
+
+        if (!session) {
+            return new Promise((resolve, reject) => {
+                reject('User not logged in');
+            });
+        }
+
         return fetch(this.baseRoute + 'me/tasks', {
            method: 'GET',
            headers: {
-               'X-Taskratchet-Token': cookies.get('tr_session').token
+               'X-Taskratchet-Token': session.token
            }
         });
     }
