@@ -54,6 +54,29 @@ class Api {
            }
         });
     }
+
+    // Requires that user be authenticated.
+    addTask(task: string, due: number, stakes: number) {
+        const session = cookies.get('tr_session');
+
+        if (!session) {
+            return new Promise((resolve, reject) => {
+                reject('User not logged in');
+            });
+        }
+
+        return fetch(this.baseRoute + 'me/tasks', {
+            method: 'POST',
+            body: JSON.stringify({
+                task: task,
+                due: due,
+                stakes: stakes
+            }),
+            headers: {
+                'X-Taskratchet-Token': session.token
+            }
+        })
+    }
 }
 
 export default Api;
