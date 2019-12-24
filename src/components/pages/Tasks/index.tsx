@@ -113,6 +113,20 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         return today.toISOString().slice(0, -1);
     };
 
+    toggleStatus = (task: Task) => {
+        this.setState((prev: TasksState) => {
+            prev.tasks = prev.tasks.map((t: Task) => {
+                if (t.id === task.id) {
+                    t.complete = !t.complete;
+                }
+                return t;
+            });
+            return prev;
+        });
+
+        this.api.setComplete(task.id, !task.complete).then((res: any) => this.updateTasks())
+    };
+
     render() {
         if (this.props.session && this.state.tasks.length === 0) {
             this.updateTasks()
@@ -131,7 +145,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
 
             {
                 this.props.session ?
-                    <ul>{this.state.tasks.map(t => <li key={t.id}><Task task={t} /></li>)}</ul>
+                    <ul>{this.state.tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => this.toggleStatus(t)} /></li>)}</ul>
                     :
                     <p>Please login to view your tasks.</p>
             }

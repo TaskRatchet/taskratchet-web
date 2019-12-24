@@ -75,7 +75,28 @@ class Api {
             headers: {
                 'X-Taskratchet-Token': session.token
             }
-        })
+        });
+    }
+
+    // Requires that user be authenticated.
+    setComplete(taskId: number, complete: boolean) {
+        const session = cookies.get('tr_session');
+
+        if (!session) {
+            return new Promise((resolve, reject) => {
+                reject('User not logged in');
+            });
+        }
+
+        return fetch(this.baseRoute + 'me/tasks/' + taskId, {
+            method: 'PUT',
+            body: JSON.stringify({
+                'complete': complete
+            }),
+            headers: {
+                'X-Taskratchet-Token': session.token
+            }
+        });
     }
 }
 
