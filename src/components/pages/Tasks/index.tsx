@@ -90,7 +90,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
             this.state.newTask,
             Math.floor((new Date(this.state.newDue)).getTime() / 1000),
             this.state.newStakes
-        );
+        ).then((res: any) => this.updateTasks());
     };
 
     isoToPrettyDateString = (isoString: string) => {
