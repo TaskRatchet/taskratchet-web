@@ -1,0 +1,16 @@
+.page-tasks {
+  form {
+    padding-bottom: 1rem;
+    label {
+      display: flex;
+      justify-content: space-between;
+    }
+    input {
+      flex: 0 1 80%
+    }
+    .page-tasks__addButton {
+      float: right;
+      margin-top: .5rem;
+    }
+  }
+}

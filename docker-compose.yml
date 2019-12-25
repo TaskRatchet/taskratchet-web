@@ -1,12 +1,20 @@
-version: '3.3'
-
+version: "2"
 services:
-  angular:
-    build: .
+  node:
+    image: "node:latest"
+    user: "node"
+    working_dir: /home/node/app
+    volumes:
+      - ./:/home/node/app
     ports:
-      - "4200:4200"
+      - "3000:3000"
+    command: "npm start"
+  storybook:
+    image: node:latest
+    ports:
+      - "9009:9009"
     working_dir: /home/node/app
     volumes:
       - .:/home/node/app
       - ./transfer:/transfer
-    command: "/transfer/startup.sh"
+    command: "npm run storybook"

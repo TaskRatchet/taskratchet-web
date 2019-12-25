@@ -1,0 +1,17 @@
+html {
+  background-color: #c6d1d8;
+  font-family: sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+body {
+  width: 30rem;
+  max-width:80vw;
+  padding: 2rem;
+  background-color: white;
+  box-shadow: 0 5px 10px rgba(0,0,0,.1);
+  border-radius: 4px;
+}
