@@ -112,7 +112,8 @@ class Register extends React.Component<{}, RegisterState> {
             this.state.name,
             this.state.email,
             this.state.password,
-            this.state.timezone
+            this.state.timezone,
+            this.getSessionId(),
         )
             .then(res => {
                 if (res.ok) {
@@ -135,7 +136,7 @@ class Register extends React.Component<{}, RegisterState> {
         const stripe = window.Stripe('pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd');
 
         stripe.redirectToCheckout({
-            sessionId: this.state.checkoutSession.id
+            sessionId: this.getSessionId()
         }).then((result: any) => {
             // If `redirectToCheckout` fails due to a browser or network
             // error, display the localized error message to your customer
@@ -145,6 +146,12 @@ class Register extends React.Component<{}, RegisterState> {
             console.log('Checkout redirect error');
             console.log(result);
         });
+    };
+
+    getSessionId = () => {
+        if (this.state.checkoutSession == null) return null;
+
+        return this.state.checkoutSession.id;
     };
 
     pushMessage = (msg: string) => {

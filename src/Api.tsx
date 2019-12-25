@@ -18,14 +18,21 @@ class Api {
         })
     }
 
-    register(name: string, email: string, password: string, timezone: string) {
+    register(
+        name: string,
+        email: string,
+        password: string,
+        timezone: string,
+        checkoutSessionId: string | null,
+    ) {
         return fetch(this.baseRoute + 'account/register', {
             method: 'POST',
             body: JSON.stringify({
                 'name': name,
                 'email': email,
                 'password': password,
-                'timezone': timezone
+                'timezone': timezone,
+                'checkout_session_id': checkoutSessionId,
             }),
             headers: {
                 'Content-Type': 'application/json'
