@@ -37,6 +37,10 @@ class Api {
         return fetch(this.baseRoute + 'timezones')
     }
 
+    getCheckoutSession() {
+        return fetch(this.baseRoute + 'payments/checkout/session')
+    }
+
     // Requires that user be authenticated.
     getTasks() {
         const session = cookies.get('tr_session');

@@ -9,6 +9,9 @@ interface RegisterState {
     password2: string,
     timezones: string[],
     timezone: string,
+    checkoutSession: {
+        id: string
+    } | null,
 }
 
 class Register extends React.Component<{}, RegisterState> {
@@ -20,12 +23,14 @@ class Register extends React.Component<{}, RegisterState> {
         password2: '',
         timezones: [],
         timezone: '',
+        checkoutSession: null,
     };
 
     api: Api = new Api();
 
     componentDidMount(): void {
         this.populateTimezones();
+        this.loadCheckoutSession();
     }
 
     populateTimezones = () => {
@@ -38,6 +43,17 @@ class Register extends React.Component<{}, RegisterState> {
                     return prev;
                 });
             });
+    };
+
+    loadCheckoutSession = () => {
+        this.api.getCheckoutSession()
+            .then(res => res.json())
+            .then((session) => {
+                this.setState((prev: RegisterState) => {
+                    prev.checkoutSession = session;
+                    return prev;
+                });
+            })
     };
 
     setName = (event: any) => {
@@ -100,7 +116,7 @@ class Register extends React.Component<{}, RegisterState> {
         )
             .then(res => {
                 if (res.ok) {
-                    this.pushMessage('Registration successful')
+                    this.pushMessage('Redirecting...')
                 } else {
                     this.pushMessage('Registration failed')
                 }
@@ -109,6 +125,26 @@ class Register extends React.Component<{}, RegisterState> {
             .then(res => {
                 console.log(res);
             });
+
+        this.redirect();
+    };
+
+    redirect = () => {
+        if (this.state.checkoutSession == null) return;
+
+        const stripe = window.Stripe('pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd');
+
+        stripe.redirectToCheckout({
+            sessionId: this.state.checkoutSession.id
+        }).then((result: any) => {
+            // If `redirectToCheckout` fails due to a browser or network
+            // error, display the localized error message to your customer
+            // using `result.error.message`.
+            this.pushMessage(result.error.message);
+
+            console.log('Checkout redirect error');
+            console.log(result);
+        });
     };
 
     pushMessage = (msg: string) => {
@@ -188,7 +224,9 @@ class Register extends React.Component<{}, RegisterState> {
                 {this.state.timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
             </select><br/>
 
-            <input type="submit" value={'Register'}/>
+            <p>Pressing the button below will redirect you to our payments provider to add your payment method.</p>
+
+            <input type="submit" value={'Add payment method'} disabled={this.state.checkoutSession == null} />
         </form>
     }
 }
