@@ -55,6 +55,10 @@ class App extends React.Component<AppProps, {}> {
                         <LoginForm onLogin={this.updateSession} session={this.state.session} />
                     </Route>
                     <Route path={'/register'}><RegisterForm/></Route>
+                    <Route path={'/success'}>You've been registered successfully.</Route>
+                    <Route path={'/cancel'}>
+                        You canceled before your registration was completed. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'}>nathan@taskratchet.com</a> if you wish to restart your registration.
+                    </Route>
                     <Route path={'/'}><Tasks session={this.state.session} /></Route>
                 </Switch>
             </Router>
