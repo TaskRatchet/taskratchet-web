@@ -132,6 +132,42 @@ class Account extends React.Component<AccountProps, AccountState> {
         return (value === '') ? null : value;
     };
 
+    savePassword = (event: any) => {
+        event.preventDefault();
+
+        if (!this.isPasswordFormValid()) return;
+
+        this.api.updatePassword(this.state.oldPassword, this.state.password)
+            .then((res: any) => {
+                if (res.ok) {
+                    this.pushMessage('Password saved');
+                } else {
+                    this.pushMessage('Something went wrong');
+                }
+            });
+    };
+
+    isPasswordFormValid = () => {
+        let passed = true;
+
+        if (this.state.oldPassword === '') {
+            this.pushMessage('Old password required');
+            passed = false;
+        }
+
+        if (this.state.password === '') {
+            this.pushMessage('New password required');
+            passed = false;
+        }
+
+        if (this.state.password !== this.state.password2) {
+            this.pushMessage('New password fields don\'t match');
+            passed = false;
+        }
+
+        return passed;
+    };
+
     pushMessage = (msg: string) => {
         this.setState((prev: AccountState) => {
             prev.messages.push(msg);
@@ -171,7 +207,7 @@ class Account extends React.Component<AccountProps, AccountState> {
 
             <h2>Reset Password</h2>
 
-            <form>
+            <form onSubmit={this.savePassword}>
                 <input
                     type="password"
                     value={this.state.oldPassword}

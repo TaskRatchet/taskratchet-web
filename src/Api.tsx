@@ -69,14 +69,24 @@ class Api {
             data['timezone'] = timezone;
         }
 
-        console.log(data);
-
         return this._fetch(
             '/me',
             true,
             'PUT',
             data
         );
+    }
+
+    updatePassword(oldPassword: string, newPassword: string) {
+        return this._fetch(
+            'me',
+            true,
+            'PUT',
+            {
+                'old_password': oldPassword,
+                'new_password': newPassword
+            }
+        )
     }
 
     getTasks() {
