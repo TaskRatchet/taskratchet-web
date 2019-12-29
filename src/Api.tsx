@@ -6,16 +6,15 @@ class Api {
     baseRoute: string = 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
 
     login(email: string, password: string) {
-        return fetch(this.baseRoute + 'account/login', {
-            method: 'POST',
-            body: JSON.stringify({
+        return this._fetch(
+            'account/login',
+            false,
+            'POST',
+            {
                 'email': email,
                 'password': password,
-            }),
-            headers: {
-                'Content-Type': 'application/json'
             }
-        })
+        );
     }
 
     register(
@@ -25,87 +24,81 @@ class Api {
         timezone: string,
         checkoutSessionId: string | null,
     ) {
-        return fetch(this.baseRoute + 'account/register', {
-            method: 'POST',
-            body: JSON.stringify({
+        return this._fetch(
+            'account/register',
+            false,
+            'POST',
+            {
                 'name': name,
                 'email': email,
                 'password': password,
                 'timezone': timezone,
                 'checkout_session_id': checkoutSessionId,
-            }),
-            headers: {
-                'Content-Type': 'application/json'
             }
-        });
+        );
     }
 
     getTimezones() {
-        return fetch(this.baseRoute + 'timezones')
+        return this._fetch('timezones')
     }
 
     getCheckoutSession() {
-        return fetch(this.baseRoute + 'payments/checkout/session')
+        return this._fetch('payments/checkout/session');
     }
 
-    // Requires that user be authenticated.
+    getMe() {
+        return this._fetch('me', true);
+    }
+
     getTasks() {
-        const session = cookies.get('tr_session');
-
-        if (!session) {
-            return new Promise((resolve, reject) => {
-                reject('User not logged in');
-            });
-        }
-
-        return fetch(this.baseRoute + 'me/tasks', {
-           method: 'GET',
-           headers: {
-               'X-Taskratchet-Token': session.token
-           }
-        });
+        return this._fetch('me/tasks', true);
     }
 
     // Requires that user be authenticated.
     addTask(task: string, due: number, stakes: number) {
-        const session = cookies.get('tr_session');
-
-        if (!session) {
-            return new Promise((resolve, reject) => {
-                reject('User not logged in');
-            });
-        }
-
-        return fetch(this.baseRoute + 'me/tasks', {
-            method: 'POST',
-            body: JSON.stringify({
+        return this._fetch(
+            'me/tasks',
+            true,
+            'POST',
+            {
                 task: task,
                 due: due,
                 stakes: stakes
-            }),
-            headers: {
-                'X-Taskratchet-Token': session.token
             }
-        });
+        );
     }
 
     // Requires that user be authenticated.
     setComplete(taskId: number, complete: boolean) {
+        return this._fetch(
+            'me/tasks/' + taskId,
+            true,
+            'PUT',
+            {
+                'complete': complete
+            }
+        );
+    }
+
+    _fetch = (
+        route: string,
+        authenticated: boolean = false,
+        method: string = 'GET',
+        data: any = null,
+    ) => {
         const session = cookies.get('tr_session');
 
-        if (!session) {
+        if (authenticated && !session) {
             return new Promise((resolve, reject) => {
                 reject('User not logged in');
             });
         }
 
-        return fetch(this.baseRoute + 'me/tasks/' + taskId, {
-            method: 'PUT',
-            body: JSON.stringify({
-                'complete': complete
-            }),
+        return fetch(this.baseRoute + route, {
+            method: method,
+            body: data ? JSON.stringify(data) : undefined,
             headers: {
-                'X-Taskratchet-Token': session.token
+                'X-Taskratchet-Token': session ? session.token : undefined,
             }
         });
     }

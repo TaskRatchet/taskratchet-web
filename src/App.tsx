@@ -8,9 +8,11 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link
+    Link,
 } from "react-router-dom";
 import SessionWidget from './components/molecules/SessionWidget'
+import Account from './components/pages/Account'
+import Authenticated from './components/pages/Authenticated'
 
 const cookies = new Cookies();
 
@@ -54,12 +56,30 @@ class App extends React.Component<AppProps, {}> {
                     <Route path={'/login'}>
                         <LoginForm onLogin={this.updateSession} session={this.state.session} />
                     </Route>
-                    <Route path={'/register'}><RegisterForm/></Route>
-                    <Route path={'/success'}>You've been registered successfully.</Route>
+
+                    <Route path={'/register'}>
+                        <RegisterForm/>
+                    </Route>
+
+                    <Route path={'/success'}>
+                        You've been registered successfully.
+                    </Route>
+
                     <Route path={'/cancel'}>
                         You canceled before your registration was completed. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'}>nathan@taskratchet.com</a> if you wish to restart your registration.
                     </Route>
-                    <Route path={'/'}><Tasks session={this.state.session} /></Route>
+
+                    <Route path={'/account'}>
+                        <Authenticated session={this.state.session}>
+                            <Account/>
+                        </Authenticated>
+                    </Route>
+
+                    <Route path={'/'}>
+                        <Authenticated session={this.state.session}>
+                            <Tasks />
+                        </Authenticated>
+                    </Route>
                 </Switch>
             </Router>
         </div>

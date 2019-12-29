@@ -1,5 +1,5 @@
 .molecule-sessionWidget {
-  button {
-    margin-left: 1em;
+  > div > * {
+    margin-right: 1em;
   }
 }

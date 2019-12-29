@@ -4,7 +4,6 @@ import './style.css'
 import Task from '../../molecules/Task'
 
 interface TasksProps {
-    session: Session | null
 }
 
 interface TasksState {
@@ -28,7 +27,9 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         this.setState((prev: TasksState) => {
             prev.newDue = this.getNowString();
             return prev;
-        })
+        });
+
+        this.updateTasks();
     }
 
     updateTasks = () => {
@@ -128,12 +129,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     };
 
     render() {
-        if (this.props.session && this.state.tasks.length === 0) {
-            this.updateTasks()
-        }
-
         return <div className={'page-tasks'}>
-
             <h1>Tasks</h1>
 
             <form onSubmit={this.saveTask}>
@@ -143,13 +139,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
             </form>
 
-            {
-                this.props.session ?
-                    <ul>{this.state.tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => this.toggleStatus(t)} /></li>)}</ul>
-                    :
-                    <p>Please login to view your tasks.</p>
-            }
-
+            <ul>{this.state.tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => this.toggleStatus(t)} /></li>)}</ul>
         </div>
     }
 }

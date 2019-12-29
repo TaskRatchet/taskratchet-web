@@ -35,7 +35,7 @@ class Register extends React.Component<{}, RegisterState> {
 
     populateTimezones = () => {
         this.api.getTimezones()
-            .then(res => res.json())
+            .then((res: any) => res.json())
             .then((data) => {
                 this.setState((prev: RegisterState) => {
                     prev.timezones = data;
@@ -47,7 +47,7 @@ class Register extends React.Component<{}, RegisterState> {
 
     loadCheckoutSession = () => {
         this.api.getCheckoutSession()
-            .then(res => res.json())
+            .then((res: any) => res.json())
             .then((session) => {
                 this.setState((prev: RegisterState) => {
                     prev.checkoutSession = session;
@@ -115,7 +115,7 @@ class Register extends React.Component<{}, RegisterState> {
             this.state.timezone,
             this.getSessionId(),
         )
-            .then(res => {
+            .then((res: any) => {
                 if (res.ok) {
                     this.pushMessage('Redirecting...')
                 } else {
