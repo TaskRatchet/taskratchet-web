@@ -16,4 +16,13 @@ body {
   border-radius: 4px;
 }
 
+a, .link {
+  font-size: 1em;
+  background: none;
+  border: none;
+  color: #0000EE;
+  padding: 0;
+  text-decoration: underline;
+}
+
 /*# sourceMappingURL=App.css.map */

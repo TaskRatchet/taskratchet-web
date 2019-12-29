@@ -56,7 +56,6 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     setNewDue = (event: any) => {
         const t = event.target;
         this.setState((prev: TasksState) => {
-            const d = new Date(t.value);
             prev.newDue = t.value;
             return prev;
         })

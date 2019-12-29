@@ -50,6 +50,35 @@ class Api {
         return this._fetch('me', true);
     }
 
+    updateMe(
+        name: string|null = null,
+        email: string|null = null,
+        timezone: string|null = null
+    ) {
+        let data: any = {};
+
+        if (name !== null) {
+            data['name'] = name;
+        }
+
+        if (email !== null) {
+            data['email'] = email;
+        }
+
+        if (timezone !== null) {
+            data['timezone'] = timezone;
+        }
+
+        console.log(data);
+
+        return this._fetch(
+            '/me',
+            true,
+            'PUT',
+            data
+        );
+    }
+
     getTasks() {
         return this._fetch('me/tasks', true);
     }
@@ -82,26 +111,35 @@ class Api {
 
     _fetch = (
         route: string,
-        authenticated: boolean = false,
+        protected_: boolean = false,
         method: string = 'GET',
         data: any = null,
     ) => {
-        const session = cookies.get('tr_session');
+        const session = cookies.get('tr_session'),
+            route_ = this._trim(route, '/');
 
-        if (authenticated && !session) {
+        if (protected_ && !session) {
             return new Promise((resolve, reject) => {
                 reject('User not logged in');
             });
         }
 
-        return fetch(this.baseRoute + route, {
+        return fetch(this.baseRoute + route_, {
             method: method,
             body: data ? JSON.stringify(data) : undefined,
             headers: {
                 'X-Taskratchet-Token': session ? session.token : undefined,
             }
         });
-    }
+    };
+
+    _trim = (s: string, c: string) => {
+        if (c === "]") c = "\\]";
+        if (c === "\\") c = "\\\\";
+        return s.replace(new RegExp(
+            "^[" + c + "]+|[" + c + "]+$", "g"
+        ), "");
+    };
 }
 
 export default Api;

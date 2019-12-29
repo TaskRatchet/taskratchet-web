@@ -13,7 +13,7 @@ const SessionWidget = (props: SessionWidgetProps) => {
             props.session ?
                 <div>
                     <span>{props.session.email}</span>
-                    <a href={'#'} onClick={props.logOutHandler}>Logout</a>
+                    <button className={'link'} onClick={props.logOutHandler}>Logout</button>
                     <Link to={'/account'}>Account</Link>
                 </div>
                 :

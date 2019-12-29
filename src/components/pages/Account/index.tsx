@@ -1,9 +1,6 @@
 import React from 'react';
-import Cookies from 'universal-cookie';
 import Api from '../../../Api';
 import './style.css'
-
-const cookies = new Cookies();
 
 interface AccountProps {
 }
@@ -52,14 +49,16 @@ class Account extends React.Component<AccountProps, AccountState> {
     loadUser = () => {
         this.api.getMe()
             .then((res: any) => res.json())
-            .then((data) => {
-                this.setState((prev: AccountState) => {
-                    prev.name = data['name'];
-                    prev.email = data['email'];
-                    prev.timezone = data['timezone'];
-                    return prev;
-                })
-            })
+            .then(this.loadResponseData)
+    };
+
+    loadResponseData = (data: any) => {
+        this.setState((prev: AccountState) => {
+            prev.name = data['name'];
+            prev.email = data['email'];
+            prev.timezone = data['timezone'];
+            return prev;
+        })
     };
 
     setName = (event: any) => {
@@ -110,58 +109,96 @@ class Account extends React.Component<AccountProps, AccountState> {
         })
     };
 
+    saveGeneral = (event: any) => {
+        event.preventDefault();
+
+        const name = this.prepareValue(this.state.name),
+            email = this.prepareValue(this.state.email),
+            timezone = this.prepareValue(this.state.timezone);
+
+        this.api.updateMe(name, email, timezone)
+            .then((res: any) => {
+                if (res.ok) {
+                    this.pushMessage('Changes saved');
+                } else {
+                    this.pushMessage('Something went wrong');
+                }
+                return res.json();
+            })
+            .then(this.loadResponseData);
+    };
+
+    prepareValue = (value: string) => {
+        return (value === '') ? null : value;
+    };
+
+    pushMessage = (msg: string) => {
+        this.setState((prev: AccountState) => {
+            prev.messages.push(msg);
+            return prev;
+        });
+    };
+
     render() {
-        return <form className={'page-account'}>
+        return <div className={'page-account'}>
             <h1>Account</h1>
 
-            <input
-                type="text"
-                value={this.state.name}
-                onChange={this.setName}
-                name={'name'}
-                placeholder={'Name'}
-            /><br/>
+            {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
-            <input
-                type="email"
-                value={this.state.email}
-                onChange={this.setEmail}
-                name={'email'}
-                placeholder={'Email'}
-            /><br/>
+            <form onSubmit={this.saveGeneral}>
+                <input
+                    type="text"
+                    value={this.state.name}
+                    onChange={this.setName}
+                    name={'name'}
+                    placeholder={'Name'}
+                /><br/>
 
+                <input
+                    type="email"
+                    value={this.state.email}
+                    onChange={this.setEmail}
+                    name={'email'}
+                    placeholder={'Email'}
+                /><br/>
 
+                <select name="timezone" value={this.state.timezone} onChange={this.setTimezone}>
+                    {this.state.timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
+                </select><br/>
 
-            <select name="timezone" value={this.state.timezone} onChange={this.setTimezone}>
-                {this.state.timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
-            </select><br/>
+                <input type="submit" value={'Save'}/>
+            </form>
 
             <h2>Reset Password</h2>
 
-            <input
-                type="password"
-                value={this.state.oldPassword}
-                onChange={this.setOldPassword}
-                name={'old_password'}
-                placeholder={'Old Password'}
-            /><br/>
+            <form>
+                <input
+                    type="password"
+                    value={this.state.oldPassword}
+                    onChange={this.setOldPassword}
+                    name={'old_password'}
+                    placeholder={'Old Password'}
+                /><br/>
 
-            <input
-                type="password"
-                value={this.state.password}
-                onChange={this.setPassword}
-                name={'password'}
-                placeholder={'Password'}
-            /><br/>
+                <input
+                    type="password"
+                    value={this.state.password}
+                    onChange={this.setPassword}
+                    name={'password'}
+                    placeholder={'Password'}
+                /><br/>
 
-            <input
-                type="password"
-                value={this.state.password2}
-                onChange={this.setPassword2}
-                name={'password2'}
-                placeholder={'Retype Password'}
-            /><br/>
-        </form>
+                <input
+                    type="password"
+                    value={this.state.password2}
+                    onChange={this.setPassword2}
+                    name={'password2'}
+                    placeholder={'Retype Password'}
+                /><br/>
+
+                <input type="submit" value={'Save'}/>
+            </form>
+        </div>
     }
 }
 

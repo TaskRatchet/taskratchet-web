@@ -1,9 +1,4 @@
 import React from 'react';
-import Cookies from 'universal-cookie';
-import Api from '../../../Api';
-// import './style.css'
-
-const cookies = new Cookies();
 
 interface AuthenticatedProps {
     session: Session | null
