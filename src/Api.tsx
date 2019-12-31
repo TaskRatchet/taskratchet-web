@@ -53,7 +53,7 @@ class Api {
     updateMe(
         name: string|null = null,
         email: string|null = null,
-        timezone: string|null = null
+        timezone: string|null = null,
     ) {
         let data: any = {};
 
@@ -74,6 +74,17 @@ class Api {
             true,
             'PUT',
             data
+        );
+    }
+
+    updateCheckoutSessionId(sessionId: string) {
+        return this._fetch(
+            '/me',
+            true,
+            'PUT',
+            {
+                'checkout_session_id': sessionId
+            }
         );
     }
 

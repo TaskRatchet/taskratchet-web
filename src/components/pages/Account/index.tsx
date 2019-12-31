@@ -14,6 +14,9 @@ interface AccountState {
     password2: string,
     timezones: string[],
     timezone: string,
+    checkoutSession: {
+        id: string
+    } | null,
 }
 
 class Account extends React.Component<AccountProps, AccountState> {
@@ -26,6 +29,7 @@ class Account extends React.Component<AccountProps, AccountState> {
         password2: '',
         timezones: [],
         timezone: '',
+        checkoutSession: null,
     };
 
     api: Api = new Api();
@@ -33,7 +37,19 @@ class Account extends React.Component<AccountProps, AccountState> {
     componentDidMount(): void {
         this.populateTimezones();
         this.loadUser();
+        this.loadCheckoutSession();
     }
+
+    loadCheckoutSession = () => {
+        this.api.getCheckoutSession()
+            .then((res: any) => res.json())
+            .then((session) => {
+                this.setState((prev: AccountState) => {
+                    prev.checkoutSession = session;
+                    return prev;
+                });
+            })
+    };
 
     populateTimezones = () => {
         this.api.getTimezones()
@@ -175,6 +191,43 @@ class Account extends React.Component<AccountProps, AccountState> {
         });
     };
 
+    updatePaymentDetails = () => {
+        const sessionId = this.getSessionId();
+
+        if (sessionId === null) {
+            this.pushMessage('Checkout session error');
+            return;
+        }
+
+        this.api.updateCheckoutSessionId(sessionId);
+
+        this.redirect();
+    };
+
+    redirect = () => {
+        if (this.state.checkoutSession == null) return;
+
+        const stripe = window.Stripe('pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd');
+
+        stripe.redirectToCheckout({
+            sessionId: this.getSessionId()
+        }).then((result: any) => {
+            // If `redirectToCheckout` fails due to a browser or network
+            // error, display the localized error message to your customer
+            // using `result.error.message`.
+            this.pushMessage(result.error.message);
+
+            console.log('Checkout redirect error');
+            console.log(result);
+        });
+    };
+
+    getSessionId = () => {
+        if (this.state.checkoutSession == null) return null;
+
+        return this.state.checkoutSession.id;
+    };
+
     render() {
         return <div className={'page-account'}>
             <h1>Account</h1>
@@ -234,6 +287,12 @@ class Account extends React.Component<AccountProps, AccountState> {
 
                 <input type="submit" value={'Save'}/>
             </form>
+
+            <h2>Update Payment Details</h2>
+
+            <p>Pressing the button below will redirect you to our payments provider to update your payment method.</p>
+
+            <button onClick={this.updatePaymentDetails}>Update</button>
         </div>
     }
 }
