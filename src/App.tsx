@@ -63,11 +63,11 @@ class App extends React.Component<AppProps, {}> {
                         </Route>
 
                         <Route path={'/success'}>
-                            You've been registered successfully.
+                            Your payment method has been saved successfully.
                         </Route>
 
                         <Route path={'/cancel'}>
-                            You canceled before your registration was completed. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'}>nathan@taskratchet.com</a> if you wish to restart your registration.
+                            Your payment method could not be saved. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'}>nathan@taskratchet.com</a> for assistance.
                         </Route>
 
                         <Route path={'/account'}>

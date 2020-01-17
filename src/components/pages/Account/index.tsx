@@ -2,6 +2,11 @@ import React from 'react';
 import Api from '../../../Api';
 import './style.css'
 
+interface Card {
+    brand: string,
+    last4: string,
+}
+
 interface AccountProps {
 }
 
@@ -14,6 +19,7 @@ interface AccountState {
     password2: string,
     timezones: string[],
     timezone: string,
+    cards: Card[],
     checkoutSession: {
         id: string
     } | null,
@@ -29,6 +35,7 @@ class Account extends React.Component<AccountProps, AccountState> {
         password2: '',
         timezones: [],
         timezone: '',
+        cards: [],
         checkoutSession: null,
     };
 
@@ -73,6 +80,7 @@ class Account extends React.Component<AccountProps, AccountState> {
             prev.name = data['name'];
             prev.email = data['email'];
             prev.timezone = data['timezone'];
+            prev.cards = data['cards'];
             return prev;
         })
     };
@@ -296,9 +304,13 @@ class Account extends React.Component<AccountProps, AccountState> {
 
             <h2>Update Payment Details</h2>
 
-            <p>Pressing the button below will redirect you to our payments provider to update your payment method.</p>
+            <p>Saved payment method:</p>
 
-            <button onClick={this.updatePaymentDetails}>Update</button>
+            {this.state.cards ? <ul>
+                {this.state.cards.map((c, i) => <li key={i}>{c.brand} ending with {c.last4}</li>)}
+            </ul> : <p>None</p>}
+
+            <button onClick={this.updatePaymentDetails}>Replace payment method</button>
         </div>
     }
 }
