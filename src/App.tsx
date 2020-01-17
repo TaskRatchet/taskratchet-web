@@ -46,41 +46,43 @@ class App extends React.Component<AppProps, {}> {
     };
 
     render() {
-        return <div>
+        return <div className={'page-base'}>
             <Router>
                 <SessionWidget session={this.state.session} logOutHandler={this.logOut} />
 
                 <h2><Link to={'/'}>TaskRatchet</Link></h2>
 
-                <Switch>
-                    <Route path={'/login'}>
-                        <LoginForm onLogin={this.updateSession} session={this.state.session} />
-                    </Route>
+                <div className={'page-base__content'}>
+                    <Switch>
+                        <Route path={'/login'}>
+                            <LoginForm onLogin={this.updateSession} session={this.state.session} />
+                        </Route>
 
-                    <Route path={'/register'}>
-                        <RegisterForm/>
-                    </Route>
+                        <Route path={'/register'}>
+                            <RegisterForm/>
+                        </Route>
 
-                    <Route path={'/success'}>
-                        You've been registered successfully.
-                    </Route>
+                        <Route path={'/success'}>
+                            You've been registered successfully.
+                        </Route>
 
-                    <Route path={'/cancel'}>
-                        You canceled before your registration was completed. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'}>nathan@taskratchet.com</a> if you wish to restart your registration.
-                    </Route>
+                        <Route path={'/cancel'}>
+                            You canceled before your registration was completed. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'}>nathan@taskratchet.com</a> if you wish to restart your registration.
+                        </Route>
 
-                    <Route path={'/account'}>
-                        <Authenticated session={this.state.session}>
-                            <Account/>
-                        </Authenticated>
-                    </Route>
+                        <Route path={'/account'}>
+                            <Authenticated session={this.state.session}>
+                                <Account/>
+                            </Authenticated>
+                        </Route>
 
-                    <Route path={'/'}>
-                        <Authenticated session={this.state.session}>
-                            <Tasks />
-                        </Authenticated>
-                    </Route>
-                </Switch>
+                        <Route path={'/'}>
+                            <Authenticated session={this.state.session}>
+                                <Tasks />
+                            </Authenticated>
+                        </Route>
+                    </Switch>
+                </div>
             </Router>
         </div>
     }

@@ -1,0 +1,13 @@
+.page-account {
+  label, input {
+    display: block;
+  }
+  label {
+    margin-bottom: .25em;
+    font-size: .75em;
+    font-weight: bold;
+  }
+  input, select {
+    margin-bottom: 1.5em;
+  }
+}

@@ -7,7 +7,7 @@ html {
   height: 100vh;
 }
 
-body {
+.page-base__content {
   width: 30rem;
   max-width: 80vw;
   padding: 2rem;

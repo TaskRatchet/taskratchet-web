@@ -235,25 +235,28 @@ class Account extends React.Component<AccountProps, AccountState> {
             {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
             <form onSubmit={this.saveGeneral}>
+                <label htmlFor="name">Name</label>
                 <input
                     type="text"
                     value={this.state.name}
                     onChange={this.setName}
+                    id={'name'}
                     name={'name'}
-                    placeholder={'Name'}
-                /><br/>
+                />
 
+                <label htmlFor="email">Email</label>
                 <input
                     type="email"
                     value={this.state.email}
                     onChange={this.setEmail}
+                    id={'email'}
                     name={'email'}
-                    placeholder={'Email'}
-                /><br/>
+                />
 
-                <select name="timezone" value={this.state.timezone} onChange={this.setTimezone}>
+                <label htmlFor="timezone">Timezone</label>
+                <select id={'timezone'} name="timezone" value={this.state.timezone} onChange={this.setTimezone}>
                     {this.state.timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
-                </select><br/>
+                </select>
 
                 <input type="submit" value={'Save'}/>
             </form>
@@ -261,29 +264,32 @@ class Account extends React.Component<AccountProps, AccountState> {
             <h2>Reset Password</h2>
 
             <form onSubmit={this.savePassword}>
+                <label htmlFor="old_password">Old Password</label>
                 <input
                     type="password"
                     value={this.state.oldPassword}
                     onChange={this.setOldPassword}
+                    id={'old_password'}
                     name={'old_password'}
-                    placeholder={'Old Password'}
-                /><br/>
+                />
 
+                <label htmlFor="password">New Password</label>
                 <input
                     type="password"
                     value={this.state.password}
                     onChange={this.setPassword}
+                    id={'password'}
                     name={'password'}
-                    placeholder={'Password'}
-                /><br/>
+                />
 
+                <label htmlFor="password2">Retype Password</label>
                 <input
                     type="password"
                     value={this.state.password2}
                     onChange={this.setPassword2}
+                    id={'password2'}
                     name={'password2'}
-                    placeholder={'Retype Password'}
-                /><br/>
+                />
 
                 <input type="submit" value={'Save'}/>
             </form>
