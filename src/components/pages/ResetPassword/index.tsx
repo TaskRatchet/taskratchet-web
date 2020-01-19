@@ -1,124 +1,93 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Api from '../../../Api';
 import {useLocation} from 'react-router-dom';
 
-interface ResetPasswordState {
-    messages: string[],
-    password: string,
-    password2: string,
-}
+function ResetPassword() {
+    const useToken = () => {
+        let query = new URLSearchParams(useLocation().search);
 
-class ResetPassword extends React.Component<{}, ResetPasswordState> {
-    state: ResetPasswordState = {
-        messages: [],
-        password: '',
-        password2: '',
+        return query.get('t') || '';
     };
 
-    api: Api = new Api();
+    const [messages, setMessages] = useState<string[]>([]);
+    const [password, setPassword] = useState<string>('');
+    const [password2, setPassword2] = useState<string>('');
+    const token = useToken();
 
-    componentDidMount(): void {
-    }
+    const api: Api = new Api();
 
-    setPassword = (event: any) => {
-        const t = event.target;
-        this.setState((prev: ResetPasswordState) => {
-            prev.password = t.value;
-            return prev;
-        })
-    };
-
-    setPassword2 = (event: any) => {
-        const t = event.target;
-        this.setState((prev: ResetPasswordState) => {
-            prev.password2 = t.value;
-            return prev;
-        })
-    };
-
-    resetPassword = (event: any) => {
+    const resetPassword = (event: any) => {
         event.preventDefault();
 
-        this.clearMessages();
-        const passes = this.validateForm();
+        clearMessages();
+        const passes = validateForm();
 
         if (!passes) return;
 
-        this.api.resetPassword(
-            this.getToken(),
-            this.state.password,
+        api.resetPassword(
+            token,
+            password,
         )
             .then((res: any) => {
                 if (res.ok) {
-                    this.pushMessage('Password reset successfully');
+                    pushMessage('Password reset successfully');
                 } else {
-                    this.pushMessage('Password reset failed');
+                    pushMessage('Password reset failed');
                     res.text().then((t: string) => console.log(t));
                 }
             })
     };
 
-    getToken = () => {
-        let query = new URLSearchParams(useLocation().search);
+    const pushMessage = (msg: string) => {
+        const newMessages = [...messages, msg];
 
-        return query.get('token') || '';
+        setMessages(newMessages);
     };
 
-    pushMessage = (msg: string) => {
-        this.setState((prev: ResetPasswordState) => {
-            prev.messages.push(msg);
-            return prev;
-        });
+    const clearMessages = () => {
+        setMessages([]);
     };
 
-    clearMessages = () => {
-        this.setState((prev: ResetPasswordState) => {
-            prev.messages = [];
-            return prev;
-        });
-    };
-
-    validateForm = () => {
+    const validateForm = () => {
         let passes = true;
 
-        if (!this.state.password || !this.state.password2) {
-            this.pushMessage("Please enter new password twice");
+        if (!password || !password2) {
+            pushMessage("Please enter new password twice");
             passes = false;
         }
 
-        if (this.state.password !== this.state.password2) {
-            this.pushMessage("Passwords don't match");
+        if (password !== password2) {
+            pushMessage("Passwords don't match");
             passes = false;
         }
 
         return passes;
     };
 
-    render() {
-        return <form onSubmit={this.resetPassword}>
-            <h1>Reset Password</h1>
 
-            {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
+    return <form onSubmit={resetPassword}>
+        <h1>Reset Password</h1>
 
-            <input
-                type="password"
-                value={this.state.password}
-                onChange={this.setPassword}
-                name={'password'}
-                placeholder={'Password'}
-            /><br/>
+        {messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
-            <input
-                type="password"
-                value={this.state.password2}
-                onChange={this.setPassword2}
-                name={'password2'}
-                placeholder={'Retype Password'}
-            /><br/>
+        <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            name={'password'}
+            placeholder={'Password'}
+        /><br/>
 
-            <input type="submit" value={'Save new password'} />
-        </form>
-    }
+        <input
+            type="password"
+            value={password2}
+            onChange={e => setPassword2(e.target.value)}
+            name={'password2'}
+            placeholder={'Retype Password'}
+        /><br/>
+
+        <input type="submit" value={'Save new password'} />
+    </form>
 }
 
 export default ResetPassword;
