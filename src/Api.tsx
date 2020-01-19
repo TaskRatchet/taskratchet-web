@@ -26,6 +26,18 @@ class Api {
             )
     }
 
+    resetPassword(token: string, password: string) {
+        return this._fetch(
+            'account/reset-password',
+            false,
+            'POST',
+            {
+                'token': token,
+                'password': password
+            }
+        );
+    }
+
     register(
         name: string,
         email: string,

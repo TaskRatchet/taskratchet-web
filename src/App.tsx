@@ -12,6 +12,7 @@ import {
 import SessionWidget from './components/molecules/SessionWidget'
 import Account from './components/pages/Account'
 import Authenticated from './components/pages/Authenticated'
+import ResetPassword from "./components/pages/ResetPassword";
 
 const cookies = new Cookies();
 
@@ -69,6 +70,10 @@ class App extends React.Component<AppProps, {}> {
                             <Authenticated session={this.state.session} onLogin={this.updateSession}>
                                 <Account/>
                             </Authenticated>
+                        </Route>
+
+                        <Route path={'/reset'}>
+                            <ResetPassword/>
                         </Route>
 
                         <Route path={'/'}>
