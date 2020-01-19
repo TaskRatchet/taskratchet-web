@@ -17,6 +17,15 @@ class Api {
         );
     }
 
+    requestResetEmail(email: string) {
+        return this._fetch(
+            'account/forgot-password',
+            false,
+            'POST',
+            {'email': email}
+            )
+    }
+
     register(
         name: string,
         email: string,

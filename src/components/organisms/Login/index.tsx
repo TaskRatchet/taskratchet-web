@@ -57,7 +57,25 @@ class Login extends React.Component<LoginProps, LoginState> {
             });
     };
 
-    validateLoginForm = () => {
+    reset = (event: any) => {
+        event.preventDefault();
+
+        const passes = this.validateLoginForm(false);
+
+        if (!passes) return;
+
+        this.api.requestResetEmail(this.state.email)
+            .then((res: any) => {
+                if (res.ok) {
+                    this.pushMessage('Instructions sent to ' + this.state.email);
+                } else {
+                    this.pushMessage('Reset request failed');
+                    res.text().then((t: string) => console.log(t))
+                }
+            })
+    };
+
+    validateLoginForm = (passwordRequired = true) => {
         let passes = true;
 
         if (!this.state.email) {
@@ -65,7 +83,7 @@ class Login extends React.Component<LoginProps, LoginState> {
             passes = false;
         }
 
-        if (!this.state.password) {
+        if (passwordRequired && !this.state.password) {
             this.pushMessage('Password required');
             passes = false;
         }
@@ -111,7 +129,7 @@ class Login extends React.Component<LoginProps, LoginState> {
                 this.props.session ?
                     <p>You are logged in as {this.props.session.email}</p>
                     :
-                    <form onSubmit={this.login}>
+                    <form>
                         <input
                             type="email"
                             value={this.state.email}
@@ -128,7 +146,8 @@ class Login extends React.Component<LoginProps, LoginState> {
                             placeholder={'Password'}
                         />
 
-                        <input type="submit" value={'Submit'}/>
+                        <input type="submit" value={'Submit'} onClick={this.login} />
+                        <input type="submit" value={'Reset Password'} onClick={this.reset} />
                     </form>
             }
         </div>
