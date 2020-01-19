@@ -17,10 +17,7 @@ const SessionWidget = (props: SessionWidgetProps) => {
                     <Link to={'/account'}>Account</Link>
                 </div>
                 :
-                <div>
-                    <Link to={'/login'}>Login</Link>
-                    <Link to={'/register'}>Register</Link>
-                </div>
+                <div />
         }
     </div>
 };

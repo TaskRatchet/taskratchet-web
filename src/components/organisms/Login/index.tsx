@@ -104,9 +104,7 @@ class Login extends React.Component<LoginProps, LoginState> {
     };
 
     render() {
-        return <div className={'page-login'}>
-            <h1>Login</h1>
-
+        return <div className={'organism-login'}>
             {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
             {

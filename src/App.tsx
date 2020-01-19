@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import LoginForm from './components/pages/Login'
 import RegisterForm from './components/pages/Register';
 import Tasks from './components/pages/Tasks';
 import Cookies from 'universal-cookie';
@@ -54,10 +53,6 @@ class App extends React.Component<AppProps, {}> {
 
                 <div className={'page-base__content'}>
                     <Switch>
-                        <Route path={'/login'}>
-                            <LoginForm onLogin={this.updateSession} session={this.state.session} />
-                        </Route>
-
                         <Route path={'/register'}>
                             <RegisterForm/>
                         </Route>
@@ -71,13 +66,13 @@ class App extends React.Component<AppProps, {}> {
                         </Route>
 
                         <Route path={'/account'}>
-                            <Authenticated session={this.state.session}>
+                            <Authenticated session={this.state.session} onLogin={this.updateSession}>
                                 <Account/>
                             </Authenticated>
                         </Route>
 
                         <Route path={'/'}>
-                            <Authenticated session={this.state.session}>
+                            <Authenticated session={this.state.session} onLogin={this.updateSession}>
                                 <Tasks />
                             </Authenticated>
                         </Route>
