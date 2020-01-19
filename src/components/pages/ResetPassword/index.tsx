@@ -20,14 +20,10 @@ function ResetPassword() {
         event.preventDefault();
 
         clearMessages();
-        const passes = validateForm();
 
-        if (!passes) return;
+        if (!validateForm()) return;
 
-        api.resetPassword(
-            token,
-            password,
-        )
+        api.resetPassword(token, password)
             .then((res: any) => {
                 if (res.ok) {
                     pushMessage('Password reset successfully');
@@ -39,9 +35,7 @@ function ResetPassword() {
     };
 
     const pushMessage = (msg: string) => {
-        const newMessages = [...messages, msg];
-
-        setMessages(newMessages);
+        setMessages([...messages, msg]);
     };
 
     const clearMessages = () => {
