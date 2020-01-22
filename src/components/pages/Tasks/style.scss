@@ -1,16 +1,27 @@
 .page-tasks {
   form {
-    padding-bottom: 1rem;
-    label {
+    .page-tasks__inputs {
       display: flex;
-      justify-content: space-between;
+    }
+    label {
+      font-size: .75em;
+      font-weight: bold;
     }
     input {
-      flex: 0 1 80%
+      margin-top: .25em;
+      height: 2em;
     }
-    .page-tasks__addButton {
-      float: right;
-      margin-top: .5rem;
-    }
+    //padding-bottom: 1rem;
+    //label {
+    //  display: flex;
+    //  justify-content: space-between;
+    //}
+    //input {
+    //  flex: 0 1 80%
+    //}
+    //.page-tasks__addButton {
+    //  float: right;
+    //  margin-top: .5rem;
+    //}
   }
 }

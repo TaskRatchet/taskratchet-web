@@ -1,16 +1,13 @@
-.page-tasks form {
-  padding-bottom: 1rem;
+.page-tasks form .page-tasks__inputs {
+  display: flex;
 }
 .page-tasks form label {
-  display: flex;
-  justify-content: space-between;
+  font-size: 0.75em;
+  font-weight: bold;
 }
 .page-tasks form input {
-  flex: 0 1 80%;
-}
-.page-tasks form .page-tasks__addButton {
-  float: right;
-  margin-top: 0.5rem;
+  margin-top: 0.25em;
+  height: 2em;
 }
 
 /*# sourceMappingURL=style.css.map */
