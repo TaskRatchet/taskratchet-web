@@ -6,15 +6,16 @@
       label {
         font-size: .75em;
         font-weight: bold;
-        margin-right: 1em;
         margin-bottom: 1em;
         flex-grow: 1;
+        padding: 2px;
       }
       input {
-        margin-top: .25em;
-        height: 2em;
+        font-size: 1rem;
+        margin-top: .25rem;
         width: 100%;
         padding: 1px;
+        height: 1.75rem;
       }
     }
     .page-tasks__description {
@@ -22,22 +23,23 @@
     }
     .page-tasks__stakes {
       position: relative;
-      &:before {
-        content: '$';
-        position: absolute;
-        bottom: 0.5em;
-        left: .5em;
-        font-weight: normal;
-      }
       input {
         padding-left: 1.2em;
       }
+      &:before, &:after {
+        position: absolute;
+        bottom: 0.35em;
+        font-weight: normal;
+        font-size: 1rem;
+        opacity: .5;
+      }
+      &:before {
+        content: '$';
+        left: .5em;
+      }
       &:after {
         content: 'USD';
-        position: absolute;
-        bottom: 0.5em;
         right: .5em;
-        font-weight: normal;
       }
     }
   }

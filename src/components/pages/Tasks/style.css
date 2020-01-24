@@ -5,15 +5,16 @@
 .page-tasks form .page-tasks__inputs label {
   font-size: 0.75em;
   font-weight: bold;
-  margin-right: 1em;
   margin-bottom: 1em;
   flex-grow: 1;
+  padding: 2px;
 }
 .page-tasks form .page-tasks__inputs input {
-  margin-top: 0.25em;
-  height: 2em;
+  font-size: 1rem;
+  margin-top: 0.25rem;
   width: 100%;
   padding: 1px;
+  height: 1.75rem;
 }
 .page-tasks form .page-tasks__description {
   flex: 0 0 100%;
@@ -21,22 +22,23 @@
 .page-tasks form .page-tasks__stakes {
   position: relative;
 }
-.page-tasks form .page-tasks__stakes:before {
-  content: "$";
-  position: absolute;
-  bottom: 0.5em;
-  left: 0.5em;
-  font-weight: normal;
-}
 .page-tasks form .page-tasks__stakes input {
   padding-left: 1.2em;
 }
+.page-tasks form .page-tasks__stakes:before, .page-tasks form .page-tasks__stakes:after {
+  position: absolute;
+  bottom: 0.35em;
+  font-weight: normal;
+  font-size: 1rem;
+  opacity: 0.5;
+}
+.page-tasks form .page-tasks__stakes:before {
+  content: "$";
+  left: 0.5em;
+}
 .page-tasks form .page-tasks__stakes:after {
   content: "USD";
-  position: absolute;
-  bottom: 0.5em;
   right: 0.5em;
-  font-weight: normal;
 }
 .page-tasks ul {
   padding-left: 0;

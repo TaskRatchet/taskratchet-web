@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 html {
   background-color: #c6d1d8;
   font-family: sans-serif;
@@ -8,8 +12,8 @@ html {
 }
 
 .page-base__content {
-  width: 30rem;
-  max-width: 80vw;
+  width: 38rem;
+  max-width: 95vw;
   padding: 2rem;
   background-color: white;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
