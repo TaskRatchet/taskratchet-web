@@ -1,0 +1,20 @@
+.molecule-task {
+  padding-bottom: 1.5em;
+  position: relative;
+}
+.molecule-task .molecule-task__description {
+  margin-left: 0.5em;
+}
+.molecule-task .molecule-task__due, .molecule-task .molecule-task__stakes {
+  position: absolute;
+  bottom: 0;
+  opacity: 0.5;
+}
+.molecule-task .molecule-task__due {
+  left: 1.5em;
+}
+.molecule-task .molecule-task__stakes {
+  right: 0;
+}
+
+/*# sourceMappingURL=style.css.map */
