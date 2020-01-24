@@ -18,7 +18,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         tasks: [],
         newTask: '',
         newDue: '',
-        newStakes: 0
+        newStakes: 5
     };
 
     api: Api = new Api();
@@ -134,7 +134,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 <div className="page-tasks__inputs">
                     <label>Task <input type="text" placeholder={'Task'} value={this.state.newTask} onChange={this.setNewTask} /></label>
                     <label>Due <input type="datetime-local" value={this.state.newDue} onChange={this.setNewDue} /></label>
-                    <label>Stakes <input type="number" placeholder={'USD'} value={this.state.newStakes} onChange={this.setNewStakes} /></label>
+                    <label className={'page-tasks__stakes'}>Stakes <input type="number" placeholder={'USD'} min={1} value={this.state.newStakes} onChange={this.setNewStakes} /></label>
                 </div>
                 <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
             </form>
