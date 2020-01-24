@@ -1,13 +1,22 @@
 .page-tasks form .page-tasks__inputs {
   display: flex;
+  flex-wrap: wrap;
 }
-.page-tasks form label {
+.page-tasks form .page-tasks__inputs label {
   font-size: 0.75em;
   font-weight: bold;
+  margin-right: 1em;
+  margin-bottom: 1em;
+  flex-grow: 1;
 }
-.page-tasks form input {
+.page-tasks form .page-tasks__inputs input {
   margin-top: 0.25em;
   height: 2em;
+  width: 100%;
+  padding: 1px;
+}
+.page-tasks form .page-tasks__description {
+  flex: 0 0 100%;
 }
 .page-tasks form .page-tasks__stakes {
   position: relative;

@@ -7,6 +7,7 @@ interface TasksProps {
 }
 
 interface TasksState {
+    messages: string[],
     tasks: Task[],
     newTask: string,
     newDue: string,
@@ -15,6 +16,7 @@ interface TasksState {
 
 class Tasks extends React.Component<TasksProps, TasksState> {
     state: TasksState = {
+        messages: [],
         tasks: [],
         newTask: '',
         newDue: '',
@@ -69,6 +71,11 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     saveTask = (event: any) => {
         event.preventDefault();
 
+        if (!this.state.newTask) {
+            this.pushMessage('Missing task description');
+            return;
+        }
+
         this.setState((prev: TasksState) => {
             prev.tasks.push({
                 complete: false,
@@ -78,7 +85,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 task: this.state.newTask
             });
             prev.newDue = this.getDefaultDue();
-            prev.newStakes = 0;
+            prev.newStakes = 5;
             prev.newTask = '';
             return prev
         });
@@ -126,14 +133,23 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         this.api.setComplete(task.id, !task.complete).then((res: any) => this.updateTasks())
     };
 
+    pushMessage = (msg: string) => {
+        this.setState((prev: TasksState) => {
+            prev.messages.push(msg);
+            return prev;
+        });
+    };
+
     render() {
         return <div className={'page-tasks'}>
             <h1>Tasks</h1>
 
+            {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
+
             <form onSubmit={this.saveTask}>
                 <div className="page-tasks__inputs">
-                    <label>Task <input type="text" placeholder={'Task'} value={this.state.newTask} onChange={this.setNewTask} /></label>
-                    <label>Due <input type="datetime-local" value={this.state.newDue} onChange={this.setNewDue} /></label>
+                    <label className={'page-tasks__description'}>Task <input type="text" placeholder={'Task'} value={this.state.newTask} onChange={this.setNewTask} /></label>
+                    <label className={'page-tasks__due'}>Due <input type="datetime-local" value={this.state.newDue} onChange={this.setNewDue} /></label>
                     <label className={'page-tasks__stakes'}>Stakes <input type="number" placeholder={'USD'} min={1} value={this.state.newStakes} onChange={this.setNewStakes} /></label>
                 </div>
                 <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>

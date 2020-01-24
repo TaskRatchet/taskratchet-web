@@ -2,21 +2,30 @@
   form {
     .page-tasks__inputs {
       display: flex;
+      flex-wrap: wrap;
+      label {
+        font-size: .75em;
+        font-weight: bold;
+        margin-right: 1em;
+        margin-bottom: 1em;
+        flex-grow: 1;
+      }
+      input {
+        margin-top: .25em;
+        height: 2em;
+        width: 100%;
+        padding: 1px;
+      }
     }
-    label {
-      font-size: .75em;
-      font-weight: bold;
-    }
-    input {
-      margin-top: .25em;
-      height: 2em;
+    .page-tasks__description {
+      flex: 0 0 100%;
     }
     .page-tasks__stakes {
       position: relative;
       &:before {
         content: '$';
         position: absolute;
-        bottom: .5em;
+        bottom: 0.5em;
         left: .5em;
         font-weight: normal;
       }
@@ -26,7 +35,7 @@
       &:after {
         content: 'USD';
         position: absolute;
-        bottom: .5em;
+        bottom: 0.5em;
         right: .5em;
         font-weight: normal;
       }
