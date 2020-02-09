@@ -11,7 +11,7 @@ interface TasksState {
     tasks: Task[],
     newTask: string,
     newDue: string,
-    newStakes: number
+    newCents: number
 }
 
 class Tasks extends React.Component<TasksProps, TasksState> {
@@ -20,7 +20,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         tasks: [],
         newTask: '',
         newDue: '',
-        newStakes: 5
+        newCents: 5
     };
 
     api: Api = new Api();
@@ -60,10 +60,10 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         })
     };
 
-    setNewStakes = (event: any) => {
+    setNewCents = (event: any) => {
         const t = event.target;
         this.setState((prev: TasksState) => {
-            prev.newStakes = t.value;
+            prev.newCents = t.value * 100;
             return prev;
         })
     };
@@ -81,11 +81,11 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 complete: false,
                 due: this.isoToPrettyDateString(this.state.newDue),
                 id: -1,
-                stakes: this.state.newStakes,
+                cents: this.state.newCents,
                 task: this.state.newTask
             });
             prev.newDue = this.getDefaultDue();
-            prev.newStakes = 5;
+            prev.newCents = 5;
             prev.newTask = '';
             return prev
         });
@@ -93,7 +93,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         this.api.addTask(
             this.state.newTask,
             Math.floor((new Date(this.state.newDue)).getTime() / 1000),
-            this.state.newStakes
+            this.state.newCents
         ).then((res: any) => this.updateTasks());
     };
 
@@ -150,7 +150,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 <div className="page-tasks__inputs">
                     <label className={'page-tasks__description'}>Task <input type="text" placeholder={'Task'} value={this.state.newTask} onChange={this.setNewTask} /></label>
                     <label className={'page-tasks__due'}>Due <input type="datetime-local" value={this.state.newDue} onChange={this.setNewDue} /></label>
-                    <label className={'page-tasks__stakes'}>Stakes <input type="number" placeholder={'USD'} min={1} value={this.state.newStakes} onChange={this.setNewStakes} /></label>
+                    <label className={'page-tasks__dollars'}>Stakes <input type="number" placeholder={'USD'} min={1} value={this.state.newCents / 100} onChange={this.setNewCents} /></label>
                 </div>
                 <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
             </form>

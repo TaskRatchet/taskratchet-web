@@ -7,6 +7,6 @@ type Task = {
     complete: boolean,
     due: string,
     id: number,
-    stakes: number,
+    cents: number,
     task: string
 }

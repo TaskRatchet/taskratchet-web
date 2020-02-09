@@ -126,7 +126,7 @@ class Api {
     }
 
     // Requires that user be authenticated.
-    addTask(task: string, due: number, stakes: number) {
+    addTask(task: string, due: number, cents: number) {
         return this._fetch(
             'me/tasks',
             true,
@@ -134,7 +134,7 @@ class Api {
             {
                 task: task,
                 due: due,
-                stakes: stakes
+                cents: cents
             }
         );
     }

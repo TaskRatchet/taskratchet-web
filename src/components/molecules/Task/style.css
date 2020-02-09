@@ -5,7 +5,7 @@
 .molecule-task .molecule-task__description {
   margin-left: 0.5em;
 }
-.molecule-task .molecule-task__due, .molecule-task .molecule-task__stakes {
+.molecule-task .molecule-task__due, .molecule-task .molecule-task__dollars {
   position: absolute;
   bottom: 0;
   opacity: 0.5;
@@ -13,7 +13,7 @@
 .molecule-task .molecule-task__due {
   left: 1.5em;
 }
-.molecule-task .molecule-task__stakes {
+.molecule-task .molecule-task__dollars {
   right: 0;
 }
 
