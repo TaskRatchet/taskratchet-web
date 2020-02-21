@@ -20,7 +20,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         tasks: [],
         newTask: '',
         newDue: '',
-        newCents: 5
+        newCents: 500
     };
 
     api: Api = new Api();
