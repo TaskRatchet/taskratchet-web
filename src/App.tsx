@@ -3,8 +3,9 @@ import './App.css';
 import RegisterForm from './components/pages/Register';
 import Tasks from './components/pages/Tasks';
 import Cookies from 'universal-cookie';
+import ReactGA from 'react-ga'
 import {
-    BrowserRouter as Router,
+    Router,
     Switch,
     Route,
     Link,
@@ -13,8 +14,17 @@ import SessionWidget from './components/molecules/SessionWidget'
 import Account from './components/pages/Account'
 import Authenticated from './components/pages/Authenticated'
 import ResetPassword from "./components/pages/ResetPassword";
+import createHistory from 'history/createBrowserHistory'
 
 const cookies = new Cookies();
+
+ReactGA.initialize('G-Y074NE79ML');
+
+const history = createHistory();
+history.listen(location => {
+    ReactGA.set({page: location.pathname});
+    ReactGA.pageview(location.pathname);
+});
 
 interface AppProps {
 }
@@ -31,7 +41,9 @@ class App extends React.Component<AppProps, {}> {
     componentDidMount(): void {
         document.title = 'TaskRatchet';
 
-        this.updateSession()
+        this.updateSession();
+
+        ReactGA.pageview(window.location.pathname);
     }
 
     updateSession = () => {
@@ -47,7 +59,7 @@ class App extends React.Component<AppProps, {}> {
 
     render() {
         return <div className={'page-base'}>
-            <Router>
+            <Router history={history}>
                 <SessionWidget session={this.state.session} logOutHandler={this.logOut} />
 
                 <h2><Link to={'/'}>TaskRatchet</Link></h2>
@@ -63,7 +75,7 @@ class App extends React.Component<AppProps, {}> {
                         </Route>
 
                         <Route path={'/cancel'}>
-                            Your payment method could not be saved. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'}>nathan@taskratchet.com</a> for assistance.
+                            Your payment method could not be saved. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'} rel="noopener noreferrer">nathan@taskratchet.com</a> for assistance.
                         </Route>
 
                         <Route path={'/account'}>

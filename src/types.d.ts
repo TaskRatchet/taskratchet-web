@@ -5,7 +5,7 @@ type Session = {
 
 type Task = {
     complete: boolean,
-    due: string,
+    due: int,
     id: number,
     cents: number,
     task: string

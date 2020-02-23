@@ -76,10 +76,12 @@ class Tasks extends React.Component<TasksProps, TasksState> {
             return;
         }
 
+        const unixDue = Math.floor((new Date(this.state.newDue)).getTime() / 1000);
+
         this.setState((prev: TasksState) => {
             prev.tasks.push({
                 complete: false,
-                due: this.isoToPrettyDateString(this.state.newDue),
+                due: unixDue,
                 id: -1,
                 cents: this.state.newCents,
                 task: this.state.newTask
@@ -92,22 +94,9 @@ class Tasks extends React.Component<TasksProps, TasksState> {
 
         this.api.addTask(
             this.state.newTask,
-            Math.floor((new Date(this.state.newDue)).getTime() / 1000),
+            unixDue,
             this.state.newCents
         ).then((res: any) => this.updateTasks());
-    };
-
-    isoToPrettyDateString = (isoString: string) => {
-        const d = new Date(isoString);
-
-        return d.toLocaleString('en-US', {
-            month: 'numeric',
-            day: 'numeric',
-            year: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric',
-            hour12: true
-        });
     };
 
     getDefaultDue = () => {
@@ -140,6 +129,12 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         });
     };
 
+    compareTasks = (a: Task, b: Task) => {
+        if (a.due < b.due) return -1;
+        if (a.due > b.due) return 1;
+        return 0;
+    };
+
     render() {
         return <div className={'page-tasks'}>
             <h1>Tasks</h1>
@@ -155,7 +150,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
             </form>
 
-            <ul>{this.state.tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => this.toggleStatus(t)} /></li>)}</ul>
+            <ul>{this.state.tasks.sort(this.compareTasks).map(t => <li key={t.id}><Task task={t} onToggle={() => this.toggleStatus(t)} /></li>)}</ul>
         </div>
     }
 }
