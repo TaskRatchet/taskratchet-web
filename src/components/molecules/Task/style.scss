@@ -4,6 +4,21 @@
   .molecule-task__description {
     margin-left: .5em;
   }
+  .molecule-task__labels {
+    padding-left: 0;
+    position: absolute;
+    top: 0;
+    right: 0;
+    li {
+      list-style-type: none;
+      display: inline-block;
+      background-color: #d9d9d9;
+      color: #737373;
+      padding: .5px 4px;
+      margin-left: .5em;
+      border-radius: 4px;
+    }
+  }
   .molecule-task__due, .molecule-task__dollars {
     position: absolute;
     bottom: 0;

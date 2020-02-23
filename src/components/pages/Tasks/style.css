@@ -40,15 +40,29 @@
   content: "USD";
   right: 0.5em;
 }
-.page-tasks ul {
+.page-tasks .page-tasks__list {
   padding-left: 0;
 }
-.page-tasks li {
+.page-tasks .page-tasks__list > li {
   list-style-type: none;
   padding: 0.5em;
 }
-.page-tasks li:nth-child(odd) {
+.page-tasks .page-tasks__list > li:nth-child(odd) {
   background-color: #ededed;
+}
+.page-tasks .page-tasks__toggleLabel {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.page-tasks .page-tasks__toggleInput {
+  display: none;
+}
+.page-tasks .page-tasks__archive {
+  display: none;
+}
+.page-tasks .page-tasks__toggleInput:checked + .page-tasks__archive {
+  display: block;
 }
 
 /*# sourceMappingURL=style.css.map */

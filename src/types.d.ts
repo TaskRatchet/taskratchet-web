@@ -8,5 +8,8 @@ type Task = {
     due: int,
     id: number,
     cents: number,
-    task: string
+    task: string,
+    charge_locked: int | null,
+    charge_authorized: int | null,
+    charge_captured: int | null,
 }

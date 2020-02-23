@@ -43,14 +43,28 @@
       }
     }
   }
-  ul {
+  .page-tasks__list {
     padding-left: 0;
-  }
-  li {
-    list-style-type: none;
-    padding: .5em;
-    &:nth-child(odd) {
-      background-color: #ededed;
+    > li {
+      list-style-type: none;
+      padding: .5em;
+      &:nth-child(odd) {
+        background-color: #ededed;
+      }
     }
+  }
+  .page-tasks__toggleLabel {
+    color: blue;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+  .page-tasks__toggleInput {
+    display: none;
+  }
+  .page-tasks__archive {
+    display: none;
+  }
+  .page-tasks__toggleInput:checked + .page-tasks__archive {
+    display: block;
   }
 }

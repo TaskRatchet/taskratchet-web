@@ -84,7 +84,10 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 due: unixDue,
                 id: -1,
                 cents: this.state.newCents,
-                task: this.state.newTask
+                task: this.state.newTask,
+                charge_authorized: null,
+                charge_locked: null,
+                charge_captured: null,
             });
             prev.newDue = this.getDefaultDue();
             prev.newCents = 5;
@@ -135,6 +138,27 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         return 0;
     };
 
+    getSortedTasks = () => {
+        return this.state.tasks.sort(this.compareTasks);
+    };
+
+    getActiveTasks = () => {
+        return this.getSortedTasks().filter((t: Task) => {
+            return !t.complete && !t.charge_captured;
+        });
+    };
+
+    getArchivedTasks = () =>
+    {
+        return this.getSortedTasks().filter((t: Task) => {
+            return t.complete || t.charge_captured;
+        });
+    };
+
+    makeTaskListItems = (tasks: Task[]) => {
+        return tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => this.toggleStatus(t)} /></li>);
+    };
+
     render() {
         return <div className={'page-tasks'}>
             <h1>Tasks</h1>
@@ -150,7 +174,12 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
             </form>
 
-            <ul>{this.state.tasks.sort(this.compareTasks).map(t => <li key={t.id}><Task task={t} onToggle={() => this.toggleStatus(t)} /></li>)}</ul>
+            <ul className={'page-tasks__list'}>{this.makeTaskListItems(this.getActiveTasks())}</ul>
+
+            <label htmlFor="archive_toggle" className={'page-tasks__toggleLabel'}>Archived Tasks</label>
+            <input type="checkbox" className={'page-tasks__toggleInput'} id="archive_toggle"/>
+
+            <ul className={'page-tasks__list page-tasks__archive'}>{this.makeTaskListItems(this.getArchivedTasks())}</ul>
         </div>
     }
 }
