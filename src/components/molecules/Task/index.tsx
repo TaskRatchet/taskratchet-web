@@ -22,10 +22,11 @@ const Task = (props: TaskProps) => {
             {props.task.task || '[Description Missing]'}
         </span>
         <ul className={'molecule-task__labels'}>
-            {charged ? <li>Charged</li> : ''}
-            {charging ? <li>Charging</li> : ''}
             {imminent ? <li>Due</li> : ''}
             {late ? <li>Late</li> : ''}
+            {props.task.complete ? <li>Done</li> : ''}
+            {charged ? <li>Charged</li> : ''}
+            {charging ? <li>Charging</li> : ''}
         </ul>
         <span className={'molecule-task__due'}>{dateString} {timeString}</span>
         <span className={'molecule-task__dollars'}>${props.task.cents / 100}</span>
