@@ -90,7 +90,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
                 charge_captured: null,
             });
             prev.newDue = this.getDefaultDue();
-            prev.newCents = 5;
+            prev.newCents = 500;
             prev.newTask = '';
             return prev
         });

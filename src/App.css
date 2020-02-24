@@ -6,15 +6,15 @@ html {
   background-color: #c6d1d8;
   font-family: sans-serif;
   display: flex;
-  align-items: center;
   justify-content: center;
-  height: 100vh;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
 }
 
 .page-base__content {
   width: 38rem;
   max-width: 95vw;
-  padding: 2rem;
+  padding: 1rem;
   background-color: white;
   box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
   border-radius: 4px;
