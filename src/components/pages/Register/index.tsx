@@ -1,5 +1,5 @@
 import React from 'react';
-import Api from '../../../Api';
+import Api from '../../../classes/Api';
 
 interface RegisterState {
     messages: string[],

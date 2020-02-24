@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import Api from '../../../Api';
+import Api from '../../../classes/Api';
 import {useLocation} from 'react-router-dom';
 
 function ResetPassword() {

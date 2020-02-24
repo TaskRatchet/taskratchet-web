@@ -15,6 +15,10 @@ import Account from './components/pages/Account'
 import Authenticated from './components/pages/Authenticated'
 import ResetPassword from "./components/pages/ResetPassword";
 import createHistory from 'history/createBrowserHistory'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+toast.configure();
 
 const cookies = new Cookies();
 

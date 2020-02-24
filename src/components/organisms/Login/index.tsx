@@ -1,6 +1,7 @@
 import React from 'react';
 import Cookies from 'universal-cookie';
-import Api from '../../../Api';
+import Api from '../../../classes/Api';
+import Toaster from '../../../classes/Toaster';
 import './style.css'
 
 const cookies = new Cookies();
@@ -11,29 +12,27 @@ interface LoginProps {
 }
 
 interface LoginState {
-    messages: string[],
     email: string,
     password: string
 }
 
 class Login extends React.Component<LoginProps, LoginState> {
     state: LoginState = {
-        messages: [],
         email: '',
         password: ''
     };
 
     api: Api = new Api();
+    toaster: Toaster = new Toaster();
 
     login = (event: any) => {
         event.preventDefault();
 
-        console.log('logging in', this.state);
-
-        this.clearMessages();
         const passes = this.validateLoginForm();
 
         if (!passes) return;
+
+        this.toaster.send('Logging in...');
 
         this.api.login(this.state.email, this.state.password)
             .then((res: any) => {
@@ -41,20 +40,20 @@ class Login extends React.Component<LoginProps, LoginState> {
                     this.pushMessage('Login failed');
                 } else {
                     this.pushMessage('Login successful');
-                    return res.text();
+                    res.text().then(this.handleLogin);
                 }
             })
-            .then((res: any) => {
-                console.log(res);
-                cookies.set('tr_session', {
-                    'token': res,
-                    'email': this.state.email,
-                    'options': {
-                        'sameSite': 'lax'
-                    }
-                });
-                this.props.onLogin()
-            });
+    };
+
+    handleLogin = (token: string) => {
+        cookies.set('tr_session', {
+            'token': token,
+            'email': this.state.email,
+            'options': {
+                'sameSite': 'lax'
+            }
+        });
+        this.props.onLogin();
     };
 
     reset = (event: any) => {
@@ -107,24 +106,12 @@ class Login extends React.Component<LoginProps, LoginState> {
         })
     };
 
-    clearMessages = () => {
-        this.setState((prev: LoginState) => {
-            prev.messages = [];
-            return prev;
-        });
-    };
-
     pushMessage = (msg: string) => {
-        this.setState((prev: LoginState) => {
-            prev.messages.push(msg);
-            return prev;
-        });
+        this.toaster.send(msg)
     };
 
     render() {
         return <div className={'organism-login'}>
-            {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
-
             {
                 this.props.session ?
                     <p>You are logged in as {this.props.session.email}</p>

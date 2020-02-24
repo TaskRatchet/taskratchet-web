@@ -1,13 +1,13 @@
 import React from 'react';
-import Api from '../../../Api';
+import Api from '../../../classes/Api';
 import './style.css'
 import Task from '../../molecules/Task'
+import Toaster from "../../../classes/Toaster";
 
 interface TasksProps {
 }
 
 interface TasksState {
-    messages: string[],
     tasks: Task[],
     newTask: string,
     newDue: string,
@@ -16,7 +16,6 @@ interface TasksState {
 
 class Tasks extends React.Component<TasksProps, TasksState> {
     state: TasksState = {
-        messages: [],
         tasks: [],
         newTask: '',
         newDue: '',
@@ -24,6 +23,7 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     };
 
     api: Api = new Api();
+    toaster: Toaster = new Toaster();
 
     componentDidMount(): void {
         this.setState((prev: TasksState) => {
@@ -72,9 +72,11 @@ class Tasks extends React.Component<TasksProps, TasksState> {
         event.preventDefault();
 
         if (!this.state.newTask) {
-            this.pushMessage('Missing task description');
+            this.toaster.send('Missing task description');
             return;
         }
+
+        this.toaster.send('Adding task...');
 
         const unixDue = Math.floor((new Date(this.state.newDue)).getTime() / 1000);
 
@@ -99,7 +101,14 @@ class Tasks extends React.Component<TasksProps, TasksState> {
             this.state.newTask,
             unixDue,
             this.state.newCents
-        ).then((res: any) => this.updateTasks());
+        ).then((res: any) => {
+            if (res.ok) {
+                this.toaster.send('Task added');
+            } else {
+                this.toaster.send('Failed to add task')
+            }
+            this.updateTasks();
+        });
     };
 
     getDefaultDue = () => {
@@ -122,14 +131,13 @@ class Tasks extends React.Component<TasksProps, TasksState> {
             return prev;
         });
 
-        this.api.setComplete(task.id, !task.complete).then((res: any) => this.updateTasks())
-    };
+        this.api.setComplete(task.id, !task.complete).then((res: any) => {
+            if (!res.ok) {
+                this.toaster.send('Failed to mark task complete')
+            }
 
-    pushMessage = (msg: string) => {
-        this.setState((prev: TasksState) => {
-            prev.messages.push(msg);
-            return prev;
-        });
+            this.updateTasks()
+        })
     };
 
     compareTasks = (a: Task, b: Task) => {
@@ -162,8 +170,6 @@ class Tasks extends React.Component<TasksProps, TasksState> {
     render() {
         return <div className={'page-tasks'}>
             <h1>Tasks</h1>
-
-            {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
 
             <form onSubmit={this.saveTask}>
                 <div className="page-tasks__inputs">
