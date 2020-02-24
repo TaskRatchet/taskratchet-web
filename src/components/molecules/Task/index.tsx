@@ -14,7 +14,7 @@ const Task = (props: TaskProps) => {
         charging = !charged && props.task.charge_authorized,
         difference = (dueDate.getTime() - Date.now()) / 1000,
         imminent = difference > 0 && difference <= 60 * 60 * 24,
-        late = difference < 0;
+        late = difference < 0 && !props.task.complete;
 
     return <div className={'molecule-task'}>
         <input type="checkbox" onChange={props.onToggle} checked={props.task.complete}/>
