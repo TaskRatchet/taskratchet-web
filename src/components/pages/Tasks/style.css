@@ -45,7 +45,6 @@
 }
 .page-tasks .page-tasks__list > li {
   list-style-type: none;
-  padding: 0.5em;
 }
 .page-tasks .page-tasks__list > li:nth-child(odd) {
   background-color: #ededed;

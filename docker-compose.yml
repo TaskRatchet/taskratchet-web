@@ -9,12 +9,3 @@ services:
     ports:
       - "3000:3000"
     command: "npm start"
-#  storybook:
-#    image: node:latest
-#    ports:
-#      - "9009:9009"
-#    working_dir: /home/node/app
-#    volumes:
-#      - .:/home/node/app
-#      - ./transfer:/transfer
-#    command: "npm run storybook"
