@@ -1,318 +1,231 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Api from '../../../classes/Api';
 import './style.css'
+import Toaster from "../../../classes/Toaster";
 
 interface Card {
     brand: string,
     last4: string,
 }
 
+interface CheckoutSession {
+    id: string
+}
+
 interface AccountProps {
 }
 
-interface AccountState {
-    messages: string[],
-    name: string,
-    email: string,
-    oldPassword: string,
-    password: string,
-    password2: string,
-    timezones: string[],
-    timezone: string,
-    cards: Card[],
-    checkoutSession: {
-        id: string
-    } | null,
-}
+const Account = (props: AccountProps) => {
+    const [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null),
+        [timezones, setTimezones] = useState<string[]>([]),
+        [name, setName] = useState<string>(''),
+        [email, setEmail] = useState<string>(''),
+        [timezone, setTimezone] = useState<string>(''),
+        [cards, setCards] = useState<Card[]>([]),
+        [oldPassword, setOldPassword] = useState<string>(''),
+        [password, setPassword] = useState<string>(''),
+        [password2, setPassword2] = useState<string>('');
 
-class Account extends React.Component<AccountProps, AccountState> {
-    state: AccountState = {
-        messages: [],
-        name: '',
-        email: '',
-        oldPassword: '',
-        password: '',
-        password2: '',
-        timezones: [],
-        timezone: '',
-        cards: [],
-        checkoutSession: null,
-    };
+    const api: Api = new Api(),
+        toaster: Toaster = new Toaster();
 
-    api: Api = new Api();
+    useEffect(() => {
+        populateTimezones();
+        loadUser();
+        loadCheckoutSession();
+    }, []);
 
-    componentDidMount(): void {
-        this.populateTimezones();
-        this.loadUser();
-        this.loadCheckoutSession();
-    }
-
-    loadCheckoutSession = () => {
-        this.api.getCheckoutSession()
+    const loadCheckoutSession = () => {
+        api.getCheckoutSession()
             .then((res: any) => res.json())
-            .then((session) => {
-                this.setState((prev: AccountState) => {
-                    prev.checkoutSession = session;
-                    return prev;
-                });
-            })
+            .then(setCheckoutSession)
     };
 
-    populateTimezones = () => {
-        this.api.getTimezones()
+    const populateTimezones = () => {
+        api.getTimezones()
             .then((res: any) => res.json())
-            .then((data) => {
-                this.setState((prev: AccountState) => {
-                    prev.timezones = data;
-                    return prev;
-                });
-            });
+            .then(setTimezones);
     };
 
-    loadUser = () => {
-        this.api.getMe()
+    const loadUser = () => {
+        api.getMe()
             .then((res: any) => res.json())
-            .then(this.loadResponseData)
+            .then(loadResponseData)
     };
 
-    loadResponseData = (data: any) => {
-        this.setState((prev: AccountState) => {
-            prev.name = data['name'];
-            prev.email = data['email'];
-            prev.timezone = data['timezone'];
-            prev.cards = data['cards'];
-            return prev;
-        })
+    const loadResponseData = (data: any) => {
+        console.log(data);
+
+        setName(data['name']);
+        setEmail(data['email']);
+        setTimezone(data['timezone']);
+        setCards(data['cards']);
     };
 
-    setName = (event: any) => {
-        const t = event.target;
-        this.setState((prev: AccountState) => {
-            prev.name = t.value;
-            return prev;
-        })
-    };
-
-    setEmail = (event: any) => {
-        const t = event.target;
-        this.setState((prev: AccountState) => {
-            prev.email = t.value;
-            return prev;
-        })
-    };
-
-    setOldPassword = (event: any) => {
-        const t = event.target;
-        this.setState((prev: AccountState) => {
-            prev.oldPassword = t.value;
-            return prev;
-        })
-    };
-
-    setPassword = (event: any) => {
-        const t = event.target;
-        this.setState((prev: AccountState) => {
-            prev.password = t.value;
-            return prev;
-        })
-    };
-
-    setPassword2 = (event: any) => {
-        const t = event.target;
-        this.setState((prev: AccountState) => {
-            prev.password2 = t.value;
-            return prev;
-        })
-    };
-
-    setTimezone = (event: any) => {
-        const t = event.target;
-        this.setState((prev: AccountState) => {
-            prev.timezone = t.value;
-            return prev;
-        })
-    };
-
-    saveGeneral = (event: any) => {
+    const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        const name = this.prepareValue(this.state.name),
-            email = this.prepareValue(this.state.email),
-            timezone = this.prepareValue(this.state.timezone);
-
-        this.api.updateMe(name, email, timezone)
-            .then((res: any) => {
-                if (res.ok) {
-                    this.pushMessage('Changes saved');
-                } else {
-                    this.pushMessage('Something went wrong');
-                }
-                return res.json();
-            })
-            .then(this.loadResponseData);
+        api.updateMe(
+            prepareValue(name),
+            prepareValue(email),
+            prepareValue(timezone)
+        ).then((res: any) => {
+            toaster.send((res.ok) ? 'Changes saved' : 'Something went wrong');
+            return res.json();
+        }).then(loadResponseData);
     };
 
-    prepareValue = (value: string) => {
+    const prepareValue = (value: string) => {
         return (value === '') ? null : value;
     };
 
-    savePassword = (event: any) => {
+    const savePassword = (event: any) => {
         event.preventDefault();
 
-        if (!this.isPasswordFormValid()) return;
+        if (!isPasswordFormValid()) return;
 
-        this.api.updatePassword(this.state.oldPassword, this.state.password)
+        api.updatePassword(oldPassword, password)
             .then((res: any) => {
-                if (res.ok) {
-                    this.pushMessage('Password saved');
-                } else {
-                    this.pushMessage('Something went wrong');
-                }
+                toaster.send((res.ok) ? 'Password saved' : 'Something went wrong');
             });
     };
 
-    isPasswordFormValid = () => {
+    const isPasswordFormValid = () => {
         let passed = true;
 
-        if (this.state.oldPassword === '') {
-            this.pushMessage('Old password required');
+        if (oldPassword === '') {
+            toaster.send('Old password required');
             passed = false;
         }
 
-        if (this.state.password === '') {
-            this.pushMessage('New password required');
+        if (password === '') {
+            toaster.send('New password required');
             passed = false;
         }
 
-        if (this.state.password !== this.state.password2) {
-            this.pushMessage('New password fields don\'t match');
+        if (password !== password2) {
+            toaster.send('New password fields don\'t match');
             passed = false;
         }
 
         return passed;
     };
 
-    pushMessage = (msg: string) => {
-        this.setState((prev: AccountState) => {
-            prev.messages.push(msg);
-            return prev;
-        });
-    };
-
-    updatePaymentDetails = () => {
-        const sessionId = this.getSessionId();
+    const updatePaymentDetails = () => {
+        const sessionId = getSessionId();
 
         if (sessionId === null) {
-            this.pushMessage('Checkout session error');
+            toaster.send('Checkout session error');
             return;
         }
 
-        this.api.updateCheckoutSessionId(sessionId);
+        api.updateCheckoutSessionId(sessionId);
 
-        this.redirect();
+        redirect();
     };
 
-    redirect = () => {
-        if (this.state.checkoutSession == null) return;
+    const redirect = () => {
+        if (checkoutSession == null) return;
 
         const stripe = window.Stripe('pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd');
 
         stripe.redirectToCheckout({
-            sessionId: this.getSessionId()
+            sessionId: getSessionId()
         }).then((result: any) => {
             // If `redirectToCheckout` fails due to a browser or network
             // error, display the localized error message to your customer
             // using `result.error.message`.
-            this.pushMessage(result.error.message);
+            toaster.send(result.error.message);
 
             console.log('Checkout redirect error');
             console.log(result);
         });
     };
 
-    getSessionId = () => {
-        if (this.state.checkoutSession == null) return null;
+    const getSessionId = () => {
+        if (checkoutSession == null) return null;
 
-        return this.state.checkoutSession.id;
+        return checkoutSession.id;
     };
 
-    render() {
-        return <div className={'page-account'}>
-            <h1>Account</h1>
+    return <div className={'page-account'}>
+        <h1>Account</h1>
 
-            {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
+        <form onSubmit={saveGeneral}>
+            <label htmlFor="name">Name</label>
+            <input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                id={'name'}
+                name={'name'}
+            />
 
-            <form onSubmit={this.saveGeneral}>
-                <label htmlFor="name">Name</label>
-                <input
-                    type="text"
-                    value={this.state.name}
-                    onChange={this.setName}
-                    id={'name'}
-                    name={'name'}
-                />
+            <label htmlFor="email">Email</label>
+            <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                id={'email'}
+                name={'email'}
+            />
 
-                <label htmlFor="email">Email</label>
-                <input
-                    type="email"
-                    value={this.state.email}
-                    onChange={this.setEmail}
-                    id={'email'}
-                    name={'email'}
-                />
+            <label htmlFor="timezone">Timezone</label>
+            <select
+                id={'timezone'}
+                name="timezone"
+                value={timezone}
+                onChange={(e) => setTimezone(e.target.value)}
+            >
+                {timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
+            </select>
 
-                <label htmlFor="timezone">Timezone</label>
-                <select id={'timezone'} name="timezone" value={this.state.timezone} onChange={this.setTimezone}>
-                    {this.state.timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
-                </select>
+            <input type="submit" value={'Save'}/>
+        </form>
 
-                <input type="submit" value={'Save'}/>
-            </form>
+        <h2>Reset Password</h2>
 
-            <h2>Reset Password</h2>
+        <form onSubmit={savePassword}>
+            <label htmlFor="old_password">Old Password</label>
+            <input
+                type="password"
+                value={oldPassword}
+                onChange={(e) => setOldPassword(e.target.value)}
+                id={'old_password'}
+                name={'old_password'}
+            />
 
-            <form onSubmit={this.savePassword}>
-                <label htmlFor="old_password">Old Password</label>
-                <input
-                    type="password"
-                    value={this.state.oldPassword}
-                    onChange={this.setOldPassword}
-                    id={'old_password'}
-                    name={'old_password'}
-                />
+            <label htmlFor="password">New Password</label>
+            <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                id={'password'}
+                name={'password'}
+            />
 
-                <label htmlFor="password">New Password</label>
-                <input
-                    type="password"
-                    value={this.state.password}
-                    onChange={this.setPassword}
-                    id={'password'}
-                    name={'password'}
-                />
+            <label htmlFor="password2">Retype Password</label>
+            <input
+                type="password"
+                value={password2}
+                onChange={(e) => setPassword2(e.target.value)}
+                id={'password2'}
+                name={'password2'}
+            />
 
-                <label htmlFor="password2">Retype Password</label>
-                <input
-                    type="password"
-                    value={this.state.password2}
-                    onChange={this.setPassword2}
-                    id={'password2'}
-                    name={'password2'}
-                />
+            <input type="submit" value={'Save'}/>
+        </form>
 
-                <input type="submit" value={'Save'}/>
-            </form>
+        <h2>Update Payment Details</h2>
 
-            <h2>Update Payment Details</h2>
+        <p>Saved payment method:</p>
 
-            <p>Saved payment method:</p>
+        {cards ? <ul>
+            {cards.map((c, i) => <li key={i}>{c.brand} ending with {c.last4}</li>)}
+        </ul> : <p>None</p>}
 
-            {this.state.cards ? <ul>
-                {this.state.cards.map((c, i) => <li key={i}>{c.brand} ending with {c.last4}</li>)}
-            </ul> : <p>None</p>}
-
-            <button onClick={this.updatePaymentDetails}>Replace payment method</button>
-        </div>
-    }
+        <button onClick={updatePaymentDetails}>Replace payment method</button>
+    </div>
 }
 
 export default Account;
