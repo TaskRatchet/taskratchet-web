@@ -3,7 +3,8 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
 class Api {
-    baseRoute: string = 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
+    productionBase: string = 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
+    localBase: string = 'http://localhost:8080/';
 
     login(email: string, password: string) {
         return this._fetch(
@@ -158,7 +159,8 @@ class Api {
         data: any = null,
     ) => {
         const session = cookies.get('tr_session'),
-            route_ = this._trim(route, '/');
+            route_ = this._trim(route, '/'),
+            base = (process.env.NODE_ENV == 'development') ? this.localBase : this.productionBase;
 
         if (protected_ && !session) {
             return new Promise((resolve, reject) => {
@@ -166,7 +168,7 @@ class Api {
             });
         }
 
-        return fetch(this.baseRoute + route_, {
+        return fetch(base + route_, {
             method: method,
             body: data ? JSON.stringify(data) : undefined,
             headers: {
