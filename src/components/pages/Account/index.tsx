@@ -13,6 +13,7 @@ interface CheckoutSession {
 }
 
 interface AccountProps {
+    api: Api
 }
 
 const Account = (props: AccountProps) => {
@@ -26,8 +27,7 @@ const Account = (props: AccountProps) => {
         [password, setPassword] = useState<string>(''),
         [password2, setPassword2] = useState<string>('');
 
-    const api: Api = new Api(),
-        toaster: Toaster = new Toaster();
+    const toaster: Toaster = new Toaster();
 
     useEffect(() => {
         populateTimezones();
@@ -36,19 +36,19 @@ const Account = (props: AccountProps) => {
     }, []);
 
     const loadCheckoutSession = () => {
-        api.getCheckoutSession()
+        props.api.getCheckoutSession()
             .then((res: any) => res.json())
             .then(setCheckoutSession)
     };
 
     const populateTimezones = () => {
-        api.getTimezones()
+        props.api.getTimezones()
             .then((res: any) => res.json())
             .then(setTimezones);
     };
 
     const loadUser = () => {
-        api.getMe()
+        props.api.getMe()
             .then((res: any) => res.json())
             .then(loadResponseData)
     };
@@ -65,7 +65,7 @@ const Account = (props: AccountProps) => {
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        api.updateMe(
+        props.api.updateMe(
             prepareValue(name),
             prepareValue(email),
             prepareValue(timezone)
@@ -84,7 +84,7 @@ const Account = (props: AccountProps) => {
 
         if (!isPasswordFormValid()) return;
 
-        api.updatePassword(oldPassword, password)
+        props.api.updatePassword(oldPassword, password)
             .then((res: any) => {
                 toaster.send((res.ok) ? 'Password saved' : 'Something went wrong');
             });
@@ -119,7 +119,7 @@ const Account = (props: AccountProps) => {
             return;
         }
 
-        api.updateCheckoutSessionId(sessionId);
+        props.api.updateCheckoutSessionId(sessionId);
 
         redirect();
     };
@@ -127,7 +127,7 @@ const Account = (props: AccountProps) => {
     const redirect = () => {
         if (checkoutSession == null) return;
 
-        const stripe = window.Stripe('pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd');
+        const stripe = window.Stripe(window.stripe_key);
 
         stripe.redirectToCheckout({
             sessionId: getSessionId()

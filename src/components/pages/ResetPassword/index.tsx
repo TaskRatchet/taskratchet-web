@@ -2,7 +2,11 @@ import React, {useState} from 'react';
 import Api from '../../../classes/Api';
 import {useLocation} from 'react-router-dom';
 
-function ResetPassword() {
+interface ResetPasswordProps {
+    api: Api
+}
+
+function ResetPassword(props: ResetPasswordProps) {
     const useToken = () => {
         let query = new URLSearchParams(useLocation().search);
 
@@ -14,8 +18,6 @@ function ResetPassword() {
     const [password2, setPassword2] = useState<string>('');
     const token = useToken();
 
-    const api: Api = new Api();
-
     const resetPassword = (event: any) => {
         event.preventDefault();
 
@@ -23,7 +25,7 @@ function ResetPassword() {
 
         if (!validateForm()) return;
 
-        api.resetPassword(token, password)
+        props.api.resetPassword(token, password)
             .then((res: any) => {
                 if (res.ok) {
                     pushMessage('Password reset successfully');

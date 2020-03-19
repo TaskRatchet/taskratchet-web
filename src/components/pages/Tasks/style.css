@@ -19,7 +19,11 @@
 .page-tasks form .page-tasks__description {
   flex: 0 0 100%;
 }
+.page-tasks form .page-tasks__due .react-datepicker-wrapper {
+  display: block;
+}
 .page-tasks form .page-tasks__dollars {
+  max-width: 10rem;
   position: relative;
 }
 .page-tasks form .page-tasks__dollars input {

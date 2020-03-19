@@ -14,7 +14,11 @@ interface RegisterState {
     } | null,
 }
 
-class Register extends React.Component<{}, RegisterState> {
+interface RegisterProps {
+    api: Api
+}
+
+class Register extends React.Component<RegisterProps, RegisterState> {
     state: RegisterState = {
         messages: [],
         name: '',
@@ -26,15 +30,13 @@ class Register extends React.Component<{}, RegisterState> {
         checkoutSession: null,
     };
 
-    api: Api = new Api();
-
     componentDidMount(): void {
         this.populateTimezones();
         this.loadCheckoutSession();
     }
 
     populateTimezones = () => {
-        this.api.getTimezones()
+        this.props.api.getTimezones()
             .then((res: any) => res.json())
             .then((data) => {
                 this.setState((prev: RegisterState) => {
@@ -46,7 +48,7 @@ class Register extends React.Component<{}, RegisterState> {
     };
 
     loadCheckoutSession = () => {
-        this.api.getCheckoutSession()
+        this.props.api.getCheckoutSession()
             .then((res: any) => res.json())
             .then((session) => {
                 this.setState((prev: RegisterState) => {
@@ -108,7 +110,7 @@ class Register extends React.Component<{}, RegisterState> {
 
         console.log('posting registration');
 
-        this.api.register(
+        this.props.api.register(
             this.state.name,
             this.state.email,
             this.state.password,
@@ -133,7 +135,7 @@ class Register extends React.Component<{}, RegisterState> {
     redirect = () => {
         if (this.state.checkoutSession == null) return;
 
-        const stripe = window.Stripe('pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd');
+        const stripe = window.Stripe(window.stripe_key);
 
         stripe.redirectToCheckout({
             sessionId: this.getSessionId()

@@ -1,25 +1,37 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import Api from '../../../classes/Api';
 import './style.css'
 import Task from '../../molecules/Task'
 import Toaster from "../../../classes/Toaster";
+import DatePicker from 'react-datepicker'
+import 'react-datepicker/dist/react-datepicker.min.css'
 
-const Tasks = (props: {}) => {
+interface TasksProps {
+    api: Api
+}
+
+const Tasks = (props: TasksProps) => {
+    const getDefaultDue = () => {
+        const due = new Date();
+
+        due.setDate(due.getDate() + 7);
+        due.setHours(23);
+        due.setMinutes(59);
+
+        return due;
+    };
+
     const [tasks, setTasks] = useState<Task[]>([]),
         [newTask, setNewTask] = useState<string>(''),
-        [newDue, setNewDue] = useState<string>(''),
+        [newDue, setNewDue] = useState<Date>(getDefaultDue()),
         [newCents, setNewCents] = useState<number>(500);
 
-    const api: Api = new Api(),
-        toaster: Toaster = new Toaster();
+    const toaster: Toaster = new Toaster();
 
-    useEffect(() => {
-        setNewDue(getDefaultDue());
-        updateTasks();
-    }, []);
+    useEffect(() => updateTasks(), []);
 
     const updateTasks = () => {
-        api.getTasks()
+        props.api.getTasks()
             .then((res: any) => res.json())
             .then(setTasks)
     };
@@ -34,11 +46,17 @@ const Tasks = (props: {}) => {
 
         toaster.send('Adding task...');
 
-        const unixDue = Math.floor((new Date(newDue)).getTime() / 1000);
+        const dueString = newDue.toLocaleDateString("en-US", {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        });
 
         setTasks((prev) => [...prev, {
             complete: false,
-            due: unixDue,
+            due: newDue,
             id: -1,
             cents: newCents,
             task: newTask,
@@ -51,19 +69,10 @@ const Tasks = (props: {}) => {
         setNewCents(500);
         setNewTask('');
 
-        api.addTask(newTask, unixDue, newCents).then((res: any) => {
+        props.api.addTask(newTask, dueString, newCents).then((res: any) => {
             toaster.send((res.ok) ? 'Task added' : 'Failed to add task');
             updateTasks();
         });
-    };
-
-    const getDefaultDue = () => {
-        const week = 1000 * 60 * 60 * 24 * 7,
-            offset = (new Date()).getTimezoneOffset() * 60 * 1000,
-            theDate = new Date(Date.now() + week - offset),
-            dateString = theDate.toISOString().slice(0, 10);
-
-        return dateString + 'T23:59:59';
     };
 
     const toggleStatus = (task: Task) => {
@@ -78,13 +87,14 @@ const Tasks = (props: {}) => {
             });
         });
 
-        api.setComplete(task.id, !task.complete).then((res: any) => {
+        props.api.setComplete(task.id, !task.complete).then((res: any) => {
             toaster.send(res.ok ? `Successfully marked task ${change}`
                 : `Failed to mark task ${change}`);
             updateTasks()
         });
     };
 
+    // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
         if (a.due < b.due) return -1;
         if (a.due > b.due) return 1;
@@ -122,11 +132,9 @@ const Tasks = (props: {}) => {
                     value={newTask}
                     onChange={(e) => setNewTask(e.target.value)}
                 /></label>
-                <label className={'page-tasks__due'}>Due <input
-                    type="datetime-local"
-                    value={newDue}
-                    onChange={(e) => setNewDue(e.target.value)}
-                /></label>
+                <label className={'page-tasks__due'}>Due <DatePicker selected={newDue} onChange={(date: Date | null | undefined) => {
+                    if (date) setNewDue(date);
+                }} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
                 <label className={'page-tasks__dollars'}>Stakes <input
                     type="number"
                     placeholder={'USD'}

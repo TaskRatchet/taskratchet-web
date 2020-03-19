@@ -1,3 +1,4 @@
 interface Window {
-    Stripe: any
+    Stripe: any,
+    stripe_key: string
 }

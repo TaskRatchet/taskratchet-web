@@ -1,13 +1,19 @@
 import React from "react";
 import './style.css'
 
+interface Flag {
+    label: string,
+    active: boolean,
+    class: string
+}
+
 interface TaskProps {
     task: Task,
     onToggle: () => void
 }
 
 const Task = (props: TaskProps) => {
-    const dueDate = new Date(props.task.due * 1000),
+    const dueDate = new Date(props.task.due),
         dateString = dueDate.toLocaleDateString(),
         timeString = dueDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
         difference = (dueDate.getTime() - Date.now()) / 1000,
@@ -48,7 +54,7 @@ const Task = (props: TaskProps) => {
             {props.task.task || '[Description Missing]'}
         </span>
         <ul className={'molecule-task__labels'}>
-            {activeFlags.map((f) => <li>{f.label}</li>)}
+            {activeFlags.map((f: Flag, i: number) => <li key={i}>{f.label}</li>)}
         </ul>
         <span className={'molecule-task__due'}>{dateString} {timeString}</span>
         <span className={'molecule-task__dollars'}>${props.task.cents / 100}</span>

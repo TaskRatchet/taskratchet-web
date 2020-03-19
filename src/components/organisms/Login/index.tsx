@@ -8,7 +8,8 @@ const cookies = new Cookies();
 
 interface LoginProps {
     onLogin: () => void,
-    session: Session | null
+    session: Session | null,
+    api: Api
 }
 
 interface LoginState {
@@ -22,7 +23,6 @@ class Login extends React.Component<LoginProps, LoginState> {
         password: ''
     };
 
-    api: Api = new Api();
     toaster: Toaster = new Toaster();
 
     login = (event: any) => {
@@ -34,7 +34,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 
         this.toaster.send('Logging in...');
 
-        this.api.login(this.state.email, this.state.password)
+        this.props.api.login(this.state.email, this.state.password)
             .then((res: any) => {
                 if (res.status === 403) {
                     this.pushMessage('Login failed');
@@ -63,7 +63,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 
         if (!passes) return;
 
-        this.api.requestResetEmail(this.state.email)
+        this.props.api.requestResetEmail(this.state.email)
             .then((res: any) => {
                 if (res.ok) {
                     this.pushMessage('Instructions sent to ' + this.state.email);

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import RegisterForm from './components/pages/Register';
 import Tasks from './components/pages/Tasks';
@@ -15,10 +15,15 @@ import Account from './components/pages/Account'
 import Authenticated from './components/pages/Authenticated'
 import ResetPassword from "./components/pages/ResetPassword";
 import createHistory from 'history/createBrowserHistory'
-import { toast } from 'react-toastify';
+import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Api from "./classes/Api";
 
 toast.configure();
+
+window.stripe_key = (process.env.NODE_ENV === 'development') ?
+    'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp' :
+    'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd';
 
 const cookies = new Cookies();
 
@@ -30,78 +35,71 @@ history.listen(location => {
     ReactGA.pageview(location.pathname);
 });
 
-interface AppProps {
-}
+interface AppProps {}
 
-interface AppState {
-    session: Session | null,
-}
+const App = (props: AppProps) => {
+    const [session, setSession] = useState<Session | null>(null);
 
-class App extends React.Component<AppProps, {}> {
-    state: AppState = {
-        session: null,
+    const logOut = () => {
+        cookies.remove('tr_session');
+        updateSession();
     };
 
-    componentDidMount(): void {
+    const api: Api = new Api(logOut);
+
+    useEffect(() => {
         document.title = 'TaskRatchet';
 
-        this.updateSession();
+        updateSession();
 
         ReactGA.pageview(window.location.pathname);
-    }
+    }, []);
 
-    updateSession = () => {
-        this.setState({
-            session: cookies.get('tr_session')
-        })
+    const updateSession = () => {
+        setSession(cookies.get('tr_session'));
     };
 
-    logOut = () => {
-        cookies.remove('tr_session');
-        this.updateSession();
-    };
+    return <div className={'page-base'}>
+        <Router history={history}>
+            <SessionWidget session={session} logOutHandler={logOut}/>
 
-    render() {
-        return <div className={'page-base'}>
-            <Router history={history}>
-                <SessionWidget session={this.state.session} logOutHandler={this.logOut} />
+            <h2><Link to={'/'}>TaskRatchet</Link></h2>
 
-                <h2><Link to={'/'}>TaskRatchet</Link></h2>
+            <div className={'page-base__content'}>
+                <Switch>
+                    <Route path={'/register'}>
+                        <RegisterForm api={api} />
+                    </Route>
 
-                <div className={'page-base__content'}>
-                    <Switch>
-                        <Route path={'/register'}>
-                            <RegisterForm/>
-                        </Route>
+                    <Route path={'/success'}>
+                        Your payment method has been saved successfully.
+                    </Route>
 
-                        <Route path={'/success'}>
-                            Your payment method has been saved successfully.
-                        </Route>
+                    <Route path={'/cancel'}>
+                        Your payment method could not be saved. Please contact
+                        <a href="mailto:nathan@taskratchet.com" target={'_blank'} rel="noopener noreferrer">nathan@taskratchet.com</a>
+                        for assistance.
+                    </Route>
 
-                        <Route path={'/cancel'}>
-                            Your payment method could not be saved. Please contact <a href="mailto:nathan@taskratchet.com" target={'_blank'} rel="noopener noreferrer">nathan@taskratchet.com</a> for assistance.
-                        </Route>
+                    <Route path={'/account'}>
+                        <Authenticated api={api} session={session} onLogin={updateSession}>
+                            <Account api={api} />
+                        </Authenticated>
+                    </Route>
 
-                        <Route path={'/account'}>
-                            <Authenticated session={this.state.session} onLogin={this.updateSession}>
-                                <Account/>
-                            </Authenticated>
-                        </Route>
+                    <Route path={'/reset'}>
+                        <ResetPassword api={api} />
+                    </Route>
 
-                        <Route path={'/reset'}>
-                            <ResetPassword/>
-                        </Route>
-
-                        <Route path={'/'}>
-                            <Authenticated session={this.state.session} onLogin={this.updateSession}>
-                                <Tasks />
-                            </Authenticated>
-                        </Route>
-                    </Switch>
-                </div>
-            </Router>
-        </div>
-    }
+                    <Route path={'/'}>
+                        <Authenticated api={api} session={session} onLogin={updateSession}>
+                            <Tasks api={api} />
+                        </Authenticated>
+                    </Route>
+                </Switch>
+            </div>
+        </Router>
+    </div>
 }
 
 export default App;
