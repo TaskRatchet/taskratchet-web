@@ -139,6 +139,7 @@ const Tasks = (props: TasksProps) => {
                     type="number"
                     placeholder={'USD'}
                     min={1}
+                    max={2500}
                     value={newCents / 100}
                     onChange={(e: any) => setNewCents(e.target.value * 100)}
                 /></label>
