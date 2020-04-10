@@ -65,8 +65,6 @@ const Tasks = (props: TasksProps) => {
             charge_captured: null,
         }]);
 
-        setNewDue(getDefaultDue());
-        setNewCents(500);
         setNewTask('');
 
         props.api.addTask(newTask, dueString, newCents).then((res: any) => {
@@ -96,8 +94,11 @@ const Tasks = (props: TasksProps) => {
 
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
-        if (a.due < b.due) return -1;
-        if (a.due > b.due) return 1;
+        const aDate = new Date(a.due),
+            bDate = new Date(b.due);
+
+        if (aDate < bDate) return -1;
+        if (aDate > bDate) return 1;
         return 0;
     };
 

@@ -21,7 +21,7 @@ const Task = (props: TaskProps) => {
         flags = [
             {
                 'label': 'Due',
-                'active': difference > 0 && difference <= 60 * 60 * 24,
+                'active': !props.task.complete && difference > 0 && difference <= 60 * 60 * 24,
                 'class': 'due'
             },
             {
