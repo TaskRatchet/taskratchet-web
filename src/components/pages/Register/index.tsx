@@ -1,127 +1,70 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import Api from '../../../classes/Api';
+import Toaster from "../../../classes/Toaster";
 
-interface RegisterState {
-    messages: string[],
-    name: string,
-    email: string,
-    password: string,
-    password2: string,
-    timezones: string[],
-    timezone: string,
-    checkoutSession: {
-        id: string
-    } | null,
+interface CheckoutSession {
+    id: string
 }
 
 interface RegisterProps {
     api: Api
 }
 
-class Register extends React.Component<RegisterProps, RegisterState> {
-    state: RegisterState = {
-        messages: [],
-        name: '',
-        email: '',
-        password: '',
-        password2: '',
-        timezones: [],
-        timezone: '',
-        checkoutSession: null,
-    };
+const Register = (props: RegisterProps) => {
+    const [name, setName] = useState<string>(''),
+        [email, setEmail] = useState<string>(''),
+        [password, setPassword] = useState<string>(''),
+        [password2, setPassword2] = useState<string>(''),
+        [timezones, setTimezones] = useState<string[]>([]),
+        [timezone, setTimezone] = useState<string>(''),
+        [agreed, setAgreed] = useState<boolean>(false),
+        [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null);
 
-    componentDidMount(): void {
-        this.populateTimezones();
-        this.loadCheckoutSession();
-    }
+    const toaster: Toaster = new Toaster();
 
-    populateTimezones = () => {
-        this.props.api.getTimezones()
+    useEffect(() => {
+        populateTimezones();
+        loadCheckoutSession();
+    }, []);
+
+    const populateTimezones = () => {
+        props.api.getTimezones()
             .then((res: any) => res.json())
             .then((data) => {
-                this.setState((prev: RegisterState) => {
-                    prev.timezones = data;
-                    prev.timezone = data[0];
-                    return prev;
-                });
+                setTimezones(data);
+                setTimezone(data[0]);
             });
     };
 
-    loadCheckoutSession = () => {
-        this.props.api.getCheckoutSession()
+    const loadCheckoutSession = () => {
+        props.api.getCheckoutSession()
             .then((res: any) => res.json())
-            .then((session) => {
-                this.setState((prev: RegisterState) => {
-                    prev.checkoutSession = session;
-                    return prev;
-                });
-            })
+            .then((session) => setCheckoutSession(session));
     };
 
-    setName = (event: any) => {
-        const t = event.target;
-        this.setState((prev: RegisterState) => {
-            prev.name = t.value;
-            return prev;
-        })
-    };
-
-    setEmail = (event: any) => {
-        const t = event.target;
-        this.setState((prev: RegisterState) => {
-            prev.email = t.value;
-            return prev;
-        })
-    };
-
-    setPassword = (event: any) => {
-        const t = event.target;
-        this.setState((prev: RegisterState) => {
-            prev.password = t.value;
-            return prev;
-        })
-    };
-
-    setPassword2 = (event: any) => {
-        const t = event.target;
-        this.setState((prev: RegisterState) => {
-            prev.password2 = t.value;
-            return prev;
-        })
-    };
-
-    setTimezone = (event: any) => {
-        const t = event.target;
-        this.setState((prev: RegisterState) => {
-            prev.timezone = t.value;
-            return prev;
-        })
-    };
-
-    register = (event: any) => {
+    const register = (event: any) => {
         event.preventDefault();
 
-        console.log('registering', this.state);
+        console.log('registering');
 
-        this.clearMessages();
-        const passes = this.validateRegistrationForm();
+        const passes = validateRegistrationForm();
 
         if (!passes) return;
 
         console.log('posting registration');
 
-        this.props.api.register(
-            this.state.name,
-            this.state.email,
-            this.state.password,
-            this.state.timezone,
-            this.getSessionId(),
+        props.api.register(
+            name,
+            email,
+            password,
+            timezone,
+            getSessionId(),
         )
             .then((res: any) => {
                 if (res.ok) {
-                    this.pushMessage('Redirecting...')
+                    toaster.send('Redirecting...')
                 } else {
-                    this.pushMessage('Registration failed')
+                    toaster.send('Registration failed')
                 }
                 return res.json()
             })
@@ -129,115 +72,111 @@ class Register extends React.Component<RegisterProps, RegisterState> {
                 console.log(res);
             });
 
-        this.redirect();
+        redirect();
     };
 
-    redirect = () => {
-        if (this.state.checkoutSession == null) return;
+    const redirect = () => {
+        if (checkoutSession == null) return;
 
         const stripe = window.Stripe(window.stripe_key);
 
         stripe.redirectToCheckout({
-            sessionId: this.getSessionId()
+            sessionId: getSessionId()
         }).then((result: any) => {
             // If `redirectToCheckout` fails due to a browser or network
             // error, display the localized error message to your customer
             // using `result.error.message`.
-            this.pushMessage(result.error.message);
+            toaster.send(result.error.message);
 
             console.log('Checkout redirect error');
             console.log(result);
         });
     };
 
-    getSessionId = () => {
-        if (this.state.checkoutSession == null) return null;
+    const getSessionId = () => {
+        if (checkoutSession == null) return null;
 
-        return this.state.checkoutSession.id;
+        return checkoutSession.id;
     };
 
-    pushMessage = (msg: string) => {
-        this.setState((prev: RegisterState) => {
-            prev.messages.push(msg);
-            return prev;
-        });
-    };
-
-    clearMessages = () => {
-        this.setState((prev: RegisterState) => {
-            prev.messages = [];
-            return prev;
-        });
-    };
-
-    validateRegistrationForm = () => {
+    const validateRegistrationForm = () => {
         let passes = true;
 
-        if (!this.state.email) {
-            this.pushMessage("Email missing");
+        if (!email) {
+            toaster.send("Email missing");
             passes = false;
         }
 
-        if (!this.state.password || !this.state.password2) {
-            this.pushMessage("Please enter password twice");
+        if (!password || !password2) {
+            toaster.send("Please enter password twice");
             passes = false;
         }
 
-        if (this.state.password !== this.state.password2) {
-            this.pushMessage("Passwords don't match");
+        if (password !== password2) {
+            toaster.send("Passwords don't match");
+            passes = false;
+        }
+
+        if (!agreed) {
+            toaster.send("Please agree before submitting");
             passes = false;
         }
 
         return passes;
     };
 
-    render() {
-        return <form onSubmit={this.register}>
-            <h1>Register</h1>
+    return <form onSubmit={register}>
+        <h1>Register</h1>
 
-            {this.state.messages.map((msg, i) => <p key={i}>{msg}</p>)}
+        <input
+            type="text"
+            value={name}
+            onChange={e => setName(e.target.value)}
+            name={'name'}
+            placeholder={'Name'}
+        /><br/>
 
-            <input
-                type="text"
-                value={this.state.name}
-                onChange={this.setName}
-                name={'name'}
-                placeholder={'Name'}
-            /><br/>
+        <input
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            name={'email'}
+            placeholder={'Email'}
+        /><br/>
 
-            <input
-                type="email"
-                value={this.state.email}
-                onChange={this.setEmail}
-                name={'email'}
-                placeholder={'Email'}
-            /><br/>
+        <input
+            type="password"
+            value={password}
+            onChange={e => setPassword(e.target.value)}
+            name={'password'}
+            placeholder={'Password'}
+        /><br/>
 
-            <input
-                type="password"
-                value={this.state.password}
-                onChange={this.setPassword}
-                name={'password'}
-                placeholder={'Password'}
-            /><br/>
+        <input
+            type="password"
+            value={password2}
+            onChange={e => setPassword2(e.target.value)}
+            name={'password2'}
+            placeholder={'Retype Password'}
+        /><br/>
 
-            <input
-                type="password"
-                value={this.state.password2}
-                onChange={this.setPassword2}
-                name={'password2'}
-                placeholder={'Retype Password'}
-            /><br/>
+        <select name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
+            {timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
+        </select><br/>
 
-            <select name="timezone" value={this.state.timezone} onChange={this.setTimezone}>
-                {this.state.timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
-            </select><br/>
+        <p>
+            <label>
+                <input type="checkbox" value={"yes"} onChange={e => {
+                    setAgreed(e.target.value === "yes")
+                }}/>
+                &nbsp;I have read and agree to TaskRatchet's <a href="https://taskratchet.com/privacy/" target={"_blank"}>privacy policy</a> and <a href="https://taskratchet.com/terms/" target={"_blank"}>terms of service</a>.
+            </label>
+        </p>
 
-            <p>Pressing the button below will redirect you to our payments provider to add your payment method.</p>
+        <p>Pressing the button below to be redirected to our payments provider to add your payment method.</p>
 
-            <input type="submit" value={'Add payment method'} disabled={this.state.checkoutSession == null} />
-        </form>
-    }
+        <input type="submit" value={'Add payment method'} disabled={checkoutSession == null}/>
+    </form>
 }
 
 export default Register;
