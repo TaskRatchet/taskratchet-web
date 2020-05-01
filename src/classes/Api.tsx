@@ -171,7 +171,11 @@ class Api {
             });
         }
 
-        const response = fetch(base + route_, {
+        const endpoint = base + route_;
+
+        console.log(endpoint);
+
+        const response = fetch(endpoint, {
             method: method,
             body: data ? JSON.stringify(data) : undefined,
             headers: {
