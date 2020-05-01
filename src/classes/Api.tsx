@@ -3,8 +3,6 @@ import Cookies from 'universal-cookie';
 const cookies = new Cookies();
 
 class Api {
-    productionBase: string = 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
-    localBase: string = 'http://localhost:8080/';
     logOutHandler: null | (() => void) = null;
 
     constructor(logOutHandler: () => void) {
@@ -29,7 +27,7 @@ class Api {
             false,
             'POST',
             {'email': email}
-            )
+        )
     }
 
     resetPassword(token: string, password: string) {
@@ -78,9 +76,9 @@ class Api {
     }
 
     updateMe(
-        name: string|null = null,
-        email: string|null = null,
-        timezone: string|null = null,
+        name: string | null = null,
+        email: string | null = null,
+        timezone: string | null = null,
     ) {
         let data: any = {};
 
@@ -165,7 +163,7 @@ class Api {
     ) => {
         const session = cookies.get('tr_session'),
             route_ = this._trim(route, '/'),
-            base = (process.env.NODE_ENV === 'development') ? this.localBase : this.productionBase;
+            base = this._get_base();
 
         if (protected_ && !session) {
             return new Promise((resolve, reject) => {
@@ -189,6 +187,20 @@ class Api {
 
         return response;
     };
+
+    _get_base = () => {
+        const hostname = window && window.location && window.location.hostname;
+
+        if (hostname === 'app.taskratchet.com') {
+            return 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
+        }
+
+        if (hostname === 'staging.taskratchet.com') {
+            return 'https://us-central1-taskratchet-dev.cloudfunctions.net/api1/';
+        }
+
+        return 'http://localhost:8080/'
+    }
 
     _trim = (s: string, c: string) => {
         if (c === "]") c = "\\]";
