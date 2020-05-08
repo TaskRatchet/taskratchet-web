@@ -1,4 +1,5 @@
 import Cookies from 'universal-cookie';
+import {isProduction, isStaging} from "../tr_constants"
 
 const cookies = new Cookies();
 
@@ -193,13 +194,16 @@ class Api {
     };
 
     _get_base = () => {
-        const hostname = window && window.location && window.location.hostname;
+        console.log({
+            'isProduction': isProduction,
+            'isStaging': isStaging
+        })
 
-        if (hostname === 'app.taskratchet.com') {
+        if (isProduction) {
             return 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
         }
 
-        if (hostname === 'staging.taskratchet.com') {
+        if (isStaging) {
             return 'https://us-central1-taskratchet-dev.cloudfunctions.net/api1/';
         }
 

@@ -18,10 +18,11 @@ import createHistory from 'history/createBrowserHistory'
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Api from "./classes/Api";
+import {isProduction} from "./tr_constants"
 
 toast.configure();
 
-window.stripe_key = (process.env.NODE_ENV === 'development') ?
+window.stripe_key = isProduction ?
     'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp' :
     'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd';
 
