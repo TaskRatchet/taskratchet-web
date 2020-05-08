@@ -23,8 +23,8 @@ import {isProduction} from "./tr_constants"
 toast.configure();
 
 window.stripe_key = isProduction ?
-    'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp' :
-    'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd';
+    'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd' :
+    'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp';
 
 const cookies = new Cookies();
 
