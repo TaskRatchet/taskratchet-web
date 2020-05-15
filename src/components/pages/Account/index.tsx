@@ -2,6 +2,8 @@ import React, {useEffect, useState} from 'react';
 import Api from '../../../classes/Api';
 import './style.css'
 import Toaster from "../../../classes/Toaster";
+import {useLocation} from "react-router-dom"
+import queryString from 'query-string'
 
 interface Card {
     brand: string,
@@ -27,13 +29,37 @@ const Account = (props: AccountProps) => {
         [password, setPassword] = useState<string>(''),
         [password2, setPassword2] = useState<string>('');
 
+    const location = useLocation<any>();
+
     const toaster: Toaster = new Toaster();
 
     useEffect(() => {
         populateTimezones();
         loadUser();
         loadCheckoutSession();
+        saveNewBeeminderIntegration();
     }, []);
+
+    const saveNewBeeminderIntegration = () => {
+        console.log('Checking for new Beeminder integration')
+
+        const params: any = queryString.parse(location.search)
+
+        if (!params.access_token || !params.username) return;
+
+        console.log('New integration found, updating me')
+
+        props.api.updateMe(
+            null,
+            null,
+            null,
+            params.access_token,
+            params.username
+        ).then((res: any) => {
+            toaster.send((res.ok) ? 'Beeminder integration saved' : 'Something went wrong');
+            return res.json();
+        }).then(loadResponseData);
+    }
 
     const loadCheckoutSession = () => {
         props.api.getCheckoutSession()

@@ -80,6 +80,8 @@ class Api {
         name: string | null = null,
         email: string | null = null,
         timezone: string | null = null,
+        beeminder_token: string | null = null,
+        beeminder_user: string | null = null,
     ) {
         let data: any = {};
 
@@ -93,6 +95,18 @@ class Api {
 
         if (timezone !== null) {
             data['timezone'] = timezone;
+        }
+
+        if (beeminder_token !== null || beeminder_user !== null) {
+            data['integrations'] = {'beeminder': {}}
+
+            if (beeminder_token !== null) {
+                data['integrations']['beeminder']['token'] = beeminder_token
+            }
+
+            if (beeminder_user !== null) {
+                data['integrations']['beeminder']['user'] = beeminder_user
+            }
         }
 
         return this._fetch(
@@ -172,11 +186,7 @@ class Api {
             });
         }
 
-        const endpoint = base + route_;
-
-        console.log(endpoint);
-
-        const response = fetch(endpoint, {
+        const response = fetch(base + route_, {
             method: method,
             body: data ? JSON.stringify(data) : undefined,
             headers: {
@@ -194,11 +204,6 @@ class Api {
     };
 
     _get_base = () => {
-        console.log({
-            'isProduction': isProduction,
-            'isStaging': isStaging
-        })
-
         if (isProduction) {
             return 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
         }

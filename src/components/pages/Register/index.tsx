@@ -169,7 +169,7 @@ const Register = (props: RegisterProps) => {
                 <input type="checkbox" value={"yes"} onChange={e => {
                     setAgreed(e.target.value === "yes")
                 }}/>
-                &nbsp;I have read and agree to TaskRatchet's <a href="https://taskratchet.com/privacy/" target={"_blank"}>privacy policy</a> and <a href="https://taskratchet.com/terms/" target={"_blank"}>terms of service</a>.
+                &nbsp;I have read and agree to TaskRatchet's <a href="https://taskratchet.com/privacy/" target={"_blank"} rel={'noopener noreferrer'}>privacy policy</a> and <a href="https://taskratchet.com/terms/" target={"_blank"}>terms of service</a>.
             </label>
         </p>
 
