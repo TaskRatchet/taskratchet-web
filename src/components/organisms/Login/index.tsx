@@ -48,10 +48,9 @@ class Login extends React.Component<LoginProps, LoginState> {
     handleLogin = (token: string) => {
         cookies.set('tr_session', {
             'token': token,
-            'email': this.state.email,
-            'options': {
-                'sameSite': 'lax'
-            }
+            'email': this.state.email
+        }, {
+            'sameSite': 'lax'
         });
         this.props.onLogin();
     };

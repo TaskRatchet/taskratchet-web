@@ -1,10 +1,9 @@
 import Cookies from 'universal-cookie';
+import {isProduction, isStaging} from "../tr_constants"
 
 const cookies = new Cookies();
 
 class Api {
-    productionBase: string = 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
-    localBase: string = 'http://localhost:8080/';
     logOutHandler: null | (() => void) = null;
 
     constructor(logOutHandler: () => void) {
@@ -29,7 +28,7 @@ class Api {
             false,
             'POST',
             {'email': email}
-            )
+        )
     }
 
     resetPassword(token: string, password: string) {
@@ -78,9 +77,21 @@ class Api {
     }
 
     updateMe(
-        name: string|null = null,
-        email: string|null = null,
-        timezone: string|null = null,
+        {
+            name = null,
+            email = null,
+            timezone = null,
+            beeminder_token = null,
+            beeminder_user = null,
+            beeminder_goal_new_tasks = null,
+        }: {
+            name?: string | null,
+            email?: string | null,
+            timezone?: string | null,
+            beeminder_token?: string | null,
+            beeminder_user?: string | null,
+            beeminder_goal_new_tasks?: string | null,
+        }
     ) {
         let data: any = {};
 
@@ -94,6 +105,22 @@ class Api {
 
         if (timezone !== null) {
             data['timezone'] = timezone;
+        }
+
+        if (beeminder_token !== null || beeminder_user !== null || beeminder_goal_new_tasks !== null) {
+            data['integrations'] = {'beeminder': {}}
+
+            if (beeminder_token !== null) {
+                data['integrations']['beeminder']['token'] = beeminder_token
+            }
+
+            if (beeminder_user !== null) {
+                data['integrations']['beeminder']['user'] = beeminder_user
+            }
+
+            if (beeminder_goal_new_tasks !== null) {
+                data['integrations']['beeminder']['goal_new_tasks'] = beeminder_goal_new_tasks
+            }
         }
 
         return this._fetch(
@@ -165,7 +192,7 @@ class Api {
     ) => {
         const session = cookies.get('tr_session'),
             route_ = this._trim(route, '/'),
-            base = (process.env.NODE_ENV === 'development') ? this.localBase : this.productionBase;
+            base = this._get_base();
 
         if (protected_ && !session) {
             return new Promise((resolve, reject) => {
@@ -189,6 +216,18 @@ class Api {
 
         return response;
     };
+
+    _get_base = () => {
+        if (isProduction) {
+            return 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
+        }
+
+        if (isStaging) {
+            return 'https://us-central1-taskratchet-dev.cloudfunctions.net/api1/';
+        }
+
+        return 'http://localhost:8080/'
+    }
 
     _trim = (s: string, c: string) => {
         if (c === "]") c = "\\]";

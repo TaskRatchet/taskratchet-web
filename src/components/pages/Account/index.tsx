@@ -2,6 +2,9 @@ import React, {useEffect, useState} from 'react';
 import Api from '../../../classes/Api';
 import './style.css'
 import Toaster from "../../../classes/Toaster";
+import {useLocation} from "react-router-dom"
+import queryString from 'query-string'
+import {isProduction} from "./../../../tr_constants"
 
 interface Card {
     brand: string,
@@ -25,7 +28,20 @@ const Account = (props: AccountProps) => {
         [cards, setCards] = useState<Card[]>([]),
         [oldPassword, setOldPassword] = useState<string>(''),
         [password, setPassword] = useState<string>(''),
-        [password2, setPassword2] = useState<string>('');
+        [password2, setPassword2] = useState<string>(''),
+        [bmUser, setBmUser] = useState<string>(''),
+        [bmGoal, setBmGoal] = useState<string>('');
+
+    const location = useLocation<any>();
+
+    const beeminderClientId: string = (isProduction)
+        ? "1w70sy12t1106s9ptod11ex21"
+        : "29k46vimhtdeptt616tuhmp2r",
+        beeminderRedirect: string = (isProduction)
+            ? "https://app.taskratchet.com/account"
+            : "https://staging.taskratchet.com/account",
+        beeminderAuthUrl: string = `https://www.beeminder.com/apps/authorize?client_id=${beeminderClientId}` +
+            `&redirect_uri=${encodeURIComponent(beeminderRedirect)}&response_type=token`
 
     const toaster: Toaster = new Toaster();
 
@@ -33,7 +49,26 @@ const Account = (props: AccountProps) => {
         populateTimezones();
         loadUser();
         loadCheckoutSession();
+        saveNewBeeminderIntegration();
     }, []);
+
+    const saveNewBeeminderIntegration = () => {
+        console.log('Checking for new Beeminder integration')
+
+        const params: any = queryString.parse(location.search)
+
+        if (!params.access_token || !params.username) return;
+
+        console.log('New integration found, updating me')
+
+        props.api.updateMe({
+            beeminder_token: params.access_token,
+            beeminder_user: params.username
+        }).then((res: any) => {
+            toaster.send((res.ok) ? 'Beeminder integration saved' : 'Something went wrong');
+            return res.json();
+        }).then(loadResponseData);
+    }
 
     const loadCheckoutSession = () => {
         props.api.getCheckoutSession()
@@ -60,16 +95,22 @@ const Account = (props: AccountProps) => {
         setEmail(data['email']);
         setTimezone(data['timezone']);
         setCards(data['cards']);
+
+        if ('beeminder' in data['integrations']) {
+            const bm = data['integrations']['beeminder'];
+            if ('user' in bm) setBmUser(bm['user']);
+            if ('goal_new_tasks' in bm) setBmGoal(bm['goal_new_tasks'] || '');
+        }
     };
 
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        props.api.updateMe(
-            prepareValue(name),
-            prepareValue(email),
-            prepareValue(timezone)
-        ).then((res: any) => {
+        props.api.updateMe({
+            name: prepareValue(name),
+            email: prepareValue(email),
+            timezone: prepareValue(timezone)
+        }).then((res: any) => {
             toaster.send((res.ok) ? 'Changes saved' : 'Something went wrong');
             return res.json();
         }).then(loadResponseData);
@@ -78,6 +119,17 @@ const Account = (props: AccountProps) => {
     const prepareValue = (value: string) => {
         return (value === '') ? null : value;
     };
+
+    const saveGoalName = (event: any) => {
+        event.preventDefault();
+
+        props.api.updateMe({
+            beeminder_goal_new_tasks: bmGoal
+        }).then((res: any) => {
+            toaster.send((res.ok) ? 'Beeminder goal saved' : 'Something went wrong');
+            return res.json();
+        }).then(loadResponseData);
+    }
 
     const savePassword = (event: any) => {
         event.preventDefault();
@@ -225,6 +277,24 @@ const Account = (props: AccountProps) => {
         </ul> : <p>None</p>}
 
         <button onClick={updatePaymentDetails}>Replace payment method</button>
+
+        <h2>Beeminder Integration</h2>
+
+        {bmUser ? <form onSubmit={saveGoalName}>
+                <p>Beeminder username: {bmUser}</p>
+
+                <label htmlFor="bmGoal">Post new tasks to goal:</label>
+                <input
+                    value={bmGoal}
+                    onChange={(e) => setBmGoal(e.target.value)}
+                    id={'bmGoal'}
+                    name={'bmGoal'}
+                />
+
+                <input type="submit" value={'Save'}/>
+            </form>
+            : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>
+        }
     </div>
 }
 
