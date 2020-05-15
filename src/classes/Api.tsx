@@ -77,11 +77,21 @@ class Api {
     }
 
     updateMe(
-        name: string | null = null,
-        email: string | null = null,
-        timezone: string | null = null,
-        beeminder_token: string | null = null,
-        beeminder_user: string | null = null,
+        {
+            name = null,
+            email = null,
+            timezone = null,
+            beeminder_token = null,
+            beeminder_user = null,
+            beeminder_goal_new_tasks = null,
+        }: {
+            name?: string | null,
+            email?: string | null,
+            timezone?: string | null,
+            beeminder_token?: string | null,
+            beeminder_user?: string | null,
+            beeminder_goal_new_tasks?: string | null,
+        }
     ) {
         let data: any = {};
 
@@ -97,7 +107,7 @@ class Api {
             data['timezone'] = timezone;
         }
 
-        if (beeminder_token !== null || beeminder_user !== null) {
+        if (beeminder_token !== null || beeminder_user !== null || beeminder_goal_new_tasks !== null) {
             data['integrations'] = {'beeminder': {}}
 
             if (beeminder_token !== null) {
@@ -106,6 +116,10 @@ class Api {
 
             if (beeminder_user !== null) {
                 data['integrations']['beeminder']['user'] = beeminder_user
+            }
+
+            if (beeminder_goal_new_tasks !== null) {
+                data['integrations']['beeminder']['goal_new_tasks'] = beeminder_goal_new_tasks
             }
         }
 
