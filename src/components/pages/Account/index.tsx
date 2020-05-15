@@ -27,7 +27,9 @@ const Account = (props: AccountProps) => {
         [cards, setCards] = useState<Card[]>([]),
         [oldPassword, setOldPassword] = useState<string>(''),
         [password, setPassword] = useState<string>(''),
-        [password2, setPassword2] = useState<string>('');
+        [password2, setPassword2] = useState<string>(''),
+        [bmUser, setBmUser] = useState<string>(''),
+        [bmGoal, setBmGoal] = useState<string>('');
 
     const location = useLocation<any>();
 
@@ -86,6 +88,12 @@ const Account = (props: AccountProps) => {
         setEmail(data['email']);
         setTimezone(data['timezone']);
         setCards(data['cards']);
+
+        if ('beeminder' in data['integrations']) {
+            const bm = data['integrations']['beeminder'];
+            if ('user' in bm) setBmUser(bm['user']);
+            if ('goal_new_tasks' in bm) setBmGoal(bm['goal_new_tasks']);
+        }
     };
 
     const saveGeneral = (event: any) => {
@@ -251,6 +259,23 @@ const Account = (props: AccountProps) => {
         </ul> : <p>None</p>}
 
         <button onClick={updatePaymentDetails}>Replace payment method</button>
+
+        <h2>Beeminder Integration</h2>
+
+        {bmUser ? <div>
+            <p>Beeminder username: {bmUser}</p>
+            <form>
+                <label htmlFor="bmGoal">Post new tasks to goal:</label>
+                <input
+                    value={bmGoal}
+                    onChange={(e) => setBmGoal(e.target.value)}
+                    id={'bmGoal'}
+                    name={'bmGoal'}
+                />
+
+                <input type="submit" value={'Save'}/>
+            </form>
+        </div> : ''}
     </div>
 }
 
