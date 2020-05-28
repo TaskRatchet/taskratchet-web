@@ -28,7 +28,7 @@ const Register = (props: RegisterProps) => {
     }, []);
 
     const populateTimezones = () => {
-        props.api.getTimezones()
+        props.api.useTimezones()
             .then((res: any) => res.json())
             .then((data) => {
                 setTimezones(data);
@@ -37,7 +37,7 @@ const Register = (props: RegisterProps) => {
     };
 
     const loadCheckoutSession = () => {
-        props.api.getCheckoutSession()
+        props.api.useCheckoutSession()
             .then((res: any) => res.json())
             .then((session) => setCheckoutSession(session));
     };
@@ -53,7 +53,7 @@ const Register = (props: RegisterProps) => {
 
         console.log('posting registration');
 
-        props.api.register(
+        props.api.useRegister(
             name,
             email,
             password,

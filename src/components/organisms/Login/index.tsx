@@ -34,7 +34,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 
         this.toaster.send('Logging in...');
 
-        this.props.api.login(this.state.email, this.state.password)
+        this.props.api.useLogin(this.state.email, this.state.password)
             .then((res: any) => {
                 if (res.status === 403) {
                     this.pushMessage('Login failed');
@@ -62,7 +62,7 @@ class Login extends React.Component<LoginProps, LoginState> {
 
         if (!passes) return;
 
-        this.props.api.requestResetEmail(this.state.email)
+        this.props.api.useRequestResetEmail(this.state.email)
             .then((res: any) => {
                 if (res.ok) {
                     this.pushMessage('Instructions sent to ' + this.state.email);

@@ -25,7 +25,7 @@ function ResetPassword(props: ResetPasswordProps) {
 
         if (!validateForm()) return;
 
-        props.api.resetPassword(token, password)
+        props.api.useResetPassword(token, password)
             .then((res: any) => {
                 if (res.ok) {
                     pushMessage('Password reset successfully');

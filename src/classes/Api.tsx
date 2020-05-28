@@ -1,5 +1,6 @@
 import Cookies from 'universal-cookie';
 import {isProduction, isStaging} from "../tr_constants"
+import useFetch from 'fetch-suspense'
 
 const cookies = new Cookies();
 
@@ -10,8 +11,8 @@ class Api {
         this.logOutHandler = logOutHandler;
     }
 
-    login(email: string, password: string) {
-        return this._fetch(
+    useLogin(email: string, password: string) {
+        return this._useFetch(
             'account/login',
             false,
             'POST',
@@ -22,8 +23,8 @@ class Api {
         );
     }
 
-    requestResetEmail(email: string) {
-        return this._fetch(
+    useRequestResetEmail(email: string) {
+        return this._useFetch(
             'account/forgot-password',
             false,
             'POST',
@@ -31,8 +32,8 @@ class Api {
         )
     }
 
-    resetPassword(token: string, password: string) {
-        return this._fetch(
+    useResetPassword(token: string, password: string) {
+        return this._useFetch(
             'account/reset-password',
             false,
             'POST',
@@ -43,14 +44,14 @@ class Api {
         );
     }
 
-    register(
+    useRegister(
         name: string,
         email: string,
         password: string,
         timezone: string,
         checkoutSessionId: string | null,
     ) {
-        return this._fetch(
+        return this._useFetch(
             'account/register',
             false,
             'POST',
@@ -64,19 +65,19 @@ class Api {
         );
     }
 
-    getTimezones() {
-        return this._fetch('timezones')
+    useTimezones() {
+        return this._useFetch('timezones')
     }
 
-    getCheckoutSession() {
-        return this._fetch('payments/checkout/session');
+    useCheckoutSession() {
+        return this._useFetch('payments/checkout/session');
     }
 
-    getMe() {
-        return this._fetch('me', true);
+    useMe() {
+        return this._useFetch('me', true);
     }
 
-    updateMe(
+    useUpdateMe(
         {
             name = null,
             email = null,
@@ -123,7 +124,7 @@ class Api {
             }
         }
 
-        return this._fetch(
+        return this._useFetch(
             '/me',
             true,
             'PUT',
@@ -131,8 +132,8 @@ class Api {
         );
     }
 
-    updateCheckoutSessionId(sessionId: string) {
-        return this._fetch(
+    useUpdateCheckoutSessionId(sessionId: string) {
+        return this._useFetch(
             '/me',
             true,
             'PUT',
@@ -142,8 +143,8 @@ class Api {
         );
     }
 
-    updatePassword(oldPassword: string, newPassword: string) {
-        return this._fetch(
+    useUpdatePassword(oldPassword: string, newPassword: string) {
+        return this._useFetch(
             'me',
             true,
             'PUT',
@@ -154,13 +155,13 @@ class Api {
         )
     }
 
-    getTasks() {
-        return this._fetch('me/tasks', true);
+    useTasks() {
+        return this._useFetch('me/tasks', true);
     }
 
     // Requires that user be authenticated.
-    addTask(task: string, due: string, cents: number) {
-        return this._fetch(
+    useAddTask(task: string, due: string, cents: number) {
+        return this._useFetch(
             'me/tasks',
             true,
             'POST',
@@ -173,8 +174,8 @@ class Api {
     }
 
     // Requires that user be authenticated.
-    setComplete(taskId: number, complete: boolean) {
-        return this._fetch(
+    useSetComplete(taskId: number, complete: boolean) {
+        return this._useFetch(
             'me/tasks/' + taskId,
             true,
             'PUT',
@@ -184,7 +185,7 @@ class Api {
         );
     }
 
-    _fetch = (
+    _useFetch = (
         route: string,
         protected_: boolean = false,
         method: string = 'GET',
@@ -195,24 +196,20 @@ class Api {
             base = this._get_base();
 
         if (protected_ && !session) {
-            return new Promise((resolve, reject) => {
-                reject('User not logged in');
-            });
+            throw "User not logged in"
         }
 
-        const response = fetch(base + route_, {
+        const response = useFetch(base + route_, {
             method: method,
             body: data ? JSON.stringify(data) : undefined,
             headers: {
                 'X-Taskratchet-Token': session ? session.token : undefined,
             }
-        });
+        }, { metadata: true });
 
-        response.then((res: any) => {
-            if (res.status === 403 && this.logOutHandler) {
-                this.logOutHandler();
-            }
-        });
+        if (response.status === 403 && this.logOutHandler) {
+            this.logOutHandler();
+        }
 
         return response;
     };

@@ -4,7 +4,7 @@ import './style.css'
 import Toaster from "../../../classes/Toaster";
 import {useLocation} from "react-router-dom"
 import queryString from 'query-string'
-import {isProduction} from "./../../../tr_constants"
+import {isProduction} from "../../../tr_constants"
 
 interface Card {
     brand: string,
@@ -61,34 +61,43 @@ const Account = (props: AccountProps) => {
 
         console.log('New integration found, updating me')
 
-        props.api.updateMe({
+        const response = props.api.useUpdateMe({
             beeminder_token: params.access_token,
             beeminder_user: params.username
-        }).then((res: any) => {
-            toaster.send((res.ok) ? 'Beeminder integration saved' : 'Something went wrong');
-            return res.json();
-        }).then(loadResponseData);
+        });
+
+        toaster.send((response.ok) ?
+            'Beeminder integration saved' :
+            'Something went wrong');
+
+        loadResponseData(response);
     }
 
     const loadCheckoutSession = () => {
-        props.api.getCheckoutSession()
-            .then((res: any) => res.json())
-            .then(setCheckoutSession)
+        const response = props.api.useCheckoutSession()
+
+        if (typeof response.response === 'object' && 'id' in response.response) {
+            setCheckoutSession(response.response)
+        }
     };
 
     const populateTimezones = () => {
-        props.api.getTimezones()
-            .then((res: any) => res.json())
-            .then(setTimezones);
+        const response = props.api.useTimezones();
+
+        if (Array.isArray(response.response)) {
+            setTimezones(response.response);
+        }
     };
 
     const loadUser = () => {
-        props.api.getMe()
-            .then((res: any) => res.json())
-            .then(loadResponseData)
+        const response = props.api.useMe();
+
+        loadResponseData(response.response)
     };
 
-    const loadResponseData = (data: any) => {
+    const loadResponseData = (response: any) => {
+        const data = response.response;
+
         console.log(data);
 
         setName(data['name']);
@@ -106,7 +115,7 @@ const Account = (props: AccountProps) => {
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        props.api.updateMe({
+        props.api.useUpdateMe({
             name: prepareValue(name),
             email: prepareValue(email),
             timezone: prepareValue(timezone)
@@ -123,7 +132,7 @@ const Account = (props: AccountProps) => {
     const saveGoalName = (event: any) => {
         event.preventDefault();
 
-        props.api.updateMe({
+        props.api.useUpdateMe({
             beeminder_goal_new_tasks: bmGoal
         }).then((res: any) => {
             toaster.send((res.ok) ? 'Beeminder goal saved' : 'Something went wrong');
@@ -136,7 +145,7 @@ const Account = (props: AccountProps) => {
 
         if (!isPasswordFormValid()) return;
 
-        props.api.updatePassword(oldPassword, password)
+        props.api.useUpdatePassword(oldPassword, password)
             .then((res: any) => {
                 toaster.send((res.ok) ? 'Password saved' : 'Something went wrong');
             });
@@ -171,7 +180,7 @@ const Account = (props: AccountProps) => {
             return;
         }
 
-        props.api.updateCheckoutSessionId(sessionId);
+        props.api.useUpdateCheckoutSessionId(sessionId);
 
         redirect();
     };
