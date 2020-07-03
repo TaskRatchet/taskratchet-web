@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import Api from '../../../classes/Api';
 import Toaster from '../../../classes/Toaster';
@@ -9,54 +9,60 @@ import {useMachine} from '@xstate/react';
 const cookies = new Cookies();
 
 // https://xstate.js.org/viz/
-const loginMachine = createMachine({
-    id: 'login',
-    initial: 'idle',
-    states: {
-        idle: {
-            on: {
-                LOGIN: 'validatingLogin',
-                RESET: 'validatingReset'
-            }
-        },
-        validatingLogin: {
-            on: {
-                PASS: 'authenticating',
-                FAIL: 'invalid'
-            }
-        },
-        validatingReset: {
-            on: {
-                PASS: 'resetting',
-                FAIL: 'invalid'
-            }
-        },
-        invalid: {
-            on: {
-                LOGIN: 'validatingLogin',
-                RESET: 'validatingReset'
-            }
-        },
-        authenticating: {
-            on: {
-                SUCCESS: 'idle',
-                ERROR: 'error'
-            }
-        },
-        resetting: {
-            on: {
-                SUCCESS: 'idle',
-                ERROR: 'error'
-            }
-        },
-        error: {
-            on: {
-                LOGIN: 'validatingLogin',
-                RESET: 'validatingReset'
+const loginMachine = createMachine(
+    {
+        id: 'login',
+        initial: 'idle',
+        states: {
+            idle: {
+                on: {
+                    LOGIN: 'validatingLogin',
+                    RESET: 'validatingReset'
+                }
+            },
+            validatingLogin: {
+                onEntry: 'validateLogin',
+                on: {
+                    PASS: 'authenticating',
+                    FAIL: 'invalid'
+                }
+            },
+            validatingReset: {
+                onEntry: 'validateReset',
+                on: {
+                    PASS: 'resetting',
+                    FAIL: 'invalid'
+                }
+            },
+            invalid: {
+                on: {
+                    LOGIN: 'validatingLogin',
+                    RESET: 'validatingReset'
+                }
+            },
+            authenticating: {
+                onEntry: 'login',
+                on: {
+                    SUCCESS: 'idle',
+                    ERROR: 'error'
+                }
+            },
+            resetting: {
+                onEntry: 'reset',
+                on: {
+                    SUCCESS: 'idle',
+                    ERROR: 'error'
+                }
+            },
+            error: {
+                on: {
+                    LOGIN: 'validatingLogin',
+                    RESET: 'validatingReset'
+                }
             }
         }
     }
-})
+)
 
 interface LoginProps {
     onLogin: () => void,
@@ -68,32 +74,39 @@ const Login = (props: LoginProps) => {
     const [state, send] = useMachine(loginMachine);
 
     console.log(state.value);
+    console.log(state.actions);
 
     const [email, setEmail] = useState<string>(''),
         [password, setPassword] = useState<string>('');
 
     const toaster: Toaster = new Toaster();
 
-    const login = (event: any) => {
-        send('LOGIN');
+    const actionHandlers: { [key: string]: () => void } = {
+        "validateLogin": () => validateLoginForm(),
+        "validateReset": () => validateLoginForm(false),
+        "login": () => login(),
+        "reset": () => reset(),
+    }
 
-        event.preventDefault();
+    useEffect(() => {
+        console.log('state change');
+        state.actions.forEach(action => {
+            console.log(action.type);
+            if (action.type in actionHandlers) {
+                actionHandlers[action.type]();
+            }
+        })
+    }, [state])
 
-        const passes = validateLoginForm();
-
-        if (!passes) return;
-
-        toaster.send('Logging in...');
-
+    const login = () => {
         props.api.login(email, password)
             .then((res: any) => {
-                if (res.status === 403) {
+                if (res.ok) {
+                    send('SUCCESS')
+                    res.text().then(handleLoginResponse);
+                } else {
                     send('ERROR')
                     toaster.send('Login failed');
-                } else {
-                    send('SUCCESS')
-                    toaster.send('Login successful');
-                    res.text().then(handleLoginResponse);
                 }
             })
     };
@@ -108,15 +121,7 @@ const Login = (props: LoginProps) => {
         props.onLogin();
     };
 
-    const reset = (event: any) => {
-        send('RESET')
-
-        event.preventDefault();
-
-        const passes = validateLoginForm(false);
-
-        if (!passes) return;
-
+    const reset = () => {
         props.api.requestResetEmail(email)
             .then((res: any) => {
                 if (res.ok) {
@@ -131,28 +136,26 @@ const Login = (props: LoginProps) => {
     };
 
     const validateLoginForm = (passwordRequired = true) => {
-        let passes = true;
-
         if (!email) {
             toaster.send('Email required');
-            passes = false;
+            send('FAIL')
+            return
         }
 
         if (passwordRequired && !password) {
             toaster.send('Password required');
-            passes = false;
+            send('FAIL')
+            return
         }
 
-        send(passes ? 'PASS' : 'FAIL')
-
-        return passes;
+        send('PASS')
     };
 
     const isLoading = () => {
         return state.matches('authenticating') || state.matches('resetting');
     }
 
-    return <div className={`organism-login ${isLoading() ? 'loading': ''}`}>
+    return <div className={`organism-login ${isLoading() ? 'loading' : ''}`}>
         {
             props.session ?
                 <p>You are logged in as {props.session.email}</p>
@@ -174,8 +177,14 @@ const Login = (props: LoginProps) => {
                         placeholder={'Password'}
                     />
 
-                    <input type="submit" value={'Submit'} onClick={login}/>
-                    <input type="submit" value={'Reset Password'} onClick={reset}/>
+                    <input type="submit" value={'Submit'} onClick={e => {
+                        e.preventDefault();
+                        send('LOGIN');
+                    }}/>
+                    <input type="submit" value={'Reset Password'} onClick={e => {
+                        e.preventDefault();
+                        send('RESET');
+                    }}/>
                 </form>
         }
     </div>
