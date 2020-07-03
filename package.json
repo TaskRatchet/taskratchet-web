@@ -9,6 +9,7 @@
     "@types/react-datepicker": "^2.11.0",
     "@types/react-dom": "^16.9.0",
     "@types/react-router-dom": "^5.1.2",
+    "@xstate/react": "^0.8.1",
     "query-string": "^6.12.1",
     "react": "^16.9.0",
     "react-datepicker": "^2.14.0",
@@ -19,7 +20,8 @@
     "react-scripts": "^3.4.0",
     "react-toastify": "^5.5.0",
     "typescript": "^3.5.3",
-    "universal-cookie": "^4.0.2"
+    "universal-cookie": "^4.0.2",
+    "xstate": "^4.11.0"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,10 +1,62 @@
-import React from 'react';
+import React, {useState} from 'react';
 import Cookies from 'universal-cookie';
 import Api from '../../../classes/Api';
 import Toaster from '../../../classes/Toaster';
+import {createMachine, interpret} from 'xstate';
 import './style.css'
+import {useMachine} from '@xstate/react';
 
 const cookies = new Cookies();
+
+// https://xstate.js.org/viz/
+const loginMachine = createMachine({
+    id: 'login',
+    initial: 'idle',
+    states: {
+        idle: {
+            on: {
+                LOGIN: 'validatingLogin',
+                RESET: 'validatingReset'
+            }
+        },
+        validatingLogin: {
+            on: {
+                PASS: 'authenticating',
+                FAIL: 'invalid'
+            }
+        },
+        validatingReset: {
+            on: {
+                PASS: 'resetting',
+                FAIL: 'invalid'
+            }
+        },
+        invalid: {
+            on: {
+                LOGIN: 'validatingLogin',
+                RESET: 'validatingReset'
+            }
+        },
+        authenticating: {
+            on: {
+                SUCCESS: 'idle',
+                ERROR: 'error'
+            }
+        },
+        resetting: {
+            on: {
+                SUCCESS: 'idle',
+                ERROR: 'error'
+            }
+        },
+        error: {
+            on: {
+                LOGIN: 'validatingLogin',
+                RESET: 'validatingReset'
+            }
+        }
+    }
+})
 
 interface LoginProps {
     onLogin: () => void,
@@ -12,132 +64,121 @@ interface LoginProps {
     api: Api
 }
 
-interface LoginState {
-    email: string,
-    password: string
-}
+const Login = (props: LoginProps) => {
+    const [state, send] = useMachine(loginMachine);
 
-class Login extends React.Component<LoginProps, LoginState> {
-    state: LoginState = {
-        email: '',
-        password: ''
-    };
+    console.log(state.value);
 
-    toaster: Toaster = new Toaster();
+    const [email, setEmail] = useState<string>(''),
+        [password, setPassword] = useState<string>('');
 
-    login = (event: any) => {
+    const toaster: Toaster = new Toaster();
+
+    const login = (event: any) => {
+        send('LOGIN');
+
         event.preventDefault();
 
-        const passes = this.validateLoginForm();
+        const passes = validateLoginForm();
 
         if (!passes) return;
 
-        this.toaster.send('Logging in...');
+        toaster.send('Logging in...');
 
-        this.props.api.login(this.state.email, this.state.password)
+        props.api.login(email, password)
             .then((res: any) => {
                 if (res.status === 403) {
-                    this.pushMessage('Login failed');
+                    send('ERROR')
+                    toaster.send('Login failed');
                 } else {
-                    this.pushMessage('Login successful');
-                    res.text().then(this.handleLogin);
+                    send('SUCCESS')
+                    toaster.send('Login successful');
+                    res.text().then(handleLoginResponse);
                 }
             })
     };
 
-    handleLogin = (token: string) => {
+    const handleLoginResponse = (token: string) => {
         cookies.set('tr_session', {
             'token': token,
-            'email': this.state.email
+            'email': email
         }, {
             'sameSite': 'lax'
         });
-        this.props.onLogin();
+        props.onLogin();
     };
 
-    reset = (event: any) => {
+    const reset = (event: any) => {
+        send('RESET')
+
         event.preventDefault();
 
-        const passes = this.validateLoginForm(false);
+        const passes = validateLoginForm(false);
 
         if (!passes) return;
 
-        this.props.api.requestResetEmail(this.state.email)
+        props.api.requestResetEmail(email)
             .then((res: any) => {
                 if (res.ok) {
-                    this.pushMessage('Instructions sent to ' + this.state.email);
+                    send('SUCCESS')
+                    toaster.send('Instructions sent to ' + email);
                 } else {
-                    this.pushMessage('Reset request failed');
+                    send('ERROR')
+                    toaster.send('Reset request failed');
                     res.text().then((t: string) => console.log(t))
                 }
             })
     };
 
-    validateLoginForm = (passwordRequired = true) => {
+    const validateLoginForm = (passwordRequired = true) => {
         let passes = true;
 
-        if (!this.state.email) {
-            this.pushMessage('Email required');
+        if (!email) {
+            toaster.send('Email required');
             passes = false;
         }
 
-        if (passwordRequired && !this.state.password) {
-            this.pushMessage('Password required');
+        if (passwordRequired && !password) {
+            toaster.send('Password required');
             passes = false;
         }
+
+        send(passes ? 'PASS' : 'FAIL')
 
         return passes;
     };
 
-    setLoginEmail = (event: any) => {
-        const t = event.target;
-        this.setState((prev: LoginState) => {
-            prev.email = t.value;
-            return prev;
-        })
-    };
-
-    setLoginPassword = (event: any) => {
-        const t = event.target;
-        this.setState((prev: LoginState) => {
-            prev.password = t.value;
-            return prev;
-        })
-    };
-
-    pushMessage = (msg: string) => {
-        this.toaster.send(msg)
-    };
-
-    render() {
-        return <div className={'organism-login'}>
-            {
-                this.props.session ?
-                    <p>You are logged in as {this.props.session.email}</p>
-                    :
-                    <form>
-                        <input
-                            type="email"
-                            value={this.state.email}
-                            onChange={this.setLoginEmail}
-                            name={'email'}
-                            placeholder={'Email'}
-                        />
-
-                        <input
-                            type="password"
-                            value={this.state.password}
-                            onChange={this.setLoginPassword}
-                            name={'password'}
-                            placeholder={'Password'}
-                        />
-
-                        <input type="submit" value={'Submit'} onClick={this.login} />
-                        <input type="submit" value={'Reset Password'} onClick={this.reset} />
-                    </form>
-            }
-        </div>
+    const isLoading = () => {
+        return state.matches('authenticating') || state.matches('resetting');
     }
+
+    return <div className={`organism-login ${isLoading() ? 'loading': ''}`}>
+        {
+            props.session ?
+                <p>You are logged in as {props.session.email}</p>
+                :
+                <form>
+                    <input
+                        type="email"
+                        value={email}
+                        onChange={e => setEmail(e.target.value)}
+                        name={'email'}
+                        placeholder={'Email'}
+                    />
+
+                    <input
+                        type="password"
+                        value={password}
+                        onChange={e => setPassword(e.target.value)}
+                        name={'password'}
+                        placeholder={'Password'}
+                    />
+
+                    <input type="submit" value={'Submit'} onClick={login}/>
+                    <input type="submit" value={'Reset Password'} onClick={reset}/>
+                </form>
+        }
+    </div>
 }
 
 export default Login;
