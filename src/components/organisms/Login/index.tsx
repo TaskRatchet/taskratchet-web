@@ -89,7 +89,8 @@ const Login = (props: LoginProps) => {
     }
 
     useEffect(() => {
-        console.log('state change');
+        if (!state.changed) return;
+
         state.actions.forEach(action => {
             console.log(action.type);
             if (action.type in actionHandlers) {
