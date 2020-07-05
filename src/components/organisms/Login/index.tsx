@@ -2,9 +2,10 @@ import React, {useEffect, useState} from 'react';
 import Cookies from 'universal-cookie';
 import Api from '../../../classes/Api';
 import Toaster from '../../../classes/Toaster';
-import {createMachine, interpret} from 'xstate';
+import {createMachine} from 'xstate';
 import './style.css'
 import {useMachine} from '@xstate/react';
+import Input from "../../molecules/Input";
 
 const cookies = new Cookies();
 
@@ -17,7 +18,7 @@ const loginMachine = createMachine(
             idle: {
                 on: {
                     LOGIN: 'validatingLogin',
-                    RESET: 'validatingReset'
+                    RESET: 'validatingReset',
                 }
             },
             validatingLogin: {
@@ -92,7 +93,6 @@ const Login = (props: LoginProps) => {
         if (!state.changed) return;
 
         state.actions.forEach(action => {
-            console.log(action.type);
             if (action.type in actionHandlers) {
                 actionHandlers[action.type]();
             }
@@ -162,20 +162,20 @@ const Login = (props: LoginProps) => {
                 <p>You are logged in as {props.session.email}</p>
                 :
                 <form>
-                    <input
-                        type="email"
+                    <Input
+                        id={'email'}
+                        type={'email'}
                         value={email}
                         onChange={e => setEmail(e.target.value)}
-                        name={'email'}
-                        placeholder={'Email'}
+                        label={'Email'}
                     />
 
-                    <input
-                        type="password"
+                    <Input
+                        id={'password'}
+                        type={'password'}
                         value={password}
                         onChange={e => setPassword(e.target.value)}
-                        name={'password'}
-                        placeholder={'Password'}
+                        label={'Password'}
                     />
 
                     <input type="submit" value={'Submit'} onClick={e => {
