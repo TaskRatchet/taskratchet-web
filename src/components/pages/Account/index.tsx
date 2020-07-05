@@ -4,7 +4,8 @@ import './style.css'
 import Toaster from "../../../classes/Toaster";
 import {useLocation} from "react-router-dom"
 import queryString from 'query-string'
-import {isProduction} from "./../../../tr_constants"
+import {isProduction} from "../../../tr_constants"
+import Input from "../../molecules/Input";
 
 interface Card {
     brand: string,
@@ -238,31 +239,28 @@ const Account = (props: AccountProps) => {
         <h2>Reset Password</h2>
 
         <form onSubmit={savePassword}>
-            <label htmlFor="old_password">Old Password</label>
-            <input
-                type="password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
+            <Input
                 id={'old_password'}
-                name={'old_password'}
+                label={"Old Password"}
+                onChange={e => setOldPassword(e.target.value)}
+                value={oldPassword}
+                type={"password"}
             />
 
-            <label htmlFor="password">New Password</label>
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+            <Input
                 id={'password'}
-                name={'password'}
+                label={'New Password'}
+                onChange={e => setPassword(e.target.value)}
+                value={password}
+                type={'password'}
             />
 
-            <label htmlFor="password2">Retype Password</label>
-            <input
-                type="password"
-                value={password2}
-                onChange={(e) => setPassword2(e.target.value)}
+            <Input
                 id={'password2'}
-                name={'password2'}
+                label={'Retype Password'}
+                onChange={e => setPassword2(e.target.value)}
+                value={password2}
+                type={'password'}
             />
 
             <input type="submit" value={'Save'}/>
