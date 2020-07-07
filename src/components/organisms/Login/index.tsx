@@ -38,45 +38,41 @@ const loginMachine = createMachine(
                         {target: 'resetting', cond: 'isResetValid'},
                         {target: 'idle'}
                     ],
-                    EMAIL: {
-                        actions: assign({
-                            'email': (ctx: any, e: any): string => e.value
-                        })
-                    } as any,
-                    PASSWORD: {
-                        actions: assign({
-                            'password': (ctx: any, e: any): string => e.value
-                        })
-                    } as any,
+                    EMAIL: {actions: 'setEmail'},
+                    PASSWORD: {actions: 'setPassword'},
                 }
             },
             authenticating: {
                 invoke: {
                     id: 'login',
-                    src: (ctx: any, e) => api.login(ctx.email, ctx.password),
+                    src: 'loginService',
                     onDone: {
                         target: 'idle',
-                        actions: assign({
-                            requestError: (ctx: any, e) => (!e.data) ? 'Login failed' : ''
-                        })
+                        actions: 'storeLoginResponse'
                     },
                 }
             },
             resetting: {
                 invoke: {
                     id: 'reset',
-                    src: (ctx: any, e) => api.requestResetEmail(ctx.email),
+                    src: 'resetService',
                     onDone: {
                         target: 'idle',
-                        actions: assign({
-                            requestError: (ctx: any, e) => (!e.data.ok) ? 'Reset failed' : `Instructions sent to ${ctx.email}`
-                        })
+                        actions: 'storeResetResponse'
                     }
                 }
             },
         }
     },
     {
+        services: {
+            loginService: (ctx: LoginContext, e: any) => api.login(ctx.email, ctx.password),
+            resetService: (ctx: LoginContext, e: any) => api.requestResetEmail(ctx.email),
+        },
+        guards: {
+            isLoginValid: (context: LoginContext) => !!context.email && !!context.password,
+            isResetValid: (context: LoginContext) => !!context.email,
+        },
         actions: {
             validateForm: assign((context: LoginContext, event) => {
                 const shouldValidate = ['LOGIN', 'RESET'].includes(event.type),
@@ -96,11 +92,19 @@ const loginMachine = createMachine(
                 passwordError: '',
                 requestError: '',
             } as any),
+            setEmail: assign({
+                'email': (ctx: any, e: any): string => e.value
+            } as any),
+            setPassword: assign({
+                'password': (ctx: any, e: any): string => e.value
+            } as any),
+            storeLoginResponse: assign({
+                requestError: (ctx: any, e: any) => (!e.data) ? 'Login failed' : ''
+            } as any),
+            storeResetResponse: assign({
+                requestError: (ctx: any, e: any) => (!e.data.ok) ? 'Reset failed' : `Instructions sent to ${ctx.email}`
+            } as any),
         },
-        guards: {
-            isLoginValid: (context) => !!context.email && !!context.password,
-            isResetValid: (context) => !!context.email,
-        }
     }
 )
 
