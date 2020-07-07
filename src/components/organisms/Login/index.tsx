@@ -1,6 +1,5 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import api from '../../../classes/Api';
-import Toaster from '../../../classes/Toaster';
 import {assign, createMachine} from 'xstate';
 import './style.css'
 import {useMachine} from '@xstate/react';
@@ -64,9 +63,15 @@ const loginMachine = createMachine(
                 }
             },
             resetting: {
-                entry: 'reset',
-                on: {
-                    RESOLVE: 'idle'
+                invoke: {
+                    id: 'reset',
+                    src: (ctx: any, e) => api.requestResetEmail(ctx.email),
+                    onDone: {
+                        target: 'idle',
+                        actions: assign({
+                            requestError: (ctx: any, e) => (!e.data.ok) ? 'Reset failed' : `Instructions sent to ${ctx.email}`
+                        })
+                    }
                 }
             },
         }
@@ -91,26 +96,6 @@ const loginMachine = createMachine(
                 passwordError: '',
                 requestError: '',
             } as any),
-            // login: assign((context: LoginContext, event) => {
-            //     // async function getResponse() {
-            //     //     return await api.login(context.email, context.password)
-            //     // }
-            //     // const response = getResponse();
-            //     //
-            //     // response.text().then(handleLoginResponse);
-            //     //
-            //     // if response.ok return {}
-            //     //
-            //     // return {
-            //     //     requestError: 'Login failed'
-            //     // }
-            //
-            //     return {
-            //         requestError: api.login(context.email, context.password)
-            //             .then((res: any) => res.ok ? '' : 'Login failed')
-            //     }
-            // }),
-            // reset: assign((context: LoginContext, event) => {}),
         },
         guards: {
             isLoginValid: (context) => !!context.email && !!context.password,
@@ -120,46 +105,8 @@ const loginMachine = createMachine(
 )
 
 const Login = () => {
-    const [state, send] = useMachine(loginMachine);
-
-    // console.log({
-    //     value: state.value,
-    //     actions: state.actions,
-    //     context: state.context
-    // })
-
-    const toaster: Toaster = new Toaster();
-
-    const session = api.getSession();
-
-    const actionHandlers: { [key: string]: () => void } = {
-        // "login": () => login(),
-        "reset": () => reset(),
-    }
-
-    useEffect(() => {
-        if (!state.changed) return;
-
-        state.actions.forEach(action => {
-            if (action.type in actionHandlers) {
-                actionHandlers[action.type]();
-            }
-        })
-    }, [state])
-
-    const reset = () => {
-        api.requestResetEmail(state.context.email)
-            .then((res: any) => {
-                if (res.ok) {
-                    send('SUCCESS')
-                    toaster.send('Instructions sent to ' + state.context.email);
-                } else {
-                    send('ERROR')
-                    toaster.send('Reset request failed');
-                    res.text().then((t: string) => console.log(t))
-                }
-            })
-    };
+    const [state, send] = useMachine(loginMachine),
+        session = api.getSession();
 
     const isLoading = () => {
         return state.matches('authenticating') || state.matches('resetting');
