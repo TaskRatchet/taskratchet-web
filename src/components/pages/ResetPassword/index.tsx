@@ -1,9 +1,8 @@
 import React, {useState} from 'react';
-import Api from '../../../classes/Api';
+import api from '../../../classes/Api';
 import {useLocation} from 'react-router-dom';
 
 interface ResetPasswordProps {
-    api: Api
 }
 
 function ResetPassword(props: ResetPasswordProps) {
@@ -25,7 +24,7 @@ function ResetPassword(props: ResetPasswordProps) {
 
         if (!validateForm()) return;
 
-        props.api.resetPassword(token, password)
+        api.resetPassword(token, password)
             .then((res: any) => {
                 if (res.ok) {
                     pushMessage('Password reset successfully');

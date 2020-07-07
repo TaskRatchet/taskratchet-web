@@ -1,19 +1,20 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import './style.css'
+import api from "../../../classes/Api";
 
 interface SessionWidgetProps {
-    session: Session | null,
-    logOutHandler: () => void
 }
 
 const SessionWidget = (props: SessionWidgetProps) => {
+    const session = api.useSession();
+
     return <div className={'molecule-sessionWidget'}>
         {
-            props.session ?
+            session ?
                 <div>
-                    <span>{props.session.email}</span>
-                    <button className={'link'} onClick={props.logOutHandler}>Logout</button>
+                    <span>{session.email}</span>
+                    <button className={'link'} onClick={() => api.logout()}>Logout</button>
                     <Link to={'/account'}>Account</Link>
                 </div>
                 :

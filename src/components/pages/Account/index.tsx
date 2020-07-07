@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Api from '../../../classes/Api';
+import api from '../../../classes/Api';
 import './style.css'
 import Toaster from "../../../classes/Toaster";
 import {useLocation} from "react-router-dom"
@@ -17,7 +17,6 @@ interface CheckoutSession {
 }
 
 interface AccountProps {
-    api: Api
 }
 
 const Account = (props: AccountProps) => {
@@ -62,7 +61,7 @@ const Account = (props: AccountProps) => {
 
         console.log('New integration found, updating me')
 
-        props.api.updateMe({
+        api.updateMe({
             beeminder_token: params.access_token,
             beeminder_user: params.username
         }).then((res: any) => {
@@ -72,19 +71,19 @@ const Account = (props: AccountProps) => {
     }
 
     const loadCheckoutSession = () => {
-        props.api.getCheckoutSession()
+        api.getCheckoutSession()
             .then((res: any) => res.json())
             .then(setCheckoutSession)
     };
 
     const populateTimezones = () => {
-        props.api.getTimezones()
+        api.getTimezones()
             .then((res: any) => res.json())
             .then(setTimezones);
     };
 
     const loadUser = () => {
-        props.api.getMe()
+        api.getMe()
             .then((res: any) => res.json())
             .then(loadResponseData)
     };
@@ -107,7 +106,7 @@ const Account = (props: AccountProps) => {
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        props.api.updateMe({
+        api.updateMe({
             name: prepareValue(name),
             email: prepareValue(email),
             timezone: prepareValue(timezone)
@@ -124,7 +123,7 @@ const Account = (props: AccountProps) => {
     const saveGoalName = (event: any) => {
         event.preventDefault();
 
-        props.api.updateMe({
+        api.updateMe({
             beeminder_goal_new_tasks: bmGoal
         }).then((res: any) => {
             toaster.send((res.ok) ? 'Beeminder goal saved' : 'Something went wrong');
@@ -137,7 +136,7 @@ const Account = (props: AccountProps) => {
 
         if (!isPasswordFormValid()) return;
 
-        props.api.updatePassword(oldPassword, password)
+        api.updatePassword(oldPassword, password)
             .then((res: any) => {
                 toaster.send((res.ok) ? 'Password saved' : 'Something went wrong');
             });
@@ -172,7 +171,7 @@ const Account = (props: AccountProps) => {
             return;
         }
 
-        props.api.updateCheckoutSessionId(sessionId);
+        api.updateCheckoutSessionId(sessionId);
 
         redirect();
     };

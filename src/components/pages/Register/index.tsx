@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Api from '../../../classes/Api';
+import api from '../../../classes/Api';
 import Toaster from "../../../classes/Toaster";
 
 interface CheckoutSession {
@@ -7,7 +7,6 @@ interface CheckoutSession {
 }
 
 interface RegisterProps {
-    api: Api
 }
 
 const Register = (props: RegisterProps) => {
@@ -28,7 +27,7 @@ const Register = (props: RegisterProps) => {
     }, []);
 
     const populateTimezones = () => {
-        props.api.getTimezones()
+        api.getTimezones()
             .then((res: any) => res.json())
             .then((data) => {
                 setTimezones(data);
@@ -37,7 +36,7 @@ const Register = (props: RegisterProps) => {
     };
 
     const loadCheckoutSession = () => {
-        props.api.getCheckoutSession()
+        api.getCheckoutSession()
             .then((res: any) => res.json())
             .then((session) => setCheckoutSession(session));
     };
@@ -53,7 +52,7 @@ const Register = (props: RegisterProps) => {
 
         console.log('posting registration');
 
-        props.api.register(
+        api.register(
             name,
             email,
             password,

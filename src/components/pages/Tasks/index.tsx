@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import Api from '../../../classes/Api';
+import api from '../../../classes/Api';
 import './style.css'
 import Task from '../../molecules/Task'
 import Toaster from "../../../classes/Toaster";
@@ -7,7 +7,6 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.min.css'
 
 interface TasksProps {
-    api: Api
 }
 
 const Tasks = (props: TasksProps) => {
@@ -31,7 +30,7 @@ const Tasks = (props: TasksProps) => {
     useEffect(() => updateTasks(), []);
 
     const updateTasks = () => {
-        props.api.getTasks()
+        api.getTasks()
             .then((res: any) => res.json())
             .then(setTasks)
     };
@@ -67,7 +66,7 @@ const Tasks = (props: TasksProps) => {
 
         setNewTask('');
 
-        props.api.addTask(newTask, dueString, newCents).then((res: any) => {
+        api.addTask(newTask, dueString, newCents).then((res: any) => {
             toaster.send((res.ok) ? 'Task added' : 'Failed to add task');
             updateTasks();
         });
@@ -85,7 +84,7 @@ const Tasks = (props: TasksProps) => {
             });
         });
 
-        props.api.setComplete(task.id, !task.complete).then((res: any) => {
+        api.setComplete(task.id, !task.complete).then((res: any) => {
             toaster.send(res.ok ? `Successfully marked task ${change}`
                 : `Failed to mark task ${change}`);
             updateTasks()

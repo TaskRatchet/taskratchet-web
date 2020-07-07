@@ -1,10 +1,18 @@
 .molecule-input {
+  margin-bottom: .5em;
   label, input {
     display: block;
   }
   label {
-    margin-bottom: .25em;
     font-size: .75em;
     font-weight: bold;
+  }
+  &.molecule-input__hasError {
+    padding: .25em;
+    border: 1px solid red;
+  }
+  .molecule-input__error {
+    font-weight: bold;
+    color: darkred;
   }
 }
