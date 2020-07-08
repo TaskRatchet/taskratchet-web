@@ -29,6 +29,15 @@ a, .link {
   text-decoration: underline;
 }
 
+.alert {
+  padding: .5em;
+  margin-bottom: 1em;
+  &.info {
+    background-color: #e1effd;
+    border-radius: 4px;
+  }
+}
+
 .loading {
   position: relative;
   &:before {

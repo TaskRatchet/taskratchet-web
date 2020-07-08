@@ -10,7 +10,7 @@ interface LoginContext {
     password: string,
     emailError: string,
     passwordError: string,
-    requestError: string
+    message: string
 }
 
 // https://xstate.js.org/viz/
@@ -23,12 +23,12 @@ const loginMachine = createMachine(
             password: '',
             emailError: '',
             passwordError: '',
-            requestError: '',
+            message: '',
         } as LoginContext,
         states: {
             idle: {
                 entry: 'validateForm',
-                exit: 'clearErrors',
+                exit: 'clearMessages',
                 on: {
                     LOGIN: [
                         {target: 'authenticating', cond: 'isLoginValid'},
@@ -87,10 +87,10 @@ const loginMachine = createMachine(
                     passwordError: isPasswordMissing ? 'Password required' : ''
                 }
             }),
-            clearErrors: assign({
+            clearMessages: assign({
                 emailError: '',
                 passwordError: '',
-                requestError: '',
+                message: '',
             } as any),
             setEmail: assign({
                 'email': (ctx: any, e: any): string => e.value
@@ -99,10 +99,10 @@ const loginMachine = createMachine(
                 'password': (ctx: any, e: any): string => e.value
             } as any),
             storeLoginResponse: assign({
-                requestError: (ctx: any, e: any) => (!e.data) ? 'Login failed' : ''
+                message: (ctx: any, e: any) => (!e.data) ? 'Login failed' : ''
             } as any),
             storeResetResponse: assign({
-                requestError: (ctx: any, e: any) => (!e.data.ok) ? 'Reset failed' : `Instructions sent to ${ctx.email}`
+                message: (ctx: any, e: any) => (!e.data.ok) ? 'Reset failed' : `Instructions sent to ${ctx.email}`
             } as any),
         },
     }
@@ -123,8 +123,8 @@ const Login = () => {
                 :
                 <form>
                     {
-                        state.context.requestError ?
-                            <div className={'organism-login__error'}>{state.context.requestError}</div> : ''
+                        state.context.message ?
+                            <div className={'organism-login__message alert info'}>{state.context.message}</div> : ''
                     }
 
                     <Input
