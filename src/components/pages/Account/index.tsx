@@ -46,51 +46,45 @@ const Account = (props: AccountProps) => {
     const toaster: Toaster = new Toaster();
 
     useEffect(() => {
+        const populateTimezones = () => {
+            api.getTimezones()
+                .then((res: any) => res.json())
+                .then(setTimezones);
+        };
+
+        const loadUser = () => {
+            api.getMe()
+                .then((res: any) => res.json())
+                .then(loadResponseData)
+        };
+
+        const loadCheckoutSession = () => {
+            api.getCheckoutSession()
+                .then((res: any) => res.json())
+                .then(setCheckoutSession)
+        };
+
+        const saveNewBeeminderIntegration = () => {
+            const params: any = queryString.parse(location.search)
+
+            if (!params.access_token || !params.username) return;
+
+            api.updateMe({
+                beeminder_token: params.access_token,
+                beeminder_user: params.username
+            }).then((res: any) => {
+                toaster.send((res.ok) ? 'Beeminder integration saved' : 'Something went wrong');
+                return res.json();
+            }).then(loadResponseData);
+        }
+
         populateTimezones();
         loadUser();
         loadCheckoutSession();
         saveNewBeeminderIntegration();
     }, []);
 
-    const saveNewBeeminderIntegration = () => {
-        console.log('Checking for new Beeminder integration')
-
-        const params: any = queryString.parse(location.search)
-
-        if (!params.access_token || !params.username) return;
-
-        console.log('New integration found, updating me')
-
-        api.updateMe({
-            beeminder_token: params.access_token,
-            beeminder_user: params.username
-        }).then((res: any) => {
-            toaster.send((res.ok) ? 'Beeminder integration saved' : 'Something went wrong');
-            return res.json();
-        }).then(loadResponseData);
-    }
-
-    const loadCheckoutSession = () => {
-        api.getCheckoutSession()
-            .then((res: any) => res.json())
-            .then(setCheckoutSession)
-    };
-
-    const populateTimezones = () => {
-        api.getTimezones()
-            .then((res: any) => res.json())
-            .then(setTimezones);
-    };
-
-    const loadUser = () => {
-        api.getMe()
-            .then((res: any) => res.json())
-            .then(loadResponseData)
-    };
-
     const loadResponseData = (data: any) => {
-        console.log(data);
-
         setName(data['name']);
         setEmail(data['email']);
         setTimezone(data['timezone']);
