@@ -28,3 +28,36 @@ a, .link {
   padding: 0;
   text-decoration: underline;
 }
+
+.alert {
+  padding: .5em;
+  margin-bottom: 1em;
+  &.info {
+    background-color: #e1effd;
+    border-radius: 4px;
+  }
+}
+
+.loading {
+  position: relative;
+  &:before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255,255,255,.8);
+  }
+  &:after {
+    content: "loading ...";
+    text-align: center;
+    display: block;
+    position: absolute;
+    top: calc(50% - .5em);
+    left: 0;
+    width: 100%;
+    height: 1em;
+  }
+}

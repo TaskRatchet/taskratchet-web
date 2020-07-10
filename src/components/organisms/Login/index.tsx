@@ -1,143 +1,167 @@
 import React from 'react';
-import Cookies from 'universal-cookie';
-import Api from '../../../classes/Api';
-import Toaster from '../../../classes/Toaster';
+import api from '../../../classes/Api';
+import {assign, createMachine} from 'xstate';
 import './style.css'
+import {useMachine} from '@xstate/react';
+import Input from "../../molecules/Input";
 
-const cookies = new Cookies();
-
-interface LoginProps {
-    onLogin: () => void,
-    session: Session | null,
-    api: Api
-}
-
-interface LoginState {
+interface LoginContext {
     email: string,
-    password: string
+    password: string,
+    emailError: string,
+    passwordError: string,
+    message: string
 }
 
-class Login extends React.Component<LoginProps, LoginState> {
-    state: LoginState = {
-        email: '',
-        password: ''
-    };
-
-    toaster: Toaster = new Toaster();
-
-    login = (event: any) => {
-        event.preventDefault();
-
-        const passes = this.validateLoginForm();
-
-        if (!passes) return;
-
-        this.toaster.send('Logging in...');
-
-        this.props.api.login(this.state.email, this.state.password)
-            .then((res: any) => {
-                if (res.status === 403) {
-                    this.pushMessage('Login failed');
-                } else {
-                    this.pushMessage('Login successful');
-                    res.text().then(this.handleLogin);
+// https://xstate.js.org/viz/
+const loginMachine = createMachine(
+    {
+        id: 'login',
+        initial: 'idle',
+        context: {
+            email: '',
+            password: '',
+            emailError: '',
+            passwordError: '',
+            message: '',
+        } as LoginContext,
+        states: {
+            idle: {
+                entry: 'validateForm',
+                exit: 'clearMessages',
+                on: {
+                    LOGIN: [
+                        {target: 'authenticating', cond: 'isLoginValid'},
+                        {target: 'idle'}
+                    ],
+                    RESET: [
+                        {target: 'resetting', cond: 'isResetValid'},
+                        {target: 'idle'}
+                    ],
+                    EMAIL: {actions: 'setEmail'},
+                    PASSWORD: {actions: 'setPassword'},
                 }
-            })
-    };
-
-    handleLogin = (token: string) => {
-        cookies.set('tr_session', {
-            'token': token,
-            'email': this.state.email
-        }, {
-            'sameSite': 'lax'
-        });
-        this.props.onLogin();
-    };
-
-    reset = (event: any) => {
-        event.preventDefault();
-
-        const passes = this.validateLoginForm(false);
-
-        if (!passes) return;
-
-        this.props.api.requestResetEmail(this.state.email)
-            .then((res: any) => {
-                if (res.ok) {
-                    this.pushMessage('Instructions sent to ' + this.state.email);
-                } else {
-                    this.pushMessage('Reset request failed');
-                    res.text().then((t: string) => console.log(t))
+            },
+            authenticating: {
+                invoke: {
+                    id: 'login',
+                    src: 'loginService',
+                    onDone: {
+                        target: 'idle',
+                        actions: 'storeLoginResponse'
+                    },
                 }
-            })
-    };
-
-    validateLoginForm = (passwordRequired = true) => {
-        let passes = true;
-
-        if (!this.state.email) {
-            this.pushMessage('Email required');
-            passes = false;
+            },
+            resetting: {
+                invoke: {
+                    id: 'reset',
+                    src: 'resetService',
+                    onDone: {
+                        target: 'idle',
+                        actions: 'storeResetResponse'
+                    }
+                }
+            },
         }
+    },
+    {
+        services: {
+            loginService: (ctx: LoginContext, e: any) => api.login(ctx.email, ctx.password),
+            resetService: (ctx: LoginContext, e: any) => api.requestResetEmail(ctx.email),
+        },
+        guards: {
+            isLoginValid: (context: LoginContext) => !!context.email && !!context.password,
+            isResetValid: (context: LoginContext) => !!context.email,
+        },
+        actions: {
+            validateForm: assign((context: LoginContext, event) => {
+                const shouldValidate = ['LOGIN', 'RESET'].includes(event.type),
+                    isEmailMissing = !context.email,
+                    isLoginEvent = event.type === 'LOGIN',
+                    isPasswordMissing = isLoginEvent && !context.password;
 
-        if (passwordRequired && !this.state.password) {
-            this.pushMessage('Password required');
-            passes = false;
-        }
+                if (!shouldValidate) return {}
 
-        return passes;
-    };
-
-    setLoginEmail = (event: any) => {
-        const t = event.target;
-        this.setState((prev: LoginState) => {
-            prev.email = t.value;
-            return prev;
-        })
-    };
-
-    setLoginPassword = (event: any) => {
-        const t = event.target;
-        this.setState((prev: LoginState) => {
-            prev.password = t.value;
-            return prev;
-        })
-    };
-
-    pushMessage = (msg: string) => {
-        this.toaster.send(msg)
-    };
-
-    render() {
-        return <div className={'organism-login'}>
-            {
-                this.props.session ?
-                    <p>You are logged in as {this.props.session.email}</p>
-                    :
-                    <form>
-                        <input
-                            type="email"
-                            value={this.state.email}
-                            onChange={this.setLoginEmail}
-                            name={'email'}
-                            placeholder={'Email'}
-                        />
-
-                        <input
-                            type="password"
-                            value={this.state.password}
-                            onChange={this.setLoginPassword}
-                            name={'password'}
-                            placeholder={'Password'}
-                        />
-
-                        <input type="submit" value={'Submit'} onClick={this.login} />
-                        <input type="submit" value={'Reset Password'} onClick={this.reset} />
-                    </form>
-            }
-        </div>
+                return {
+                    emailError: isEmailMissing ? 'Email required' : '',
+                    passwordError: isPasswordMissing ? 'Password required' : ''
+                }
+            }),
+            clearMessages: assign({
+                emailError: '',
+                passwordError: '',
+                message: '',
+            } as any),
+            setEmail: assign({
+                'email': (ctx: any, e: any): string => e.value
+            } as any),
+            setPassword: assign({
+                'password': (ctx: any, e: any): string => e.value
+            } as any),
+            storeLoginResponse: assign({
+                message: (ctx: any, e: any) => (!e.data) ? 'Login failed' : ''
+            } as any),
+            storeResetResponse: assign({
+                message: (ctx: any, e: any) => (!e.data.ok) ? 'Reset failed' : `Instructions sent to ${ctx.email}`
+            } as any),
+        },
     }
+)
+
+const Login = () => {
+    const [state, send] = useMachine(loginMachine),
+        session = api.getSession();
+
+    const isLoading = () => {
+        return state.matches('authenticating') || state.matches('resetting');
+    }
+
+    return <div className={`organism-login ${isLoading() ? 'loading' : ''}`}>
+        {
+            session ?
+                <p>You are logged in as {session.email}</p>
+                :
+                <form>
+                    {
+                        state.context.message ?
+                            <div className={'organism-login__message alert info'}>{state.context.message}</div> : ''
+                    }
+
+                    <Input
+                        id={'email'}
+                        type={'email'}
+                        value={state.context.email}
+                        onChange={e => send({
+                            type: 'EMAIL',
+                            value: e.target.value
+                        } as any)}
+                        label={'Email'}
+                        error={state.context.emailError}
+                    />
+
+                    <Input
+                        id={'password'}
+                        type={'password'}
+                        value={state.context.password}
+                        onChange={e => send({
+                            type: 'PASSWORD',
+                            value: e.target.value
+                        } as any)}
+                        label={'Password'}
+                        error={state.context.passwordError}
+                    />
+
+                    <input type="submit" value={'Submit'} onClick={e => {
+                        e.preventDefault();
+                        send('LOGIN');
+                    }}/>
+                    <input type="submit" value={'Reset Password'} onClick={e => {
+                        e.preventDefault();
+                        send('RESET');
+                    }}/>
+                </form>
+        }
+    </div>
 }
 
 export default Login;

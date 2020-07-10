@@ -1,10 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import Api from '../../../classes/Api';
+import api from '../../../classes/Api';
 import './style.css'
 import Toaster from "../../../classes/Toaster";
-import {useLocation} from "react-router-dom"
 import queryString from 'query-string'
-import {isProduction} from "./../../../tr_constants"
+import {isProduction} from "../../../tr_constants"
+import Input from "../../molecules/Input";
+
+const toaster: Toaster = new Toaster(),
+    params: any = queryString.parse(window.location.search);
 
 interface Card {
     brand: string,
@@ -16,7 +19,6 @@ interface CheckoutSession {
 }
 
 interface AccountProps {
-    api: Api
 }
 
 const Account = (props: AccountProps) => {
@@ -32,8 +34,6 @@ const Account = (props: AccountProps) => {
         [bmUser, setBmUser] = useState<string>(''),
         [bmGoal, setBmGoal] = useState<string>('');
 
-    const location = useLocation<any>();
-
     const beeminderClientId: string = (isProduction)
         ? "1w70sy12t1106s9ptod11ex21"
         : "29k46vimhtdeptt616tuhmp2r",
@@ -43,54 +43,44 @@ const Account = (props: AccountProps) => {
         beeminderAuthUrl: string = `https://www.beeminder.com/apps/authorize?client_id=${beeminderClientId}` +
             `&redirect_uri=${encodeURIComponent(beeminderRedirect)}&response_type=token`
 
-    const toaster: Toaster = new Toaster();
-
     useEffect(() => {
+        const populateTimezones = () => {
+            api.getTimezones()
+                .then((res: any) => res.json())
+                .then(setTimezones);
+        };
+
+        const loadUser = () => {
+            api.getMe()
+                .then((res: any) => res.json())
+                .then(loadResponseData)
+        };
+
+        const loadCheckoutSession = () => {
+            api.getCheckoutSession()
+                .then((res: any) => res.json())
+                .then(setCheckoutSession)
+        };
+
+        const saveNewBeeminderIntegration = () => {
+            if (!params.access_token || !params.username) return;
+
+            api.updateMe({
+                beeminder_token: params.access_token,
+                beeminder_user: params.username
+            }).then((res: any) => {
+                toaster.send((res.ok) ? 'Beeminder integration saved' : 'Something went wrong');
+                return res.json();
+            }).then(loadResponseData);
+        }
+
         populateTimezones();
         loadUser();
         loadCheckoutSession();
         saveNewBeeminderIntegration();
     }, []);
 
-    const saveNewBeeminderIntegration = () => {
-        console.log('Checking for new Beeminder integration')
-
-        const params: any = queryString.parse(location.search)
-
-        if (!params.access_token || !params.username) return;
-
-        console.log('New integration found, updating me')
-
-        props.api.updateMe({
-            beeminder_token: params.access_token,
-            beeminder_user: params.username
-        }).then((res: any) => {
-            toaster.send((res.ok) ? 'Beeminder integration saved' : 'Something went wrong');
-            return res.json();
-        }).then(loadResponseData);
-    }
-
-    const loadCheckoutSession = () => {
-        props.api.getCheckoutSession()
-            .then((res: any) => res.json())
-            .then(setCheckoutSession)
-    };
-
-    const populateTimezones = () => {
-        props.api.getTimezones()
-            .then((res: any) => res.json())
-            .then(setTimezones);
-    };
-
-    const loadUser = () => {
-        props.api.getMe()
-            .then((res: any) => res.json())
-            .then(loadResponseData)
-    };
-
     const loadResponseData = (data: any) => {
-        console.log(data);
-
         setName(data['name']);
         setEmail(data['email']);
         setTimezone(data['timezone']);
@@ -106,14 +96,21 @@ const Account = (props: AccountProps) => {
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        props.api.updateMe({
+        api.updateMe({
             name: prepareValue(name),
             email: prepareValue(email),
             timezone: prepareValue(timezone)
-        }).then((res: any) => {
-            toaster.send((res.ok) ? 'Changes saved' : 'Something went wrong');
-            return res.json();
-        }).then(loadResponseData);
+        }).then((res: Response) => {
+            if (res.ok) {
+                toaster.send('Changes saved');
+
+                res.json().then(loadResponseData)
+            } else {
+                res.text().then((error: string) => {
+                    toaster.send(`Something went wrong: ${error}`);
+                })
+            }
+        })
     };
 
     const prepareValue = (value: string) => {
@@ -123,7 +120,7 @@ const Account = (props: AccountProps) => {
     const saveGoalName = (event: any) => {
         event.preventDefault();
 
-        props.api.updateMe({
+        api.updateMe({
             beeminder_goal_new_tasks: bmGoal
         }).then((res: any) => {
             toaster.send((res.ok) ? 'Beeminder goal saved' : 'Something went wrong');
@@ -136,7 +133,7 @@ const Account = (props: AccountProps) => {
 
         if (!isPasswordFormValid()) return;
 
-        props.api.updatePassword(oldPassword, password)
+        api.updatePassword(oldPassword, password)
             .then((res: any) => {
                 toaster.send((res.ok) ? 'Password saved' : 'Something went wrong');
             });
@@ -171,7 +168,7 @@ const Account = (props: AccountProps) => {
             return;
         }
 
-        props.api.updateCheckoutSessionId(sessionId);
+        api.updateCheckoutSessionId(sessionId);
 
         redirect();
     };
@@ -238,31 +235,28 @@ const Account = (props: AccountProps) => {
         <h2>Reset Password</h2>
 
         <form onSubmit={savePassword}>
-            <label htmlFor="old_password">Old Password</label>
-            <input
-                type="password"
-                value={oldPassword}
-                onChange={(e) => setOldPassword(e.target.value)}
+            <Input
                 id={'old_password'}
-                name={'old_password'}
+                label={"Old Password"}
+                onChange={e => setOldPassword(e.target.value)}
+                value={oldPassword}
+                type={"password"}
             />
 
-            <label htmlFor="password">New Password</label>
-            <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+            <Input
                 id={'password'}
-                name={'password'}
+                label={'New Password'}
+                onChange={e => setPassword(e.target.value)}
+                value={password}
+                type={'password'}
             />
 
-            <label htmlFor="password2">Retype Password</label>
-            <input
-                type="password"
-                value={password2}
-                onChange={(e) => setPassword2(e.target.value)}
+            <Input
                 id={'password2'}
-                name={'password2'}
+                label={'Retype Password'}
+                onChange={e => setPassword2(e.target.value)}
+                value={password2}
+                type={'password'}
             />
 
             <input type="submit" value={'Save'}/>

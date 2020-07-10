@@ -1,13 +1,14 @@
 import Cookies from 'universal-cookie';
 import {isProduction, isStaging} from "../tr_constants"
+import {useEffect, useState} from "react";
 
 const cookies = new Cookies();
 
 class Api {
-    logOutHandler: null | (() => void) = null;
+    sessionSubs: Array<CallableFunction>
 
-    constructor(logOutHandler: () => void) {
-        this.logOutHandler = logOutHandler;
+    constructor() {
+        this.sessionSubs = [];
     }
 
     login(email: string, password: string) {
@@ -19,7 +20,64 @@ class Api {
                 'email': email,
                 'password': password,
             }
-        );
+        ).then((res: any) => {
+            if (!res.ok) return false;
+
+            res.text().then((token: string) => this._handleLoginResponse(email, token));
+
+            return true;
+        });
+    }
+
+    _handleLoginResponse(email: string, token: string) {
+        cookies.set('tr_session', {
+            'token': token,
+            'email': email
+        }, {
+            'sameSite': 'lax'
+        });
+
+        this.publishSession();
+    }
+
+    logout() {
+        cookies.remove('tr_session');
+
+        this.publishSession();
+    }
+
+    publishSession() {
+        const session = this.getSession();
+
+        this.sessionSubs.forEach(x => x(session));
+    }
+
+    getSession() {
+        return cookies.get('tr_session');
+    }
+
+    subscribeToSession(callback: CallableFunction) {
+        this.sessionSubs.push(callback);
+    }
+
+    unsubscribeFromSession(callback: CallableFunction) {
+        this.sessionSubs = this.sessionSubs.filter(x => x !== callback)
+    }
+
+    useSession() {
+        const [session, setSession] = useState<Session>(this.getSession());
+
+        useEffect(() => {
+            function handleUpdate(session: Session) {
+                setSession(session);
+            }
+
+            this.subscribeToSession(handleUpdate)
+
+            return () => this.unsubscribeFromSession(handleUpdate)
+        }, [])
+
+        return session;
     }
 
     requestResetEmail(email: string) {
@@ -92,7 +150,7 @@ class Api {
             beeminder_user?: string | null,
             beeminder_goal_new_tasks?: string | null,
         }
-    ) {
+    ): Promise<Response> {
         let data: any = {};
 
         if (name !== null) {
@@ -189,7 +247,7 @@ class Api {
         protected_: boolean = false,
         method: string = 'GET',
         data: any = null,
-    ) => {
+    ): Promise<Response> => {
         const session = cookies.get('tr_session'),
             route_ = this._trim(route, '/'),
             base = this._get_base();
@@ -209,8 +267,8 @@ class Api {
         });
 
         response.then((res: any) => {
-            if (res.status === 403 && this.logOutHandler) {
-                this.logOutHandler();
+            if (res.status === 403) {
+                this.logout();
             }
         });
 
@@ -238,4 +296,6 @@ class Api {
     };
 }
 
-export default Api;
+const api = new Api();
+
+export default api;
