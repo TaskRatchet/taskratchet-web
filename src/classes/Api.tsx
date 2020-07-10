@@ -150,7 +150,7 @@ class Api {
             beeminder_user?: string | null,
             beeminder_goal_new_tasks?: string | null,
         }
-    ) {
+    ): Promise<Response> {
         let data: any = {};
 
         if (name !== null) {
@@ -247,7 +247,7 @@ class Api {
         protected_: boolean = false,
         method: string = 'GET',
         data: any = null,
-    ) => {
+    ): Promise<Response> => {
         const session = cookies.get('tr_session'),
             route_ = this._trim(route, '/'),
             base = this._get_base();

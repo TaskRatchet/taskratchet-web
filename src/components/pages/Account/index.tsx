@@ -2,10 +2,12 @@ import React, {useEffect, useState} from 'react';
 import api from '../../../classes/Api';
 import './style.css'
 import Toaster from "../../../classes/Toaster";
-import {useLocation} from "react-router-dom"
 import queryString from 'query-string'
 import {isProduction} from "../../../tr_constants"
 import Input from "../../molecules/Input";
+
+const toaster: Toaster = new Toaster(),
+    params: any = queryString.parse(window.location.search);
 
 interface Card {
     brand: string,
@@ -32,8 +34,6 @@ const Account = (props: AccountProps) => {
         [bmUser, setBmUser] = useState<string>(''),
         [bmGoal, setBmGoal] = useState<string>('');
 
-    const location = useLocation<any>();
-
     const beeminderClientId: string = (isProduction)
         ? "1w70sy12t1106s9ptod11ex21"
         : "29k46vimhtdeptt616tuhmp2r",
@@ -42,8 +42,6 @@ const Account = (props: AccountProps) => {
             : "https://staging.taskratchet.com/account",
         beeminderAuthUrl: string = `https://www.beeminder.com/apps/authorize?client_id=${beeminderClientId}` +
             `&redirect_uri=${encodeURIComponent(beeminderRedirect)}&response_type=token`
-
-    const toaster: Toaster = new Toaster();
 
     useEffect(() => {
         const populateTimezones = () => {
@@ -65,8 +63,6 @@ const Account = (props: AccountProps) => {
         };
 
         const saveNewBeeminderIntegration = () => {
-            const params: any = queryString.parse(location.search)
-
             if (!params.access_token || !params.username) return;
 
             api.updateMe({
@@ -104,10 +100,17 @@ const Account = (props: AccountProps) => {
             name: prepareValue(name),
             email: prepareValue(email),
             timezone: prepareValue(timezone)
-        }).then((res: any) => {
-            toaster.send((res.ok) ? 'Changes saved' : 'Something went wrong');
-            return res.json();
-        }).then(loadResponseData);
+        }).then((res: Response) => {
+            if (res.ok) {
+                toaster.send('Changes saved');
+
+                res.json().then(loadResponseData)
+            } else {
+                res.text().then((error: string) => {
+                    toaster.send(`Something went wrong: ${error}`);
+                })
+            }
+        })
     };
 
     const prepareValue = (value: string) => {
