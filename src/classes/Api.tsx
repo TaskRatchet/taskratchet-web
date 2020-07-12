@@ -4,7 +4,7 @@ import {useEffect, useState} from "react";
 
 const cookies = new Cookies();
 
-class Api {
+export class Api {
     sessionSubs: Array<CallableFunction>
 
     constructor() {
