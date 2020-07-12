@@ -3,7 +3,9 @@ import api from '../../../classes/Api';
 import './style.css'
 import {useMachine} from '@xstate/react';
 import Input from "../../molecules/Input";
-import machine from './machine'
+import createLoginMachine from './machine'
+
+const machine = createLoginMachine();
 
 const Login = () => {
     const [state, send] = useMachine(machine),
