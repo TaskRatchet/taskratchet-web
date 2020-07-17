@@ -21,10 +21,6 @@ describe('manage email machine', () => {
         service = createService()
     })
 
-    it('starts in init state', () => {
-        expect(service.state.value).toBe('initial')
-    })
-
     it('gets subs', () => {
         expect(api.getSubs).toBeCalled()
     })
@@ -40,9 +36,7 @@ describe('manage email machine', () => {
             jsonResponse = JSON.stringify(data),
             machine = createManageEmailMachine();
 
-        (api.getSubs as jest.Mock).mockReturnValue(new Promise((resolve, reject) => {
-            resolve(jsonResponse)
-        }))
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse))
 
         interpret(machine).onTransition((state) => {
             if (state.matches('idle')) {
@@ -51,5 +45,11 @@ describe('manage email machine', () => {
         }).start()
 
         expect.assertions(1)
+    })
+
+    it('unsubscribes if list param present', () => {
+        service = createService({t: 'the_token', list: 'the_list'})
+
+        expect(service.state.value).toBe('unsubscribing')
     })
 })

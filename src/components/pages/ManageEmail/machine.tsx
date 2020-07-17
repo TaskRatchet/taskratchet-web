@@ -13,7 +13,7 @@ interface Options {
 }
 
 const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMachine<Context, any, any> => {
-    const {t} = options.queryParams
+    const {t, list} = options.queryParams
     return createMachine({
         id: 'login',
         initial: 'initial',
@@ -22,6 +22,12 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
         },
         states: {
             initial: {
+                always: [
+                    {target: 'unsubscribing', cond: 'wasListProvided'},
+                    {target: 'loading'},
+                ]
+            },
+            loading: {
                 invoke: {
                     src: () => api.getSubs(t),
                     onDone: {
@@ -33,6 +39,12 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
                 }
             },
             idle: {},
+            unsubscribing: {},
+        },
+    }, {
+        services: {},
+        guards: {
+            wasListProvided: (ctx, e) => !!list
         },
     })
 }
