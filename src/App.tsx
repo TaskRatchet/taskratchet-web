@@ -17,6 +17,7 @@ import ResetPassword from "./components/pages/ResetPassword";
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {isProduction} from "./tr_constants"
+import ManageEmail from "./components/pages/ManageEmail";
 
 toast.configure();
 
@@ -72,6 +73,10 @@ const App = () => {
 
                 <Route path={'/reset'}>
                     <ResetPassword />
+                </Route>
+
+                <Route path={'/email'}>
+                    <ManageEmail />
                 </Route>
 
                 <Route path={'/'}>
