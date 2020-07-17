@@ -122,6 +122,17 @@ export class Api {
         );
     }
 
+    getSubs(optionalManageEmailToken: string | undefined) {
+        return this._fetch(
+            'me/subs',
+            false,
+            'GET',
+            {
+                'manage_email_token': optionalManageEmailToken
+            }
+        )
+    }
+
     getTimezones() {
         return this._fetch('timezones')
     }
