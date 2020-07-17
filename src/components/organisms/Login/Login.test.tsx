@@ -1,11 +1,11 @@
 import createLoginMachine, {LoginContext} from './machine'
-import api, {Api} from "../../../classes/Api";
+import api from "../../../classes/Api";
 import {interpret, Interpreter} from "xstate";
 
-let service: Interpreter<LoginContext>, mockApi: Api;
+let service: Interpreter<LoginContext>;
 
 const createService = () => {
-    const machine = createLoginMachine({ api: mockApi });
+    const machine = createLoginMachine({ api: api });
     const service = interpret(machine);
 
     service.start();
@@ -13,21 +13,11 @@ const createService = () => {
     return service;
 }
 
-const createMockApi = () => {
-    const mockApi = api;
-
-    mockApi.login = jest.fn();
-
-    return mockApi
-}
-
 describe('login machine', () => {
     service = createService()
-    mockApi = createMockApi()
 
     beforeEach(() => {
         service = createService()
-        mockApi = createMockApi()
     })
 
     it('tracks email state', () => {
@@ -37,12 +27,12 @@ describe('login machine', () => {
     })
 
     it('sends login request', () => {
-        service.start();
+        api.login = jest.fn();
 
         service.send('EMAIL', {value: 'the_email'})
         service.send('PASSWORD', {value: 'the_password'})
         service.send('LOGIN')
 
-        expect(mockApi.login).toBeCalled()
+        expect(api.login).toBeCalled()
     })
 })

@@ -1,11 +1,11 @@
 import createManageEmailMachine, {Context} from './machine'
-import api, {Api} from "../../../classes/Api";
+import api from "../../../classes/Api";
 import {interpret, Interpreter} from "xstate";
 
-let service: Interpreter<Context>, mockApi: Api;
+let service: Interpreter<Context>;
 
 const createService = () => {
-    const machine = createManageEmailMachine({ api: mockApi });
+    const machine = createManageEmailMachine({ api: api });
     const service = interpret(machine);
 
     service.start();
@@ -13,21 +13,11 @@ const createService = () => {
     return service;
 }
 
-const createMockApi = () => {
-    const mockApi = api;
-
-    mockApi.login = jest.fn();
-
-    return mockApi
-}
-
 describe('login machine', () => {
     service = createService()
-    mockApi = createMockApi()
 
     beforeEach(() => {
         service = createService()
-        mockApi = createMockApi()
     })
 
     it('starts in init state', () => {

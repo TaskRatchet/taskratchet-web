@@ -85,6 +85,5 @@ open http://localhost:3000/
 
 ### Tests
 
-```bash
-./in.sh npm run test
-```
+- Running on the host is fast: `npm run test`
+- Running inside Docker is slow: `./in.sh npm run test`
