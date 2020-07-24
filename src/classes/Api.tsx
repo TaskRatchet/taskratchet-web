@@ -4,6 +4,12 @@ import {useEffect, useState} from "react";
 
 const cookies = new Cookies();
 
+interface FetchOptions {
+    protected_?: boolean,
+    method?: string,
+    data?: any
+}
+
 export class Api {
     sessionSubs: Array<CallableFunction>
 
@@ -12,20 +18,20 @@ export class Api {
     }
 
     login(email: string, password: string) {
-        return this._fetch(
-            'account/login',
-            false,
-            'POST',
-            {
+        return this._fetch('account/login', {
+            method: 'POST',
+            data: {
                 'email': email,
                 'password': password,
             }
-        ).then((res: any) => {
+        }).then((res: any) => {
             if (!res.ok) return false;
 
             res.text().then((token: string) => this._handleLoginResponse(email, token));
 
             return true;
+        }).catch(() => {
+            return false;
         });
     }
 
@@ -81,24 +87,20 @@ export class Api {
     }
 
     requestResetEmail(email: string) {
-        return this._fetch(
-            'account/forgot-password',
-            false,
-            'POST',
-            {'email': email}
-        )
+        return this._fetch('account/forgot-password', {
+            method: 'POST',
+            data: {'email': email}
+        })
     }
 
     resetPassword(token: string, password: string) {
-        return this._fetch(
-            'account/reset-password',
-            false,
-            'POST',
-            {
+        return this._fetch('account/reset-password', {
+            method: 'POST',
+            data: {
                 'token': token,
                 'password': password
             }
-        );
+        });
     }
 
     register(
@@ -108,53 +110,44 @@ export class Api {
         timezone: string,
         checkoutSessionId: string | null,
     ) {
-        return this._fetch(
-            'account/register',
-            false,
-            'POST',
-            {
+        return this._fetch('account/register', {
+            method: 'POST',
+            data: {
                 'name': name,
                 'email': email,
                 'password': password,
                 'timezone': timezone,
                 'checkout_session_id': checkoutSessionId,
             }
-        );
+        });
     }
 
     getSubs(optionalManageEmailToken: string | undefined) {
-        return this._fetch(
-            'me/subs',
-            false,
-            'GET',
-            {
+        return this._fetch('me/subs', {
+            data: {
                 'manage_email_token': optionalManageEmailToken
             }
-        )
+        })
     }
 
     removeSub(list: string, optionalManageEmailToken: string | undefined) {
-        return this._fetch(
-            'me/subs',
-            false,
-            'PUT',
-            {
+        return this._fetch('me/subs', {
+            method: 'PUT',
+            data: {
                 'manage_email_token': optionalManageEmailToken,
                 'email_subs': {[list]: false}
             }
-        )
+        })
     }
 
     addSub(list: string, optionalManageEmailToken: string | undefined) {
-        return this._fetch(
-            'me/subs',
-            false,
-            'PUT',
-            {
+        return this._fetch('me/subs', {
+            method: 'PUT',
+            data: {
                 'manage_email_token': optionalManageEmailToken,
                 'email_subs': {[list]: true}
             }
-        )
+        })
     }
 
     getTimezones() {
@@ -166,7 +159,7 @@ export class Api {
     }
 
     getMe() {
-        return this._fetch('me', true);
+        return this._fetch('me', {protected_: true});
     }
 
     updateMe(
@@ -216,72 +209,72 @@ export class Api {
             }
         }
 
-        return this._fetch(
-            '/me',
-            true,
-            'PUT',
-            data
-        );
+        return this._fetch('/me', {
+            protected_: true,
+            method: 'PUT',
+            data: data
+        });
     }
 
     updateCheckoutSessionId(sessionId: string) {
-        return this._fetch(
-            '/me',
-            true,
-            'PUT',
-            {
+        return this._fetch('/me', {
+            protected_: true,
+            method: 'PUT',
+            data: {
                 'checkout_session_id': sessionId
             }
-        );
+        });
     }
 
     updatePassword(oldPassword: string, newPassword: string) {
-        return this._fetch(
-            'me',
-            true,
-            'PUT',
-            {
+        return this._fetch('me', {
+            protected_: true,
+            method: 'PUT',
+            data: {
                 'old_password': oldPassword,
                 'new_password': newPassword
             }
-        )
+        })
     }
 
     getTasks() {
-        return this._fetch('me/tasks', true);
+        return this._fetch('me/tasks', {protected_: true});
     }
 
     // Requires that user be authenticated.
     addTask(task: string, due: string, cents: number) {
-        return this._fetch(
-            'me/tasks',
-            true,
-            'POST',
-            {
+        return this._fetch('me/tasks', {
+            protected_: true,
+            method: 'POST',
+            data: {
                 task: task,
                 due: due,
                 cents: cents
             }
-        );
+        });
     }
 
     // Requires that user be authenticated.
     setComplete(taskId: number, complete: boolean) {
         return this._fetch(
             'me/tasks/' + taskId,
-            true,
-            'PUT',
             {
-                'complete': complete
+                protected_: true,
+                method: 'PUT',
+                data: {
+                    'complete': complete
+                }
             }
         );
     }
 
     _fetch = (
         route: string,
-        protected_: boolean = false,
-        method: string = 'GET',
-        data: any = null,
+        {
+            protected_ = false,
+            method = 'GET',
+            data = null,
+        }: FetchOptions = {}
     ): Promise<Response> => {
         const session = cookies.get('tr_session'),
             route_ = this._trim(route, '/'),
