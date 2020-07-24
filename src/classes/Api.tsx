@@ -133,6 +133,30 @@ export class Api {
         )
     }
 
+    removeSub(list: string, optionalManageEmailToken: string | undefined) {
+        return this._fetch(
+            'me/subs',
+            false,
+            'PUT',
+            {
+                'manage_email_token': optionalManageEmailToken,
+                'email_subs': {[list]: false}
+            }
+        )
+    }
+
+    addSub(list: string, optionalManageEmailToken: string | undefined) {
+        return this._fetch(
+            'me/subs',
+            false,
+            'PUT',
+            {
+                'manage_email_token': optionalManageEmailToken,
+                'email_subs': {[list]: true}
+            }
+        )
+    }
+
     getTimezones() {
         return this._fetch('timezones')
     }

@@ -32,20 +32,48 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
                     src: () => api.getSubs(t),
                     onDone: {
                         target: 'idle',
-                        actions: assign({
-                            subs: (ctx: Context, e) => JSON.parse(e.data)
-                        })
+                        actions: 'saveSubs'
                     }
                 }
             },
-            idle: {},
-            unsubscribing: {},
+            idle: {
+                on: {
+                    UNSUBSCRIBE: 'unsubscribing',
+                    SUBSCRIBE: 'subscribing',
+                },
+            },
+            unsubscribing: {
+                invoke: {
+                    src: (ctx, e) => {
+                        const _list = e.value || list || ''
+                        return api.removeSub(_list, t)
+                    },
+                    onDone: {
+                        target: 'idle',
+                        actions: 'saveSubs',
+                    },
+                }
+            },
+            subscribing: {
+                invoke: {
+                    src: (ctx, e) => api.addSub(e.value, t),
+                    onDone: {
+                        target: 'idle',
+                        actions: 'saveSubs',
+                    }
+                }
+            },
         },
     }, {
         services: {},
         guards: {
             wasListProvided: (ctx, e) => !!list
         },
+        actions: {
+            saveSubs: assign({
+                subs: (ctx: Context, e) => JSON.parse(e.data)
+            })
+        }
     })
 }
 

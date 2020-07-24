@@ -15,9 +15,12 @@ const createService = (queryParams: object = {}) => {
 
 describe('manage email machine', () => {
     api.getSubs = jest.fn()
+    api.addSub = jest.fn()
+    api.removeSub = jest.fn()
     service = createService()
 
     beforeEach(() => {
+        jest.clearAllMocks()
         service = createService()
     })
 
@@ -31,7 +34,7 @@ describe('manage email machine', () => {
         expect(api.getSubs).toBeCalledWith('token')
     })
 
-    it('stores subs', () => {
+    it('stores subs', (done) => {
         const data = {'summaries': true},
             jsonResponse = JSON.stringify(data),
             machine = createManageEmailMachine();
@@ -40,7 +43,8 @@ describe('manage email machine', () => {
 
         interpret(machine).onTransition((state) => {
             if (state.matches('idle')) {
-                expect(state.context.subs).toBe(data)
+                expect(state.context.subs).toStrictEqual(data)
+                done()
             }
         }).start()
 
@@ -48,8 +52,113 @@ describe('manage email machine', () => {
     })
 
     it('unsubscribes if list param present', () => {
-        service = createService({t: 'the_token', list: 'the_list'})
+        service = createService({list: 'the_list'})
 
         expect(service.state.value).toBe('unsubscribing')
+    })
+
+    it('sends unsubscribe request', () => {
+        createService({list: 'the_list'})
+
+        expect(api.removeSub).toBeCalledWith('the_list', undefined)
+    })
+
+    it('stores subs on unsubscribe', (done) => {
+        const data = {'summaries': true},
+            jsonResponse = JSON.stringify(data),
+            machine = createManageEmailMachine({queryParams: {list: 'the_list'}});
+
+        (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse))
+
+        interpret(machine).onTransition((state) => {
+            if (state.matches('idle')) {
+                expect(state.context.subs).toStrictEqual(data)
+                done()
+            }
+        }).start()
+
+        expect.assertions(1)
+    })
+
+    it('accepts unsubscribe event', (done) => {
+        const data = {'summaries': true},
+            jsonResponse = JSON.stringify(data),
+            machine = createManageEmailMachine();
+
+        let didSendEvent = false;
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse))
+
+        service = interpret(machine)
+
+        service.onTransition((state) => {
+            if (state.matches('idle') && didSendEvent) {
+                expect(api.removeSub).toBeCalledWith('the_list', undefined)
+                done()
+            }
+
+            if (state.matches('idle') && !didSendEvent) {
+                service.send('UNSUBSCRIBE', {value: 'the_list'})
+                didSendEvent = true
+            }
+        }).start()
+
+        expect.assertions(1)
+    })
+
+    it('accepts subscribe event', (done) => {
+        const data = {'summaries': true},
+            jsonResponse = JSON.stringify(data),
+            machine = createManageEmailMachine();
+
+        let didSendEvent = false;
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse));
+        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse));
+
+        service = interpret(machine)
+
+        service.onTransition((state) => {
+            if (state.matches('idle') && didSendEvent) {
+                expect(api.addSub).toBeCalledWith('the_list', undefined)
+                done()
+            }
+
+            if (state.matches('idle') && !didSendEvent) {
+                service.send('SUBSCRIBE', {value: 'the_list'})
+                didSendEvent = true
+            }
+        }).start()
+
+        expect.assertions(1)
+    })
+
+    it('stores subs on subscribe', (done) => {
+        const initData = {},
+            initJsonResponse = JSON.stringify(initData),
+            endData = {'summaries': true},
+            endJsonResponse = JSON.stringify(endData),
+            machine = createManageEmailMachine();
+
+        let didSendEvent = false;
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(initJsonResponse));
+        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(endJsonResponse));
+
+        service = interpret(machine)
+
+        service.onTransition((state) => {
+            if (state.matches('idle') && didSendEvent) {
+                expect(state.context.subs).toStrictEqual(endData)
+                done()
+            }
+
+            if (state.matches('idle') && !didSendEvent) {
+                service.send('SUBSCRIBE', {value: 'the_list'})
+                didSendEvent = true
+            }
+        }).start()
+
+        expect.assertions(1)
     })
 })
