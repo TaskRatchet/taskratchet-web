@@ -35,22 +35,18 @@ describe('manage email machine', () => {
     })
 
     it('stores subs', (done) => {
-        const data = {'summaries': true},
-            jsonResponse = JSON.stringify(data),
-            machine = createManageEmailMachine();
+        const machine = createManageEmailMachine();
 
         const response = {
             ok: true,
-            json: async () => {
-                return {'summaries': true}
-            }
+            json: async () => ({'summaries': true})
         };
 
         (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response))
 
         interpret(machine).onTransition((state) => {
             if (state.matches('idle')) {
-                expect(state.context.subs).toStrictEqual(data)
+                expect(state.context.subs).toStrictEqual({'summaries': true})
                 done()
             }
         }).start()
@@ -93,9 +89,7 @@ describe('manage email machine', () => {
     })
 
     it('accepts unsubscribe event', (done) => {
-        const data = {'summaries': true},
-            jsonResponse = JSON.stringify(data),
-            machine = createManageEmailMachine();
+        const machine = createManageEmailMachine();
 
         let didSendEvent = false;
 
@@ -124,9 +118,7 @@ describe('manage email machine', () => {
     })
 
     it('accepts subscribe event', (done) => {
-        const data = {'summaries': true},
-            jsonResponse = JSON.stringify(data),
-            machine = createManageEmailMachine();
+        const machine = createManageEmailMachine();
 
         let didSendEvent = false;
 
@@ -158,11 +150,7 @@ describe('manage email machine', () => {
     })
 
     it('stores subs on subscribe', (done) => {
-        const initData = {},
-            initJsonResponse = JSON.stringify(initData),
-            endData = {'summaries': true},
-            endJsonResponse = JSON.stringify(endData),
-            machine = createManageEmailMachine();
+        const machine = createManageEmailMachine();
 
         let didSendEvent = false;
 
@@ -186,7 +174,7 @@ describe('manage email machine', () => {
 
         service.onTransition((state) => {
             if (state.matches('idle') && didSendEvent) {
-                expect(state.context.subs).toStrictEqual(endData)
+                expect(state.context.subs).toStrictEqual({'summaries': true})
                 done()
             }
 
@@ -200,15 +188,9 @@ describe('manage email machine', () => {
     })
 
     it("sets error when failed unsubscribe", (done) => {
-        const initData = {},
-            initJsonResponse = JSON.stringify(initData),
-            data = {'ok': false},
-            jsonResponse = JSON.stringify(data),
-            machine = createManageEmailMachine();
+        const machine = createManageEmailMachine();
 
         let didSendEvent = false;
-
-
 
         const getSubResponse = {
             ok: true,
@@ -227,10 +209,6 @@ describe('manage email machine', () => {
         service = interpret(machine)
 
         service.onTransition(state => {
-            // console.log({
-            //     state: state.value,
-            //     didSendEvent
-            // })
             if (state.matches('idle') && didSendEvent) {
                 expect(state.context.error).toContain('Unsubscribe failed')
                 done()
