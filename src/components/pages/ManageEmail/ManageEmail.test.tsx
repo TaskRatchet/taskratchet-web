@@ -218,4 +218,21 @@ describe('manage email machine', () => {
 
         expect.assertions(1)
     })
+
+    it("sets error when failed to load", (done) => {
+        const machine = createManageEmailMachine();
+
+        setGetSubsResponse({ok: false})
+
+        service = interpret(machine)
+
+        service.onTransition(state => {
+            if (state.matches('idle')) {
+                expect(state.context.error).toContain('Failed to load subscriptions')
+                done()
+            }
+        }).start()
+
+        expect.assertions(1)
+    })
 })

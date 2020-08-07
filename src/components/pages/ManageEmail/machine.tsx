@@ -31,11 +31,23 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
             },
             loading: {
                 invoke: {
-                    src: async () => await (await api.getSubs(t)).json(),
+                    src: async () => {
+                        const response = await api.getSubs(t);
+
+                        if (!response.ok) {
+                            throw new Error('Failed to load subscriptions')
+                        }
+
+                        return await response.json()
+                    },
                     onDone: {
                         target: 'idle',
                         actions: 'saveSubs'
-                    }
+                    },
+                    onError: {
+                        target: 'idle',
+                        actions: 'setError'
+                    },
                 }
             },
             idle: {
