@@ -193,4 +193,29 @@ describe('manage email machine', () => {
 
         expect.assertions(1)
     })
+
+    it("sets error when failed subscribe", (done) => {
+        const machine = createManageEmailMachine();
+
+        let didSendEvent = false;
+
+        setGetSubsResponse({data: {'summaries': true}});
+        setAddSubResponse({ok: false})
+
+        service = interpret(machine)
+
+        service.onTransition(state => {
+            if (state.matches('idle') && didSendEvent) {
+                expect(state.context.error).toContain('Subscribe failed')
+                done()
+            }
+
+            if (state.matches('idle') && !didSendEvent) {
+                service.send('SUBSCRIBE', {value: 'the_list'})
+                didSendEvent = true
+            }
+        }).start()
+
+        expect.assertions(1)
+    })
 })

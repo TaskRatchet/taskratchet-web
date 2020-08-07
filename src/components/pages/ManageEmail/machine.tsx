@@ -62,17 +62,29 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
                     },
                     onError: {
                         target: 'idle',
-                        actions: 'setUnsubscribeError'
+                        actions: 'setError'
                     },
                 }
             },
             subscribing: {
                 invoke: {
-                    src: async (ctx, e) => await (await api.addSub(e.value, t)).json(),
+                    src: async (ctx, e) => {
+                        const response = await api.addSub(e.value, t);
+
+                        if (!response.ok) {
+                            throw new Error('Subscribe failed')
+                        }
+
+                        return await response.json()
+                    },
                     onDone: {
                         target: 'idle',
                         actions: 'saveSubs',
-                    }
+                    },
+                    onError: {
+                        target: 'idle',
+                        actions: 'setError'
+                    },
                 }
             },
         },
@@ -86,7 +98,7 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
             saveSubs: assign({
                 subs: (ctx, e) => e.data
             }),
-            setUnsubscribeError: assign({
+            setError: assign({
                 error: (ctx, e) => e.data.message
             })
         }
