@@ -1,6 +1,7 @@
 import createManageEmailMachine, {Context} from './machine'
 import api from "../../../classes/Api";
 import {interpret, Interpreter} from "xstate";
+import {create} from "domain";
 
 let service: Interpreter<Context>;
 
@@ -12,6 +13,8 @@ const createService = (queryParams: object = {}) => {
 
     return service;
 }
+
+const createResponse = ({ok = true, data = {}} = {}) => ({ok, json: async () => data})
 
 describe('manage email machine', () => {
     api.getSubs = jest.fn()
@@ -35,12 +38,8 @@ describe('manage email machine', () => {
     })
 
     it('stores subs', (done) => {
-        const machine = createManageEmailMachine();
-
-        const response = {
-            ok: true,
-            json: async () => ({'summaries': true})
-        };
+        const machine = createManageEmailMachine(),
+            response = createResponse({data: {'summaries': true}});
 
         (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response))
 
@@ -67,14 +66,8 @@ describe('manage email machine', () => {
     })
 
     it('stores subs on unsubscribe', (done) => {
-        const machine = createManageEmailMachine({queryParams: {list: 'the_list'}});
-
-        const removeSubResponse = {
-            ok: true,
-            json: async () => {
-                return {'summaries': true}
-            }
-        };
+        const machine = createManageEmailMachine({queryParams: {list: 'the_list'}}),
+            removeSubResponse = createResponse({data: {'summaries': true}});
 
         (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(removeSubResponse))
 
@@ -93,10 +86,7 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const response = {
-            ok: true,
-            json: async () => ({'summaries': true})
-        };
+        const response = createResponse({data: {'summaries': true}});
 
         (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response))
 
@@ -122,12 +112,7 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const response = {
-            ok: true,
-            json: async () => {
-                return {'summaries': true}
-            }
-        };
+        const response = createResponse({data: {'summaries': true}});
 
         (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response));
         (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(response));
@@ -154,18 +139,8 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const getSubsResponse = {
-            ok: true,
-            json: async () => {
-                return {}
-            }
-        };
-        const addSubResponse = {
-            ok: true,
-            json: async () => {
-                return {'summaries': true}
-            }
-        };
+        const getSubsResponse = createResponse();
+        const addSubResponse = createResponse({data: {'summaries': true}});
 
         (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(getSubsResponse));
         (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(addSubResponse));
@@ -192,16 +167,9 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const getSubResponse = {
-            ok: true,
-            json: async () => {
-                return {'summaries': true}
-            }
-        };
+        const getSubResponse = createResponse({data: {'summaries': true}});
 
-        const removeSubResponse = {
-            ok: false,
-        };
+        const removeSubResponse = createResponse({ok: false});
 
         (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(getSubResponse));
         (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(removeSubResponse))
