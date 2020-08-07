@@ -1,7 +1,6 @@
 import createManageEmailMachine, {Context} from './machine'
 import api from "../../../classes/Api";
 import {interpret, Interpreter} from "xstate";
-import {create} from "domain";
 
 let service: Interpreter<Context>;
 
@@ -15,6 +14,23 @@ const createService = (queryParams: object = {}) => {
 }
 
 const createResponse = ({ok = true, data = {}} = {}) => ({ok, json: async () => data})
+
+const setApiResponse = (method: any, {ok = true, data = {}} = {}) => {
+    const response = createResponse({ok, data});
+    method.mockReturnValue(Promise.resolve(response));
+}
+
+const setGetSubsResponse = ({ok = true, data = {}} = {}) => {
+    setApiResponse(api.getSubs, {ok, data})
+}
+
+const setRemoveSubResponse = ({ok = true, data = {}} = {}) => {
+    setApiResponse(api.removeSub, {ok, data})
+}
+
+const setAddSubResponse = ({ok = true, data = {}} = {}) => {
+    setApiResponse(api.addSub, {ok, data})
+}
 
 describe('manage email machine', () => {
     api.getSubs = jest.fn()
@@ -38,10 +54,9 @@ describe('manage email machine', () => {
     })
 
     it('stores subs', (done) => {
-        const machine = createManageEmailMachine(),
-            response = createResponse({data: {'summaries': true}});
+        const machine = createManageEmailMachine();
 
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response))
+        setGetSubsResponse({data: {'summaries': true}})
 
         interpret(machine).onTransition((state) => {
             if (state.matches('idle')) {
@@ -66,10 +81,9 @@ describe('manage email machine', () => {
     })
 
     it('stores subs on unsubscribe', (done) => {
-        const machine = createManageEmailMachine({queryParams: {list: 'the_list'}}),
-            removeSubResponse = createResponse({data: {'summaries': true}});
+        const machine = createManageEmailMachine({queryParams: {list: 'the_list'}});
 
-        (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(removeSubResponse))
+        setRemoveSubResponse({data: {'summaries': true}})
 
         interpret(machine).onTransition((state) => {
             if (state.matches('idle')) {
@@ -86,9 +100,7 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const response = createResponse({data: {'summaries': true}});
-
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response))
+        setGetSubsResponse({data: {'summaries': true}})
 
         service = interpret(machine)
 
@@ -112,10 +124,8 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const response = createResponse({data: {'summaries': true}});
-
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response));
-        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(response));
+        setGetSubsResponse({data: {'summaries': true}})
+        setAddSubResponse({data: {'summaries': true}})
 
         service = interpret(machine)
 
@@ -139,11 +149,8 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const getSubsResponse = createResponse();
-        const addSubResponse = createResponse({data: {'summaries': true}});
-
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(getSubsResponse));
-        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(addSubResponse));
+        setGetSubsResponse()
+        setAddSubResponse({data: {'summaries': true}})
 
         service = interpret(machine)
 
@@ -167,12 +174,8 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        const getSubResponse = createResponse({data: {'summaries': true}});
-
-        const removeSubResponse = createResponse({ok: false});
-
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(getSubResponse));
-        (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(removeSubResponse))
+        setGetSubsResponse({data: {'summaries': true}});
+        setRemoveSubResponse({ok: false})
 
         service = interpret(machine)
 
