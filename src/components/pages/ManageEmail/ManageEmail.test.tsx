@@ -39,7 +39,14 @@ describe('manage email machine', () => {
             jsonResponse = JSON.stringify(data),
             machine = createManageEmailMachine();
 
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse))
+        const response = {
+            ok: true,
+            json: async () => {
+                return {'summaries': true}
+            }
+        };
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response))
 
         interpret(machine).onTransition((state) => {
             if (state.matches('idle')) {
@@ -64,15 +71,20 @@ describe('manage email machine', () => {
     })
 
     it('stores subs on unsubscribe', (done) => {
-        const data = {'summaries': true},
-            jsonResponse = JSON.stringify(data),
-            machine = createManageEmailMachine({queryParams: {list: 'the_list'}});
+        const machine = createManageEmailMachine({queryParams: {list: 'the_list'}});
 
-        (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse))
+        const removeSubResponse = {
+            ok: true,
+            json: async () => {
+                return {'summaries': true}
+            }
+        };
+
+        (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(removeSubResponse))
 
         interpret(machine).onTransition((state) => {
             if (state.matches('idle')) {
-                expect(state.context.subs).toStrictEqual(data)
+                expect(state.context.subs).toStrictEqual({'summaries': true})
                 done()
             }
         }).start()
@@ -87,7 +99,12 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse))
+        const response = {
+            ok: true,
+            json: async () => ({'summaries': true})
+        };
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response))
 
         service = interpret(machine)
 
@@ -113,8 +130,15 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse));
-        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(jsonResponse));
+        const response = {
+            ok: true,
+            json: async () => {
+                return {'summaries': true}
+            }
+        };
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(response));
+        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(response));
 
         service = interpret(machine)
 
@@ -142,8 +166,21 @@ describe('manage email machine', () => {
 
         let didSendEvent = false;
 
-        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(initJsonResponse));
-        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(endJsonResponse));
+        const getSubsResponse = {
+            ok: true,
+            json: async () => {
+                return {}
+            }
+        };
+        const addSubResponse = {
+            ok: true,
+            json: async () => {
+                return {'summaries': true}
+            }
+        };
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(getSubsResponse));
+        (api.addSub as jest.Mock).mockReturnValue(Promise.resolve(addSubResponse));
 
         service = interpret(machine)
 
@@ -155,6 +192,52 @@ describe('manage email machine', () => {
 
             if (state.matches('idle') && !didSendEvent) {
                 service.send('SUBSCRIBE', {value: 'the_list'})
+                didSendEvent = true
+            }
+        }).start()
+
+        expect.assertions(1)
+    })
+
+    it("sets error when failed unsubscribe", (done) => {
+        const initData = {},
+            initJsonResponse = JSON.stringify(initData),
+            data = {'ok': false},
+            jsonResponse = JSON.stringify(data),
+            machine = createManageEmailMachine();
+
+        let didSendEvent = false;
+
+
+
+        const getSubResponse = {
+            ok: true,
+            json: async () => {
+                return {'summaries': true}
+            }
+        };
+
+        const removeSubResponse = {
+            ok: false,
+        };
+
+        (api.getSubs as jest.Mock).mockReturnValue(Promise.resolve(getSubResponse));
+        (api.removeSub as jest.Mock).mockReturnValue(Promise.resolve(removeSubResponse))
+
+        service = interpret(machine)
+
+        service.onTransition(state => {
+            // console.log({
+            //     state: state.value,
+            //     didSendEvent
+            // })
+            if (state.matches('idle') && didSendEvent) {
+                expect(state.context.error).toContain('Unsubscribe failed')
+                done()
+            }
+
+            if (state.matches('idle') && !didSendEvent) {
+                service.send('UNSUBSCRIBE', {value: 'the_list'})
                 didSendEvent = true
             }
         }).start()

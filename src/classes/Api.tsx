@@ -7,7 +7,8 @@ const cookies = new Cookies();
 interface FetchOptions {
     protected_?: boolean,
     method?: string,
-    data?: any
+    data?: any,
+    headers?: object
 }
 
 export class Api {
@@ -124,8 +125,8 @@ export class Api {
 
     getSubs(optionalManageEmailToken: string | undefined) {
         return this._fetch('me/subs', {
-            data: {
-                'manage_email_token': optionalManageEmailToken
+            headers: {
+                'X-Taskratchet-Manageemailtoken': optionalManageEmailToken
             }
         })
     }
@@ -134,9 +135,11 @@ export class Api {
         return this._fetch('me/subs', {
             method: 'PUT',
             data: {
-                'manage_email_token': optionalManageEmailToken,
                 'email_subs': {[list]: false}
-            }
+            },
+            headers: {
+                'X-Taskratchet-Manageemailtoken': optionalManageEmailToken
+            },
         })
     }
 
@@ -144,9 +147,11 @@ export class Api {
         return this._fetch('me/subs', {
             method: 'PUT',
             data: {
-                'manage_email_token': optionalManageEmailToken,
                 'email_subs': {[list]: true}
-            }
+            },
+            headers: {
+                'X-Taskratchet-Manageemailtoken': optionalManageEmailToken
+            },
         })
     }
 
@@ -241,7 +246,6 @@ export class Api {
         return this._fetch('me/tasks', {protected_: true});
     }
 
-    // Requires that user be authenticated.
     addTask(task: string, due: string, cents: number) {
         return this._fetch('me/tasks', {
             protected_: true,
@@ -254,7 +258,6 @@ export class Api {
         });
     }
 
-    // Requires that user be authenticated.
     setComplete(taskId: number, complete: boolean) {
         return this._fetch(
             'me/tasks/' + taskId,
@@ -268,12 +271,13 @@ export class Api {
         );
     }
 
-    _fetch = (
+    _fetch = async (
         route: string,
         {
             protected_ = false,
             method = 'GET',
             data = null,
+            headers = {}
         }: FetchOptions = {}
     ): Promise<Response> => {
         const session = cookies.get('tr_session'),
@@ -281,26 +285,23 @@ export class Api {
             base = this._get_base();
 
         if (protected_ && !session) {
-            return new Promise((resolve, reject) => {
-                reject('User not logged in');
-            });
+            throw new Error('User not logged in')
         }
 
-        const response = fetch(base + route_, {
+        const response = await fetch(base + route_, {
             method: method,
             body: data ? JSON.stringify(data) : undefined,
             headers: {
                 'X-Taskratchet-Token': session ? session.token : undefined,
+                ...headers,
             }
         });
 
-        response.then((res: any) => {
-            if (res.status === 403) {
-                this.logout();
-            }
-        });
+        if (response.status === 403) {
+            this.logout();
+        }
 
-        return response;
+        return response
     };
 
     _get_base = () => {

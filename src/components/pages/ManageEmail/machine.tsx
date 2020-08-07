@@ -2,7 +2,8 @@ import {assign, createMachine, StateMachine} from "xstate";
 import api from "../../../classes/Api";
 
 export interface Context {
-    subs: object
+    subs: object,
+    error: string,
 }
 
 interface Options {
@@ -19,6 +20,7 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
         initial: 'initial',
         context: {
             subs: {},
+            error: '',
         },
         states: {
             initial: {
@@ -29,7 +31,7 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
             },
             loading: {
                 invoke: {
-                    src: () => api.getSubs(t),
+                    src: async () => await (await api.getSubs(t)).json(),
                     onDone: {
                         target: 'idle',
                         actions: 'saveSubs'
@@ -44,19 +46,29 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
             },
             unsubscribing: {
                 invoke: {
-                    src: (ctx, e) => {
-                        const _list = e.value || list || ''
-                        return api.removeSub(_list, t)
+                    src: async (ctx, e) => {
+                        const _list = e.value || list || '',
+                            response = await api.removeSub(_list, t)
+
+                        if (!response.ok) {
+                            throw new Error('Unsubscribe failed')
+                        }
+
+                        return await response.json()
                     },
                     onDone: {
                         target: 'idle',
                         actions: 'saveSubs',
                     },
+                    onError: {
+                        target: 'idle',
+                        actions: 'setUnsubscribeError'
+                    },
                 }
             },
             subscribing: {
                 invoke: {
-                    src: (ctx, e) => api.addSub(e.value, t),
+                    src: async (ctx, e) => await (await api.addSub(e.value, t)).json(),
                     onDone: {
                         target: 'idle',
                         actions: 'saveSubs',
@@ -67,11 +79,15 @@ const createManageEmailMachine = (options: Options = {queryParams: {}}): StateMa
     }, {
         services: {},
         guards: {
-            wasListProvided: (ctx, e) => !!list
+            wasListProvided: (ctx, e) => !!list,
+            wasRequestSuccessful: (ctx, e) => !!e.data.ok,
         },
         actions: {
             saveSubs: assign({
-                subs: (ctx: Context, e) => JSON.parse(e.data)
+                subs: (ctx, e) => e.data
+            }),
+            setUnsubscribeError: assign({
+                error: (ctx, e) => e.data.message
             })
         }
     })
