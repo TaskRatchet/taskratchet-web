@@ -17,6 +17,7 @@ import ResetPassword from "./components/pages/ResetPassword";
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {isProduction} from "./tr_constants"
+import Footer from "./components/organisms/Footer"
 
 toast.configure();
 
@@ -81,6 +82,8 @@ const App = () => {
                 </Route>
             </Switch>
         </div>
+
+        <Footer />
     </div>
 }
 
