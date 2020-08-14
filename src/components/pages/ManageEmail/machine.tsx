@@ -2,7 +2,7 @@ import {assign, createMachine, StateMachine} from "xstate";
 import api from "../../../classes/Api";
 
 export interface Context {
-    subs: object,
+    subs: {[key: string]: boolean},
     error: string,
 }
 

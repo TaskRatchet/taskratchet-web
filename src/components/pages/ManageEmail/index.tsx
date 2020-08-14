@@ -21,7 +21,16 @@ const ManageEmail = (props: ManageEmailProps) => {
 
     console.log(state)
 
-    return <div className={'page-manageEmail'}>Hello World</div>
+    return <div className={'page-manageEmail'}>
+        Hello World
+        {
+            state.context.error ?
+                <div className={'page-manageEmail__error alert info'}>{state.context.error}</div> : ''
+        }
+        <ul>
+            {Object.keys(state.context.subs).map(key => <li>{state.context.subs[key] ? 'Y' : 'N'} : {key}</li>)}
+        </ul>
+    </div>
 }
 
 export default ManageEmail

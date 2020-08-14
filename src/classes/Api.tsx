@@ -124,6 +124,7 @@ export class Api {
     }
 
     getSubs(optionalManageEmailToken: string | undefined) {
+        console.log({token:optionalManageEmailToken})
         return this._fetch('me/subs', {
             headers: {
                 'X-Taskratchet-Manageemailtoken': optionalManageEmailToken
