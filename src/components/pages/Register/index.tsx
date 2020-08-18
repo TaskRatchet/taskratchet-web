@@ -41,7 +41,7 @@ const Register = (props: RegisterProps) => {
             .then((session) => setCheckoutSession(session));
     };
 
-    const register = (event: any) => {
+    const register = async (event: any) => {
         event.preventDefault();
 
         console.log('registering');
@@ -52,26 +52,23 @@ const Register = (props: RegisterProps) => {
 
         console.log('posting registration');
 
-        api.register(
+        const response = await api.register(
             name,
             email,
             password,
             timezone,
             getSessionId(),
-        )
-            .then((res: any) => {
-                if (res.ok) {
-                    toaster.send('Redirecting...')
-                } else {
-                    toaster.send('Registration failed')
-                }
-                return res.json()
-            })
-            .then(res => {
-                console.log(res);
-            });
+        );
 
-        redirect();
+        const payload = await response.json();
+        console.log(payload)
+
+        if (response.ok) {
+            toaster.send('Redirecting...')
+            redirect();
+        } else {
+            toaster.send('Registration failed')
+        }
     };
 
     const redirect = () => {
