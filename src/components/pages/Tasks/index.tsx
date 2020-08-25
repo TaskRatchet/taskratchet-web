@@ -23,16 +23,23 @@ const Tasks = (props: TasksProps) => {
     const [tasks, setTasks] = useState<Task[]>([]),
         [newTask, setNewTask] = useState<string>(''),
         [newDue, setNewDue] = useState<Date>(getDefaultDue()),
-        [newCents, setNewCents] = useState<number>(500);
+        [newCents, setNewCents] = useState<number>(500),
+        [timezone, setTimezone] = useState<string>('');
 
     const toaster: Toaster = new Toaster();
 
-    useEffect(() => updateTasks(), []);
+    useEffect( () => {
+        refreshData()
+    }, []);
 
-    const updateTasks = () => {
-        api.getTasks()
-            .then((res: any) => res.json())
-            .then(setTasks)
+    const refreshData = async () => {
+        const tasksResponse = await api.getTasks(),
+            tasks = await tasksResponse.json(),
+            meResponse = await api.getMe(),
+            me = await meResponse.json();
+
+        setTasks(tasks)
+        setTimezone(me.timezone)
     };
 
     const saveTask = (event: any) => {
@@ -68,7 +75,7 @@ const Tasks = (props: TasksProps) => {
 
         api.addTask(newTask, dueString, newCents).then((res: any) => {
             toaster.send((res.ok) ? 'Task added' : 'Failed to add task');
-            updateTasks();
+            refreshData();
         });
     };
 
@@ -87,7 +94,7 @@ const Tasks = (props: TasksProps) => {
         api.setComplete(task.id, !task.complete).then((res: any) => {
             toaster.send(res.ok ? `Successfully marked task ${change}`
                 : `Failed to mark task ${change}`);
-            updateTasks()
+            refreshData()
         });
     };
 
@@ -132,7 +139,7 @@ const Tasks = (props: TasksProps) => {
                     value={newTask}
                     onChange={(e) => setNewTask(e.target.value)}
                 /></label>
-                <label className={'page-tasks__due'}>Due <DatePicker selected={newDue} onChange={(date: Date | null | undefined) => {
+                <label className={'page-tasks__due'}>Due {timezone ? `(${timezone})` : null} <DatePicker selected={newDue} onChange={(date: Date | null | undefined) => {
                     if (date) setNewDue(date);
                 }} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
                 <label className={'page-tasks__dollars'}>Stakes <input
