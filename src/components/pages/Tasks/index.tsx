@@ -139,7 +139,7 @@ const Tasks = (props: TasksProps) => {
                     value={newTask}
                     onChange={(e) => setNewTask(e.target.value)}
                 /></label>
-                <label className={'page-tasks__due'}>Due {timezone ? `(${timezone})` : null} <DatePicker selected={newDue} onChange={(date: Date | null | undefined) => {
+                <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker selected={newDue} onChange={(date: Date | null | undefined) => {
                     if (date) setNewDue(date);
                 }} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
                 <label className={'page-tasks__dollars'}>Stakes <input
