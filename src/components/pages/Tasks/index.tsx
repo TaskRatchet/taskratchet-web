@@ -92,6 +92,7 @@ const Tasks = (props: TasksProps) => {
         });
 
         api.setComplete(task.id, !task.complete).then((res: any) => {
+            res.text().then(console.log)
             toaster.send(res.ok ? `Successfully marked task ${change}`
                 : `Failed to mark task ${change}`);
             refreshData()
@@ -113,9 +114,10 @@ const Tasks = (props: TasksProps) => {
     };
 
     const getActiveTasks = () => {
-        return getSortedTasks().filter((t: Task) => {
+        const tasks1 = getSortedTasks().filter((t: Task) => {
             return !t.complete && !t.charge_captured;
         });
+        return tasks1;
     };
 
     const getArchivedTasks = () => {
