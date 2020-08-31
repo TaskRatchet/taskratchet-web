@@ -9,8 +9,10 @@ import userEvent from '@testing-library/user-event'
 jest.mock('../../../classes/Api')
 
 global.document.createRange = () => ({
-    setStart: () => {},
-    setEnd: () => {},
+    setStart: () => {
+    },
+    setEnd: () => {
+    },
     commonAncestorContainer: {
         nodeName: 'BODY',
         ownerDocument: document,
@@ -86,6 +88,28 @@ const expectTaskSave = (
     expect(api.addTask).toBeCalledWith(task, dueString, cents)
 }
 
+const renderTasksPage = () => {
+    const getters = render(<Tasks/>),
+        {getByText, getByPlaceholderText} = getters,
+        // @ts-ignore
+        dueInput = getByText("Due")
+            .firstElementChild
+            .firstElementChild
+            .firstElementChild
+
+    if (!dueInput) {
+        throw Error("Missing due input")
+    }
+
+    return {
+        taskInput: getByPlaceholderText("Task"),
+        dueInput,
+        centsInput: getByPlaceholderText("USD"),
+        addButton: getByText("Add"),
+        ...getters
+    }
+}
+
 describe("tasks page", () => {
     beforeEach(() => {
         jest.resetAllMocks()
@@ -102,17 +126,14 @@ describe("tasks page", () => {
     it("only shows one of each created task", async () => {
         loadApiData()
 
-        const {getAllByText, getByText, getByPlaceholderText} = render(<Tasks/>)
-
-        const taskBox = getByPlaceholderText("Task"),
-            addButton = getByText("Add")
+        const {taskInput, addButton, getByText, getAllByText} = renderTasksPage()
 
         loadApiData({
             tasks: [
                 makeTask({task: 'a'})
             ]
         })
-        await userEvent.type(taskBox, "a")
+        await userEvent.type(taskInput, "a")
         userEvent.click(addButton)
 
         loadApiData({
@@ -121,7 +142,7 @@ describe("tasks page", () => {
                 makeTask({task: 'b'})
             ]
         })
-        await userEvent.type(taskBox, "b")
+        await userEvent.type(taskInput, "b")
         userEvent.click(addButton)
 
         loadApiData({
@@ -132,7 +153,7 @@ describe("tasks page", () => {
                 makeTask({task: 'done'})
             ]
         })
-        await userEvent.type(taskBox, "c")
+        await userEvent.type(taskInput, "c")
         userEvent.click(addButton)
 
         await waitFor(() => getByText("done"))
@@ -143,14 +164,11 @@ describe("tasks page", () => {
     it("saves task", async () => {
         loadApiData()
 
-        const {getByText, getByPlaceholderText} = render(<Tasks/>)
+        const {taskInput, addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        const taskBox = getByPlaceholderText("Task"),
-            addButton = getByText("Add")
-
-        await userEvent.type(taskBox, "the_task")
+        await userEvent.type(taskInput, "the_task")
         userEvent.click(addButton)
 
         expectTaskSave({task: "the_task"})
@@ -159,12 +177,9 @@ describe("tasks page", () => {
     it("allows cents change", async () => {
         loadApiData()
 
-        const {getByText, getByPlaceholderText} = render(<Tasks/>)
+        const {centsInput, addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
-
-        const centsInput = getByPlaceholderText("USD"),
-            addButton = getByText("Add")
 
         await userEvent.type(centsInput, "{backspace}15")
         userEvent.click(addButton)
@@ -175,23 +190,13 @@ describe("tasks page", () => {
     it("allows due change", async () => {
         loadApiData()
 
-        const {getByText, getByPlaceholderText} = render(<Tasks/>)
+        const {dueInput, addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        // @ts-ignore
-        const dueInput = getByText("Due")
-            .firstElementChild
-            .firstElementChild
-            .firstElementChild
-
-        if (!dueInput) {
-            throw Error("Missing due input")
-        }
-
         await userEvent.type(dueInput, "{backspace}{backspace}AM")
 
-        userEvent.click(getByText("Add"))
+        userEvent.click(addButton)
 
         const due = getDefaultDueDate();
 
