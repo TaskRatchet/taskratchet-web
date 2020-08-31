@@ -51,12 +51,10 @@ const Tasks = (props: TasksProps) => {
     const saveTask = (event: any) => {
         event.preventDefault();
 
-        send("SAVE_TASK")
-
-        if (!newTask) {
-            toaster.send('Missing task description');
-            return;
-        }
+        // if (!newTask) {
+        //     toaster.send('Missing task description');
+        //     return;
+        // }
 
         toaster.send('Adding task...');
 
@@ -79,12 +77,15 @@ const Tasks = (props: TasksProps) => {
             charge_captured: null,
         }]);
 
-        setNewTask('');
 
-        api.addTask(newTask, dueString, newCents).then((res: any) => {
-            toaster.send((res.ok) ? 'Task added' : 'Failed to add task');
-            refreshData();
-        });
+        // api.addTask(newTask, dueString, newCents).then((res: any) => {
+        //     toaster.send((res.ok) ? 'Task added' : 'Failed to add task');
+        //     refreshData();
+        // });
+
+        send("SAVE_TASK")
+
+        setNewTask('');
     };
 
     const toggleStatus = (task: Task) => {
@@ -137,7 +138,7 @@ const Tasks = (props: TasksProps) => {
         return tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => toggleStatus(t)}/></li>);
     };
 
-    return <div className={'page-tasks'}>
+    return <div className={`page-tasks ${state.value}`}>
         <h1>Tasks</h1>
 
         <form onSubmit={saveTask}>
@@ -145,19 +146,26 @@ const Tasks = (props: TasksProps) => {
                 <label className={'page-tasks__description'}>Task <input
                     type="text"
                     placeholder={'Task'}
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
+                    value={state.context.task}
+                    onChange={e => {
+                        send({
+                            type: 'SET_TASK',
+                            value: e.target.value
+                        })
+                    }}
                 /></label>
-                <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker selected={newDue} onChange={(date: Date | null | undefined) => {
-                    if (date) setNewDue(date);
-                }} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
+                <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker
+                    selected={newDue} onChange={value => send({type: 'SET_DUE', value})} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
                 <label className={'page-tasks__dollars'}>Stakes <input
                     type="number"
                     placeholder={'USD'}
                     min={1}
                     max={2500}
                     value={newCents / 100}
-                    onChange={(e: any) => setNewCents(e.target.value * 100)}
+                    onChange={e => send({
+                        type: 'SET_CENTS',
+                        value: e.target.value
+                    })}
                 /></label>
             </div>
             <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>

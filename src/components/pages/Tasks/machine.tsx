@@ -4,9 +4,19 @@ import api from "../../../classes/Api";
 export interface Context {
     tasks: Task[],
     task: string,
-    due: number,
-    stakes: number,
+    due: any, // TODO: Replace with proper type
+    cents: number,
 }
+
+const getDefaultDue = () => {
+    const due = new Date();
+
+    due.setDate(due.getDate() + 7);
+    due.setHours(23);
+    due.setMinutes(59);
+
+    return due;
+};
 
 const createTasksMachine = (): StateMachine<Context, any, any> => {
     return createMachine({
@@ -14,8 +24,8 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
         context: {
             tasks: [],
             task: "",
-            due: 0, // TODO: Set to +1 week at midnight
-            stakes: 5, // TODO: Use user setting
+            due: getDefaultDue(),
+            cents: 500, // TODO: Use user setting
         } as Context,
         states: {
             loading: {
@@ -35,7 +45,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 on: {
                     SET_TASK: {actions: "setTask"},
                     SET_DUE: {actions: "setDue"},
-                    SET_STAKES: {actions: "setStakes"},
+                    SET_CENTS: {actions: "setCents"},
                     SAVE_TASK: [
                         {target: "saving", cond: "isFormValid"},
                         {target: "idle"}
@@ -43,7 +53,26 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 }
             },
             saving: {
-                always: {target: "loading"}
+                invoke: {
+                    src: async (ctx) => {
+                        const dueString = ctx.due.toLocaleDateString("en-US", {
+                            year: 'numeric',
+                            month: 'numeric',
+                            day: 'numeric',
+                            hour: 'numeric',
+                            minute: 'numeric'
+                        });
+
+                        const response = await api.addTask(ctx.task, dueString, ctx.cents);
+
+                        // TODO: Throw error if !response.ok
+                    },
+                    onDone: {
+                        target: "loading",
+                        // TODO: Reset form
+                    }
+                    // TODO: Handle thrown error
+                }
             }
         },
     }, {
@@ -55,13 +84,13 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 tasks: (ctx, e) => e.data
             }),
             setTask: assign({
-                task: (ctx, e) => e.value
+                task: (ctx, e) =>  e.value
             }),
             setDue: assign({
                 due: (ctx, e) => e.value
             }),
-            setStakes: assign({
-                stakes: (ctx, e) => e.value
+            setCents: assign({
+                cents: (ctx, e) => e.value
             }),
         }
     })
