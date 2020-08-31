@@ -1,12 +1,21 @@
 /**  * @jest-environment jsdom-fourteen  */
 
-import api, {Api} from "../../../classes/Api";
-import {waitFor, render, getByPlaceholderText} from "@testing-library/react"
+import api from "../../../classes/Api";
+import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "."
 import React from "react";
 import userEvent from '@testing-library/user-event'
 
 jest.mock('../../../classes/Api')
+
+global.document.createRange = () => ({
+    setStart: () => {},
+    setEnd: () => {},
+    commonAncestorContainer: {
+        nodeName: 'BODY',
+        ownerDocument: document,
+    }
+} as any)
 
 const makeResponse = ({ok = true, json = ''} = {}) => {
     return {ok, json: () => Promise.resolve(json)}
@@ -49,13 +58,23 @@ const makeTask = (
     }
 }
 
-const expectTaskSave = ({task = "", cents = 500}) => {
+const getDefaultDueDate = () => {
     const due = new Date();
 
     due.setDate(due.getDate() + 7);
     due.setHours(23);
     due.setMinutes(59);
 
+    return due;
+}
+
+const expectTaskSave = (
+    {
+        task = "",
+        due = getDefaultDueDate(),
+        cents = 500
+    }
+) => {
     const dueString = due.toLocaleDateString("en-US", {
         year: 'numeric',
         month: 'numeric',
@@ -151,6 +170,34 @@ describe("tasks page", () => {
         userEvent.click(addButton)
 
         expectTaskSave({cents: 1500})
+    })
+
+    it("allows due change", async () => {
+        loadApiData()
+
+        const {getByText, getByPlaceholderText} = render(<Tasks/>)
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        // @ts-ignore
+        const dueInput = getByText("Due")
+            .firstElementChild
+            .firstElementChild
+            .firstElementChild
+
+        if (!dueInput) {
+            throw Error("Missing due input")
+        }
+
+        await userEvent.type(dueInput, "{backspace}{backspace}AM")
+
+        userEvent.click(getByText("Add"))
+
+        const due = getDefaultDueDate();
+
+        due.setHours(11);
+
+        expectTaskSave({due})
     })
 
     // TODO: Test that new task added to list optimistically
