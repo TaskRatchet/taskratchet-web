@@ -161,10 +161,10 @@ const Tasks = (props: TasksProps) => {
                     placeholder={'USD'}
                     min={1}
                     max={2500}
-                    value={newCents / 100}
+                    value={state.context.cents / 100}
                     onChange={e => send({
                         type: 'SET_CENTS',
-                        value: e.target.value
+                        value: parseInt(e.target.value) * 100
                     })}
                 /></label>
             </div>

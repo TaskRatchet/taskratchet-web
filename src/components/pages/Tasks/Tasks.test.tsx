@@ -49,7 +49,7 @@ const makeTask = (
     }
 }
 
-const expectTaskSave = ({task = ""}) => {
+const expectTaskSave = ({task = "", cents = 500}) => {
     const due = new Date();
 
     due.setDate(due.getDate() + 7);
@@ -64,7 +64,7 @@ const expectTaskSave = ({task = ""}) => {
         minute: 'numeric'
     });
 
-    expect(api.addTask).toBeCalledWith("the_task", dueString, 500)
+    expect(api.addTask).toBeCalledWith(task, dueString, cents)
 }
 
 describe("tasks page", () => {
@@ -136,6 +136,23 @@ describe("tasks page", () => {
 
         expectTaskSave({task: "the_task"})
     })
+
+    it("allows cents change", async () => {
+        loadApiData()
+
+        const {getByText, getByPlaceholderText} = render(<Tasks/>)
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        const centsInput = getByPlaceholderText("USD"),
+            addButton = getByText("Add")
+
+        await userEvent.type(centsInput, "{backspace}15")
+        userEvent.click(addButton)
+
+        expectTaskSave({cents: 1500})
+    })
+
     // TODO: Test that new task added to list optimistically
 })
 
