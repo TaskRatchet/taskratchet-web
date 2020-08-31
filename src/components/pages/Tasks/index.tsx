@@ -5,11 +5,17 @@ import Task from '../../molecules/Task'
 import Toaster from "../../../classes/Toaster";
 import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.min.css'
+import createTasksMachine from './machine'
+import {useMachine} from '@xstate/react';
+
+const machine = createTasksMachine()
 
 interface TasksProps {
 }
 
 const Tasks = (props: TasksProps) => {
+    const [state, send] = useMachine(machine)
+
     const getDefaultDue = () => {
         const due = new Date();
 
@@ -44,6 +50,8 @@ const Tasks = (props: TasksProps) => {
 
     const saveTask = (event: any) => {
         event.preventDefault();
+
+        send("SAVE_TASK")
 
         if (!newTask) {
             toaster.send('Missing task description');
@@ -92,7 +100,7 @@ const Tasks = (props: TasksProps) => {
         });
 
         api.setComplete(task.id, !task.complete).then((res: any) => {
-            res.text().then(console.log)
+            // res.text().then(console.log)
             toaster.send(res.ok ? `Successfully marked task ${change}`
                 : `Failed to mark task ${change}`);
             refreshData()
@@ -110,14 +118,13 @@ const Tasks = (props: TasksProps) => {
     };
 
     const getSortedTasks = () => {
-        return tasks.sort(compareTasks);
+        return state.context.tasks.sort(compareTasks);
     };
 
     const getActiveTasks = () => {
-        const tasks1 = getSortedTasks().filter((t: Task) => {
+        return getSortedTasks().filter((t: Task) => {
             return !t.complete && !t.charge_captured;
         });
-        return tasks1;
     };
 
     const getArchivedTasks = () => {
