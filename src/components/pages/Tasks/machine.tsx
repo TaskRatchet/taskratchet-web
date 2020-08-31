@@ -26,11 +26,14 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             task: "",
             due: getDefaultDue(),
             cents: 500, // TODO: Use user setting
+            // TODO: Add timezone
         } as Context,
         states: {
             loading: {
                 invoke: {
                     src: async () => {
+                        // TODO: Load user timezone
+
                         const response = await api.getTasks();
 
                         return await response.json()
@@ -69,11 +72,12 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     },
                     onDone: {
                         target: "loading",
-                        // TODO: Reset form
+                        actions: "resetForm"
                     }
                     // TODO: Handle thrown error
                 }
             }
+            // TODO: Add toggling state
         },
     }, {
         guards: {
@@ -92,6 +96,11 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             setCents: assign({
                 cents: (ctx, e) => e.value
             }),
+            resetForm: assign({
+                task: "",
+                due: getDefaultDue(),
+                cents: 500, // TODO: Use user setting
+            })
         }
     })
 }

@@ -14,22 +14,8 @@ interface TasksProps {
 }
 
 const Tasks = (props: TasksProps) => {
-    const [state, send] = useMachine(machine)
-
-    const getDefaultDue = () => {
-        const due = new Date();
-
-        due.setDate(due.getDate() + 7);
-        due.setHours(23);
-        due.setMinutes(59);
-
-        return due;
-    };
-
-    const [tasks, setTasks] = useState<Task[]>([]),
-        [newTask, setNewTask] = useState<string>(''),
-        [newDue, setNewDue] = useState<Date>(getDefaultDue()),
-        [newCents, setNewCents] = useState<number>(500),
+    const [state, send] = useMachine(machine),
+        [tasks, setTasks] = useState<Task[]>([]),
         [timezone, setTimezone] = useState<string>('');
 
     const toaster: Toaster = new Toaster();
@@ -46,46 +32,6 @@ const Tasks = (props: TasksProps) => {
 
         setTasks(tasks)
         setTimezone(me.timezone)
-    };
-
-    const saveTask = (event: any) => {
-        event.preventDefault();
-
-        // if (!newTask) {
-        //     toaster.send('Missing task description');
-        //     return;
-        // }
-
-        toaster.send('Adding task...');
-
-        const dueString = newDue.toLocaleDateString("en-US", {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric'
-        });
-
-        setTasks((prev) => [...prev, {
-            complete: false,
-            due: newDue,
-            id: -1,
-            cents: newCents,
-            task: newTask,
-            charge_authorized: null,
-            charge_locked: null,
-            charge_captured: null,
-        }]);
-
-
-        // api.addTask(newTask, dueString, newCents).then((res: any) => {
-        //     toaster.send((res.ok) ? 'Task added' : 'Failed to add task');
-        //     refreshData();
-        // });
-
-        send("SAVE_TASK")
-
-        setNewTask('');
     };
 
     const toggleStatus = (task: Task) => {
@@ -141,7 +87,10 @@ const Tasks = (props: TasksProps) => {
     return <div className={`page-tasks ${state.value}`}>
         <h1>Tasks</h1>
 
-        <form onSubmit={saveTask}>
+        <form onSubmit={e => {
+            e.preventDefault();
+            send("SAVE_TASK")
+        }}>
             <div className="page-tasks__inputs">
                 <label className={'page-tasks__description'}>Task <input
                     type="text"

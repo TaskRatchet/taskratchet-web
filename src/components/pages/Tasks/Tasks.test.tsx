@@ -205,6 +205,19 @@ describe("tasks page", () => {
         expectTaskSave({due})
     })
 
-    // TODO: Test that new task added to list optimistically
+    it("resets task input", async () => {
+        loadApiData()
+
+        const {taskInput, addButton} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "new_task")
+        userEvent.click(addButton)
+
+        await waitFor(() => expect(api.addTask).toHaveBeenCalled())
+
+        expect((taskInput as HTMLInputElement).value).toBe("")
+    })
 })
 
