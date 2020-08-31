@@ -49,6 +49,24 @@ const makeTask = (
     }
 }
 
+const expectTaskSave = ({task = ""}) => {
+    const due = new Date();
+
+    due.setDate(due.getDate() + 7);
+    due.setHours(23);
+    due.setMinutes(59);
+
+    const dueString = due.toLocaleDateString("en-US", {
+        year: 'numeric',
+        month: 'numeric',
+        day: 'numeric',
+        hour: 'numeric',
+        minute: 'numeric'
+    });
+
+    expect(api.addTask).toBeCalledWith("the_task", dueString, 500)
+}
+
 describe("tasks page", () => {
     beforeEach(() => {
         jest.resetAllMocks()
@@ -106,20 +124,6 @@ describe("tasks page", () => {
     it("saves task", async () => {
         loadApiData()
 
-        const due = new Date();
-
-        due.setDate(due.getDate() + 7);
-        due.setHours(23);
-        due.setMinutes(59);
-
-        const dueString = due.toLocaleDateString("en-US", {
-            year: 'numeric',
-            month: 'numeric',
-            day: 'numeric',
-            hour: 'numeric',
-            minute: 'numeric'
-        });
-
         const {getByText, getByPlaceholderText} = render(<Tasks/>)
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
@@ -130,7 +134,7 @@ describe("tasks page", () => {
         await userEvent.type(taskBox, "the_task")
         userEvent.click(addButton)
 
-        expect(api.addTask).toBeCalledWith("the_task", dueString, 500)
+        expectTaskSave({task: "the_task"})
     })
     // TODO: Test that new task added to list optimistically
 })
