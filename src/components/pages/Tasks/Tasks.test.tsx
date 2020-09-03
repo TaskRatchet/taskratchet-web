@@ -20,7 +20,7 @@ global.document.createRange = () => ({
 } as any)
 
 const makeResponse = ({ok = true, json = ''} = {}) => {
-    return {ok, json: () => Promise.resolve(json)}
+    return Promise.resolve({ok, json: () => Promise.resolve(json)})
 }
 
 const loadApiResponse = (mock: any, data: any) => {
@@ -32,13 +32,13 @@ const loadApiData = (
 ) => {
     loadApiResponse(api.getTasks, tasks || []);
     loadApiResponse(api.getMe, me || {});
-
-    (api.addTask as jest.Mock).mockReturnValue(Promise.resolve(makeResponse()))
+    loadApiResponse(api.setComplete, null);
+    loadApiResponse(api.addTask, null)
 }
 
 const makeTask = (
     {
-        complete = true,
+        complete = false,
         due = 0,
         id = Math.random(),
         cents = 0,
@@ -259,7 +259,27 @@ describe("tasks page", () => {
         expect(getByText("the_timezone")).toBeDefined()
     })
 
-    // TODO: Test mark task complete
+    it("marks task complete", async () => {
+        loadApiData({
+            tasks: [makeTask({id: 3})]
+        })
+
+        const {getByText} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        const desc = getByText("the_task"),
+            checkbox = desc.previousElementSibling
+
+        if (!checkbox) {
+            throw Error("Missing task checkbox")
+        }
+
+        userEvent.click(checkbox)
+
+        expect(api.setComplete).toBeCalledWith(3, true)
+    })
+
     // TODO: Test mark task incomplete
 })
 
