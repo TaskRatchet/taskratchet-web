@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import api from '../../../classes/Api';
 import './style.css'
 import Task from '../../molecules/Task'
@@ -14,43 +14,27 @@ interface TasksProps {
 }
 
 const Tasks = (props: TasksProps) => {
-    const [state, send] = useMachine(machine),
-        [tasks, setTasks] = useState<Task[]>([]),
-        [timezone, setTimezone] = useState<string>('');
+    const [state, send] = useMachine(machine)
 
     const toaster: Toaster = new Toaster();
-
-    useEffect( () => {
-        refreshData()
-    }, []);
-
-    const refreshData = async () => {
-        const tasksResponse = await api.getTasks(),
-            tasks = await tasksResponse.json(),
-            meResponse = await api.getMe(),
-            me = await meResponse.json();
-
-        setTasks(tasks)
-        setTimezone(me.timezone)
-    };
 
     const toggleStatus = (task: Task) => {
         const change = (task.complete ? 'incomplete' : 'complete');
 
         toaster.send(`Marking task ${change}...`);
 
-        setTasks((prev: Task[]) => {
-            return prev.map((t: Task) => {
-                if (t.id === task.id) t.complete = !t.complete;
-                return t;
-            });
-        });
+        // setTasks((prev: Task[]) => {
+        //     return prev.map((t: Task) => {
+        //         if (t.id === task.id) t.complete = !t.complete;
+        //         return t;
+        //     });
+        // });
 
         api.setComplete(task.id, !task.complete).then((res: any) => {
             // res.text().then(console.log)
             toaster.send(res.ok ? `Successfully marked task ${change}`
                 : `Failed to mark task ${change}`);
-            refreshData()
+            // refreshData()
         });
     };
 
@@ -105,7 +89,7 @@ const Tasks = (props: TasksProps) => {
                         })
                     }}
                 /></label>
-                <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker
+                <label className={'page-tasks__due'}>Due {state.context.timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{state.context.timezone}</a>)</> : null} <DatePicker
                     selected={state.context.due} onChange={value => send({type: 'SET_DUE', value})} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
                 <label className={'page-tasks__dollars'}>Stakes <input
                     type="number"

@@ -7,6 +7,7 @@ export interface Context {
     due: Date,
     cents: number,
     error: string,
+    timezone: string,
 }
 
 const getDefaultDue = () => {
@@ -28,21 +29,25 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             due: getDefaultDue(),
             cents: 500, // TODO: Use user setting
             error: "",
-            // TODO: Add timezone
+            timezone: "",
         } as Context,
         states: {
             loading: {
                 invoke: {
                     src: async () => {
-                        // TODO: Load user timezone
+                        const tasksResponse = await api.getTasks(),
+                            tasks = await tasksResponse.json(),
+                            meResponse = await api.getMe(),
+                            me = await meResponse.json();
 
-                        const response = await api.getTasks();
-
-                        return await response.json()
+                        return {
+                            tasks,
+                            timezone: me.timezone
+                        }
                     },
                     onDone: {
                         target: "idle",
-                        actions: "saveTasks"
+                        actions: "loadData"
                     }
                 },
             },
@@ -97,9 +102,10 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     error: isTaskMissing ? 'Task is required' : ''
                 }
             }),
-            saveTasks: assign({
-                tasks: (ctx, e) => e.data
-            }),
+            loadData: assign((ctx, e) => ({
+                tasks: e.data.tasks,
+                timezone: e.data.timezone
+            })),
             setTask: assign({
                 task: (ctx, e) =>  e.value
             }),

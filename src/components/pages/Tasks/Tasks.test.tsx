@@ -248,5 +248,19 @@ describe("tasks page", () => {
 
         expect(getByText("Task is required")).toBeDefined()
     })
+
+    // TODO: Test timezone display
+    it("displays timezone", async () => {
+        loadApiData({me: {timezone: "the_timezone"}})
+
+        const {getByText} = renderTasksPage()
+
+        await waitFor(() => expect(api.getMe).toHaveBeenCalled())
+
+        expect(getByText("the_timezone")).toBeDefined()
+    })
+
+    // TODO: Test mark task complete
+    // TODO: Test mark task incomplete
 })
 
