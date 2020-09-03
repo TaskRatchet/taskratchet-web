@@ -228,7 +228,7 @@ describe("tasks page", () => {
     it("doesn't accept empty task", async () => {
         loadApiData()
 
-        const {taskInput, addButton} = renderTasksPage()
+        const {addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
@@ -237,6 +237,16 @@ describe("tasks page", () => {
         expect(api.addTask).not.toHaveBeenCalled()
     })
 
-    // TODO: Test empty task submit displays error
+    it("displays error on empty task submit", async () => {
+        loadApiData()
+
+        const {addButton, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        userEvent.click(addButton)
+
+        expect(getByText("Task is required")).toBeDefined()
+    })
 })
 

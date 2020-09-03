@@ -4,8 +4,9 @@ import api from "../../../classes/Api";
 export interface Context {
     tasks: Task[],
     task: string,
-    due: any, // TODO: Replace with proper type
+    due: Date,
     cents: number,
+    error: string,
 }
 
 const getDefaultDue = () => {
@@ -26,6 +27,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             task: "",
             due: getDefaultDue(),
             cents: 500, // TODO: Use user setting
+            error: "",
             // TODO: Add timezone
         } as Context,
         states: {
@@ -45,6 +47,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 },
             },
             idle: {
+                entry: "validateForm",
                 on: {
                     SET_TASK: {actions: "setTask"},
                     SET_DUE: {actions: "setDue"},
@@ -84,6 +87,16 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             isFormValid: (ctx) => !!ctx.task
         },
         actions: {
+            validateForm: assign((context, event) => {
+                const shouldValidate = event.type === "SAVE_TASK",
+                    isTaskMissing = !context.task;
+
+                if (!shouldValidate) return {}
+
+                return {
+                    error: isTaskMissing ? 'Task is required' : ''
+                }
+            }),
             saveTasks: assign({
                 tasks: (ctx, e) => e.data
             }),

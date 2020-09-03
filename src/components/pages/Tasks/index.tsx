@@ -92,6 +92,8 @@ const Tasks = (props: TasksProps) => {
             send("SAVE_TASK")
         }}>
             <div className="page-tasks__inputs">
+                {state.context.error ? <p>{state.context.error}</p> : null}
+
                 <label className={'page-tasks__description'}>Task <input
                     type="text"
                     placeholder={'Task'}
