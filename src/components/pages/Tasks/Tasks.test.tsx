@@ -249,7 +249,6 @@ describe("tasks page", () => {
         expect(getByText("Task is required")).toBeDefined()
     })
 
-    // TODO: Test timezone display
     it("displays timezone", async () => {
         loadApiData({me: {timezone: "the_timezone"}})
 

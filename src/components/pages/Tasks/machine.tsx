@@ -10,6 +10,8 @@ export interface Context {
     timezone: string,
 }
 
+const defaultCents = 500 // TODO: Use user setting
+
 const getDefaultDue = () => {
     const due = new Date();
 
@@ -27,7 +29,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             tasks: [],
             task: "",
             due: getDefaultDue(),
-            cents: 500, // TODO: Use user setting
+            cents: defaultCents,
             error: "",
             timezone: "",
         } as Context,
@@ -118,7 +120,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             resetForm: assign({
                 task: "",
                 due: getDefaultDue(),
-                cents: 500, // TODO: Use user setting
+                cents: defaultCents,
             })
         }
     })
