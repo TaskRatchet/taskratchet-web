@@ -36,17 +36,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
         states: {
             loading: {
                 invoke: {
-                    src: async () => {
-                        const tasksResponse = await api.getTasks(),
-                            tasks = await tasksResponse.json(),
-                            meResponse = await api.getMe(),
-                            me = await meResponse.json();
-
-                        return {
-                            tasks,
-                            timezone: me.timezone
-                        }
-                    },
+                    src: "dataService",
                     onDone: {
                         target: "idle",
                         actions: "loadData"
@@ -67,19 +57,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             },
             saving: {
                 invoke: {
-                    src: async (ctx) => {
-                        const dueString = ctx.due.toLocaleDateString("en-US", {
-                            year: 'numeric',
-                            month: 'numeric',
-                            day: 'numeric',
-                            hour: 'numeric',
-                            minute: 'numeric'
-                        });
-
-                        const response = await api.addTask(ctx.task, dueString, ctx.cents);
-
-                        // TODO: Throw error if !response.ok
-                    },
+                    src: "taskCreationService",
                     onDone: {
                         target: "loading",
                         actions: "resetForm"
@@ -90,6 +68,32 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             // TODO: Add toggling state
         },
     }, {
+        services: {
+            dataService: async () => {
+                const tasksResponse = await api.getTasks(),
+                    tasks = await tasksResponse.json(),
+                    meResponse = await api.getMe(),
+                    me = await meResponse.json();
+
+                return {
+                    tasks,
+                    timezone: me.timezone
+                }
+            },
+            taskCreationService: async (ctx) => {
+                const dueString = ctx.due.toLocaleDateString("en-US", {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                });
+
+                const response = await api.addTask(ctx.task, dueString, ctx.cents);
+
+                // TODO: Throw error if !response.ok
+            }
+        },
         guards: {
             isFormValid: (ctx) => !!ctx.task
         },
@@ -109,7 +113,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 timezone: e.data.timezone
             })),
             setTask: assign({
-                task: (ctx, e) =>  e.value
+                task: (ctx, e) => e.value
             }),
             setDue: assign({
                 due: (ctx, e) => e.value
