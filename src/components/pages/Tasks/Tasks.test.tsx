@@ -72,9 +72,13 @@ const getDefaultDueDate = () => {
 
 const expectTaskSave = (
     {
-        task = "",
+        task,
         due = getDefaultDueDate(),
         cents = 500
+    }: {
+        task: string,
+        due?: Date,
+        cents?: number
     }
 ) => {
     const dueString = due.toLocaleDateString("en-US", {
@@ -177,32 +181,33 @@ describe("tasks page", () => {
     it("allows cents change", async () => {
         loadApiData()
 
-        const {centsInput, addButton} = renderTasksPage()
+        const {taskInput, centsInput, addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
+        await userEvent.type(taskInput, "new_task")
         await userEvent.type(centsInput, "{backspace}15")
         userEvent.click(addButton)
 
-        expectTaskSave({cents: 1500})
+        expectTaskSave({task: "new_task", cents: 1500})
     })
 
     it("allows due change", async () => {
         loadApiData()
 
-        const {dueInput, addButton} = renderTasksPage()
+        const {taskInput, dueInput, addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
+        await userEvent.type(taskInput, "new_task")
         await userEvent.type(dueInput, "{backspace}{backspace}AM")
-
         userEvent.click(addButton)
 
         const due = getDefaultDueDate();
 
         due.setHours(11);
 
-        expectTaskSave({due})
+        expectTaskSave({task: "new_task", due})
     })
 
     it("resets task input", async () => {
@@ -219,5 +224,19 @@ describe("tasks page", () => {
 
         expect((taskInput as HTMLInputElement).value).toBe("")
     })
+
+    it("doesn't accept empty task", async () => {
+        loadApiData()
+
+        const {taskInput, addButton} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        userEvent.click(addButton)
+
+        expect(api.addTask).not.toHaveBeenCalled()
+    })
+
+    // TODO: Test empty task submit displays error
 })
 

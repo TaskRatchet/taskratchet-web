@@ -81,7 +81,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
         },
     }, {
         guards: {
-            isFormValid: (ctx) => true // TODO: Implement guard
+            isFormValid: (ctx) => !!ctx.task
         },
         actions: {
             saveTasks: assign({
