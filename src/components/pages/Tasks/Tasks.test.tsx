@@ -1,12 +1,14 @@
 /**  * @jest-environment jsdom-fourteen  */
 
 import api from "../../../classes/Api";
+import toaster from "../../../classes/Toaster"
 import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "."
 import React from "react";
 import userEvent from '@testing-library/user-event'
 
 jest.mock('../../../classes/Api')
+jest.mock("../../../classes/Toaster")
 
 global.document.createRange = () => ({
     setStart: () => {
@@ -299,6 +301,28 @@ describe("tasks page", () => {
         userEvent.click(checkbox)
 
         await waitFor(() => expect(api.getTasks).toBeCalledTimes(2))
+    })
+
+    it("toasts success message", async () => {
+        loadApiData({
+            tasks: [makeTask({id: 3})]
+        })
+
+        const {getByText} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        const desc = getByText("the_task"),
+            checkbox = desc.previousElementSibling
+
+        if (!checkbox) {
+            throw Error("Missing task checkbox")
+        }
+
+        userEvent.click(checkbox)
+
+        await waitFor(() => expect(toaster.send)
+            .toBeCalledWith("Successfully marked task complete"))
     })
 })
 

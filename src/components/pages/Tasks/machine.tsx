@@ -1,12 +1,13 @@
 import {assign, createMachine, StateMachine} from "xstate";
 import api from "../../../classes/Api";
+import toaster from "../../../classes/Toaster";
 
 export interface Context {
     tasks: Task[],
     task: string,
     due: Date,
     cents: number,
-    error: string,
+    formError: string,
     timezone: string,
 }
 
@@ -30,7 +31,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             task: "",
             due: getDefaultDue(),
             cents: defaultCents,
-            error: "",
+            formError: "",
             timezone: "",
         } as Context,
         states: {
@@ -107,14 +108,12 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     throw Error("No task matching ID")
                 }
 
-                const response = await api.setComplete(task.id, !task.complete)
+                const change = task.complete ? "incomplete" : "complete",
+                    response = await api.setComplete(task.id, !task.complete);
 
-                //     .then((res: any) => {
-                //     // res.text().then(console.log)
-                //     // toaster.send(res.ok ? `Successfully marked task ${change}`
-                //     //     : `Failed to mark task ${change}`);
-                //     // refreshData()
-                // });
+                toaster.send(response.ok ?
+                    `Successfully marked task ${change}` :
+                    `Failed to mark task  ${change}`)
 
                 // TODO: Handle response code
                 // TODO: Update message based on success or failure
@@ -131,7 +130,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 if (!shouldValidate) return {}
 
                 return {
-                    error: isTaskMissing ? 'Task is required' : ''
+                    formError: isTaskMissing ? 'Task is required' : ''
                 }
             }),
             loadData: assign((ctx, e) => ({
