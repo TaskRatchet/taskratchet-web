@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react';
 import api from '../../../classes/Api';
 import './style.css'
-import Toaster from "../../../classes/Toaster";
+import toaster from "../../../classes/Toaster";
 import queryString from 'query-string'
 import {isProduction} from "../../../tr_constants"
 import Input from "../../molecules/Input";
 
-const toaster: Toaster = new Toaster(),
-    params: any = queryString.parse(window.location.search);
+const params: any = queryString.parse(window.location.search);
 
 interface Card {
     brand: string,

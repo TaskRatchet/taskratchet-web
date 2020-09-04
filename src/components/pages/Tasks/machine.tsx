@@ -64,14 +64,12 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                         target: "loading",
                         actions: "resetForm"
                     }
-                    // TODO: Handle thrown error
                 }
             },
             toggling: {
                 invoke: {
                     src: "taskToggleService",
                     onDone: {target: "loading"}
-                    // TODO: Handle errors
                 }
             }
         },
