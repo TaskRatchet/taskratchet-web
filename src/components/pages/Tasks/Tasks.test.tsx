@@ -112,6 +112,16 @@ const renderTasksPage = () => {
         dueInput,
         centsInput: getByPlaceholderText("USD"),
         addButton: getByText("Add"),
+        clickCheckbox: (task = "the_task") => {
+            const desc = getByText(task),
+                checkbox = desc.previousElementSibling
+
+            if (!checkbox) {
+                throw Error("Missing task checkbox")
+            }
+
+            userEvent.click(checkbox)
+        },
         ...getters
     }
 }
@@ -266,18 +276,11 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         })
 
-        const {getByText} = renderTasksPage()
+        const {clickCheckbox} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        const desc = getByText("the_task"),
-            checkbox = desc.previousElementSibling
-
-        if (!checkbox) {
-            throw Error("Missing task checkbox")
-        }
-
-        userEvent.click(checkbox)
+        clickCheckbox()
 
         expect(api.setComplete).toBeCalledWith(3, true)
     })
@@ -287,18 +290,11 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         })
 
-        const {getByText} = renderTasksPage()
+        const {clickCheckbox} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        const desc = getByText("the_task"),
-            checkbox = desc.previousElementSibling
-
-        if (!checkbox) {
-            throw Error("Missing task checkbox")
-        }
-
-        userEvent.click(checkbox)
+        clickCheckbox()
 
         await waitFor(() => expect(api.getTasks).toBeCalledTimes(2))
     })
@@ -308,18 +304,11 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         })
 
-        const {getByText} = renderTasksPage()
+        const {clickCheckbox} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        const desc = getByText("the_task"),
-            checkbox = desc.previousElementSibling
-
-        if (!checkbox) {
-            throw Error("Missing task checkbox")
-        }
-
-        userEvent.click(checkbox)
+        clickCheckbox()
 
         await waitFor(() => expect(toaster.send)
             .toBeCalledWith("Successfully marked task complete"))
