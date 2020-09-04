@@ -300,7 +300,5 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toBeCalledTimes(2))
     })
-
-    // TODO: Test mark task incomplete
 })
 

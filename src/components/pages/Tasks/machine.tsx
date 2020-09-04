@@ -68,25 +68,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             },
             toggling: {
                 invoke: {
-                    src: async (ctx, e) => {
-                        const task = ctx.tasks.find(t => t.id === e.value);
-
-                        if (!task) {
-                            throw Error("No task matching ID")
-                        }
-
-                        const response = await api.setComplete(task.id, !task.complete)
-
-                        //     .then((res: any) => {
-                        //     // res.text().then(console.log)
-                        //     // toaster.send(res.ok ? `Successfully marked task ${change}`
-                        //     //     : `Failed to mark task ${change}`);
-                        //     // refreshData()
-                        // });
-
-                        // TODO: Handle response code
-                        // TODO: Update message based on success or failure
-                    },
+                    src: "taskToggleService",
                     onDone: {target: "loading"}
                     // TODO: Handle errors
                 }
@@ -117,6 +99,25 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 const response = await api.addTask(ctx.task, dueString, ctx.cents);
 
                 // TODO: Throw error if !response.ok
+            },
+            taskToggleService: async (ctx, e) => {
+                const task = ctx.tasks.find(t => t.id === e.value);
+
+                if (!task) {
+                    throw Error("No task matching ID")
+                }
+
+                const response = await api.setComplete(task.id, !task.complete)
+
+                //     .then((res: any) => {
+                //     // res.text().then(console.log)
+                //     // toaster.send(res.ok ? `Successfully marked task ${change}`
+                //     //     : `Failed to mark task ${change}`);
+                //     // refreshData()
+                // });
+
+                // TODO: Handle response code
+                // TODO: Update message based on success or failure
             }
         },
         guards: {
