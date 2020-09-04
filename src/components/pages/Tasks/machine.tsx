@@ -99,7 +99,8 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
 
                 const response = await api.addTask(ctx.task, dueString, ctx.cents);
 
-                toaster.send('Task added successfully')
+                toaster.send(response.ok ? 'Task added successfully' :
+                    'Failed to add task')
             },
             taskToggleService: async (ctx, e) => {
                 const task = ctx.tasks.find(t => t.id === e.value);

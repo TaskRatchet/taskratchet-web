@@ -25,17 +25,20 @@ const makeResponse = ({ok = true, json = ''} = {}) => {
     return Promise.resolve({ok, json: () => Promise.resolve(json)})
 }
 
-const loadApiResponse = (mock: any, data: any) => {
-    (mock as jest.Mock).mockReturnValue(makeResponse({json: data}))
+const loadApiResponse = (
+    mock: any,
+    response: { json?: any, ok?: boolean } = {json: null, ok: true}
+) => {
+    (mock as jest.Mock).mockReturnValue(makeResponse(response))
 }
 
 const loadApiData = (
     {tasks = [], me = {}}: { tasks?: Task[], me?: object } = {}
 ) => {
-    loadApiResponse(api.getTasks, tasks || []);
-    loadApiResponse(api.getMe, me || {});
-    loadApiResponse(api.setComplete, null);
-    loadApiResponse(api.addTask, null)
+    loadApiResponse(api.getTasks, {json: tasks || []});
+    loadApiResponse(api.getMe, {json: me || {}});
+    loadApiResponse(api.setComplete);
+    loadApiResponse(api.addTask)
 }
 
 const makeTask = (
@@ -326,6 +329,21 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(toaster.send)
             .toBeCalledWith("Task added successfully"))
+    })
+
+    it("toasts task creation failure", async () => {
+        loadApiData()
+        loadApiResponse(api.addTask, {ok: false})
+
+        const {taskInput, addButton} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "the_task")
+        userEvent.click(addButton)
+
+        await waitFor(() => expect(toaster.send)
+            .toBeCalledWith("Failed to add task"))
     })
 })
 
