@@ -41,6 +41,10 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     onDone: {
                         target: "idle",
                         actions: "loadData"
+                    },
+                    onError: {
+                        target: "idle",
+                        actions: "toastError"
                     }
                 },
             },
@@ -63,13 +67,21 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     onDone: {
                         target: "loading",
                         actions: "resetForm"
+                    },
+                    onError: {
+                        target: "loading",
+                        actions: "toastError"
                     }
                 }
             },
             toggling: {
                 invoke: {
                     src: "taskToggleService",
-                    onDone: {target: "loading"}
+                    onDone: {target: "loading"},
+                    onError: {
+                        target: "loading",
+                        actions: "toastError"
+                    }
                 }
             }
         },
@@ -146,7 +158,10 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 task: "",
                 due: getDefaultDue(),
                 cents: defaultCents,
-            })
+            }),
+            toastError: (ctx, e) => {
+                toaster.send(e.data.toString())
+            }
         }
     })
 }

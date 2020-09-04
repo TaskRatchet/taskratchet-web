@@ -47,7 +47,7 @@ const Tasks = (props: TasksProps) => {
         })}/></li>);
     };
 
-    return <div className={`page-tasks ${state.value}`}>
+    return <div className={`page-tasks ${state.value === "idle" ? null : "loading"}`}>
         <h1>Tasks</h1>
 
         <form onSubmit={e => {

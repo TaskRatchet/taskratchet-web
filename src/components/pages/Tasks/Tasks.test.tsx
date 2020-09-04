@@ -345,5 +345,53 @@ describe("tasks page", () => {
         await waitFor(() => expect(toaster.send)
             .toBeCalledWith("Failed to add task"))
     })
+
+    it("toasts data loading exception", async () => {
+        (api.getTasks as jest.Mock).mockImplementation(() => {
+            throw Error("Oops!")
+        })
+
+        renderTasksPage()
+
+        await waitFor(() => expect(toaster.send)
+            .toBeCalledWith("Error: Oops!"))
+    })
+
+    it("toasts task creation exception", async () => {
+        loadApiData();
+
+        (api.addTask as jest.Mock).mockImplementation(() => {
+            throw Error("Oops!")
+        })
+
+        const {taskInput, addButton} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "the_task")
+        userEvent.click(addButton)
+
+        await waitFor(() => expect(toaster.send)
+            .toBeCalledWith("Error: Oops!"))
+    })
+
+    it("toasts task toggle exception", async () => {
+        loadApiData({
+            tasks: [makeTask({id: 3})]
+        });
+
+        (api.setComplete as jest.Mock).mockImplementation(() => {
+            throw Error("Oops!")
+        })
+
+        const {clickCheckbox} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        clickCheckbox()
+
+        await waitFor(() => expect(toaster.send)
+            .toBeCalledWith("Error: Oops!"))
+    })
 })
 
