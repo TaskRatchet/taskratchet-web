@@ -65,7 +65,10 @@ const Tasks = (props: TasksProps) => {
     };
 
     const makeTaskListItems = (tasks: Task[]) => {
-        return tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => toggleStatus(t)}/></li>);
+        return tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => send({
+            type: "TOGGLE_TASK",
+            value: t.id
+        })}/></li>);
     };
 
     return <div className={`page-tasks ${state.value}`}>

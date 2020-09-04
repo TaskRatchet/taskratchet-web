@@ -53,6 +53,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                         {target: "saving", cond: "isFormValid"},
                         {target: "idle"}
                     ],
+                    TOGGLE_TASK: {target: "toggling"}
                 }
             },
             saving: {
@@ -64,8 +65,32 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     }
                     // TODO: Handle thrown error
                 }
+            },
+            toggling: {
+                invoke: {
+                    src: async (ctx, e) => {
+                        const task = ctx.tasks.find(t => t.id === e.value);
+
+                        if (!task) {
+                            throw Error("No task matching ID")
+                        }
+
+                        const response = await api.setComplete(task.id, !task.complete)
+
+                        //     .then((res: any) => {
+                        //     // res.text().then(console.log)
+                        //     // toaster.send(res.ok ? `Successfully marked task ${change}`
+                        //     //     : `Failed to mark task ${change}`);
+                        //     // refreshData()
+                        // });
+
+                        // TODO: Handle response code
+                        // TODO: Update message based on success or failure
+                    },
+                    onDone: {target: "loading"}
+                    // TODO: Handle errors
+                }
             }
-            // TODO: Add toggling state
         },
     }, {
         services: {

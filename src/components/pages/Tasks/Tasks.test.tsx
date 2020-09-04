@@ -259,7 +259,7 @@ describe("tasks page", () => {
         expect(getByText("the_timezone")).toBeDefined()
     })
 
-    it("marks task complete", async () => {
+    it("tells api task is complete", async () => {
         loadApiData({
             tasks: [makeTask({id: 3})]
         })
@@ -278,6 +278,27 @@ describe("tasks page", () => {
         userEvent.click(checkbox)
 
         expect(api.setComplete).toBeCalledWith(3, true)
+    })
+
+    it("reloads tasks", async () => {
+        loadApiData({
+            tasks: [makeTask({id: 3})]
+        })
+
+        const {getByText} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        const desc = getByText("the_task"),
+            checkbox = desc.previousElementSibling
+
+        if (!checkbox) {
+            throw Error("Missing task checkbox")
+        }
+
+        userEvent.click(checkbox)
+
+        await waitFor(() => expect(api.getTasks).toBeCalledTimes(2))
     })
 
     // TODO: Test mark task incomplete
