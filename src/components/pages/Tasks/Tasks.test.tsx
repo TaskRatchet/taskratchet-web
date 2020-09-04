@@ -313,5 +313,19 @@ describe("tasks page", () => {
         await waitFor(() => expect(toaster.send)
             .toBeCalledWith("Successfully marked task complete"))
     })
+
+    it("toasts task creation success", async () => {
+        loadApiData()
+
+        const {taskInput, addButton} = renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "the_task")
+        userEvent.click(addButton)
+
+        await waitFor(() => expect(toaster.send)
+            .toBeCalledWith("Task added successfully"))
+    })
 })
 

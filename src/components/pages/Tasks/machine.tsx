@@ -99,7 +99,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
 
                 const response = await api.addTask(ctx.task, dueString, ctx.cents);
 
-                // TODO: Throw error if !response.ok
+                toaster.send('Task added successfully')
             },
             taskToggleService: async (ctx, e) => {
                 const task = ctx.tasks.find(t => t.id === e.value);
@@ -114,9 +114,6 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 toaster.send(response.ok ?
                     `Successfully marked task ${change}` :
                     `Failed to mark task  ${change}`)
-
-                // TODO: Handle response code
-                // TODO: Update message based on success or failure
             }
         },
         guards: {

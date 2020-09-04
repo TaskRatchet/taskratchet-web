@@ -14,26 +14,6 @@ interface TasksProps {
 const Tasks = (props: TasksProps) => {
     const [state, send] = useMachine(machine)
 
-    // const toggleStatus = (task: Task) => {
-    //     const change = (task.complete ? 'incomplete' : 'complete');
-    //
-    //     toaster.send(`Marking task ${change}...`);
-    //
-    //     // setTasks((prev: Task[]) => {
-    //     //     return prev.map((t: Task) => {
-    //     //         if (t.id === task.id) t.complete = !t.complete;
-    //     //         return t;
-    //     //     });
-    //     // });
-    //
-    //     api.setComplete(task.id, !task.complete).then((res: any) => {
-    //         // res.text().then(console.log)
-    //         toaster.send(res.ok ? `Successfully marked task ${change}`
-    //             : `Failed to mark task ${change}`);
-    //         // refreshData()
-    //     });
-    // };
-
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
         const aDate = new Date(a.due),
