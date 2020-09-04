@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import api from '../../../classes/Api';
-import Toaster from "../../../classes/Toaster";
+import toaster from "../../../classes/Toaster";
 
 interface CheckoutSession {
     id: string
@@ -18,8 +18,6 @@ const Register = (props: RegisterProps) => {
         [timezone, setTimezone] = useState<string>(''),
         [agreed, setAgreed] = useState<boolean>(false),
         [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null);
-
-    const toaster: Toaster = new Toaster();
 
     useEffect(() => {
         populateTimezones();

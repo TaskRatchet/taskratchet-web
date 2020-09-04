@@ -49,6 +49,7 @@ a, .link {
     width: 100%;
     height: 100%;
     background-color: rgba(255,255,255,.8);
+    z-index:100;
   }
   &:after {
     content: "loading ...";
@@ -59,5 +60,6 @@ a, .link {
     left: 0;
     width: 100%;
     height: 1em;
+    z-index: 150;
   }
 }

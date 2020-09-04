@@ -6,4 +6,6 @@ class Toaster {
     }
 }
 
-export default Toaster;
+const toaster = new Toaster()
+
+export default toaster;
