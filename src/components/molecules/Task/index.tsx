@@ -1,5 +1,6 @@
 import React from "react";
 import './style.css'
+import browser from "../../../classes/Browser";
 
 interface Flag {
     label: string,
@@ -14,8 +15,8 @@ interface TaskProps {
 
 const Task = (props: TaskProps) => {
     const dueDate = new Date(props.task.due),
-        dateString = dueDate.toLocaleDateString(),
-        timeString = dueDate.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+        dateString = browser.getDateString(dueDate),
+        timeString = browser.getTimeString(dueDate),
         difference = (dueDate.getTime() - Date.now()) / 1000,
         charged = props.task.charge_captured || props.task.charge_locked,
         flags = [

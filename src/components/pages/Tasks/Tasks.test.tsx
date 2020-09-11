@@ -6,9 +6,11 @@ import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "."
 import React from "react";
 import userEvent from '@testing-library/user-event'
+import browser from "../../../classes/Browser"
 
 jest.mock('../../../classes/Api')
 jest.mock("../../../classes/Toaster")
+jest.mock("../../../classes/Browser")
 
 global.document.createRange = () => ({
     setStart: () => {
@@ -44,7 +46,7 @@ const loadApiData = (
 const makeTask = (
     {
         complete = false,
-        due = 0,
+        due = "5/22/2020, 11:59 PM",
         id = Math.random(),
         cents = 0,
         task = 'the_task',
@@ -392,6 +394,30 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(toaster.send)
             .toBeCalledWith("Error: Oops!"))
+    })
+
+    it("gets date string", async () => {
+        loadApiData({
+            tasks: [makeTask()]
+        });
+
+        await renderTasksPage()
+
+        await waitFor(() => {
+            expect(browser.getDateString).toBeCalled()
+        })
+    })
+
+    it("gets time string", async () => {
+        loadApiData({
+            tasks: [makeTask()]
+        });
+
+        await renderTasksPage()
+
+        await waitFor(() => {
+            expect(browser.getTimeString).toBeCalled()
+        })
     })
 })
 
