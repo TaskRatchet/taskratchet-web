@@ -1,5 +1,3 @@
-import {Api} from "./Api";
-
 export class Browser {
     getLanguages(): string[] {
         return navigator.languages.slice()
