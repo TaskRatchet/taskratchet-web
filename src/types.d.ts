@@ -1,3 +1,5 @@
+declare module 'jest-mock-now'
+
 type Session = {
     token: string,
     email: string

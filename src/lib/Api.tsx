@@ -4,6 +4,8 @@ import {useEffect, useState} from "react";
 
 const cookies = new Cookies();
 
+// TODO: Convert to stand-alone functions
+
 export class Api {
     sessionSubs: Array<CallableFunction>
 
@@ -214,6 +216,10 @@ export class Api {
 
     getTasks() {
         return this._fetch('me/tasks', true);
+    }
+
+    getTask(id: number) {
+        return this._fetch(`me/tasks/${id}`)
     }
 
     // Requires that user be authenticated.

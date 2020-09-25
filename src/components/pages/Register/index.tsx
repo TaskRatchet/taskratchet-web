@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../../classes/Api';
-import toaster from "../../../classes/Toaster";
+import api from '../../../lib/Api';
+import toaster from "../../../lib/Toaster";
 
 interface CheckoutSession {
     id: string

@@ -1,16 +1,17 @@
 /**  * @jest-environment jsdom-fourteen  */
 
-import api from "../../../classes/Api";
-import toaster from "../../../classes/Toaster"
+import api from "../../../lib/Api";
+import toaster from "../../../lib/Toaster"
 import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "."
 import React from "react";
 import userEvent from '@testing-library/user-event'
-import browser from "../../../classes/Browser"
+import browser from "../../../lib/Browser"
+import {loadApiData, loadApiResponse, makeTask} from "../../../lib/testHelpers";
 
-jest.mock('../../../classes/Api')
-jest.mock("../../../classes/Toaster")
-jest.mock("../../../classes/Browser")
+jest.mock('../../../lib/Api')
+jest.mock("../../../lib/Toaster")
+jest.mock("../../../lib/Browser")
 
 global.document.createRange = () => ({
     setStart: () => {
@@ -22,50 +23,6 @@ global.document.createRange = () => ({
         ownerDocument: document,
     }
 } as any)
-
-const makeResponse = ({ok = true, json = ''} = {}) => {
-    return Promise.resolve({ok, json: () => Promise.resolve(json)})
-}
-
-const loadApiResponse = (
-    mock: any,
-    response: { json?: any, ok?: boolean } = {json: null, ok: true}
-) => {
-    (mock as jest.Mock).mockReturnValue(makeResponse(response))
-}
-
-const loadApiData = (
-    {tasks = [], me = {}}: { tasks?: Task[], me?: object } = {}
-) => {
-    loadApiResponse(api.getTasks, {json: tasks || []});
-    loadApiResponse(api.getMe, {json: me || {}});
-    loadApiResponse(api.setComplete);
-    loadApiResponse(api.addTask)
-}
-
-const makeTask = (
-    {
-        complete = false,
-        due = "5/22/2020, 11:59 PM",
-        id = Math.random(),
-        cents = 0,
-        task = 'the_task',
-        charge_locked = null,
-        charge_authorized = null,
-        charge_captured = null
-    } = {}
-): Task => {
-    return {
-        complete,
-        due,
-        id,
-        cents,
-        task,
-        charge_locked,
-        charge_authorized,
-        charge_captured,
-    }
-}
 
 const getDefaultDueDate = () => {
     const due = new Date();

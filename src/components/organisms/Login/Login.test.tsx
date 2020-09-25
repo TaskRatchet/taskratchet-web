@@ -1,5 +1,5 @@
 import createLoginMachine, {LoginContext} from './machine'
-import api, {Api} from "../../../classes/Api";
+import api, {Api} from "../../../lib/Api";
 import {interpret, Interpreter} from "xstate";
 
 let service: Interpreter<LoginContext>, mockApi: Api;
