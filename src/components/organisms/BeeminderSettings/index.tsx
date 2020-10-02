@@ -29,6 +29,7 @@ const BeeminderSettings = () => {
                     value={bmGoal}
                     onChange={() => null}
                 />
+                <input type="submit" value={'Save'} />
             </>
             : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>
         }

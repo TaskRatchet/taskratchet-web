@@ -75,6 +75,16 @@ describe("BeeminderSettings component", () => {
 
         expect(getByDisplayValue('bm_goal')).toBeDefined()
     })
+
+    it('has save button', async () => {
+        loadMeWithBeeminder()
+
+        const {getByText} = await render(<BeeminderSettings/>);
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        expect(getByText('Save')).toBeDefined()
+    })
 })
 
 // TODO: Flatten folder structure
