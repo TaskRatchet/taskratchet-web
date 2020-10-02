@@ -57,8 +57,11 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             saving: {
                 invoke: {
                     src: 'saveService',
-                    onDone: {target: 'idle'}
-                    // TODO: onError
+                    onDone: {target: 'idle'},
+                    onError: {
+                        target: 'idle'
+                        // TODO: actions: "toastError"
+                    }
                 }
             }
         }
@@ -76,10 +79,14 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     beeminder_token: access_token
                 })
 
+                // TODO: Throw if !response.ok
+
                 return await parseIntegration(response);
             },
             dataService: async () => {
                 const response = await api.getMe()
+
+                // TODO: Throw if !response.ok
 
                 return parseIntegration(response)
             },
@@ -87,6 +94,8 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                 await api.updateMe({
                     beeminder_goal_new_tasks: ctx.bmGoal
                 })
+
+                // TODO: Throw if !response.ok
             }
         },
         actions: {

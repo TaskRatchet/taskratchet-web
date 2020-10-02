@@ -39,8 +39,8 @@ export const makeResponse = (args: {
     }
 }
 
-export const loadMe = (json: any) => {
-    const response = makeResponse({json});
+export const loadMe = ({json = {}, ok = true}: { json?: any, ok?: boolean }) => {
+    const response = makeResponse({json, ok});
 
     jest.spyOn(api, 'getMe').mockResolvedValue(response)
     jest.spyOn(api, 'updateMe').mockResolvedValue(response)
@@ -48,8 +48,10 @@ export const loadMe = (json: any) => {
 
 export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm_goal') => {
     loadMe({
-        integrations: {
-            beeminder: {user, goal_new_tasks: goal}
+        json: {
+            integrations: {
+                beeminder: {user, goal_new_tasks: goal}
+            }
         }
     })
 }

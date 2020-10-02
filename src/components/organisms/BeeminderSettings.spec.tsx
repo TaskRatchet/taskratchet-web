@@ -4,7 +4,7 @@ import {render, RenderResult, waitFor} from "@testing-library/react";
 import React from "react";
 import BeeminderSettings from "./BeeminderSettings";
 import api from "../../lib/Api";
-import {expectLoadingOverlay, loadMeWithBeeminder, loadUrlParams} from "../../lib/test/helpers";
+import {expectLoadingOverlay, loadMe, loadMeWithBeeminder, loadUrlParams} from "../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
 
 jest.mock('../../lib/Api')
@@ -191,6 +191,20 @@ describe("BeeminderSettings component", () => {
 
     it('removes loading overlay after save', async () => {
         loadMeWithBeeminder()
+
+        const {getByText, container} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+
+        await waitFor(() => expectLoadingOverlay(container, false));
+    })
+
+    it('removes loading overlay after save error', async () => {
+        loadMeWithBeeminder()
+
+        jest.spyOn(api, 'updateMe').mockRejectedValue('error')
 
         const {getByText, container} = await renderBeeminderSettings()
 
