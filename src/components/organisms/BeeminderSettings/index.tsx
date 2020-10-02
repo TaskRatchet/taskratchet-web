@@ -15,10 +15,11 @@ const beeminderClientId: string = (isProduction)
         `&redirect_uri=${encodeURIComponent(beeminderRedirect)}&response_type=token`
 
 const BeeminderSettings = () => {
-    const [state, send] = useMachine(machine)
+    const [state, send] = useMachine(machine),
+        {bmUser} = state.context
 
     return <div>
-        {state.context.bmUser ? null : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>}
+        {bmUser ? <p>Beeminder user: {bmUser}</p> : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>}
     </div>
 }
 

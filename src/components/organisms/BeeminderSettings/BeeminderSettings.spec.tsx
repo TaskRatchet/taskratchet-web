@@ -53,6 +53,24 @@ describe("BeeminderSettings component", () => {
 
         expect((link as HTMLAnchorElement).href).toContain('https://www.beeminder.com')
     })
+
+    it('displays beeminder user', async () => {
+        jest.spyOn(api, 'getMe').mockResolvedValue(makeResponse({
+            json: {
+                integrations: {
+                    beeminder: {
+                        user: 'bm_user'
+                    }
+                }
+            }
+        }))
+
+        const {getByText} = await render(<BeeminderSettings/>);
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        expect(getByText('Beeminder user: bm_user')).toBeDefined()
+    })
 })
 
 // TODO: Flatten folder structure
