@@ -2,6 +2,7 @@ import {assign, createMachine, StateMachine} from "xstate";
 import api from "../../lib/Api";
 import _ from "lodash";
 import browser from "../../lib/Browser";
+import toaster from "../../lib/Toaster";
 
 interface Context {
     bmUser: string,
@@ -59,8 +60,8 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     src: 'saveService',
                     onDone: {target: 'idle'},
                     onError: {
-                        target: 'idle'
-                        // TODO: actions: "toastError"
+                        target: 'idle',
+                        actions: 'toastError'
                     }
                 }
             }
@@ -91,11 +92,14 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                 return parseIntegration(response)
             },
             saveService: async (ctx: Context) => {
-                await api.updateMe({
+                const response = await api.updateMe({
                     beeminder_goal_new_tasks: ctx.bmGoal
                 })
 
-                // TODO: Throw if !response.ok
+                if (!response.ok) {
+                    const text = await response.text()
+                    throw new Error(text)
+                }
             }
         },
         actions: {
@@ -105,7 +109,10 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             })),
             setGoal: assign({
                 bmGoal: (ctx: Partial<Context>, e: any): string => e.value,
-            })
+            }),
+            toastError: (ctx, e) => {
+                toaster.send(e.data.toString())
+            }
         }
     })
 }

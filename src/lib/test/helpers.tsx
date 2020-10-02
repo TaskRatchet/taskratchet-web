@@ -30,7 +30,7 @@ export const makeResponse = (args: {
         status: 0,
         statusText: "",
         text(): Promise<string> {
-            return Promise.resolve("");
+            return Promise.resolve(JSON.stringify(json));
         },
         trailer: Promise.resolve(new Headers()),
         type: "default", // don't know if this is right

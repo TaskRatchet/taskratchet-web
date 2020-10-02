@@ -6,8 +6,10 @@ import BeeminderSettings from "./BeeminderSettings";
 import api from "../../lib/Api";
 import {expectLoadingOverlay, loadMe, loadMeWithBeeminder, loadUrlParams} from "../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
+import toaster from "../../lib/Toaster";
 
 jest.mock('../../lib/Api')
+jest.mock('../../lib/Toaster')
 
 const renderBeeminderSettings = async (): Promise<RenderResult> => {
     return render(<BeeminderSettings/>)
@@ -213,5 +215,33 @@ describe("BeeminderSettings component", () => {
         userEvent.click(getByText('Save'))
 
         await waitFor(() => expectLoadingOverlay(container, false));
+    })
+
+    it('toasts save errors', async () => {
+        loadMeWithBeeminder()
+
+        jest.spyOn(api, 'updateMe').mockRejectedValue('error')
+
+        const {getByText} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+
+        await waitFor(() => expect(toaster.send).toBeCalled())
+    })
+
+    it('toasts error when response not ok', async () => {
+        loadMeWithBeeminder()
+
+        const {getByText} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        loadMe({json: 'error_message', ok: false})
+
+        userEvent.click(getByText('Save'))
+
+        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
     })
 })
