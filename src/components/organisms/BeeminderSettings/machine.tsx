@@ -50,8 +50,10 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
 
                 return _.get(data, 'integrations.beeminder', {})
             },
-            saveService: async () => {
-                await api.updateMe({})
+            saveService: async (ctx: Context) => {
+                await api.updateMe({
+                    beeminder_goal_new_tasks: ctx.bmGoal
+                })
             }
         },
         actions: {
