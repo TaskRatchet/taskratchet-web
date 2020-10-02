@@ -49,7 +49,7 @@ export const loadMe = (json: any) => {
 export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm_goal') => {
     loadMe({
         integrations: {
-            beeminder: {user, goal}
+            beeminder: {user, goal_new_tasks: goal}
         }
     })
 }

@@ -42,10 +42,10 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                         target: "idle",
                         actions: "loadData"
                     },
-                    // onError: {
-                    //     target: "idle",
-                    //     actions: "toastError"
-                    // }
+                    onError: {
+                        target: "idle",
+                        // actions: "toastError"
+                    }
                 },
             },
             idle: {
@@ -92,7 +92,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
         actions: {
             loadData: assign((ctx, e) => ({
                 bmUser: _.get(e, 'data.user', ''),
-                bmGoal: _.get(e, 'data.goal', '')
+                bmGoal: _.get(e, 'data.goal_new_tasks', '')
             })),
             setGoal: assign({
                 bmGoal: (ctx: Partial<Context>, e: any): string => e.value,

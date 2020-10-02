@@ -163,4 +163,16 @@ describe("BeeminderSettings component", () => {
 
         expect(api.getMe).not.toBeCalled()
     })
+
+    it('uses loading class', async () => {
+        const {container} = await renderBeeminderSettings();
+
+        expect(container.getElementsByClassName('loading').length).toBe(1)
+    })
+
+    it('removes loading class', async () => {
+        const {container} = await renderBeeminderSettings();
+
+        await waitFor(() => expect(container.getElementsByClassName('loading').length).toBe(0));
+    })
 })
