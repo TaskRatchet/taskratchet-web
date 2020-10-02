@@ -7,11 +7,13 @@ import {loadCheckoutSession, loadMe, loadTimezones} from "../../lib/test/helpers
 jest.mock('../../lib/Api')
 
 describe('account page', () => {
-    it('renders', async () => {
+    it('includes Beeminder integration settings', async () => {
         loadTimezones();
         loadMe({})
         loadCheckoutSession();
 
-        await render(<Account />)
+        const {getByText} = await render(<Account />)
+
+        expect(getByText("Enable Beeminder integration")).toBeDefined()
     })
 })
