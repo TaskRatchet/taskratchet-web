@@ -1,3 +1,5 @@
+import api from "../Api";
+
 interface MakeResponseArgs {
     ok?: boolean,
     json?: any
@@ -35,4 +37,10 @@ export const makeResponse = (args: MakeResponseArgs = {}): Response => {
         url: "",
 
     }
+}
+
+export const loadMe = (json: any) => {
+    jest.spyOn(api, 'getMe').mockResolvedValue(
+        makeResponse({json})
+    )
 }
