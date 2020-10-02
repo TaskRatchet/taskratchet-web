@@ -1,7 +1,7 @@
 import React from "react";
 import {Link} from "react-router-dom";
 import './style.css'
-import api from "../../../classes/Api";
+import api from "../../../lib/Api";
 
 interface SessionWidgetProps {
 }

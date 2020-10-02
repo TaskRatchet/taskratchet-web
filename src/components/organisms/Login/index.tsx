@@ -1,5 +1,5 @@
 import React from 'react';
-import api from '../../../classes/Api';
+import api from '../../../lib/Api';
 import './style.css'
 import {useMachine} from '@xstate/react';
 import Input from "../../molecules/Input";

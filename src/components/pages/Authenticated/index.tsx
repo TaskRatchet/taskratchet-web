@@ -2,7 +2,7 @@ import React from 'react';
 import './style.css';
 import LoginForm from "../../organisms/Login";
 import {Link} from "react-router-dom";
-import api from "../../../classes/Api";
+import api from "../../../lib/Api";
 
 interface AuthenticatedProps {}
 

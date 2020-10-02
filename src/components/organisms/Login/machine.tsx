@@ -1,5 +1,5 @@
 import {assign, createMachine, StateMachine} from "xstate";
-import live_api, { Api } from "../../../classes/Api";
+import live_api, { Api } from "../../../lib/Api";
 
 // https://xstate.js.org/viz/
 

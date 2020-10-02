@@ -8,7 +8,7 @@ const BeeminderSettings = () => {
     const [state, send] = useMachine(machine)
 
     return <div>
-        <a href={''}>Enable Beeminder integration</a>
+        {state.context.bmUser ? null : <a href={''}>Enable Beeminder integration</a>}
     </div>
 }
 

@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../../classes/Api';
+import api from '../../../lib/Api';
 import './style.css'
-import toaster from "../../../classes/Toaster";
+import toaster from "../../../lib/Toaster";
 import queryString from 'query-string'
 import {isProduction} from "../../../tr_constants"
 import Input from "../../molecules/Input";

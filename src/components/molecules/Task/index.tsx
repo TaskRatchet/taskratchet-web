@@ -1,6 +1,6 @@
 import React from "react";
 import './style.css'
-import browser from "../../../classes/Browser";
+import browser from "../../../lib/Browser";
 
 interface Flag {
     label: string,

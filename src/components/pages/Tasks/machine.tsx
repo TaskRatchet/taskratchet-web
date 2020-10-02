@@ -1,6 +1,6 @@
 import {assign, createMachine, StateMachine} from "xstate";
-import api from "../../../classes/Api";
-import toaster from "../../../classes/Toaster";
+import api from "../../../lib/Api";
+import toaster from "../../../lib/Toaster";
 
 export interface Context {
     tasks: Task[],

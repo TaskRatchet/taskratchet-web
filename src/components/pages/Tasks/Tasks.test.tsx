@@ -1,16 +1,17 @@
 /**  * @jest-environment jsdom-fourteen  */
 
-import api from "../../../classes/Api";
-import toaster from "../../../classes/Toaster"
+import api from "../../../lib/Api";
+import toaster from "../../../lib/Toaster"
 import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "."
 import React from "react";
 import userEvent from '@testing-library/user-event'
-import browser from "../../../classes/Browser"
+import browser from "../../../lib/Browser"
+import {makeResponse} from "../../../lib/test/helpers";
 
-jest.mock('../../../classes/Api')
-jest.mock("../../../classes/Toaster")
-jest.mock("../../../classes/Browser")
+jest.mock('../../../lib/Api')
+jest.mock("../../../lib/Toaster")
+jest.mock("../../../lib/Browser")
 
 global.document.createRange = () => ({
     setStart: () => {
@@ -22,10 +23,6 @@ global.document.createRange = () => ({
         ownerDocument: document,
     }
 } as any)
-
-const makeResponse = ({ok = true, json = ''} = {}) => {
-    return Promise.resolve({ok, json: () => Promise.resolve(json)})
-}
 
 const loadApiResponse = (
     mock: any,
