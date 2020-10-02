@@ -2,6 +2,7 @@ import React from "react";
 import createBeeminderSettingsMachine from "./machine";
 import {useMachine} from "@xstate/react/lib";
 import {isProduction} from "../../../tr_constants";
+import Input from "../../molecules/Input";
 
 const machine = createBeeminderSettingsMachine()
 
@@ -16,10 +17,21 @@ const beeminderClientId: string = (isProduction)
 
 const BeeminderSettings = () => {
     const [state, send] = useMachine(machine),
-        {bmUser} = state.context
+        {bmUser, bmGoal} = state.context
 
     return <div>
-        {bmUser ? <p>Beeminder user: {bmUser}</p> : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>}
+        {bmUser
+            ? <>
+                <p>Beeminder user: {bmUser}</p>
+                <Input
+                    id={'new-task-goal'}
+                    label={'Post new tasks to goal:'}
+                    value={bmGoal}
+                    onChange={() => null}
+                />
+            </>
+            : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>
+        }
     </div>
 }
 

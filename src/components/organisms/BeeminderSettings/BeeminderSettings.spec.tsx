@@ -4,7 +4,7 @@ import {render, waitFor} from "@testing-library/react";
 import React from "react";
 import BeeminderSettings from "./index";
 import api from "../../../lib/Api";
-import {loadMe, makeResponse} from "../../../lib/test/helpers";
+import {loadMe, loadMeWithBeeminder, makeResponse} from "../../../lib/test/helpers";
 
 jest.mock('../../../lib/Api')
 
@@ -30,13 +30,7 @@ describe("BeeminderSettings component", () => {
     })
 
     it("does not include enable link if enabled", async () => {
-        loadMe({
-            integrations: {
-                beeminder: {
-                    user: 'bm_user'
-                }
-            }
-        })
+        loadMeWithBeeminder()
 
         const {getByText} = await render(<BeeminderSettings/>);
 
@@ -53,19 +47,33 @@ describe("BeeminderSettings component", () => {
     })
 
     it('displays beeminder user', async () => {
-        loadMe({
-            integrations: {
-                beeminder: {
-                    user: 'bm_user'
-                }
-            }
-        })
+        loadMeWithBeeminder()
 
         const {getByText} = await render(<BeeminderSettings/>);
 
         await waitFor(() => expect(api.getMe).toBeCalled());
 
         expect(getByText('Beeminder user: bm_user')).toBeDefined()
+    })
+
+    it('includes new tasks goal input', async () => {
+        loadMeWithBeeminder()
+
+        const {getByText} = await render(<BeeminderSettings/>);
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        expect(getByText('Post new tasks to goal:')).toBeDefined()
+    })
+
+    it('pre-fills goal name', async () => {
+        loadMeWithBeeminder()
+
+        const {getByDisplayValue} = await render(<BeeminderSettings/>);
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        expect(getByDisplayValue('bm_goal')).toBeDefined()
     })
 })
 

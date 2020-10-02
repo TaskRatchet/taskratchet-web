@@ -44,3 +44,11 @@ export const loadMe = (json: any) => {
         makeResponse({json})
     )
 }
+
+export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm_goal') => {
+    loadMe({
+        integrations: {
+            beeminder: {user, goal}
+        }
+    })
+}
