@@ -46,6 +46,13 @@ describe("BeeminderSettings component", () => {
 
         expect(() => getByText("Enable Beeminder integration")).toThrow();
     })
+
+    it('sets enable link href', async () => {
+        const {getByText} = await render(<BeeminderSettings/>),
+            link = getByText("Enable Beeminder integration")
+
+        expect((link as HTMLAnchorElement).href).toContain('https://www.beeminder.com')
+    })
 })
 
 // TODO: Flatten folder structure
