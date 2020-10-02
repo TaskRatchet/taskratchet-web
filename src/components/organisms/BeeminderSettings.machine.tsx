@@ -44,7 +44,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     },
                     onError: {
                         target: "idle",
-                        // actions: "toastError"
+                        // TODO: actions: "toastError"
                     }
                 },
             },
@@ -57,7 +57,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             saving: {
                 invoke: {
                     src: 'saveService',
-                    // TODO: onDone
+                    onDone: {target: 'idle'}
                     // TODO: onError
                 }
             }

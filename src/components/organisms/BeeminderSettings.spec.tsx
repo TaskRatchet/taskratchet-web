@@ -4,7 +4,7 @@ import {render, RenderResult, waitFor} from "@testing-library/react";
 import React from "react";
 import BeeminderSettings from "./BeeminderSettings";
 import api from "../../lib/Api";
-import {loadMeWithBeeminder, loadUrlParams} from "../../lib/test/helpers";
+import {expectLoadingOverlay, loadMeWithBeeminder, loadUrlParams} from "../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
 
 jest.mock('../../lib/Api')
@@ -167,12 +167,37 @@ describe("BeeminderSettings component", () => {
     it('uses loading class', async () => {
         const {container} = await renderBeeminderSettings();
 
-        expect(container.getElementsByClassName('loading').length).toBe(1)
+        expectLoadingOverlay(container);
     })
 
     it('removes loading class', async () => {
         const {container} = await renderBeeminderSettings();
 
-        await waitFor(() => expect(container.getElementsByClassName('loading').length).toBe(0));
+        await waitFor(() => expectLoadingOverlay(container, false));
+    })
+
+    it('removes loading overlay after new connection', async () => {
+        loadMeWithBeeminder('the_user')
+
+        loadUrlParams({
+            access_token: 'the_token',
+            username: 'the_user'
+        })
+
+        const {container} = await renderBeeminderSettings();
+
+        await waitFor(() => expectLoadingOverlay(container, false));
+    })
+
+    it('removes loading overlay after save', async () => {
+        loadMeWithBeeminder()
+
+        const {getByText, container} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+
+        await waitFor(() => expectLoadingOverlay(container, false));
     })
 })
