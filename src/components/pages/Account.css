@@ -1,0 +1,13 @@
+.page-account label, .page-account input {
+  display: block;
+}
+.page-account label {
+  margin-bottom: 0.25em;
+  font-size: 0.75em;
+  font-weight: bold;
+}
+.page-account input, .page-account select {
+  margin-bottom: 1.5em;
+}
+
+/*# sourceMappingURL=Account.css.map */

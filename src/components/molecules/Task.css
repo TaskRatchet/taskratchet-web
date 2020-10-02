@@ -1,0 +1,35 @@
+.molecule-task {
+  padding: 0.5em 0.5em 2em 0.5em;
+  position: relative;
+}
+.molecule-task .molecule-task__description {
+  margin-left: 0.5em;
+}
+.molecule-task .molecule-task__labels {
+  padding-left: 0;
+  position: absolute;
+  top: 0.5em;
+  right: 0.5em;
+}
+.molecule-task .molecule-task__labels li {
+  list-style-type: none;
+  display: inline-block;
+  background-color: #d9d9d9;
+  color: #737373;
+  padding: 0.5px 4px;
+  margin-left: 0.5em;
+  border-radius: 4px;
+}
+.molecule-task .molecule-task__due, .molecule-task .molecule-task__dollars {
+  position: absolute;
+  bottom: 0.5em;
+  opacity: 0.5;
+}
+.molecule-task .molecule-task__due {
+  left: 2em;
+}
+.molecule-task .molecule-task__dollars {
+  right: 0.5em;
+}
+
+/*# sourceMappingURL=Task.css.map */
