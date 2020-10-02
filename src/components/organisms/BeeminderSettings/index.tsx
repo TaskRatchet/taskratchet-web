@@ -21,7 +21,7 @@ const BeeminderSettings = () => {
 
     return <div>
         {bmUser
-            ? <>
+            ? <form>
                 <p>Beeminder user: {bmUser}</p>
                 <Input
                     id={'new-task-goal'}
@@ -29,8 +29,11 @@ const BeeminderSettings = () => {
                     value={bmGoal}
                     onChange={() => null}
                 />
-                <input type="submit" value={'Save'} />
-            </>
+                <input type="submit" value={'Save'} onClick={e => {
+                    e.preventDefault();
+                    send('SAVE');
+                }} />
+            </form>
             : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>
         }
     </div>

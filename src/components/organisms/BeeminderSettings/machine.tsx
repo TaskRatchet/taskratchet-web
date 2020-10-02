@@ -28,7 +28,18 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     // }
                 },
             },
-            idle: {}
+            idle: {
+                on: {
+                    SAVE: {target: 'saving'}
+                }
+            },
+            saving: {
+                invoke: {
+                    src: 'saveService',
+                    // TODO: onDone
+                    // TODO: onError
+                }
+            }
         }
     }, {
         services: {
@@ -37,6 +48,9 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     data = await response.json()
 
                 return _.get(data, 'integrations.beeminder', {})
+            },
+            saveService: async () => {
+                await api.updateMe({})
             }
         },
         actions: {
