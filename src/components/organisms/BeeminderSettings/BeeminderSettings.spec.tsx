@@ -4,17 +4,13 @@ import {render, RenderResult, waitFor} from "@testing-library/react";
 import React from "react";
 import BeeminderSettings from "./index";
 import api from "../../../lib/Api";
-import {loadMeWithBeeminder} from "../../../lib/test/helpers";
+import {loadMeWithBeeminder, loadUrlParams} from "../../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
 
 jest.mock('../../../lib/Api')
 
 const renderBeeminderSettings = async (): Promise<RenderResult> => {
-    const result = await render(<BeeminderSettings/>);
-
-    await waitFor(() => expect(api.getMe).toBeCalled());
-
-    return result
+    return render(<BeeminderSettings/>)
 }
 
 describe("BeeminderSettings component", () => {
@@ -43,6 +39,8 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings();
 
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
         expect(() => getByText("Enable Beeminder integration")).toThrow();
     })
 
@@ -58,6 +56,8 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings();
 
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
         expect(getByText('Beeminder user: bm_user')).toBeDefined()
     })
 
@@ -65,6 +65,8 @@ describe("BeeminderSettings component", () => {
         loadMeWithBeeminder()
 
         const {getByText} = await renderBeeminderSettings();
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
 
         expect(getByText('Post new tasks to goal:')).toBeDefined()
     })
@@ -74,6 +76,8 @@ describe("BeeminderSettings component", () => {
 
         const {getByDisplayValue} = await renderBeeminderSettings();
 
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
         expect(getByDisplayValue('bm_goal')).toBeDefined()
     })
 
@@ -81,6 +85,8 @@ describe("BeeminderSettings component", () => {
         loadMeWithBeeminder()
 
         const {getByText} = await renderBeeminderSettings();
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
 
         expect(getByText('Save')).toBeDefined()
     })
@@ -90,6 +96,8 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings()
 
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
         userEvent.click(getByText('Save'))
 
         expect(api.updateMe).toBeCalled()
@@ -98,8 +106,11 @@ describe("BeeminderSettings component", () => {
     it('allows goal name change', async () => {
         loadMeWithBeeminder()
 
-        const {getByDisplayValue} = await renderBeeminderSettings(),
-            input = getByDisplayValue('bm_goal')
+        const {getByDisplayValue} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        const input = getByDisplayValue('bm_goal')
 
         await userEvent.type(input, '_new')
 
@@ -109,8 +120,11 @@ describe("BeeminderSettings component", () => {
     it('saves new goal', async () => {
         loadMeWithBeeminder()
 
-        const {getByDisplayValue, getByText} = await renderBeeminderSettings(),
-            input = getByDisplayValue('bm_goal')
+        const {getByDisplayValue, getByText} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        const input = getByDisplayValue('bm_goal')
 
         await userEvent.type(input, '_new')
 
@@ -119,6 +133,35 @@ describe("BeeminderSettings component", () => {
         expect(api.updateMe).toBeCalledWith({
             beeminder_goal_new_tasks: 'bm_goal_new'
         })
+    })
+
+    it('saves new integration', async () => {
+        loadUrlParams({
+            access_token: 'the_token',
+            username: 'the_user'
+        })
+
+        await renderBeeminderSettings();
+
+        expect(api.updateMe).toBeCalledWith({
+            beeminder_token: 'the_token',
+            beeminder_user: 'the_user'
+        })
+    })
+
+    it('skips loadMe call on new connection', async () => {
+        loadMeWithBeeminder('the_user')
+
+        loadUrlParams({
+            access_token: 'the_token',
+            username: 'the_user'
+        })
+
+        const {getByText} = await renderBeeminderSettings();
+
+        await waitFor(() => expect(getByText('Beeminder user: the_user')).toBeDefined())
+
+        expect(api.getMe).not.toBeCalled()
     })
 })
 

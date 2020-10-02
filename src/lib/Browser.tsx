@@ -1,3 +1,5 @@
+import queryString, {ParsedQuery} from "query-string";
+
 export class Browser {
     getLanguages(): string[] {
         return navigator.languages.slice()
@@ -12,6 +14,10 @@ export class Browser {
             hour: '2-digit',
             minute: '2-digit'
         })
+    }
+
+    getUrlParams(): ParsedQuery {
+        return queryString.parse(window.location.search)
     }
 }
 

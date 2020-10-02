@@ -1,4 +1,6 @@
 import api from "../Api";
+import {ParsedQuery} from "query-string";
+import browser from "../Browser";
 
 interface MakeResponseArgs {
     ok?: boolean,
@@ -40,9 +42,10 @@ export const makeResponse = (args: MakeResponseArgs = {}): Response => {
 }
 
 export const loadMe = (json: any) => {
-    jest.spyOn(api, 'getMe').mockResolvedValue(
-        makeResponse({json})
-    )
+    const response = makeResponse({json});
+
+    jest.spyOn(api, 'getMe').mockResolvedValue(response)
+    jest.spyOn(api, 'updateMe').mockResolvedValue(response)
 }
 
 export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm_goal') => {
@@ -51,4 +54,8 @@ export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm
             beeminder: {user, goal}
         }
     })
+}
+
+export const loadUrlParams = (params: ParsedQuery) => {
+    jest.spyOn(browser, 'getUrlParams').mockReturnValue(params);
 }

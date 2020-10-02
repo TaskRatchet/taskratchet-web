@@ -1,20 +1,39 @@
 import {assign, createMachine, StateMachine} from "xstate";
 import api from "../../../lib/Api";
 import _ from "lodash";
+import browser from "../../../lib/Browser";
 
 interface Context {
     bmUser: string,
     bmGoal: string
 }
 
+async function parseIntegration(response: Response) {
+    const data = await response.json()
+
+    return _.get(data, 'integrations.beeminder', {})
+}
+
 const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
     return createMachine({
-        initial: "loading",
+        initial: "init",
         context: {
             bmUser: '',
             bmGoal: '',
         },
         states: {
+            init: {
+                invoke: {
+                    src: "connectService",
+                    onDone: {
+                        target: "idle",
+                        actions: "loadData"
+                    },
+                    onError: {
+                        target: "loading"
+                    }
+                }
+            },
             loading: {
                 invoke: {
                     src: "dataService",
@@ -44,11 +63,24 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
         }
     }, {
         services: {
-            dataService: async () => {
-                const response = await api.getMe(),
-                    data = await response.json()
+            connectService: async () => {
+                const {username, access_token} = browser.getUrlParams()
 
-                return _.get(data, 'integrations.beeminder', {})
+                if (!_.isString(username) || !_.isString(access_token)) {
+                    throw Error('Invalid params for new connection')
+                }
+
+                const response = await api.updateMe({
+                    beeminder_user: username,
+                    beeminder_token: access_token
+                })
+
+                return await parseIntegration(response);
+            },
+            dataService: async () => {
+                const response = await api.getMe()
+
+                return parseIntegration(response)
             },
             saveService: async (ctx: Context) => {
                 await api.updateMe({
