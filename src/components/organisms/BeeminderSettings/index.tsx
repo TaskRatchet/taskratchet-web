@@ -27,7 +27,10 @@ const BeeminderSettings = () => {
                     id={'new-task-goal'}
                     label={'Post new tasks to goal:'}
                     value={bmGoal}
-                    onChange={() => null}
+                    onChange={e => send({
+                        type: 'GOAL',
+                        value: e.target.value
+                    })}
                 />
                 <input type="submit" value={'Save'} onClick={e => {
                     e.preventDefault();

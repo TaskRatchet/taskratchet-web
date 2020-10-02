@@ -94,6 +94,17 @@ describe("BeeminderSettings component", () => {
 
         expect(api.updateMe).toBeCalled()
     })
+
+    it('allows goal name change', async () => {
+        loadMeWithBeeminder()
+
+        const {getByDisplayValue} = await renderBeeminderSettings(),
+            input = getByDisplayValue('bm_goal')
+
+        await userEvent.type(input, '_new')
+
+        expect(getByDisplayValue('bm_goal_new')).toBeDefined()
+    })
 })
 
 // TODO: Flatten folder structure

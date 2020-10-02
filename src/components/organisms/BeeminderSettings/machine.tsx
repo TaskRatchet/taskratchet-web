@@ -30,7 +30,8 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             },
             idle: {
                 on: {
-                    SAVE: {target: 'saving'}
+                    SAVE: {target: 'saving'},
+                    GOAL: {actions: 'setGoal'}
                 }
             },
             saving: {
@@ -57,7 +58,10 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             loadData: assign((ctx, e) => ({
                 bmUser: _.get(e, 'data.user', ''),
                 bmGoal: _.get(e, 'data.goal', '')
-            }))
+            })),
+            setGoal: assign({
+                bmGoal: (ctx: Partial<Context>, e: any): string => e.value,
+            })
         }
     })
 }
