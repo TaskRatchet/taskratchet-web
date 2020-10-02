@@ -2,12 +2,10 @@ import api from "../Api";
 import {ParsedQuery} from "query-string";
 import browser from "../Browser";
 
-interface MakeResponseArgs {
+export const makeResponse = (args: {
     ok?: boolean,
     json?: any
-}
-
-export const makeResponse = (args: MakeResponseArgs = {}): Response => {
+} = {}): Response => {
     const {ok = true, json = null} = args
 
     return {
@@ -54,6 +52,18 @@ export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm
             beeminder: {user, goal}
         }
     })
+}
+
+export function loadTimezones() {
+    jest.spyOn(api, 'getTimezones').mockResolvedValue(
+        makeResponse({json: []})
+    )
+}
+
+export function loadCheckoutSession() {
+    jest.spyOn(api, 'getCheckoutSession').mockResolvedValue(
+        makeResponse({json: 'session'})
+    )
 }
 
 export const loadUrlParams = (params: ParsedQuery) => {

@@ -5,6 +5,7 @@ import toaster from "../../lib/Toaster";
 import queryString from 'query-string'
 import {isProduction} from "../../tr_constants"
 import Input from "../molecules/Input";
+import _ from 'lodash'
 
 const params: any = queryString.parse(window.location.search);
 
@@ -85,8 +86,8 @@ const Account = (props: AccountProps) => {
         setTimezone(data['timezone']);
         setCards(data['cards']);
 
-        if ('beeminder' in data['integrations']) {
-            const bm = data['integrations']['beeminder'];
+        const bm = _.get(data, 'integrations.beeminder')
+        if (bm) {
             if ('user' in bm) setBmUser(bm['user']);
             if ('goal_new_tasks' in bm) setBmGoal(bm['goal_new_tasks'] || '');
         }

@@ -164,5 +164,3 @@ describe("BeeminderSettings component", () => {
         expect(api.getMe).not.toBeCalled()
     })
 })
-
-// TODO: Flatten folder structure
