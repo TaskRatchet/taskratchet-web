@@ -95,7 +95,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     && _.isString(access_token)
             },
             isGoalNameValid: (ctx) => {
-                const pattern = new RegExp(/^[\-\w]*$/)
+                const pattern = new RegExp(/^[-\w]*$/)
 
                 return pattern.test(ctx.bmGoal)
             }
