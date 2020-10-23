@@ -4,7 +4,7 @@ import {render, RenderResult, waitFor} from "@testing-library/react";
 import React from "react";
 import BeeminderSettings from "./BeeminderSettings";
 import api from "../../lib/Api";
-import {expectLoadingOverlay, loadMe, loadMeWithBeeminder, loadUrlParams} from "../../lib/test/helpers";
+import {expectLoadingOverlay, loadMe, loadMeWithBeeminder, loadUrlParams, makeResponse} from "../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
 import toaster from "../../lib/Toaster";
 
@@ -18,6 +18,11 @@ const renderBeeminderSettings = async (): Promise<RenderResult> => {
 describe("BeeminderSettings component", () => {
     beforeEach(() => {
         jest.resetAllMocks()
+
+        loadUrlParams({
+            access_token: null,
+            username: null
+        })
     })
 
     it("renders", async () => {
@@ -243,5 +248,30 @@ describe("BeeminderSettings component", () => {
         userEvent.click(getByText('Save'))
 
         await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
+    })
+
+    it('toasts update error', async () => {
+        loadUrlParams({
+            access_token: 'the_token',
+            username: 'the_user'
+        })
+
+        const response = makeResponse({json: 'error_message', ok: false})
+        jest.spyOn(api, 'updateMe').mockResolvedValue(response)
+
+        await renderBeeminderSettings()
+
+        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
+    })
+
+    it('does not toast error if no url params set', async () => {
+        loadUrlParams({
+            access_token: null,
+            username: null
+        })
+
+        await renderBeeminderSettings()
+
+        expect(toaster.send).not.toBeCalled()
     })
 })

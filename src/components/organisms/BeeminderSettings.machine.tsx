@@ -24,6 +24,12 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
         },
         states: {
             init: {
+                always: [
+                    { target: 'connect', cond: 'shouldConnect' },
+                    { target: 'loading' }
+                ]
+            },
+            connect: {
                 invoke: {
                     src: "connectService",
                     onDone: {
@@ -31,8 +37,8 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                         actions: "loadData"
                     },
                     onError: {
-                        target: "loading"
-                        // TODO: toast the error
+                        target: "loading",
+                        actions: 'toastError'
                     }
                 }
             },
@@ -67,12 +73,22 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             }
         }
     }, {
+        guards: {
+            shouldConnect: () => {
+                const {username, access_token} = browser.getUrlParams()
+
+                return !!username
+                    && !!access_token
+                    && _.isString(username)
+                    && _.isString(access_token)
+            }
+        },
         services: {
             connectService: async () => {
                 const {username, access_token} = browser.getUrlParams()
 
                 if (!_.isString(username) || !_.isString(access_token)) {
-                    throw Error('Invalid params for new connection')
+                    throw new Error('Invalid params for new connection')
                 }
 
                 const response = await api.updateMe({
@@ -80,7 +96,10 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     beeminder_token: access_token
                 })
 
-                // TODO: Throw if !response.ok
+                if (!response.ok) {
+                    const text = await response.text()
+                    throw new Error(text)
+                }
 
                 return await parseIntegration(response);
             },
