@@ -51,7 +51,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     },
                     onError: {
                         target: "idle",
-                        // TODO: actions: "toastError"
+                        actions: 'toastError'
                     }
                 },
             },
@@ -106,7 +106,10 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             dataService: async () => {
                 const response = await api.getMe()
 
-                // TODO: Throw if !response.ok
+                if (!response.ok) {
+                    const text = await response.text()
+                    throw new Error(text)
+                }
 
                 return parseIntegration(response)
             },

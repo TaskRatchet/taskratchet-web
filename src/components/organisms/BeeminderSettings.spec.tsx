@@ -256,8 +256,7 @@ describe("BeeminderSettings component", () => {
             username: 'the_user'
         })
 
-        const response = makeResponse({json: 'error_message', ok: false})
-        jest.spyOn(api, 'updateMe').mockResolvedValue(response)
+        loadMe({json: 'error_message', ok: false})
 
         await renderBeeminderSettings()
 
@@ -273,5 +272,13 @@ describe("BeeminderSettings component", () => {
         await renderBeeminderSettings()
 
         expect(toaster.send).not.toBeCalled()
+    })
+
+    it('toasts initial load error', async () => {
+        loadMe({json: 'error_message', ok: false})
+
+        await renderBeeminderSettings()
+
+        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
     })
 })
