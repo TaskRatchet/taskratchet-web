@@ -17,7 +17,7 @@ const beeminderClientId: string = (isProduction)
 
 const BeeminderSettings = () => {
     const [state, send] = useMachine(machine),
-        {bmUser, bmGoal} = state.context
+        {bmUser, bmGoal, inputError} = state.context
 
     return <div className={state.value === "idle" ? '' : "loading"}>
         {bmUser
@@ -27,6 +27,7 @@ const BeeminderSettings = () => {
                     id={'new-task-goal'}
                     label={'Post new tasks to goal:'}
                     value={bmGoal}
+                    error={inputError}
                     onChange={e => send({
                         type: 'GOAL',
                         value: e.target.value

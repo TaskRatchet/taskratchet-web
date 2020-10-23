@@ -283,8 +283,8 @@ describe("BeeminderSettings component", () => {
         await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
     })
 
-    it('rejects empty goal names', async () => {
-        loadMeWithBeeminder('the_user', '')
+    it('rejects invalid goal names', async () => {
+        loadMeWithBeeminder('the_user', '/')
 
         const {getByText} = await renderBeeminderSettings()
 
@@ -305,5 +305,47 @@ describe("BeeminderSettings component", () => {
         userEvent.click(getByText('Save'))
 
         expect(api.updateMe).toBeCalled()
+    })
+
+    it('displays error message', async () => {
+        loadMeWithBeeminder('the_user', '/')
+
+        const {getByText} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+
+        expect(getByText('Goal names can only contain letters, numbers, underscores, and hyphens.'))
+    })
+
+    it('allows unsetting goal name', async () => {
+        loadMeWithBeeminder('the_user', '')
+
+        const {getByText} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+
+        const getError = () => getByText('Goal names can only contain letters, numbers, underscores, and hyphens.');
+
+        expect(getError).toThrow()
+    })
+
+    it('unsets error on successful save', async () => {
+        loadMeWithBeeminder('the_user', '/')
+
+        const {getByText, getByRole} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+        await userEvent.type(getByRole('textbox'), '{backspace}new_name')
+        userEvent.click(getByText('Save'))
+
+        const getError = () => getByText('Goal names can only contain letters, numbers, underscores, and hyphens.');
+
+        expect(getError).toThrow()
     })
 })

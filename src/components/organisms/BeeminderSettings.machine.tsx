@@ -6,7 +6,8 @@ import toaster from "../../lib/Toaster";
 
 interface Context {
     bmUser: string,
-    bmGoal: string
+    bmGoal: string,
+    inputError: string,
 }
 
 async function parseIntegration(response: Response) {
@@ -28,6 +29,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
         context: {
             bmUser: '',
             bmGoal: '',
+            inputError: '',
         },
         states: {
             init: {
@@ -64,7 +66,10 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             },
             idle: {
                 on: {
-                    SAVE: {target: 'saving', cond: 'isGoalNameValid'},
+                    SAVE: [
+                        {target: 'saving', cond: 'isGoalNameValid', actions: 'unsetInputError'},
+                        {target: 'idle', actions: 'setInputError'}
+                    ],
                     GOAL: {actions: 'setGoal'}
                 }
             },
@@ -90,7 +95,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     && _.isString(access_token)
             },
             isGoalNameValid: (ctx) => {
-                const pattern = new RegExp(/^[\-\w]+$/)
+                const pattern = new RegExp(/^[\-\w]*$/)
 
                 return pattern.test(ctx.bmGoal)
             }
@@ -137,7 +142,11 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             }),
             toastError: (ctx, e) => {
                 toaster.send(e.data.toString())
-            }
+            },
+            setInputError: assign({
+                inputError: 'Goal names can only contain letters, numbers, underscores, and hyphens.'
+            }),
+            unsetInputError: assign({inputError: ''}),
         }
     })
 }
