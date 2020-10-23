@@ -19,8 +19,6 @@ const BeeminderSettings = () => {
     const [state, send] = useMachine(machine),
         {bmUser, bmGoal} = state.context
 
-    console.log(state.value)
-
     return <div className={state.value === "idle" ? '' : "loading"}>
         {bmUser
             ? <form>

@@ -15,6 +15,13 @@ async function parseIntegration(response: Response) {
     return _.get(data, 'integrations.beeminder', {})
 }
 
+const throwResponseError = async (response: Response) => {
+    if (!response.ok) {
+        const text = await response.text()
+        throw new Error(text)
+    }
+}
+
 const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
     return createMachine({
         initial: "init",
@@ -96,20 +103,14 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     beeminder_token: access_token
                 })
 
-                if (!response.ok) {
-                    const text = await response.text()
-                    throw new Error(text)
-                }
+                await throwResponseError(response)
 
                 return await parseIntegration(response);
             },
             dataService: async () => {
                 const response = await api.getMe()
 
-                if (!response.ok) {
-                    const text = await response.text()
-                    throw new Error(text)
-                }
+                await throwResponseError(response)
 
                 return parseIntegration(response)
             },
@@ -118,10 +119,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     beeminder_goal_new_tasks: ctx.bmGoal
                 })
 
-                if (!response.ok) {
-                    const text = await response.text()
-                    throw new Error(text)
-                }
+                await throwResponseError(response)
             }
         },
         actions: {
