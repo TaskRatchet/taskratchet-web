@@ -64,7 +64,7 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
             },
             idle: {
                 on: {
-                    SAVE: {target: 'saving'},
+                    SAVE: {target: 'saving', cond: 'isGoalNameValid'},
                     GOAL: {actions: 'setGoal'}
                 }
             },
@@ -88,6 +88,11 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                     && !!access_token
                     && _.isString(username)
                     && _.isString(access_token)
+            },
+            isGoalNameValid: (ctx) => {
+                const pattern = new RegExp(/^[\-\w]+$/)
+
+                return pattern.test(ctx.bmGoal)
             }
         },
         services: {

@@ -32,10 +32,14 @@ const BeeminderSettings = () => {
                         value: e.target.value
                     })}
                 />
-                <input type="submit" value={'Save'} onClick={e => {
-                    e.preventDefault();
-                    send('SAVE');
-                }} />
+                <input
+                    type="submit"
+                    value={'Save'}
+                    onClick={e => {
+                        e.preventDefault();
+                        send('SAVE');
+                    }}
+                />
             </form>
             : <a href={beeminderAuthUrl}>Enable Beeminder integration</a>
         }

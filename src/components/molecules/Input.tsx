@@ -8,9 +8,10 @@ interface InputProps {
     onChange: ChangeEventHandler<HTMLInputElement>,
     id: string
     error?: string
+    pattern?: string
 }
 
-const Input = ({label, type="text", value, onChange, id, error}: InputProps) => {
+const Input = ({label, type="text", value, onChange, id, error, pattern}: InputProps) => {
     return <div className={`molecule-input ${error ? 'molecule-input__hasError' : ''}`}>
         <label htmlFor={id}>{label}</label>
         <input
@@ -19,6 +20,7 @@ const Input = ({label, type="text", value, onChange, id, error}: InputProps) => 
             onChange={onChange}
             id={id}
             name={id}
+            pattern={pattern}
         />
         {error ? <div className={'molecule-input__error'}>{error}</div> : ''}
     </div>

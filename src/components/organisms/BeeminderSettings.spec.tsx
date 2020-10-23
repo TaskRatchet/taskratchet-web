@@ -1,6 +1,6 @@
 /**  * @jest-environment jsdom-fourteen  */
 
-import {render, RenderResult, waitFor} from "@testing-library/react";
+import {getByPlaceholderText, render, RenderResult, waitFor} from "@testing-library/react";
 import React from "react";
 import BeeminderSettings from "./BeeminderSettings";
 import api from "../../lib/Api";
@@ -101,13 +101,14 @@ describe("BeeminderSettings component", () => {
     it('updates me', async () => {
         loadMeWithBeeminder()
 
-        const {getByText} = await renderBeeminderSettings()
+        const {getByText, getByRole} = await renderBeeminderSettings()
 
         await waitFor(() => expect(api.getMe).toBeCalled());
 
+        await userEvent.type(getByRole('textbox'), 'goal_name')
         userEvent.click(getByText('Save'))
 
-        expect(api.updateMe).toBeCalled()
+        await waitFor(() => expect(api.updateMe).toBeCalled())
     })
 
     it('allows goal name change', async () => {
@@ -280,5 +281,29 @@ describe("BeeminderSettings component", () => {
         await renderBeeminderSettings()
 
         await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
+    })
+
+    it('rejects empty goal names', async () => {
+        loadMeWithBeeminder('the_user', '')
+
+        const {getByText} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+
+        expect(api.updateMe).not.toBeCalled()
+    })
+
+    it('allows goal names with hyphens', async () => {
+        loadMeWithBeeminder('the_user', 'goal-name')
+
+        const {getByText} = await renderBeeminderSettings()
+
+        await waitFor(() => expect(api.getMe).toBeCalled());
+
+        userEvent.click(getByText('Save'))
+
+        expect(api.updateMe).toBeCalled()
     })
 })
