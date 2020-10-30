@@ -14,18 +14,6 @@ export interface Context {
     timezone: string,
 }
 
-const defaultCents = 500 // TODO: Use user setting
-
-const getDefaultDue = () => {
-    const due = new Date();
-
-    due.setDate(due.getDate() + 7);
-    due.setHours(23);
-    due.setMinutes(59);
-
-    return due;
-};
-
 const createTasksMachine = (): StateMachine<Context, any, any> => {
     return createMachine({
         initial: "loading",
@@ -33,7 +21,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             tasks: [],
             task: "",
             due: null,
-            cents: defaultCents,
+            cents: null,
             formError: "",
             timezone: "",
         } as Context,
@@ -193,8 +181,8 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             }),
             resetForm: assign({
                 task: "",
-                due: getDefaultDue(),
-                cents: defaultCents,
+                due: null,
+                cents: null,
             } as Context),
             toastError: (ctx, e) => {
                 toaster.send(e.data.toString())

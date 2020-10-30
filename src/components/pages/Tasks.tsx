@@ -70,23 +70,19 @@ const Tasks = (props: TasksProps) => {
                     }}
                 /></label>
 
-                <p>Due {state.context.timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{state.context.timezone}</a>)</> : null}</p>
-                <p>{state.context.due ? browser.getDateTimeString(state.context.due) : "No deadline found"}</p>
+                <p>Example: Call the plumber by Friday or pay $15</p>
 
-                <p>Stakes</p>
-                <p>${state.context.cents / 100}</p>
+                <div className="page-tasks__summary">
+                    <p>
+                        <b>Due {state.context.timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{state.context.timezone}</a>)</> : null}</b><br/>
+                        <span>{state.context.due ? browser.getDateTimeString(state.context.due) : "No deadline found"}</span>
+                    </p>
 
-                <label className={'page-tasks__dollars'}>Stakes <input
-                    type="number"
-                    placeholder={'USD'}
-                    min={1}
-                    max={2500}
-                    value={state.context.cents / 100}
-                    onChange={e => send({
-                        type: 'SET_CENTS',
-                        value: parseInt(e.target.value) * 100
-                    })}
-                /></label>
+                    <p>
+                        <b>Stakes</b><br />
+                        <span>{state.context.cents ? `$${state.context.cents / 100}` : 'No stakes found'}</span>
+                    </p>
+                </div>
             </div>
             <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
         </form>
