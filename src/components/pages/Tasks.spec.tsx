@@ -96,20 +96,10 @@ const expectTaskSave = (
 
 const renderTasksPage = () => {
     const getters = render(<Tasks/>),
-        {getByText, getByPlaceholderText} = getters,
-        // @ts-ignore
-        dueInput = getByText("Due")
-            .firstElementChild
-            .firstElementChild
-            .firstElementChild
-
-    if (!dueInput) {
-        throw Error("Missing due input")
-    }
+        {getByText, getByPlaceholderText} = getters
 
     return {
         taskInput: getByPlaceholderText("Task"),
-        dueInput,
         centsInput: getByPlaceholderText("USD"),
         addButton: getByText("Add"),
         clickCheckbox: (task = "the_task") => {

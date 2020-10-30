@@ -1,7 +1,3 @@
-.page-tasks form .page-tasks__inputs {
-  display: flex;
-  flex-wrap: wrap;
-}
 .page-tasks form .page-tasks__inputs label {
   font-size: 0.75em;
   font-weight: bold;
