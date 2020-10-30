@@ -32,7 +32,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
         context: {
             tasks: [],
             task: "",
-            due: getDefaultDue(),
+            due: null,
             cents: defaultCents,
             formError: "",
             timezone: "",

@@ -417,5 +417,13 @@ describe("tasks page", () => {
             new Date('10/29/2020')
         );
     })
+
+    it("starts with no deadline", async () => {
+        await testParsesDueString(
+            "",
+            'No deadline found',
+            new Date('10/29/2020')
+        );
+    })
 })
 
