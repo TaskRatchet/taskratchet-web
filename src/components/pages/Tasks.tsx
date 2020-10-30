@@ -73,6 +73,9 @@ const Tasks = (props: TasksProps) => {
                 <p>Due {state.context.timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{state.context.timezone}</a>)</> : null}</p>
                 <p>{state.context.due ? browser.getDateTimeString(state.context.due) : "No deadline found"}</p>
 
+                <p>Stakes</p>
+                <p>${state.context.cents / 100}</p>
+
                 <label className={'page-tasks__dollars'}>Stakes <input
                     type="number"
                     placeholder={'USD'}

@@ -9,7 +9,7 @@ export interface Context {
     tasks: Task[],
     task: string,
     due: Date | null,
-    cents: number,
+    cents: number | null,
     formError: string,
     timezone: string,
 }
@@ -106,6 +106,10 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     throw Error("No due date")
                 }
 
+                if (!ctx.cents) {
+                    throw Error("No stakes")
+                }
+
                 const dueString = ctx.due.toLocaleDateString("en-US", {
                     year: 'numeric',
                     month: 'numeric',
@@ -172,6 +176,13 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     }
 
                     return date
+                },
+                cents: (ctx, e) => {
+                    const matches = e.value.match(/\$(\d+)/)
+
+                    if (!matches) return null
+
+                    return matches.pop() * 100
                 }
             }),
             setDue: assign({

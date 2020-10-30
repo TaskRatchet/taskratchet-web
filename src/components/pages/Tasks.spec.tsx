@@ -189,11 +189,11 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task by friday")
+        await userEvent.type(taskInput, "the_task by friday or pay $5")
         userEvent.click(addButton)
 
         expectTaskSave({
-            task: "the_task by friday",
+            task: "the_task by friday or pay $5",
             due: new Date('10/30/2020 11:59 PM'),
         })
     })
@@ -224,7 +224,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "new_task by Friday")
+        await userEvent.type(taskInput, "new_task by Friday or pay $5")
         userEvent.click(addButton)
 
         await waitFor(() => expect(api.addTask).toHaveBeenCalled())
@@ -316,7 +316,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task by Friday")
+        await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
@@ -331,7 +331,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task by Friday")
+        await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
@@ -360,7 +360,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task by Friday")
+        await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
@@ -424,6 +424,22 @@ describe("tasks page", () => {
             'No deadline found',
             new Date('10/29/2020')
         );
+    })
+
+    it("exposes stakes", async () => {
+        const {getByText} = await renderTasksPage()
+
+        expect(getByText("$5")).toBeInTheDocument()
+    })
+
+    it("changes stakes", async () => {
+        const {taskInput, getByText} = await renderTasksPage()
+
+        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, 'do this or pay $100')
+
+        expect(getByText("$100")).toBeInTheDocument()
     })
 })
 
