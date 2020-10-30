@@ -1,11 +1,14 @@
 import {assign, createMachine, StateMachine} from "xstate";
 import api from "../../lib/Api";
 import toaster from "../../lib/Toaster";
+import * as chrono from 'chrono-node'
+import browser from "../../lib/Browser";
+import _ from 'lodash'
 
 export interface Context {
     tasks: Task[],
     task: string,
-    due: Date,
+    due: Date | null,
     cents: number,
     formError: string,
     timezone: string,
@@ -99,6 +102,10 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 }
             },
             taskCreationService: async (ctx) => {
+                if (!ctx.due) {
+                    throw Error("No due date")
+                }
+
                 const dueString = ctx.due.toLocaleDateString("en-US", {
                     year: 'numeric',
                     month: 'numeric',
@@ -146,7 +153,26 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 timezone: e.data.timezone
             })),
             setTask: assign({
-                task: (ctx, e) => e.value
+                task: (ctx, e) => e.value,
+                due: (ctx, e) => {
+                    const ref = browser.getNow()
+
+                    const response = chrono.parse(
+                        e.value,
+                        ref,
+                        {forwardDate: true}
+                    ).pop()
+
+                    if (!response) return null
+
+                    const date = response.date()
+
+                    if (!_.get(response, 'start.knownValues.hour')) {
+                        date.setHours(23, 59)
+                    }
+
+                    return date
+                }
             }),
             setDue: assign({
                 due: (ctx, e) => e.value
@@ -158,7 +184,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 task: "",
                 due: getDefaultDue(),
                 cents: defaultCents,
-            }),
+            } as Context),
             toastError: (ctx, e) => {
                 toaster.send(e.data.toString())
             }

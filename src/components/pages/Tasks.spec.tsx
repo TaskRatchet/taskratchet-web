@@ -6,12 +6,10 @@ import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
-import browser from "../../lib/Browser"
-import {makeResponse} from "../../lib/test/helpers";
+import {loadNow, makeResponse} from "../../lib/test/helpers";
 
 jest.mock('../../lib/Api')
 jest.mock("../../lib/Toaster")
-jest.mock("../../lib/Browser")
 
 global.document.createRange = () => ({
     setStart: () => {
@@ -77,11 +75,11 @@ const getDefaultDueDate = () => {
 const expectTaskSave = (
     {
         task,
-        due = getDefaultDueDate(),
+        due,
         cents = 500
     }: {
         task: string,
-        due?: Date,
+        due: Date,
         cents?: number
     }
 ) => {
@@ -126,6 +124,20 @@ const renderTasksPage = () => {
         },
         ...getters
     }
+}
+
+async function testParsesDueString(task: string, expected: string, ref: Date) {
+    loadNow(ref)
+
+    loadApiData()
+
+    const {taskInput, getByText} = await renderTasksPage()
+
+    await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+
+    await userEvent.type(taskInput, task)
+
+    expect(getByText(expected)).toBeInTheDocument()
 }
 
 describe("tasks page", () => {
@@ -180,48 +192,39 @@ describe("tasks page", () => {
     })
 
     it("saves task", async () => {
+        loadNow(new Date('10/29/2020'))
         loadApiData()
 
         const {taskInput, addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task")
+        await userEvent.type(taskInput, "the_task by friday")
         userEvent.click(addButton)
 
-        expectTaskSave({task: "the_task"})
+        expectTaskSave({
+            task: "the_task by friday",
+            due: new Date('10/30/2020 11:59 PM'),
+        })
     })
 
     it("allows cents change", async () => {
+        loadNow(new Date('10/29/2020'))
         loadApiData()
 
         const {taskInput, centsInput, addButton} = renderTasksPage()
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "new_task")
+        await userEvent.type(taskInput, "new_task by friday")
         await userEvent.type(centsInput, "{backspace}15")
         userEvent.click(addButton)
 
-        expectTaskSave({task: "new_task", cents: 1500})
-    })
-
-    it("allows due change", async () => {
-        loadApiData()
-
-        const {taskInput, dueInput, addButton} = renderTasksPage()
-
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
-
-        await userEvent.type(taskInput, "new_task")
-        await userEvent.type(dueInput, "{backspace}{backspace}AM")
-        userEvent.click(addButton)
-
-        const due = getDefaultDueDate();
-
-        due.setHours(11);
-
-        expectTaskSave({task: "new_task", due})
+        expectTaskSave({
+            task: "new_task by friday",
+            due: new Date('10/30/2020 11:59 PM'),
+            cents: 1500
+        })
     })
 
     it("resets task input", async () => {
@@ -231,7 +234,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "new_task")
+        await userEvent.type(taskInput, "new_task by Friday")
         userEvent.click(addButton)
 
         await waitFor(() => expect(api.addTask).toHaveBeenCalled())
@@ -323,7 +326,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task")
+        await userEvent.type(taskInput, "the_task by Friday")
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
@@ -338,7 +341,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task")
+        await userEvent.type(taskInput, "the_task by Friday")
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
@@ -367,7 +370,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
 
-        await userEvent.type(taskInput, "the_task")
+        await userEvent.type(taskInput, "the_task by Friday")
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
@@ -393,28 +396,36 @@ describe("tasks page", () => {
             .toBeCalledWith("Error: Oops!"))
     })
 
-    it("gets date string", async () => {
-        loadApiData({
-            tasks: [makeTask()]
-        });
-
-        await renderTasksPage()
-
-        await waitFor(() => {
-            expect(browser.getDateString).toBeCalled()
-        })
+    it("parses date", async () => {
+        await testParsesDueString(
+            "do x by Friday",
+            'Friday, 10/30/2020, 11:59 PM',
+            new Date('10/29/2020')
+        );
     })
 
-    it("gets time string", async () => {
-        loadApiData({
-            tasks: [makeTask()]
-        });
+    it("includes specific time", async () => {
+        await testParsesDueString(
+            "do x by Friday at 3pm",
+            'Friday, 10/30/2020, 03:00 PM',
+            new Date('10/29/2020')
+        );
+    })
 
-        await renderTasksPage()
+    it("uses last date in string", async () => {
+        await testParsesDueString(
+            "do january task by Friday at 3pm",
+            'Friday, 10/30/2020, 03:00 PM',
+            new Date('10/29/2020')
+        );
+    })
 
-        await waitFor(() => {
-            expect(browser.getTimeString).toBeCalled()
-        })
+    it("exposes no deadline", async () => {
+        await testParsesDueString(
+            "do the thing",
+            'No deadline found',
+            new Date('10/29/2020')
+        );
     })
 })
 

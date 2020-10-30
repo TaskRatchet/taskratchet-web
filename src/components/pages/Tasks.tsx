@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.min.css'
 import createTasksMachine from './Tasks.machine'
 import {useMachine} from '@xstate/react';
+import browser from "../../lib/Browser";
 
 const machine = createTasksMachine()
 
@@ -68,6 +69,9 @@ const Tasks = (props: TasksProps) => {
                         })
                     }}
                 /></label>
+
+                <p>{state.context.due ? browser.getDateTimeString(state.context.due) : "No deadline found"}</p>
+
                 <label className={'page-tasks__due'}>Due {state.context.timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{state.context.timezone}</a>)</> : null} <DatePicker
                     selected={state.context.due} onChange={value => send({type: 'SET_DUE', value})} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
                 <label className={'page-tasks__dollars'}>Stakes <input

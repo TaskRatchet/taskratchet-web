@@ -72,6 +72,10 @@ export const loadUrlParams = (params: ParsedQuery) => {
     jest.spyOn(browser, 'getUrlParams').mockReturnValue(params);
 }
 
+export const loadNow = (date: Date) => {
+    jest.spyOn(browser, 'getNow').mockReturnValue(date)
+}
+
 export function expectLoadingOverlay(container: HTMLElement, shouldExist: boolean = true) {
     expect(container.getElementsByClassName('loading').length).toBe(+shouldExist)
 }
