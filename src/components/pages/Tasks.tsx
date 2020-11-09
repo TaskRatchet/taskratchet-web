@@ -1,7 +1,6 @@
 import React from 'react';
 import './Tasks.css'
 import Task from '../molecules/Task'
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.min.css'
 import createTasksMachine from './Tasks.machine'
 import {useMachine} from '@xstate/react';
