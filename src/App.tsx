@@ -20,6 +20,7 @@ import {isProduction} from "./tr_constants"
 import Footer from "./components/organisms/Footer"
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from "react-query";
+import LoadingIndicator from "./components/molecules/LoadingIndicator";
 
 toast.configure();
 
@@ -52,6 +53,8 @@ export const App = () => {
 
     return <div className={'page-base'}>
         <QueryClientProvider client={queryClient}>
+            <LoadingIndicator />
+
             <SessionWidget/>
 
             <h2><Link to={'/'}>TaskRatchet</Link></h2>
