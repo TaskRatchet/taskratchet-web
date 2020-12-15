@@ -10,9 +10,10 @@ import {UseQueryOptions, UseMutationOptions} from 'react-query/types';
 export function useMe(
     queryOptions: UseQueryOptions | undefined = {},
     mutateOptions: UseMutationOptions | undefined = {}
-): { me: Response | undefined, updateMe: any } {
+): { me: Response | undefined, updateMe: any, isLoading: boolean } {
     const {data: me, isLoading} = useQuery('me', getMe, queryOptions)
 
+    // TODO: fix types
     const {mutate: updateMe} = useMutation(mutator, {
         onSuccess: async (data) => {
             await queryCache.invalidateQueries('me')
