@@ -9,12 +9,14 @@ import {loadNow, makeResponse} from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {setComplete} from "../../lib/api/setComplete";
 import {getMe} from "../../lib/api";
+import {addTask} from "../../lib/api/addTask";
 
 jest.mock('../../lib/api/apiFetch')
 jest.mock('../../lib/api/getTasks')
 jest.mock('../../lib/api/getMe')
 jest.mock('../../lib/api/setComplete')
 jest.mock('../../lib/api/getTimezones')
+jest.mock('../../lib/api/addTask')
 jest.mock("../../lib/Toaster")
 jest.mock('../../lib/LegacyApi')
 jest.mock('react-ga')
@@ -47,7 +49,7 @@ const loadApiData = (
     jest.spyOn(new_api, "getMe").mockResolvedValue(me || {})
 
     loadApiResponse(setComplete);
-    loadApiResponse(api.addTask)
+    loadApiResponse(addTask)
 }
 
 const makeTask = (
@@ -93,7 +95,7 @@ const expectTaskSave = (
         minute: 'numeric'
     });
 
-    expect(api.addTask).toBeCalledWith(task, dueString, cents)
+    expect(addTask).toBeCalledWith(task, dueString, cents)
 }
 
 const renderTasksPage = () => {
@@ -172,7 +174,7 @@ describe("tasks page", () => {
         await userEvent.type(taskInput, "new_task by Friday or pay $5")
         userEvent.click(addButton)
 
-        await waitFor(() => expect(api.addTask).toHaveBeenCalled())
+        await waitFor(() => expect(addTask).toHaveBeenCalled())
 
         expect((taskInput as HTMLInputElement).value).toBe("")
     })
@@ -255,7 +257,7 @@ describe("tasks page", () => {
 
     it("toasts task creation failure", async () => {
         loadApiData()
-        loadApiResponse(api.addTask, {ok: false})
+        loadApiResponse(addTask, {ok: false})
 
         const {taskInput, addButton} = renderTasksPage()
 
@@ -271,7 +273,7 @@ describe("tasks page", () => {
     it("toasts task creation exception", async () => {
         loadApiData();
 
-        (api.addTask as jest.Mock).mockImplementation(() => {
+        jest.spyOn(new_api, 'addTask').mockImplementation(() => {
             throw Error("Oops!")
         })
 

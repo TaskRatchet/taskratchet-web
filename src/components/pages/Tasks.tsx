@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import './Tasks.css'
 import Task from '../molecules/Task'
 import 'react-datepicker/dist/react-datepicker.min.css'
@@ -7,6 +7,7 @@ import {useMachine} from '@xstate/react';
 import FreeEntry from "../organisms/FreeEntry";
 import {useMe, useTasks} from "../../lib/api";
 import {useSetComplete} from "../../lib/api/useSetComplete";
+import _ from "lodash";
 
 const machine = createTasksMachine()
 
@@ -18,6 +19,10 @@ const Tasks = (props: TasksProps) => {
     const {data: tasks} = useTasks();
     const {me} = useMe()
     const setComplete = useSetComplete()
+    const [task, setTask] = useState<string>('')
+    const [due, setDue] = useState<Date | null>(null)
+    const [cents, setCents] = useState<number | null>(null)
+    const timezone = _.get(me, 'timezone')
 
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
@@ -55,10 +60,10 @@ const Tasks = (props: TasksProps) => {
         <h1>Tasks</h1>
 
         {/*<TaskForm*/}
-        {/*    task={state.context.task}*/}
-        {/*    due={state.context.due}*/}
-        {/*    cents={state.context.cents}*/}
-        {/*    timezone={state.context.timezone}*/}
+        {/*    task={task}*/}
+        {/*    due={due}*/}
+        {/*    cents={cents}*/}
+        {/*    timezone={timezone}*/}
         {/*    error={state.context.formError}*/}
         {/*    onChange={(task: string, due: Date | null, cents: number | null) => {*/}
         {/*        send({type: 'SET_FORM', value: {task, due, cents}})*/}
@@ -69,16 +74,22 @@ const Tasks = (props: TasksProps) => {
         {/*/>*/}
 
         <FreeEntry
-            task={state.context.task}
-            due={state.context.due}
-            cents={state.context.cents}
-            timezone={me ? me.timezone : null}
+            task={task}
+            due={due}
+            cents={cents}
+            timezone={timezone}
             error={state.context.formError}
             onChange={(task: string, due: Date | null, cents: number | null) => {
                 // console.log({m: 'change handler', task, due, cents})
+                setTask(task)
+                setDue(due)
+                setCents(cents)
                 send({type: 'SET_FORM', value: {task, due, cents}})
             }}
             onSubmit={() => {
+                setTask('')
+                setDue(null)
+                setCents(null)
                 send("SAVE_TASK")
             }}
         />

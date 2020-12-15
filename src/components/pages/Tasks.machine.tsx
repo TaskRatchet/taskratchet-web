@@ -2,6 +2,7 @@ import {assign, createMachine, StateMachine} from "xstate";
 import api from "../../lib/LegacyApi";
 import toaster from "../../lib/Toaster";
 import React from 'react';
+import {addTask} from "../../lib/api/addTask";
 
 export interface Context {
     tasks: Task[],
@@ -111,7 +112,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     minute: 'numeric'
                 });
 
-                const response = await api.addTask(ctx.task, dueString, ctx.cents);
+                const response = await addTask(ctx.task, dueString, ctx.cents);
 
                 toaster.send(response.ok ? 'Task added successfully' :
                     'Failed to add task')
