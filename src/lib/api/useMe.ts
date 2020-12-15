@@ -14,7 +14,7 @@ const onError = (error: unknown) => {
 // TODO: fix updateMe type
 export function useMe(
     queryOptions: UseQueryOptions | undefined = {}
-): { me: Response | undefined, updateMe: any, isLoading: boolean } {
+): { me: any, updateMe: any, isLoading: boolean } {
     const queryClient = useQueryClient()
     const {data: me, isLoading} = useQuery('me', getMe, {
         onError,

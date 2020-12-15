@@ -429,6 +429,7 @@ describe("tasks page", () => {
     })
 
     // TODO: Warn on app close if mutation in progress
+    // TODO: Optimistic updates for add and toggle
 
     // it('has stakes form', async () => {
     //     loadApiData()

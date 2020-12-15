@@ -2,10 +2,9 @@ import api from "../LegacyApi";
 import * as new_api from "../../lib/api"
 import {ParsedQuery} from "query-string";
 import browser from "../Browser";
-import {QueryClient, QueryClientProvider, QueryResult} from "react-query";
+import {QueryClient, QueryClientProvider} from "react-query";
 import React, {ReactElement} from "react";
 import {render} from "@testing-library/react";
-import Account from "../../components/pages/Account";
 
 jest.mock('../../lib/api/getTimezones')
 

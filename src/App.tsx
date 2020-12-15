@@ -18,7 +18,7 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {isProduction} from "./tr_constants"
 import Footer from "./components/organisms/Footer"
-import {ReactQueryDevtools} from 'react-query-devtools'
+import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from "react-query";
 
 toast.configure();
@@ -92,7 +92,7 @@ export const App = () => {
             </div>
 
             <Footer/>
-            <ReactQueryDevtools initialIsOpen/>
+            <ReactQueryDevtools initialIsOpen={false}/>
         </QueryClientProvider>
     </div>
 }
