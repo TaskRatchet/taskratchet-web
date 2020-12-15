@@ -1,24 +1,32 @@
-import {QueryResult, useQuery} from "react-query";
+import {useQuery, useQueryClient} from "react-query";
 
 import {updateMe as mutator} from './updateMe'
 
-import {queryCache, useMutation} from "react-query";
+import {useMutation} from "react-query";
 import {getMe} from "./getMe";
 import {UseQueryOptions, UseMutationOptions} from 'react-query/types';
+import toaster from "../Toaster";
+
+const onError = (error: unknown) => {
+    toaster.send((error as Error).toString());
+}
 
 // TODO: fix updateMe type
 export function useMe(
-    queryOptions: UseQueryOptions | undefined = {},
-    mutateOptions: UseMutationOptions | undefined = {}
+    queryOptions: UseQueryOptions | undefined = {}
 ): { me: Response | undefined, updateMe: any, isLoading: boolean } {
-    const {data: me, isLoading} = useQuery('me', getMe, queryOptions)
+    const queryClient = useQueryClient()
+    const {data: me, isLoading} = useQuery('me', getMe, {
+        onError,
+        ...queryOptions
+    })
 
     // TODO: fix types
     const {mutate: updateMe} = useMutation(mutator, {
         onSuccess: async (data) => {
-            await queryCache.invalidateQueries('me')
+            await queryClient.invalidateQueries('me')
         },
-        ...mutateOptions
+        onError
     })
 
     // TODO: Fix me type

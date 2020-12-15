@@ -218,7 +218,9 @@ describe("BeeminderSettings component", () => {
     it('toasts save errors', async () => {
         loadMeWithBeeminder()
 
-        jest.spyOn(api, 'updateMe').mockRejectedValue('error')
+        jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
+            throw new Error('error')
+        })
 
         const {getByText} = await renderBeeminderSettings()
 

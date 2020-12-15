@@ -16,9 +16,6 @@ const beeminderClientId: string = (isProduction)
         `&redirect_uri=${encodeURIComponent(beeminderRedirect)}&response_type=token`
 
 const BeeminderSettings = () => {
-    const onError = (error: unknown) => {
-        toaster.send((error as Error).toString());
-    }
     const [error, setError] = useState<string>('');
     const {me, updateMe, isLoading} = useMe({
         onSuccess: (data) => {
@@ -26,9 +23,8 @@ const BeeminderSettings = () => {
             if (bmGoal) return;
             const goal = _.get(data, 'integrations.beeminder.goal_new_tasks', '');
             setBmGoal(goal)
-        },
-        onError
-    }, {onError});
+        }
+    });
     const bmUser: string = _.get(me, 'integrations.beeminder.user', '');
     const [bmGoal, setBmGoal] = useState<string>('')
 
