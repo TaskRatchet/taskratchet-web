@@ -5,7 +5,7 @@ import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
-import {loadNow, makeResponse} from "../../lib/test/helpers";
+import {expectLoadingOverlay, loadNow, makeResponse} from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {setComplete} from "../../lib/api/setComplete";
 import {getMe} from "../../lib/api";
@@ -76,7 +76,7 @@ const makeTask = (
     }
 }
 
-const expectTaskSave = (
+const expectTaskSave = async (
     {
         task,
         due,
@@ -95,7 +95,7 @@ const expectTaskSave = (
         minute: 'numeric'
     });
 
-    expect(addTask).toBeCalledWith(task, dueString, cents)
+    await waitFor(() => expect(addTask).toBeCalledWith(task, dueString, cents))
 }
 
 const renderTasksPage = () => {
@@ -158,7 +158,7 @@ describe("tasks page", () => {
         await userEvent.type(taskInput, "the_task by friday or pay $5")
         userEvent.click(addButton)
 
-        expectTaskSave({
+        await expectTaskSave({
             task: "the_task by friday or pay $5",
             due: new Date('10/30/2020 11:59 PM'),
         })
@@ -241,23 +241,11 @@ describe("tasks page", () => {
         await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2))
     })
 
-    it("toasts task creation success", async () => {
-        loadApiData()
-
-        const {taskInput, addButton} = renderTasksPage()
-
-        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-
-        await userEvent.type(taskInput, "the_task by Friday or pay $5")
-        userEvent.click(addButton)
-
-        await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Task added successfully"))
-    })
-
     it("toasts task creation failure", async () => {
         loadApiData()
-        loadApiResponse(addTask, {ok: false})
+        jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+            throw new Error('Failed to add task')
+        })
 
         const {taskInput, addButton} = renderTasksPage()
 
@@ -267,7 +255,7 @@ describe("tasks page", () => {
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Failed to add task"))
+            .toBeCalledWith("Error: Failed to add task"))
     })
 
     it("toasts task creation exception", async () => {
@@ -379,10 +367,9 @@ describe("tasks page", () => {
         await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
 
-        await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Task added successfully"))
+        await waitFor(() => expect(getByText("No deadline found")).toBeInTheDocument())
 
-        expect(getByText("No deadline found")).toBeInTheDocument()
+
     })
 
     it('highlights due date', async () => {
@@ -432,6 +419,16 @@ describe("tasks page", () => {
 
         expect(getByText('$9')).toBeInTheDocument()
     })
+
+    it('uses loading overlay', async () => {
+        loadApiData()
+
+        const {container} = renderTasksPage()
+
+        expectLoadingOverlay(container)
+    })
+
+    // TODO: Warn on app close if mutation in progress
 
     // it('has stakes form', async () => {
     //     loadApiData()

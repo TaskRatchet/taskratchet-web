@@ -5,6 +5,7 @@ import {setComplete} from "./setComplete";
 export function useSetComplete() {
     const queryClient = useQueryClient()
 
+    // TODO: replace any type
     const {mutate} = useMutation(
         (variables: any) => {
             const {id, complete} = variables

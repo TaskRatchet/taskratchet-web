@@ -2,27 +2,25 @@ import React, {useState} from 'react';
 import './Tasks.css'
 import Task from '../molecules/Task'
 import 'react-datepicker/dist/react-datepicker.min.css'
-import createTasksMachine from './Tasks.machine'
-import {useMachine} from '@xstate/react';
 import FreeEntry from "../organisms/FreeEntry";
 import {useMe, useTasks} from "../../lib/api";
 import {useSetComplete} from "../../lib/api/useSetComplete";
 import _ from "lodash";
-
-const machine = createTasksMachine()
+import {useAddTask} from "../../lib/api/useAddTask";
 
 interface TasksProps {
 }
 
 const Tasks = (props: TasksProps) => {
-    const [state, send] = useMachine(machine);
-    const {data: tasks} = useTasks();
+    const {data: tasks, isLoading} = useTasks();
     const {me} = useMe()
+    const timezone = _.get(me, 'timezone')
     const setComplete = useSetComplete()
+    const addTask = useAddTask()
     const [task, setTask] = useState<string>('')
     const [due, setDue] = useState<Date | null>(null)
     const [cents, setCents] = useState<number | null>(null)
-    const timezone = _.get(me, 'timezone')
+    const [error, setError] = useState<string>('')
 
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
@@ -56,7 +54,7 @@ const Tasks = (props: TasksProps) => {
         return tasks.map(t => <li key={t.id}><Task task={t} onToggle={setComplete}/></li>);
     };
 
-    return <div className={`page-tasks ${state.value === "idle" ? null : "loading"}`}>
+    return <div className={`page-tasks ${isLoading ? "loading" : "idle"}`}>
         <h1>Tasks</h1>
 
         {/*<TaskForm*/}
@@ -64,7 +62,7 @@ const Tasks = (props: TasksProps) => {
         {/*    due={due}*/}
         {/*    cents={cents}*/}
         {/*    timezone={timezone}*/}
-        {/*    error={state.context.formError}*/}
+        {/*    error={error}*/}
         {/*    onChange={(task: string, due: Date | null, cents: number | null) => {*/}
         {/*        send({type: 'SET_FORM', value: {task, due, cents}})*/}
         {/*    }}*/}
@@ -78,19 +76,28 @@ const Tasks = (props: TasksProps) => {
             due={due}
             cents={cents}
             timezone={timezone}
-            error={state.context.formError}
+            error={error}
             onChange={(task: string, due: Date | null, cents: number | null) => {
-                // console.log({m: 'change handler', task, due, cents})
                 setTask(task)
                 setDue(due)
                 setCents(cents)
-                send({type: 'SET_FORM', value: {task, due, cents}})
             }}
             onSubmit={() => {
+                setError(task ? '' : 'Task is required')
+                if (!due || !cents) {
+                    return
+                }
+                const dueString = due.toLocaleDateString("en-US", {
+                    year: 'numeric',
+                    month: 'numeric',
+                    day: 'numeric',
+                    hour: 'numeric',
+                    minute: 'numeric'
+                });
+                addTask(task, dueString, cents)
                 setTask('')
                 setDue(null)
                 setCents(null)
-                send("SAVE_TASK")
             }}
         />
 
