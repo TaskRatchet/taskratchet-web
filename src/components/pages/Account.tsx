@@ -1,9 +1,10 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../lib/Api';
+import api from '../../lib/LegacyApi';
 import './Account.css'
 import toaster from "../../lib/Toaster";
 import Input from "../molecules/Input";
 import BeeminderSettings from "../organisms/BeeminderSettings";
+import {useCheckoutSession, useMe, useTimezones} from "../../lib/api";
 
 interface Card {
     brand: string,
@@ -18,8 +19,9 @@ interface AccountProps {
 }
 
 const Account = (props: AccountProps) => {
-    const [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null),
-        [timezones, setTimezones] = useState<string[]>([]),
+    const {data: checkoutSession, isLoading} = useCheckoutSession(),
+        {data: timezones} = useTimezones(),
+        {me, updateMe} = useMe(),
         [name, setName] = useState<string>(''),
         [email, setEmail] = useState<string>(''),
         [timezone, setTimezone] = useState<string>(''),
@@ -28,59 +30,19 @@ const Account = (props: AccountProps) => {
         [password, setPassword] = useState<string>(''),
         [password2, setPassword2] = useState<string>('');
 
-    useEffect(() => {
-        const populateTimezones = () => {
-            api.getTimezones()
-                .then((res: any) => res.json())
-                .then(setTimezones);
-        };
-
-        const loadUser = () => {
-            api.getMe()
-                .then((res: any) => res.json())
-                .then(loadResponseData)
-        };
-
-        const loadCheckoutSession = () => {
-            api.getCheckoutSession()
-                .then((res: any) => res.json())
-                .then(setCheckoutSession)
-        };
-
-        populateTimezones();
-        loadUser();
-        loadCheckoutSession();
-    }, []);
-
-    const loadResponseData = (data: any) => {
-        setName(data['name']);
-        setEmail(data['email']);
-        setTimezone(data['timezone']);
-        setCards(data['cards']);
-    };
-
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        api.updateMe({
+        // TODO: Fix types
+        updateMe({
             name: prepareValue(name),
             email: prepareValue(email),
             timezone: prepareValue(timezone)
-        }).then((res: Response) => {
-            if (res.ok) {
-                toaster.send('Changes saved');
-
-                res.json().then(loadResponseData)
-            } else {
-                res.text().then((error: string) => {
-                    toaster.send(`Something went wrong: ${error}`);
-                })
-            }
         })
     };
 
     const prepareValue = (value: string) => {
-        return (value === '') ? null : value;
+        return (value === '') ? undefined : value;
     };
 
     const savePassword = (event: any) => {
@@ -115,26 +77,30 @@ const Account = (props: AccountProps) => {
         return passed;
     };
 
-    const updatePaymentDetails = () => {
-        const sessionId = getSessionId();
+    const updatePaymentDetails = async () => {
+        const sessionId = await getSessionId();
 
         if (sessionId === null) {
             toaster.send('Checkout session error');
             return;
         }
 
-        api.updateCheckoutSessionId(sessionId);
+        await updateMe({
+            'checkout_session_id': sessionId
+        })
 
-        redirect();
+        await redirect();
     };
 
-    const redirect = () => {
+    const redirect = async () => {
+        await checkoutSession
+
         if (checkoutSession == null) return;
 
         const stripe = window.Stripe(window.stripe_key);
 
         stripe.redirectToCheckout({
-            sessionId: getSessionId()
+            sessionId: await getSessionId()
         }).then((result: any) => {
             // If `redirectToCheckout` fails due to a browser or network
             // error, display the localized error message to your customer
@@ -146,10 +112,10 @@ const Account = (props: AccountProps) => {
         });
     };
 
-    const getSessionId = () => {
-        if (checkoutSession == null) return null;
+    const getSessionId = async () => {
+        const {id = null} = await checkoutSession
 
-        return checkoutSession.id;
+        return id
     };
 
     return <div className={'page-account'}>
@@ -181,7 +147,7 @@ const Account = (props: AccountProps) => {
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
             >
-                {timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
+                {timezones ? timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>) : null}
             </select>
 
             <input type="submit" value={'Save'}/>
@@ -229,7 +195,7 @@ const Account = (props: AccountProps) => {
 
         <h2>Beeminder Integration</h2>
 
-        <BeeminderSettings />
+        <BeeminderSettings/>
     </div>
 }
 

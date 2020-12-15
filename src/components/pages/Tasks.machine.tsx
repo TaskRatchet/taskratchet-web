@@ -1,13 +1,12 @@
 import {assign, createMachine, StateMachine} from "xstate";
-import api from "../../lib/Api";
+import api from "../../lib/LegacyApi";
 import toaster from "../../lib/Toaster";
-import * as chrono from 'chrono-node'
-import browser from "../../lib/Browser";
-import _ from 'lodash'
+import React from 'react';
 
 export interface Context {
     tasks: Task[],
     task: string,
+    taskHighlighted: JSX.Element | null,
     due: Date | null,
     cents: number | null,
     formError: string,
@@ -20,6 +19,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
         context: {
             tasks: [],
             task: "",
+            taskHighlighted: null,
             due: null,
             cents: null,
             formError: "",
@@ -42,9 +42,7 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
             idle: {
                 entry: "validateForm",
                 on: {
-                    SET_TASK: {actions: "setTask"},
-                    SET_DUE: {actions: "setDue"},
-                    SET_CENTS: {actions: "setCents"},
+                    SET_FORM: {actions: "setForm"},
                     SAVE_TASK: [
                         {target: "saving", cond: "isFormValid"},
                         {target: "idle"}
@@ -79,14 +77,21 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
     }, {
         services: {
             dataService: async () => {
-                const tasksResponse = await api.getTasks(),
-                    tasks = await tasksResponse.json(),
-                    meResponse = await api.getMe(),
-                    me = await meResponse.json();
+                // TODO: Replace logic with hooks
+
+                // const tasksResponse = await api.getTasks(),
+                //     tasks = await tasksResponse.json(),
+                //     meResponse = await api.getMe(),
+                //     me = await meResponse.json();
+                //
+                // return {
+                //     tasks,
+                //     timezone: me.timezone
+                // }
 
                 return {
-                    tasks,
-                    timezone: me.timezone
+                    tasks: [],
+                    timezone: 'the_timezone'
                 }
             },
             taskCreationService: async (ctx) => {
@@ -112,7 +117,10 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                     'Failed to add task')
             },
             taskToggleService: async (ctx, e) => {
-                const task = ctx.tasks.find(t => t.id === e.value);
+                const task = e.value;
+
+                // console.log('completing')
+                // console.log({task})
 
                 if (!task) {
                     throw Error("No task matching ID")
@@ -144,43 +152,16 @@ const createTasksMachine = (): StateMachine<Context, any, any> => {
                 tasks: e.data.tasks,
                 timezone: e.data.timezone
             })),
-            setTask: assign({
-                task: (ctx, e) => e.value,
-                due: (ctx, e) => {
-                    const ref = browser.getNow()
+            setForm: assign((ctx, e) => {
+                const {task, due, cents} = e.value
 
-                    const response = chrono.parse(
-                        e.value,
-                        ref,
-                        {forwardDate: true}
-                    ).pop()
+                // console.log({task, due, cents})
 
-                    if (!response) return null
-
-                    const date = response.date()
-
-                    if (!_.get(response, 'start.knownValues.hour')) {
-                        date.setHours(23, 59)
-                    }
-
-                    return date
-                },
-                cents: (ctx, e) => {
-                    const matches = e.value.match(/\$(\d+)/)
-
-                    if (!matches) return null
-
-                    return matches.pop() * 100
-                }
-            }),
-            setDue: assign({
-                due: (ctx, e) => e.value
-            }),
-            setCents: assign({
-                cents: (ctx, e) => e.value
+                return {task, due, cents}
             }),
             resetForm: assign({
                 task: "",
+                taskHighlighted: null,
                 due: null,
                 cents: null,
             } as Context),

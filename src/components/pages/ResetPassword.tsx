@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import api from '../../lib/Api';
+import api from '../../lib/LegacyApi';
 import {useLocation} from 'react-router-dom';
 
 interface ResetPasswordProps {

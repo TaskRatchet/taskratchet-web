@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../lib/Api';
+import api from '../../lib/LegacyApi';
 import toaster from "../../lib/Toaster";
+import {useCheckoutSession, useTimezones} from "../../lib/api";
 
 interface CheckoutSession {
     id: string
@@ -14,29 +15,17 @@ const Register = (props: RegisterProps) => {
         [email, setEmail] = useState<string>(''),
         [password, setPassword] = useState<string>(''),
         [password2, setPassword2] = useState<string>(''),
-        [timezones, setTimezones] = useState<string[]>([]),
+        {data: timezones} = useTimezones(),
+        {data: checkoutSession} = useCheckoutSession(),
         [timezone, setTimezone] = useState<string>(''),
-        [agreed, setAgreed] = useState<boolean>(false),
-        [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null);
+        [agreed, setAgreed] = useState<boolean>(false);
 
     useEffect(() => {
         populateTimezones();
-        loadCheckoutSession();
     }, []);
 
     const populateTimezones = () => {
-        api.getTimezones()
-            .then((res: any) => res.json())
-            .then((data) => {
-                setTimezones(data);
-                setTimezone(data[0]);
-            });
-    };
-
-    const loadCheckoutSession = () => {
-        api.getCheckoutSession()
-            .then((res: any) => res.json())
-            .then((session) => setCheckoutSession(session));
+        setTimezone(timezones[0])
     };
 
     const register = async (event: any) => {
@@ -155,7 +144,7 @@ const Register = (props: RegisterProps) => {
         /><br/>
 
         <select name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
-            {timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
+            {timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>)}
         </select><br/>
 
         <p>

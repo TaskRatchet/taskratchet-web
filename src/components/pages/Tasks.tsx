@@ -1,11 +1,12 @@
 import React from 'react';
 import './Tasks.css'
 import Task from '../molecules/Task'
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.min.css'
 import createTasksMachine from './Tasks.machine'
 import {useMachine} from '@xstate/react';
-import browser from "../../lib/Browser";
+import FreeEntry from "../organisms/FreeEntry";
+import {useMe, useTasks} from "../../lib/api";
+import {useSetComplete} from "../../lib/api/useSetComplete";
 
 const machine = createTasksMachine()
 
@@ -13,7 +14,10 @@ interface TasksProps {
 }
 
 const Tasks = (props: TasksProps) => {
-    const [state, send] = useMachine(machine)
+    const [state, send] = useMachine(machine);
+    const {data: tasks} = useTasks();
+    const {me} = useMe()
+    const setComplete = useSetComplete()
 
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
@@ -26,7 +30,9 @@ const Tasks = (props: TasksProps) => {
     };
 
     const getSortedTasks = () => {
-        return state.context.tasks.sort(compareTasks);
+        if (!tasks) return []
+
+        return tasks.sort(compareTasks);
     };
 
     const getActiveTasks = () => {
@@ -42,50 +48,40 @@ const Tasks = (props: TasksProps) => {
     };
 
     const makeTaskListItems = (tasks: Task[]) => {
-        return tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => send({
-            type: "TOGGLE_TASK",
-            value: t.id
-        })}/></li>);
+        return tasks.map(t => <li key={t.id}><Task task={t} onToggle={setComplete}/></li>);
     };
 
     return <div className={`page-tasks ${state.value === "idle" ? null : "loading"}`}>
         <h1>Tasks</h1>
 
-        <form onSubmit={e => {
-            e.preventDefault();
-            send("SAVE_TASK")
-        }}>
-            <div className="page-tasks__inputs">
-                {state.context.formError ? <p>{state.context.formError}</p> : null}
+        {/*<TaskForm*/}
+        {/*    task={state.context.task}*/}
+        {/*    due={state.context.due}*/}
+        {/*    cents={state.context.cents}*/}
+        {/*    timezone={state.context.timezone}*/}
+        {/*    error={state.context.formError}*/}
+        {/*    onChange={(task: string, due: Date | null, cents: number | null) => {*/}
+        {/*        send({type: 'SET_FORM', value: {task, due, cents}})*/}
+        {/*    }}*/}
+        {/*    onSubmit={() => {*/}
+        {/*        send("SAVE_TASK")*/}
+        {/*    }}*/}
+        {/*/>*/}
 
-                <label className={'page-tasks__description'}>Task <input
-                    type="text"
-                    placeholder={'Task'}
-                    value={state.context.task}
-                    onChange={e => {
-                        send({
-                            type: 'SET_TASK',
-                            value: e.target.value
-                        })
-                    }}
-                /></label>
-
-                <p>Example: Call the plumber by Friday or pay $15</p>
-
-                <div className="page-tasks__summary">
-                    <p>
-                        <b>Due {state.context.timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{state.context.timezone}</a>)</> : null}</b><br/>
-                        <span>{state.context.due ? browser.getDateTimeString(state.context.due) : "No deadline found"}</span>
-                    </p>
-
-                    <p>
-                        <b>Stakes</b><br />
-                        <span>{state.context.cents ? `$${state.context.cents / 100}` : 'No stakes found'}</span>
-                    </p>
-                </div>
-            </div>
-            <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
-        </form>
+        <FreeEntry
+            task={state.context.task}
+            due={state.context.due}
+            cents={state.context.cents}
+            timezone={me ? me.timezone : null}
+            error={state.context.formError}
+            onChange={(task: string, due: Date | null, cents: number | null) => {
+                // console.log({m: 'change handler', task, due, cents})
+                send({type: 'SET_FORM', value: {task, due, cents}})
+            }}
+            onSubmit={() => {
+                send("SAVE_TASK")
+            }}
+        />
 
         <ul className={'page-tasks__list'}>{makeTaskListItems(getActiveTasks())}</ul>
 

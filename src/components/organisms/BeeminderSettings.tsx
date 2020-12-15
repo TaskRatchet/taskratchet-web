@@ -1,10 +1,10 @@
-import React from "react";
-import createBeeminderSettingsMachine from "./BeeminderSettings.machine";
-import {useMachine} from "@xstate/react/lib";
+import React, {useEffect, useState} from "react";
 import {isProduction} from "../../tr_constants";
 import Input from "../molecules/Input";
-
-const machine = createBeeminderSettingsMachine()
+import {useMe} from "../../lib/api";
+import _ from "lodash";
+import toaster from "../../lib/Toaster";
+import browser from "../../lib/Browser";
 
 const beeminderClientId: string = (isProduction)
     ? "1w70sy12t1106s9ptod11ex21"
@@ -16,10 +16,45 @@ const beeminderClientId: string = (isProduction)
         `&redirect_uri=${encodeURIComponent(beeminderRedirect)}&response_type=token`
 
 const BeeminderSettings = () => {
-    const [state, send] = useMachine(machine),
-        {bmUser, bmGoal, inputError} = state.context
+    const onError = (error: unknown) => {
+        toaster.send((error as Error).toString());
+    }
+    const [error, setError] = useState<string>('');
+    const {me, updateMe, isLoading} = useMe({
+        onSuccess: (data) => {
+            // TODO: Make sure this doesn't result in field being populated after initial page load
+            if (bmGoal) return;
+            const goal = _.get(data, 'integrations.beeminder.goal_new_tasks', '');
+            setBmGoal(goal)
+        },
+        onError
+    }, {onError});
+    const bmUser: string = _.get(me, 'integrations.beeminder.user', '');
+    const [bmGoal, setBmGoal] = useState<string>('')
 
-    return <div className={state.value === "idle" ? '' : "loading"}>
+    const isGoalNameValid = (goalName: string) => {
+        const pattern = new RegExp(/^[-\w]*$/)
+
+        return pattern.test(goalName)
+    }
+
+    useEffect(() => {
+        const {username, access_token} = browser.getUrlParams()
+
+        const shouldConnect = !!username
+            && !!access_token
+            && _.isString(username)
+            && _.isString(access_token)
+
+        if (!shouldConnect) return
+
+        updateMe({
+            beeminder_user: username,
+            beeminder_token: access_token
+        })
+    }, [])
+
+    return <div className={isLoading ? 'loading' : 'idle'}>
         {bmUser
             ? <form>
                 <p>Beeminder user: {bmUser}</p>
@@ -27,18 +62,27 @@ const BeeminderSettings = () => {
                     id={'new-task-goal'}
                     label={'Post new tasks to goal:'}
                     value={bmGoal}
-                    error={inputError}
-                    onChange={e => send({
-                        type: 'GOAL',
-                        value: e.target.value
-                    })}
+                    error={error}
+                    onChange={e => {
+                        setBmGoal(e.target.value)
+                    }}
                 />
                 <input
                     type="submit"
                     value={'Save'}
                     onClick={e => {
                         e.preventDefault();
-                        send('SAVE');
+
+                        if (!isGoalNameValid(bmGoal)) {
+                            setError('Goal names can only contain letters, numbers, underscores, and hyphens.')
+                            return
+                        }
+
+                        setError('')
+
+                        updateMe({
+                            beeminder_goal_new_tasks: bmGoal
+                        })
                     }}
                 />
             </form>

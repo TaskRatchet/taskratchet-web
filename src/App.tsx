@@ -18,6 +18,8 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {isProduction} from "./tr_constants"
 import Footer from "./components/organisms/Footer"
+import {ReactQueryDevtools} from 'react-query-devtools'
+import {QueryClient, QueryClientProvider} from "react-query";
 
 toast.configure();
 
@@ -26,6 +28,8 @@ window.stripe_key = isProduction ?
     'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp';
 
 ReactGA.initialize('G-Y074NE79ML');
+
+const queryClient = new QueryClient()
 
 function usePageViews() {
     let location = useLocation();
@@ -36,7 +40,10 @@ function usePageViews() {
     }, [location])
 }
 
-const App = () => {
+// TODO: Add global react-query loading indicator
+// TODO: Add error message if user tries to close app while mutations pending
+
+export const App = () => {
     useEffect(() => {
         document.title = 'TaskRatchet';
     }, []);
@@ -44,46 +51,49 @@ const App = () => {
     usePageViews()
 
     return <div className={'page-base'}>
-        <SessionWidget />
+        <QueryClientProvider client={queryClient}>
+            <SessionWidget/>
 
-        <h2><Link to={'/'}>TaskRatchet</Link></h2>
+            <h2><Link to={'/'}>TaskRatchet</Link></h2>
 
-        <div className={'page-base__content'}>
-            <Switch>
-                <Route path={'/register'}>
-                    <RegisterForm />
-                </Route>
+            <div className={'page-base__content'}>
+                <Switch>
+                    <Route path={'/register'}>
+                        <RegisterForm/>
+                    </Route>
 
-                <Route path={'/success'}>
-                    Your payment method has been saved successfully.
-                </Route>
+                    <Route path={'/success'}>
+                        Your payment method has been saved successfully.
+                    </Route>
 
-                <Route path={'/cancel'}>
-                    Your payment method could not be saved. Please contact
-                    <a href="mailto:nathan@taskratchet.com" target={'_blank'}
-                       rel="noopener noreferrer">nathan@taskratchet.com</a>
-                    for assistance.
-                </Route>
+                    <Route path={'/cancel'}>
+                        Your payment method could not be saved. Please contact
+                        <a href="mailto:nathan@taskratchet.com" target={'_blank'}
+                           rel="noopener noreferrer">nathan@taskratchet.com</a>
+                        for assistance.
+                    </Route>
 
-                <Route path={'/account'}>
-                    <Authenticated>
-                        <Account />
-                    </Authenticated>
-                </Route>
+                    <Route path={'/account'}>
+                        <Authenticated>
+                            <Account/>
+                        </Authenticated>
+                    </Route>
 
-                <Route path={'/reset'}>
-                    <ResetPassword />
-                </Route>
+                    <Route path={'/reset'}>
+                        <ResetPassword/>
+                    </Route>
 
-                <Route path={'/'}>
-                    <Authenticated>
-                        <Tasks />
-                    </Authenticated>
-                </Route>
-            </Switch>
-        </div>
+                    <Route path={'/'}>
+                        <Authenticated>
+                            <Tasks/>
+                        </Authenticated>
+                    </Route>
+                </Switch>
+            </div>
 
-        <Footer />
+            <Footer/>
+            <ReactQueryDevtools initialIsOpen/>
+        </QueryClientProvider>
     </div>
 }
 

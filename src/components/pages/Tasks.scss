@@ -19,6 +19,12 @@
     .page-tasks__description {
       flex: 0 0 100%;
     }
+    .page-tasks__echo {
+      .due {
+        background-color: blue;
+        color: white;
+      }
+    }
     .page-tasks__summary {
       display: flex;
       > * {

@@ -15,6 +15,10 @@
 .page-tasks form .page-tasks__description {
   flex: 0 0 100%;
 }
+.page-tasks form .page-tasks__echo .due {
+  background-color: blue;
+  color: white;
+}
 .page-tasks form .page-tasks__summary {
   display: flex;
 }

@@ -2,12 +2,13 @@ import React from 'react';
 import './Authenticated.css';
 import LoginForm from "../organisms/Login";
 import {Link} from "react-router-dom";
-import api from "../../lib/Api";
+import api from "../../lib/LegacyApi";
+import {useSession} from "../../lib/api/useSession";
 
 interface AuthenticatedProps {}
 
 const Authenticated = (props: React.PropsWithChildren<AuthenticatedProps>) => {
-    const session = api.useSession();
+    const session = useSession();
 
     return <div className={'page-authenticated'}>
         {session ? props.children :

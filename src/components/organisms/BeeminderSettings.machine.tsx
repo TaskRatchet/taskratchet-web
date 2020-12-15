@@ -1,5 +1,5 @@
 import {assign, createMachine, StateMachine} from "xstate";
-import api from "../../lib/Api";
+import api from "../../lib/LegacyApi";
 import _ from "lodash";
 import browser from "../../lib/Browser";
 import toaster from "../../lib/Toaster";
@@ -118,11 +118,13 @@ const createBeeminderSettingsMachine = (): StateMachine<Context, any, any> => {
                 return await parseIntegration(response);
             },
             dataService: async () => {
-                const response = await api.getMe()
+                // TODO: Replace this logic
 
-                await throwResponseError(response)
+                // const response = await api.getMe()
 
-                return parseIntegration(response)
+                // await throwResponseError(response)
+
+                // return parseIntegration(response)
             },
             saveService: async (ctx: Context) => {
                 const response = await api.updateMe({

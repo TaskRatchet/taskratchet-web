@@ -1,15 +1,23 @@
-/**  * @jest-environment jsdom-fourteen  */
-
-import api from "../../lib/Api";
+import api from "../../lib/LegacyApi";
+import * as new_api from "../../lib/api"
 import toaster from "../../lib/Toaster"
 import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
 import {loadNow, makeResponse} from "../../lib/test/helpers";
+import {QueryClient, QueryClientProvider} from "react-query";
+import {setComplete} from "../../lib/api/setComplete";
+import {getMe} from "../../lib/api";
 
-jest.mock('../../lib/Api')
+jest.mock('../../lib/api/apiFetch')
+jest.mock('../../lib/api/getTasks')
+jest.mock('../../lib/api/getMe')
+jest.mock('../../lib/api/setComplete')
+jest.mock('../../lib/api/getTimezones')
 jest.mock("../../lib/Toaster")
+jest.mock('../../lib/LegacyApi')
+jest.mock('react-ga')
 
 global.document.createRange = () => ({
     setStart: () => {
@@ -32,9 +40,13 @@ const loadApiResponse = (
 const loadApiData = (
     {tasks = [], me = {}}: { tasks?: Task[], me?: object } = {}
 ) => {
-    loadApiResponse(api.getTasks, {json: tasks || []});
-    loadApiResponse(api.getMe, {json: me || {}});
-    loadApiResponse(api.setComplete);
+    // loadApiResponse(api.getTasks, {json: tasks || []});
+    // loadApiResponse(api.getMe, {json: me || {}});
+
+    jest.spyOn(new_api, "getTasks").mockResolvedValue(tasks || [])
+    jest.spyOn(new_api, "getMe").mockResolvedValue(me || {})
+
+    loadApiResponse(setComplete);
     loadApiResponse(api.addTask)
 }
 
@@ -62,16 +74,6 @@ const makeTask = (
     }
 }
 
-const getDefaultDueDate = () => {
-    const due = new Date();
-
-    due.setDate(due.getDate() + 7);
-    due.setHours(23);
-    due.setMinutes(59);
-
-    return due;
-}
-
 const expectTaskSave = (
     {
         task,
@@ -95,7 +97,8 @@ const expectTaskSave = (
 }
 
 const renderTasksPage = () => {
-    const getters = render(<Tasks/>),
+    const queryClient = new QueryClient()
+    const getters = render(<QueryClientProvider client={queryClient}><Tasks/></QueryClientProvider>),
         {getByText, getByPlaceholderText} = getters
 
     return {
@@ -122,7 +125,7 @@ async function testParsesDueString(task: string, expected: string, ref: Date) {
 
     const {taskInput, getByText} = await renderTasksPage()
 
-    await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+    await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
     await userEvent.type(taskInput, task)
 
@@ -137,47 +140,9 @@ describe("tasks page", () => {
     it("loads tasks", async () => {
         loadApiData({tasks: [makeTask()]})
 
-        const {getByText} = render(<Tasks/>)
+        const {getByText} = renderTasksPage()
 
         await waitFor(() => expect(getByText('the_task')).toBeDefined())
-    })
-
-    it("only shows one of each created task", async () => {
-        loadApiData()
-
-        const {taskInput, addButton, getByText, getAllByText} = renderTasksPage()
-
-        loadApiData({
-            tasks: [
-                makeTask({task: 'a'})
-            ]
-        })
-        await userEvent.type(taskInput, "a")
-        userEvent.click(addButton)
-
-        loadApiData({
-            tasks: [
-                makeTask({task: 'a'}),
-                makeTask({task: 'b'})
-            ]
-        })
-        await userEvent.type(taskInput, "b")
-        userEvent.click(addButton)
-
-        loadApiData({
-            tasks: [
-                makeTask({task: 'a'}),
-                makeTask({task: 'b'}),
-                makeTask({task: 'c'}),
-                makeTask({task: 'done'})
-            ]
-        })
-        await userEvent.type(taskInput, "c")
-        userEvent.click(addButton)
-
-        await waitFor(() => getByText("done"))
-
-        expect(getAllByText("c").length).toBe(1)
     })
 
     it("saves task", async () => {
@@ -186,7 +151,7 @@ describe("tasks page", () => {
 
         const {taskInput, addButton} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         await userEvent.type(taskInput, "the_task by friday or pay $5")
         userEvent.click(addButton)
@@ -202,7 +167,7 @@ describe("tasks page", () => {
 
         const {taskInput, addButton} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         await userEvent.type(taskInput, "new_task by Friday or pay $5")
         userEvent.click(addButton)
@@ -217,7 +182,7 @@ describe("tasks page", () => {
 
         const {addButton} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         userEvent.click(addButton)
 
@@ -229,7 +194,7 @@ describe("tasks page", () => {
 
         const {addButton, getByText} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         userEvent.click(addButton)
 
@@ -241,7 +206,7 @@ describe("tasks page", () => {
 
         const {getByText} = renderTasksPage()
 
-        await waitFor(() => expect(api.getMe).toHaveBeenCalled())
+        await waitFor(() => expect(getMe).toHaveBeenCalled())
 
         expect(getByText("the_timezone")).toBeDefined()
     })
@@ -253,11 +218,11 @@ describe("tasks page", () => {
 
         const {clickCheckbox} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         clickCheckbox()
 
-        expect(api.setComplete).toBeCalledWith(3, true)
+        await waitFor(() => expect(setComplete).toBeCalledWith(3, true))
     })
 
     it("reloads tasks", async () => {
@@ -267,26 +232,11 @@ describe("tasks page", () => {
 
         const {clickCheckbox} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         clickCheckbox()
 
-        await waitFor(() => expect(api.getTasks).toBeCalledTimes(2))
-    })
-
-    it("toasts success message", async () => {
-        loadApiData({
-            tasks: [makeTask({id: 3})]
-        })
-
-        const {clickCheckbox} = renderTasksPage()
-
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
-
-        clickCheckbox()
-
-        await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Successfully marked task complete"))
+        await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2))
     })
 
     it("toasts task creation success", async () => {
@@ -294,7 +244,7 @@ describe("tasks page", () => {
 
         const {taskInput, addButton} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
@@ -309,24 +259,13 @@ describe("tasks page", () => {
 
         const {taskInput, addButton} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
 
         await waitFor(() => expect(toaster.send)
             .toBeCalledWith("Failed to add task"))
-    })
-
-    it("toasts data loading exception", async () => {
-        (api.getTasks as jest.Mock).mockImplementation(() => {
-            throw Error("Oops!")
-        })
-
-        renderTasksPage()
-
-        await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Error: Oops!"))
     })
 
     it("toasts task creation exception", async () => {
@@ -338,7 +277,7 @@ describe("tasks page", () => {
 
         const {taskInput, addButton} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
@@ -352,13 +291,13 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         });
 
-        (api.setComplete as jest.Mock).mockImplementation(() => {
+        jest.spyOn(new_api, 'setComplete').mockImplementation(() => {
             throw Error("Oops!")
         })
 
         const {clickCheckbox} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         clickCheckbox()
 
@@ -407,9 +346,11 @@ describe("tasks page", () => {
     })
 
     it("extracts stakes", async () => {
+        loadApiData()
+
         const {taskInput, getByText} = await renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         await userEvent.type(taskInput, 'do this or pay $100')
 
@@ -417,9 +358,11 @@ describe("tasks page", () => {
     })
 
     it("starts without stakes", async () => {
+        loadApiData()
+
         const {getByText} = await renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         expect(getByText("No stakes found")).toBeInTheDocument()
     })
@@ -429,7 +372,7 @@ describe("tasks page", () => {
 
         const {taskInput, addButton, getByText} = renderTasksPage()
 
-        await waitFor(() => expect(api.getTasks).toHaveBeenCalled())
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
         await userEvent.type(taskInput, "the_task by Friday or pay $5")
         userEvent.click(addButton)
@@ -439,5 +382,61 @@ describe("tasks page", () => {
 
         expect(getByText("No deadline found")).toBeInTheDocument()
     })
+
+    it('highlights due date', async () => {
+        loadApiData()
+
+        const {taskInput, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "the_task today or pay $5")
+
+        expect(getByText("today")).toBeInTheDocument()
+    })
+
+    it('escapes tasks before echoing', async () => {
+        loadApiData()
+
+        const {taskInput, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "the_task <span>malicious</span>")
+
+        expect(() => getByText("malicious")).toThrow()
+    })
+
+    it('echos unhighlighted', async () => {
+        loadApiData()
+
+        const {taskInput, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "abc today def")
+
+        expect(getByText((m) => m.endsWith('def'))).toBeInTheDocument()
+    })
+
+    it('highlights pledge', async () => {
+        loadApiData()
+
+        const {taskInput, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "do for $9")
+
+        expect(getByText('$9')).toBeInTheDocument()
+    })
+
+    // it('has stakes form', async () => {
+    //     loadApiData()
+    //
+    //     const {getByText} = renderTasksPage()
+    //
+    //     expect(getByText("USD")).toBeInTheDocument()
+    // })
 })
 

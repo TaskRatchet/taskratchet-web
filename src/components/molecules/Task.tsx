@@ -10,7 +10,7 @@ interface Flag {
 
 interface TaskProps {
     task: Task,
-    onToggle: () => void
+    onToggle: (id: string | number, complete: boolean) => void
 }
 
 const Task = (props: TaskProps) => {
@@ -50,7 +50,9 @@ const Task = (props: TaskProps) => {
         extraClasses = activeFlags.map((f) => f.class).join(' ');
 
     return <div className={`molecule-task ${extraClasses}`}>
-        <input type="checkbox" onChange={props.onToggle} checked={props.task.complete}/>
+        <input type="checkbox" onChange={() => {
+            props.onToggle(props.task.id, !props.task.complete)
+        }} checked={props.task.complete}/>
         <span className="molecule-task__description">
             {props.task.task || '[Description Missing]'}
         </span>
