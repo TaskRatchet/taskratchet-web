@@ -42,17 +42,6 @@
     }
   }
   .page-tasks__toggleLabel {
-    color: blue;
-    text-decoration: underline;
     cursor: pointer;
-  }
-  .page-tasks__toggleInput {
-    display: none;
-  }
-  .page-tasks__archive {
-    display: none;
-  }
-  .page-tasks__toggleInput:checked + .page-tasks__archive {
-    display: block;
   }
 }

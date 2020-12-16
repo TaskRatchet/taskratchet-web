@@ -27,6 +27,7 @@ const Tasks = (props: TasksProps) => {
     const [due, setDue] = useState<Date | null>(null)
     const [cents, setCents] = useState<number | null>(null)
     const [error, setError] = useState<string>('')
+    const [showArchive, setShowArchive] = useState<boolean>(false)
 
     useBeforeunload(getUnloadMessage)
 
@@ -113,10 +114,9 @@ const Tasks = (props: TasksProps) => {
 
         <ul className={'page-tasks__list'}>{makeTaskListItems(getActiveTasks())}</ul>
 
-        <label htmlFor="archive_toggle" className={'page-tasks__toggleLabel'}>Archived Tasks</label>
-        <input type="checkbox" className={'page-tasks__toggleInput'} id="archive_toggle"/>
+        <button className={'page-tasks__toggleLabel'} onClick={() => setShowArchive(!showArchive)}>Archived Tasks</button>
 
-        <ul className={'page-tasks__list page-tasks__archive'}>{makeTaskListItems(getArchivedTasks())}</ul>
+        {showArchive && <ul className={'page-tasks__list page-tasks__archive'}>{makeTaskListItems(getArchivedTasks())}</ul>}
     </div>
 };
 
