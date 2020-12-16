@@ -7,12 +7,15 @@ import {useMe, useTasks} from "../../lib/api";
 import {useSetComplete} from "../../lib/api/useSetComplete";
 import _ from "lodash";
 import {useAddTask} from "../../lib/api/useAddTask";
+import {useBeforeunload} from "react-beforeunload";
+import {getUnloadMessage} from "../../lib/getUnloadMessage";
 
 interface TasksProps {
 }
 
 const Tasks = (props: TasksProps) => {
     const {data: tasks, isLoading} = useTasks();
+    // TODO: extract useTimezone hook
     const {me} = useMe()
     const timezone = _.get(me, 'timezone')
     const setComplete = useSetComplete()
@@ -22,7 +25,9 @@ const Tasks = (props: TasksProps) => {
     const [cents, setCents] = useState<number | null>(null)
     const [error, setError] = useState<string>('')
 
-    console.log({m: 'rendering', tasks})
+    useBeforeunload(getUnloadMessage)
+
+    // console.log({m: 'rendering', tasks})
 
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {

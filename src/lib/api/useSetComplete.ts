@@ -35,7 +35,7 @@ export function useSetComplete() {
             onError: (error: Error, variables, context) => {
                 // console.log({m: 'handling error', variables, context})
                 queryClient.setQueryData('tasks', (context as Context).previousTasks)
-                // toaster.send(error.toString())
+                toaster.send(error.toString())
             },
             onSettled: async () => {
                 await queryClient.invalidateQueries('tasks')

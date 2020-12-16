@@ -1,7 +1,7 @@
 import api from "../../lib/LegacyApi";
 import * as new_api from "../../lib/api"
 import toaster from "../../lib/Toaster"
-import {getByPlaceholderText, render, waitFor} from "@testing-library/react"
+import {fireEvent, getByPlaceholderText, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
@@ -11,6 +11,7 @@ import {setComplete} from "../../lib/api/setComplete";
 import {getMe} from "../../lib/api";
 import {addTask} from "../../lib/api/addTask";
 import _ from "lodash";
+import {getUnloadMessage} from "../../lib/getUnloadMessage";
 
 jest.mock('../../lib/api/apiFetch')
 jest.mock('../../lib/api/getTasks')
@@ -20,6 +21,7 @@ jest.mock('../../lib/api/getTimezones')
 jest.mock('../../lib/api/addTask')
 jest.mock("../../lib/Toaster")
 jest.mock('../../lib/LegacyApi')
+jest.mock('../../lib/getUnloadMessage')
 jest.mock('react-ga')
 
 global.document.createRange = () => ({
@@ -283,6 +285,7 @@ describe("tasks page", () => {
         });
 
         jest.spyOn(new_api, 'setComplete').mockImplementation(() => {
+            // console.log('throwing')
             throw Error("Oops!")
         })
 
@@ -473,6 +476,23 @@ describe("tasks page", () => {
             const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
             expect(taskCheckbox.checked).toBeFalsy()
         })
+    })
+
+    it('gets unload warning', async () => {
+        loadApiData({
+            tasks: [makeTask({id: 3})]
+        })
+
+        const {clickCheckbox} = await renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        const event = new Event('beforeunload')
+
+        clickCheckbox()
+        fireEvent(window, event)
+
+        expect(getUnloadMessage).toBeCalled()
     })
 
     // TODO: Warn on app close if mutation in progress
