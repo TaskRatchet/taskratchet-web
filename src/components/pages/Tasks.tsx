@@ -22,6 +22,8 @@ const Tasks = (props: TasksProps) => {
     const [cents, setCents] = useState<number | null>(null)
     const [error, setError] = useState<string>('')
 
+    console.log({m: 'rendering', tasks})
+
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
         const aDate = new Date(a.due),

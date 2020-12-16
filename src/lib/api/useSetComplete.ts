@@ -1,6 +1,10 @@
-import {useMutation, UseMutationResult, useQueryClient} from "react-query";
+import {useMutation, useQueryClient} from "react-query";
 import toaster from "../Toaster";
 import {setComplete} from "./setComplete";
+
+interface Context {
+    previousTasks: Task[] | undefined
+}
 
 export function useSetComplete() {
     const queryClient = useQueryClient()
@@ -10,17 +14,32 @@ export function useSetComplete() {
         (variables: any) => {
             const {id, complete} = variables
 
-            // console.log({m: 'completing task', id, complete})
-
             return setComplete(id, complete)
-        },
-        {
+        }, {
+            onMutate: async (variables): Promise<Context> => {
+                // TODO: cancel queries
+
+                const {id, complete} = variables
+                const previousTasks: Task[] | undefined = queryClient.getQueryData('tasks')
+
+                if (!previousTasks) return {previousTasks}
+
+                const newTasks = previousTasks.map((t: Task) => (t.id === id) ? {...t, complete} : t)
+
+                // console.log({variables, previousTasks, newTasks})
+
+                queryClient.setQueryData('tasks', () => newTasks)
+
+                return {previousTasks}
+            },
+            onError: (error: Error, variables, context) => {
+                // console.log({m: 'handling error', variables, context})
+                queryClient.setQueryData('tasks', (context as Context).previousTasks)
+                // toaster.send(error.toString())
+            },
             onSettled: async () => {
                 await queryClient.invalidateQueries('tasks')
             },
-            onError: (error: Error) => {
-                toaster.send(error.toString())
-            }
         }
     )
 

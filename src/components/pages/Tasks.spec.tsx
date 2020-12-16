@@ -10,6 +10,7 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import {setComplete} from "../../lib/api/setComplete";
 import {getMe} from "../../lib/api";
 import {addTask} from "../../lib/api/addTask";
+import _ from "lodash";
 
 jest.mock('../../lib/api/apiFetch')
 jest.mock('../../lib/api/getTasks')
@@ -428,8 +429,55 @@ describe("tasks page", () => {
         expectLoadingOverlay(container)
     })
 
+    it('updates checkboxes optimistically', async () => {
+        loadApiData({
+            tasks: [makeTask({id: 3})]
+        })
+
+        const {clickCheckbox, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        clickCheckbox()
+
+        await waitFor(() => {
+            const taskDesc = getByText('the_task')
+            const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
+            expect(taskCheckbox.checked).toBeTruthy()
+        })
+    })
+
+    it('rolls back checkbox optimistic update', async () => {
+        loadApiData({
+            tasks: [makeTask({id: 3})]
+        })
+
+        const {clickCheckbox, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        jest.spyOn(new_api, 'setComplete').mockImplementation(() => {
+            throw new Error('Oops!')
+        })
+
+        clickCheckbox()
+
+        await waitFor(() => {
+            const taskDesc = getByText('the_task')
+            const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
+            expect(taskCheckbox.checked).toBeTruthy()
+        })
+
+        await waitFor(() => {
+            const taskDesc = getByText('the_task')
+            const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
+            expect(taskCheckbox.checked).toBeFalsy()
+        })
+    })
+
     // TODO: Warn on app close if mutation in progress
-    // TODO: Optimistic updates for add and toggle
+    // TODO: Optimistic updates for add
+    // TODO: Add task-complete animation so it doesn't instantly disappear
 
     // it('has stakes form', async () => {
     //     loadApiData()
