@@ -13,6 +13,9 @@ import {getUnloadMessage} from "../../lib/getUnloadMessage";
 interface TasksProps {
 }
 
+// TODO: Break entry and list portions of this component into
+//   sibling components to avoid list length affecting input
+//   performance when lots of items in list(s)
 const Tasks = (props: TasksProps) => {
     const {data: tasks, isLoading} = useTasks();
     // TODO: extract useTimezone hook
