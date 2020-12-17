@@ -501,6 +501,8 @@ describe("tasks page", () => {
     })
 
     it('checking multiple tasks not clobbered by invalidated queries', async () => {
+        // Setup
+
         loadApiData({
             tasks: [
                 makeTask({task: 'first', id: 3}),
@@ -508,9 +510,11 @@ describe("tasks page", () => {
             ]
         })
 
-        const {clickCheckbox, queryByText, debug} = await renderTasksPage()
+        const {clickCheckbox, queryByText} = await renderTasksPage()
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        // Load slow query response to clobber
 
         jest.spyOn(new_api, 'getTasks').mockImplementation(() => {
             return new Promise(resolve => setTimeout(() => {
@@ -522,18 +526,30 @@ describe("tasks page", () => {
             }, 100))
         })
 
+        // Check first task
+
         clickCheckbox('first')
 
+        // Wait for slow response to be requested
+
         await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2))
+
+        // Load second, fast response
 
         jest.spyOn(new_api, 'getTasks').mockResolvedValue([
             makeTask({task: 'first', id: 3, complete: true}),
             makeTask({task: 'second', id: 4, complete: true}),
         ])
 
+        // Check second task
+
         clickCheckbox('second')
 
+        // Sleep 200ms
+
         await new Promise((resolve) => setTimeout(resolve, 200))
+
+        // Check that first, slow response didn't clobber second, fast response
 
         expect(queryByText('second')).toBeNull()
     })
