@@ -51,6 +51,7 @@ const Task = (props: TaskProps) => {
 
     return <div className={`molecule-task ${extraClasses}`}>
         <input type="checkbox" onChange={() => {
+            // console.log({m: 'clicked checkbox', task: props.task})
             props.onToggle(props.task.id, !props.task.complete)
         }} checked={props.task.complete}/>
         <span className="molecule-task__description">

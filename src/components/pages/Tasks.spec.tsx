@@ -1,7 +1,7 @@
 import api from "../../lib/LegacyApi";
 import * as new_api from "../../lib/api"
 import toaster from "../../lib/Toaster"
-import {fireEvent, getByPlaceholderText, render, waitFor} from "@testing-library/react"
+import {fireEvent, getByPlaceholderText, queryByText, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
@@ -109,6 +109,7 @@ const renderTasksPage = () => {
     return {
         taskInput: getByPlaceholderText("Task"),
         addButton: getByText("Add"),
+        archiveButton: getByText("Archived Tasks"),
         clickCheckbox: (task = "the_task") => {
             const desc = getByText(task),
                 checkbox = desc.previousElementSibling
@@ -437,7 +438,9 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         })
 
-        const {clickCheckbox, getByText} = renderTasksPage()
+        const {clickCheckbox, getByText, archiveButton} = renderTasksPage()
+
+        userEvent.click(archiveButton)
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
@@ -455,7 +458,9 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         })
 
-        const {clickCheckbox, getByText} = renderTasksPage()
+        const {clickCheckbox, getByText, archiveButton} = renderTasksPage()
+
+        userEvent.click(archiveButton)
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
@@ -493,6 +498,44 @@ describe("tasks page", () => {
         fireEvent(window, event)
 
         expect(getUnloadMessage).toBeCalled()
+    })
+
+    it('checking multiple tasks not clobbered by invalidated queries', async () => {
+        loadApiData({
+            tasks: [
+                makeTask({task: 'first', id: 3}),
+                makeTask({task: 'second', id: 4}),
+            ]
+        })
+
+        const {clickCheckbox, queryByText, debug} = await renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        jest.spyOn(new_api, 'getTasks').mockImplementation(() => {
+            return new Promise(resolve => setTimeout(() => {
+                // console.log('clobbering!')
+                resolve([
+                    makeTask({task: 'first', id: 3, complete: true}),
+                    makeTask({task: 'second', id: 4}),
+                ])
+            }, 100))
+        })
+
+        clickCheckbox('first')
+
+        await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2))
+
+        jest.spyOn(new_api, 'getTasks').mockResolvedValue([
+            makeTask({task: 'first', id: 3, complete: true}),
+            makeTask({task: 'second', id: 4, complete: true}),
+        ])
+
+        clickCheckbox('second')
+
+        await new Promise((resolve) => setTimeout(resolve, 200))
+
+        expect(queryByText('second')).toBeNull()
     })
 
     // TODO: Warn on app close if mutation in progress

@@ -14,10 +14,12 @@ export function useSetComplete() {
         (variables: any) => {
             const {id, complete} = variables
 
+            // console.log({m: 'completing', id, complete})
+
             return setComplete(id, complete)
         }, {
             onMutate: async (variables): Promise<Context> => {
-                // TODO: cancel queries
+                await queryClient.cancelQueries('tasks')
 
                 const {id, complete} = variables
                 const previousTasks: Task[] | undefined = queryClient.getQueryData('tasks')
