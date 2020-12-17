@@ -498,6 +498,7 @@ describe("tasks page", () => {
     // TODO: Warn on app close if mutation in progress
     // TODO: Optimistic updates for add
     // TODO: Add task-complete animation so it doesn't instantly disappear
+    // TODO: Pull initial stakes & due date from most-recently added task
 
     // it('has stakes form', async () => {
     //     loadApiData()
