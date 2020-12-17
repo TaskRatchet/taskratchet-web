@@ -1,5 +1,7 @@
 import React from "react";
 import DatePicker from 'react-datepicker'
+import './TaskForm.css'
+import browser from "../../lib/Browser";
 
 interface TaskFormProps {
     task: string,
@@ -12,7 +14,7 @@ interface TaskFormProps {
 }
 
 const getDefaultDue = () => {
-    const due = new Date();
+    const due = browser.getNow();
 
     due.setDate(due.getDate() + 7);
     due.setHours(23);
@@ -21,16 +23,23 @@ const getDefaultDue = () => {
     return due;
 };
 
-// TODO: Implement default stakes in component-level machine??
-
 const TaskForm = (props: TaskFormProps): JSX.Element => {
     const {task, due, cents, timezone, error, onChange, onSubmit} = props
+
+    if (cents === null) {
+        onChange(task, due, 100)
+    }
+
+    if (due === null) {
+        onChange(task, getDefaultDue(), cents)
+    }
+
     const dollars = cents ? cents / 100 : 0
 
     return <form onSubmit={e => {
         e.preventDefault();
         onSubmit()
-    }}>
+    }} className={'organism-taskForm'}>
         <div className="page-tasks__inputs">
             {error ? <p>{error}</p> : null}
 
@@ -44,7 +53,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
             /></label>
 
             <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker
-                selected={due || getDefaultDue()}
+                selected={due}
                 onChange={value => {
                     onChange(task, value, cents)
                 }}

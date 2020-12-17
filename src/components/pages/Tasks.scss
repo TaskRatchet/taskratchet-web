@@ -1,37 +1,4 @@
 .page-tasks {
-  form {
-    .page-tasks__inputs {
-      label {
-        font-size: .75em;
-        font-weight: bold;
-        margin-bottom: 1em;
-        flex-grow: 1;
-        padding: 2px;
-      }
-      input {
-        font-size: 1rem;
-        margin-top: .25rem;
-        width: 100%;
-        padding: 1px;
-        height: 1.75rem;
-      }
-    }
-    .page-tasks__description {
-      flex: 0 0 100%;
-    }
-    .page-tasks__echo {
-      .due {
-        background-color: blue;
-        color: white;
-      }
-    }
-    .page-tasks__summary {
-      display: flex;
-      > * {
-        flex-basis: 50%;
-      }
-    }
-  }
   .page-tasks__list {
     padding-left: 0;
     > li {

@@ -2,6 +2,7 @@ import browser from "../../lib/Browser";
 import React from "react";
 import * as chrono from "chrono-node";
 import _ from "lodash";
+import './FreeEntry.css'
 
 interface FreeEntryProps {
     task: string,
@@ -70,7 +71,7 @@ const FreeEntry = (props: FreeEntryProps) => {
     return <form onSubmit={e => {
         e.preventDefault();
         onSubmit()
-    }}>
+    }} className={'organism-freeEntry'}>
         <div className="page-tasks__inputs">
             {error ? <p>{error}</p> : null}
 

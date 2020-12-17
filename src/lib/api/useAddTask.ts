@@ -15,6 +15,7 @@ export function useAddTask() {
             await queryClient.invalidateQueries('tasks')
         },
         onError: (error: Error) => {
+            console.log('Handling error')
             toaster.send(error.toString())
         }
     })

@@ -10,6 +10,7 @@ import {useAddTask} from "../../lib/api/useAddTask";
 import {useBeforeunload} from "react-beforeunload";
 import {getUnloadMessage} from "../../lib/getUnloadMessage";
 import {useQueryClient} from "react-query";
+import TaskForm from "../organisms/TaskForm";
 
 interface TasksProps {
 }
@@ -67,52 +68,55 @@ const Tasks = (props: TasksProps) => {
         return tasks.map(t => <li key={t.id}><Task task={t} onToggle={setComplete}/></li>);
     };
 
+    const onChange = (task: string, due: Date | null, cents: number | null) => {
+        setTask(task)
+        setDue(due)
+        setCents(cents)
+    };
+
+    function onSubmit() {
+        // console.log('submitting!')
+
+        setError(task ? '' : 'Task is required')
+        if (!due || !cents) {
+            // console.log('aborting')
+            return
+        }
+        const dueString = due.toLocaleDateString("en-US", {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        });
+        addTask(task, dueString, cents)
+        setTask('')
+        setDue(null)
+        setCents(null)
+    }
+
     return <div className={`page-tasks ${isLoading ? "loading" : "idle"}`}>
         <h1>Tasks</h1>
 
-        {/*<TaskForm*/}
-        {/*    task={task}*/}
-        {/*    due={due}*/}
-        {/*    cents={cents}*/}
-        {/*    timezone={timezone}*/}
-        {/*    error={error}*/}
-        {/*    onChange={(task: string, due: Date | null, cents: number | null) => {*/}
-        {/*        send({type: 'SET_FORM', value: {task, due, cents}})*/}
-        {/*    }}*/}
-        {/*    onSubmit={() => {*/}
-        {/*        send("SAVE_TASK")*/}
-        {/*    }}*/}
-        {/*/>*/}
-
-        <FreeEntry
+        <TaskForm
             task={task}
             due={due}
             cents={cents}
             timezone={timezone}
             error={error}
-            onChange={(task: string, due: Date | null, cents: number | null) => {
-                setTask(task)
-                setDue(due)
-                setCents(cents)
-            }}
-            onSubmit={() => {
-                setError(task ? '' : 'Task is required')
-                if (!due || !cents) {
-                    return
-                }
-                const dueString = due.toLocaleDateString("en-US", {
-                    year: 'numeric',
-                    month: 'numeric',
-                    day: 'numeric',
-                    hour: 'numeric',
-                    minute: 'numeric'
-                });
-                addTask(task, dueString, cents)
-                setTask('')
-                setDue(null)
-                setCents(null)
-            }}
+            onChange={onChange}
+            onSubmit={onSubmit}
         />
+
+        {/*<FreeEntry*/}
+        {/*    task={task}*/}
+        {/*    due={due}*/}
+        {/*    cents={cents}*/}
+        {/*    timezone={timezone}*/}
+        {/*    error={error}*/}
+        {/*    onChange={onChange}*/}
+        {/*    onSubmit={onSubmit}*/}
+        {/*/>*/}
 
         <ul className={'page-tasks__list'}>{makeTaskListItems(getActiveTasks())}</ul>
 

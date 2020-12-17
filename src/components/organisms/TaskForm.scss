@@ -1,0 +1,60 @@
+.organism-taskForm {
+  .page-tasks__inputs {
+    display: flex;
+    flex-wrap: wrap;
+
+    label {
+      font-size: .75em;
+      font-weight: bold;
+      margin-bottom: 1em;
+      flex-grow: 1;
+      padding: 2px;
+    }
+
+    input {
+      font-size: 1rem;
+      margin-top: .25rem;
+      width: 100%;
+      padding: 1px;
+      height: 1.75rem;
+    }
+  }
+
+  .page-tasks__description {
+    flex: 0 0 100%;
+  }
+
+  .page-tasks__due {
+    .react-datepicker-wrapper {
+      display: block;
+    }
+  }
+
+  .page-tasks__dollars {
+    max-width: 10rem;
+    position: relative;
+
+    input {
+      padding-left: 1.2em;
+    }
+
+    &:before, &:after {
+      position: absolute;
+      bottom: 0.35em;
+      font-weight: normal;
+      font-size: 1rem;
+      opacity: .5;
+    }
+
+    &:before {
+      content: '$';
+      left: .5em;
+    }
+
+    &:after {
+      content: 'USD';
+      right: .5em;
+    }
+  }
+
+}
