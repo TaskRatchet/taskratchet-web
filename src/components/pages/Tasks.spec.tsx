@@ -7,9 +7,9 @@ import React from "react";
 import userEvent from '@testing-library/user-event'
 import {expectLoadingOverlay, loadNow, makeResponse} from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
-import {setComplete} from "../../lib/api/setComplete";
+import {setComplete} from "../../lib/api";
 import {getMe} from "../../lib/api";
-import {addTask} from "../../lib/api/addTask";
+import {addTask} from "../../lib/api";
 import _ from "lodash";
 import {getUnloadMessage} from "../../lib/getUnloadMessage";
 
@@ -501,7 +501,7 @@ describe("tasks page", () => {
     })
 
     it('checking multiple tasks not clobbered by invalidated queries', async () => {
-        // Setup
+        // Setup & initial render
 
         loadApiData({
             tasks: [
@@ -555,7 +555,7 @@ describe("tasks page", () => {
     })
 
     // TODO: Warn on app close if mutation in progress
-    // TODO: Optimistic updates for add
+    // TODO: Optimistic updates for add (wait until input forms done)
     // TODO: Add task-complete animation so it doesn't instantly disappear
     // TODO: Pull initial stakes & due date from most-recently added task
 

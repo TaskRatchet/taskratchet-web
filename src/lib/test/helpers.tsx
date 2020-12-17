@@ -60,13 +60,19 @@ export function expectLoadingOverlay(container: HTMLElement, shouldExist: boolea
     expect(container.getElementsByClassName('loading').length).toBe(+shouldExist)
 }
 
-export function renderWithQueryProvider(ui: ReactElement) {
-    const client = new QueryClient({
+export async function renderWithQueryProvider(ui: ReactElement) {
+    const queryClient = new QueryClient({
         defaultOptions: {
             queries: {
                 retry: false
             }
         }
     })
-    return render(<QueryClientProvider client={client}>{ui}</QueryClientProvider>)
+
+    const result = await render(<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>)
+
+    return {
+        ...result,
+        queryClient
+    }
 }

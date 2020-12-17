@@ -9,6 +9,7 @@ import _ from "lodash";
 import {useAddTask} from "../../lib/api/useAddTask";
 import {useBeforeunload} from "react-beforeunload";
 import {getUnloadMessage} from "../../lib/getUnloadMessage";
+import {useQueryClient} from "react-query";
 
 interface TasksProps {
 }
@@ -29,7 +30,8 @@ const Tasks = (props: TasksProps) => {
     const [error, setError] = useState<string>('')
     const [showArchive, setShowArchive] = useState<boolean>(false)
 
-    useBeforeunload(getUnloadMessage)
+    const client = useQueryClient()
+    useBeforeunload(() => getUnloadMessage(client))
 
     // console.log({m: 'rendering', tasks})
 

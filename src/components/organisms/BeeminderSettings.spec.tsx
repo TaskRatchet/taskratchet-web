@@ -165,6 +165,10 @@ describe("BeeminderSettings component", () => {
     })
 
     it('uses loading class', async () => {
+        jest.spyOn(new_api, 'getMe').mockImplementation(() => {
+            return new Promise((resolve) => setTimeout(resolve, 200))
+        })
+
         const {container} = await renderBeeminderSettings();
 
         expectLoadingOverlay(container);

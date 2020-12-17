@@ -3,7 +3,6 @@ import {isProduction} from "../../tr_constants";
 import Input from "../molecules/Input";
 import {useMe} from "../../lib/api";
 import _ from "lodash";
-import toaster from "../../lib/Toaster";
 import browser from "../../lib/Browser";
 
 const beeminderClientId: string = (isProduction)
