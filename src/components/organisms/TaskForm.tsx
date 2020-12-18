@@ -26,10 +26,12 @@ const getDefaultDue = () => {
 const TaskForm = (props: TaskFormProps): JSX.Element => {
     const {task, due, cents, timezone, error, onChange, onSubmit} = props
 
+    // TODO: Default to stakes of last-added task
     if (cents === null) {
         onChange(task, due, 500)
     }
 
+    // TODO: Default to due offset of last-added task
     if (due === null) {
         onChange(task, getDefaultDue(), cents)
     }
