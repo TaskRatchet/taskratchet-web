@@ -3,10 +3,6 @@ import api from '../../lib/LegacyApi';
 import toaster from "../../lib/Toaster";
 import {useCheckoutSession, useTimezones} from "../../lib/api";
 
-interface CheckoutSession {
-    id: string
-}
-
 interface RegisterProps {
 }
 
@@ -20,24 +16,20 @@ const Register = (props: RegisterProps) => {
         [timezone, setTimezone] = useState<string>(''),
         [agreed, setAgreed] = useState<boolean>(false);
 
-    useEffect(() => {
-        populateTimezones();
-    }, []);
-
     const populateTimezones = () => {
         setTimezone(timezones[0])
     };
 
+    useEffect(() => {
+        populateTimezones();
+    }, [populateTimezones]);
+
     const register = async (event: any) => {
         event.preventDefault();
-
-        console.log('registering');
 
         const passes = validateRegistrationForm();
 
         if (!passes) return;
-
-        console.log('posting registration');
 
         const response = await api.register(
             name,

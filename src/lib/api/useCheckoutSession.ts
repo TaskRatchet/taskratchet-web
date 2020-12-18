@@ -1,4 +1,3 @@
-import {useQuery} from "react-query";
 import {getCheckoutSession} from "./getCheckoutSession";
 import {useEffect, useState} from "react";
 

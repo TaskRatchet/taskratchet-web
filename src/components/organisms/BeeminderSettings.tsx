@@ -47,7 +47,7 @@ const BeeminderSettings = () => {
             beeminder_user: username,
             beeminder_token: access_token
         })
-    }, [])
+    }, [updateMe])
 
     // TODO: Consider removing loading overlay
     return <div className={isLoading ? 'loading' : 'idle'}>

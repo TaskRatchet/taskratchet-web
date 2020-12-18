@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import './Tasks.css'
 import Task from '../molecules/Task'
 import 'react-datepicker/dist/react-datepicker.min.css'
-import FreeEntry from "../organisms/FreeEntry";
 import {useMe, useTasks} from "../../lib/api";
 import {useSetComplete} from "../../lib/api/useSetComplete";
 import _ from "lodash";

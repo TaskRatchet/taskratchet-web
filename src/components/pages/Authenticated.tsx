@@ -2,7 +2,6 @@ import React from 'react';
 import './Authenticated.css';
 import LoginForm from "../organisms/Login";
 import {Link} from "react-router-dom";
-import api from "../../lib/LegacyApi";
 import {useSession} from "../../lib/api/useSession";
 
 interface AuthenticatedProps {}

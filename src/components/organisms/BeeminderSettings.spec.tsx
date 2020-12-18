@@ -339,7 +339,7 @@ describe("BeeminderSettings component", () => {
     })
 
     // BLOCKERS
-    
+
     // TODO: test enable beeminder integration
 
     // PUNTERS

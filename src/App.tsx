@@ -43,8 +43,9 @@ function usePageViews() {
 
 // TODO: Add global react-query loading indicator
 // TODO: Add error message if user tries to close app while mutations pending
+// TODO: Turn on typescript strict mode
 
-export const App = () => {
+export function App() {
     useEffect(() => {
         document.title = 'TaskRatchet';
     }, []);
