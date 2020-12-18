@@ -30,6 +30,14 @@ const Account = (props: AccountProps) => {
         [password, setPassword] = useState<string>(''),
         [password2, setPassword2] = useState<string>('');
 
+    useEffect(() => {
+        // console.log('propagating me changes')
+        const {name: initialName = ''} = me || {}
+        setName(initialName)
+    }, [me])
+
+    // console.log({m: 'rendering', me, name})
+
     const saveGeneral = (event: any) => {
         event.preventDefault();
 

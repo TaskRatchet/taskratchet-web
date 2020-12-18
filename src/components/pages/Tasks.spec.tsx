@@ -211,7 +211,7 @@ describe("tasks page", () => {
 
         userEvent.click(addButton)
 
-        expect(api.addTask).not.toHaveBeenCalled()
+        expect(new_api.addTask).not.toHaveBeenCalled()
     })
 
     it("displays error on empty task submit", async () => {

@@ -4,6 +4,9 @@ import {apiFetch} from "./api";
 
 const cookies = new Cookies();
 
+// TODO: Migrate away from everything in this class
+// TODO: Delete this file
+
 export class LegacyApi {
     login(email: string, password: string) {
         return apiFetch(
@@ -149,19 +152,19 @@ export class LegacyApi {
     // }
 
     // Requires that user be authenticated.
-    addTask(task: string, due: string, cents: number) {
-        console.log({task, due, cents})
-        return apiFetch(
-            'me/tasks',
-            true,
-            'POST',
-            {
-                task: task,
-                due: due,
-                cents: cents
-            }
-        );
-    }
+    // addTask(task: string, due: string, cents: number) {
+    //     console.log({task, due, cents})
+    //     return apiFetch(
+    //         'me/tasks',
+    //         true,
+    //         'POST',
+    //         {
+    //             task: task,
+    //             due: due,
+    //             cents: cents
+    //         }
+    //     );
+    // }
 
 
 
