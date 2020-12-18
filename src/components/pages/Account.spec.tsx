@@ -10,12 +10,14 @@ import {
 } from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import userEvent from "@testing-library/user-event";
+import * as api from '../../lib/api'
 
 jest.mock('../../lib/api/getTimezones')
 jest.mock('../../lib/api/getMe')
 jest.mock('../../lib/api/updateMe')
 jest.mock('../../lib/api/getCheckoutSession')
 jest.mock('../../lib/api/apiFetch')
+jest.mock('../../lib/api/updatePassword')
 
 describe('account page', () => {
     it('includes Beeminder integration settings', async () => {
@@ -94,4 +96,31 @@ describe('account page', () => {
 
         await waitFor(() => expectLoadingOverlay(container, {extraClasses: 'page-account'}))
     })
+
+    it('uses loading screen when saving password', async () => {
+        loadMe({})
+
+        jest.spyOn(api, 'updatePassword').mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)))
+
+        const {container, getAllByText, getByLabelText} = await renderWithQueryProvider(<Account/>)
+
+        const button = getAllByText('Save')[1]
+
+        await waitFor(() => expectLoadingOverlay(container, {extraClasses: 'page-account', shouldExist: false}))
+
+        userEvent.type(getByLabelText('Old Password'), 'old')
+        userEvent.type(getByLabelText('New Password'), 'new')
+        userEvent.type(getByLabelText('Retype Password'), 'new')
+        userEvent.click(button)
+
+        await waitFor(() => expectLoadingOverlay(container, {extraClasses: 'page-account'}))
+    })
+
+    // TODO: manually test password reset form
+    // TODO: load payment method
+    // TODO: test replace payment method
+    // TODO: load beeminder integration
+    // TODO: test enable beeminder integration
+    // TODO: break sections into their own components
+    // TODO: get rid of test run terminal errors
 })

@@ -5,6 +5,8 @@ import toaster from "../../lib/Toaster";
 import Input from "../molecules/Input";
 import BeeminderSettings from "../organisms/BeeminderSettings";
 import {useCheckoutSession, useMe, useTimezones} from "../../lib/api";
+import {useIsFetching} from "react-query";
+import {useUpdatePassword} from "../../lib/api/useUpdatePassword";
 
 interface Card {
     brand: string,
@@ -19,16 +21,18 @@ interface AccountProps {
 }
 
 const Account = (props: AccountProps) => {
-    const {data: checkoutSession} = useCheckoutSession(),
+    const isFetching = useIsFetching(),
+        {data: checkoutSession} = useCheckoutSession(),
         {data: timezones} = useTimezones(),
-        {me, updateMe, isFetching} = useMe(),
+        {me, updateMe} = useMe(),
         [name, setName] = useState<string>(''),
         [email, setEmail] = useState<string>(''),
         [timezone, setTimezone] = useState<string>(''),
         [cards, setCards] = useState<Card[]>([]),
         [oldPassword, setOldPassword] = useState<string>(''),
         [password, setPassword] = useState<string>(''),
-        [password2, setPassword2] = useState<string>('');
+        [password2, setPassword2] = useState<string>(''),
+        {updatePassword, isLoading} = useUpdatePassword();
 
     useEffect(() => {
         // console.log('propagating me changes')
@@ -38,12 +42,9 @@ const Account = (props: AccountProps) => {
         setTimezone(timezone)
     }, [me])
 
-    console.log({m: 'rendering', isFetching})
-
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        // TODO: Fix types
         updateMe({
             name: prepareValue(name),
             email: prepareValue(email),
@@ -60,12 +61,10 @@ const Account = (props: AccountProps) => {
 
         if (!isPasswordFormValid()) return;
 
-        api.updatePassword(oldPassword, password)
-            .then((res: any) => {
-                toaster.send((res.ok) ? 'Password saved' : 'Something went wrong');
-            });
+        updatePassword(oldPassword, password)
     };
 
+    // TODO: Print to form instead of toasting
     const isPasswordFormValid = () => {
         let passed = true;
 
@@ -128,7 +127,7 @@ const Account = (props: AccountProps) => {
         return id
     };
 
-    return <div className={`page-account ${isFetching ? 'loading' : 'idle'}`}>
+    return <div className={`page-account ${isFetching || isLoading ? 'loading' : 'idle'}`}>
         <h1>Account</h1>
 
         <form onSubmit={saveGeneral}>
