@@ -338,11 +338,5 @@ describe("BeeminderSettings component", () => {
         expect(getError).toThrow()
     })
 
-    // BLOCKERS
-
-    // TODO: test enable beeminder integration
-
-    // PUNTERS
-
     // TODO: Add ability to disconnect from Beeminder
 })
