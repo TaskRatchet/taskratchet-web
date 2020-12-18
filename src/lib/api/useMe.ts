@@ -11,12 +11,19 @@ const onError = (error: unknown) => {
     toaster.send((error as Error).toString());
 }
 
+interface UseMeReturnType {
+    me: any
+    updateMe: any
+    isLoading: boolean
+    isFetching: boolean
+}
+
 // TODO: fix updateMe type
 export function useMe(
     queryOptions: UseQueryOptions | undefined = {}
-): { me: any, updateMe: any, isLoading: boolean } {
+): UseMeReturnType {
     const queryClient = useQueryClient()
-    const {data: me, isLoading} = useQuery('me', getMe, {
+    const {data: me, isLoading, isFetching} = useQuery('me', getMe, {
         onError,
         ...queryOptions
     })
@@ -30,5 +37,5 @@ export function useMe(
     })
 
     // TODO: Fix me type
-    return {me, updateMe, isLoading}
+    return {me, updateMe, isLoading, isFetching}
 }

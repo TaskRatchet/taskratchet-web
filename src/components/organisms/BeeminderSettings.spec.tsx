@@ -177,7 +177,7 @@ describe("BeeminderSettings component", () => {
     it('removes loading class', async () => {
         const {container} = await renderBeeminderSettings();
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('removes loading overlay after new connection', async () => {
@@ -190,7 +190,7 @@ describe("BeeminderSettings component", () => {
 
         const {container} = await renderBeeminderSettings();
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('removes loading overlay after save', async () => {
@@ -202,7 +202,7 @@ describe("BeeminderSettings component", () => {
 
         userEvent.click(getByText('Save'))
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('removes loading overlay after save error', async () => {
@@ -216,7 +216,7 @@ describe("BeeminderSettings component", () => {
 
         userEvent.click(getByText('Save'))
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('toasts save errors', async () => {

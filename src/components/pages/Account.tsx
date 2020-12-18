@@ -19,9 +19,9 @@ interface AccountProps {
 }
 
 const Account = (props: AccountProps) => {
-    const {data: checkoutSession, isLoading} = useCheckoutSession(),
+    const {data: checkoutSession} = useCheckoutSession(),
         {data: timezones} = useTimezones(),
-        {me, updateMe} = useMe(),
+        {me, updateMe, isFetching} = useMe(),
         [name, setName] = useState<string>(''),
         [email, setEmail] = useState<string>(''),
         [timezone, setTimezone] = useState<string>(''),
@@ -32,11 +32,13 @@ const Account = (props: AccountProps) => {
 
     useEffect(() => {
         // console.log('propagating me changes')
-        const {name: initialName = ''} = me || {}
-        setName(initialName)
+        const {name = '', email = '', timezone = ''} = me || {}
+        setName(name)
+        setEmail(email)
+        setTimezone(timezone)
     }, [me])
 
-    // console.log({m: 'rendering', me, name})
+    console.log({m: 'rendering', isFetching})
 
     const saveGeneral = (event: any) => {
         event.preventDefault();
@@ -126,7 +128,7 @@ const Account = (props: AccountProps) => {
         return id
     };
 
-    return <div className={'page-account'}>
+    return <div className={`page-account ${isFetching ? 'loading' : 'idle'}`}>
         <h1>Account</h1>
 
         <form onSubmit={saveGeneral}>

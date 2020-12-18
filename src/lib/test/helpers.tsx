@@ -5,6 +5,7 @@ import browser from "../Browser";
 import {QueryClient, QueryClientProvider} from "react-query";
 import React, {ReactElement} from "react";
 import {render} from "@testing-library/react";
+import _ from "lodash";
 
 jest.mock('../../lib/api/getTimezones')
 
@@ -27,7 +28,7 @@ export const loadMe = ({json = {}, ok = true}: { json?: any, ok?: boolean }) => 
     const response = makeResponse({json, ok});
 
     jest.spyOn(new_api, 'getMe').mockResolvedValue(json)
-    jest.spyOn(api, 'updateMe').mockResolvedValue(response as Response)
+    jest.spyOn(new_api, 'updateMe').mockResolvedValue(response as Response)
 }
 
 export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm_goal') => {
@@ -40,8 +41,8 @@ export const loadMeWithBeeminder = (user: string = 'bm_user', goal: string = 'bm
     })
 }
 
-export function loadTimezones() {
-    jest.spyOn(new_api, 'getTimezones').mockResolvedValue([])
+export function loadTimezones(timezones: string[] = []) {
+    jest.spyOn(new_api, 'getTimezones').mockResolvedValue(timezones)
 }
 
 export function loadCheckoutSession() {
@@ -56,8 +57,16 @@ export const loadNow = (date: Date) => {
     jest.spyOn(browser, 'getNow').mockReturnValue(date)
 }
 
-export function expectLoadingOverlay(container: HTMLElement, shouldExist: boolean = true) {
-    expect(container.getElementsByClassName('loading').length).toBe(+shouldExist)
+export function expectLoadingOverlay(container: HTMLElement, options: {
+    shouldExist?: boolean,
+    extraClasses?: string
+} = {}) {
+    const {
+        shouldExist = true,
+        extraClasses = ''
+    } = options
+
+    expect(container.getElementsByClassName(`loading ${extraClasses}`).length).toBe(+shouldExist)
 }
 
 export async function renderWithQueryProvider(ui: ReactElement) {

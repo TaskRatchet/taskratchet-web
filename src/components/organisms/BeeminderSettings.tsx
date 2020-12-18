@@ -49,6 +49,7 @@ const BeeminderSettings = () => {
         })
     }, [])
 
+    // TODO: Consider removing loading overlay
     return <div className={isLoading ? 'loading' : 'idle'}>
         {bmUser
             ? <form>
