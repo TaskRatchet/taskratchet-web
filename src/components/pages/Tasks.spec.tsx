@@ -183,7 +183,7 @@ describe("tasks page", () => {
         await expectTaskSave({
             task: "the_task",
             due: new Date('11/05/2020 11:59 PM'),
-            cents: 100
+            cents: 500
         })
     })
 
