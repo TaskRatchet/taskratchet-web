@@ -16,13 +16,15 @@ const Register = (props: RegisterProps) => {
         [timezone, setTimezone] = useState<string>(''),
         [agreed, setAgreed] = useState<boolean>(false);
 
-    const populateTimezones = () => {
-        setTimezone(timezones[0])
-    };
+
 
     useEffect(() => {
+        const populateTimezones = () => {
+            setTimezone(timezones[0])
+        };
+
         populateTimezones();
-    }, [populateTimezones]);
+    }, []);
 
     const register = async (event: any) => {
         event.preventDefault();

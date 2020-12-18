@@ -101,4 +101,6 @@ export function App() {
     </div>
 }
 
-export default () => <Router><App/></Router>;
+export default function() {
+    return <Router><App/></Router>
+};
