@@ -1,86 +1,61 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../lib/Api';
 import './Account.css'
 import toaster from "../../lib/Toaster";
 import Input from "../molecules/Input";
 import BeeminderSettings from "../organisms/BeeminderSettings";
+import {useCheckoutSession, useMe, useTimezones} from "../../lib/api";
+import {useIsFetching} from "react-query";
+import {useUpdatePassword} from "../../lib/api/useUpdatePassword";
 
 interface Card {
     brand: string,
     last4: string,
 }
 
-interface CheckoutSession {
-    id: string
-}
-
 interface AccountProps {
 }
 
 const Account = (props: AccountProps) => {
-    const [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null),
-        [timezones, setTimezones] = useState<string[]>([]),
+    const isFetching = useIsFetching(),
+        checkoutSession = useCheckoutSession(),
+        {data: timezones} = useTimezones(),
+        {me, updateMe} = useMe(),
         [name, setName] = useState<string>(''),
         [email, setEmail] = useState<string>(''),
         [timezone, setTimezone] = useState<string>(''),
         [cards, setCards] = useState<Card[]>([]),
         [oldPassword, setOldPassword] = useState<string>(''),
         [password, setPassword] = useState<string>(''),
-        [password2, setPassword2] = useState<string>('');
+        [password2, setPassword2] = useState<string>(''),
+        {updatePassword, isLoading} = useUpdatePassword();
 
     useEffect(() => {
-        const populateTimezones = () => {
-            api.getTimezones()
-                .then((res: any) => res.json())
-                .then(setTimezones);
-        };
+        // console.log('propagating me changes')
+        const {
+            name = '',
+            email = '',
+            timezone = '',
+            cards = []
+        } = me || {}
 
-        const loadUser = () => {
-            api.getMe()
-                .then((res: any) => res.json())
-                .then(loadResponseData)
-        };
-
-        const loadCheckoutSession = () => {
-            api.getCheckoutSession()
-                .then((res: any) => res.json())
-                .then(setCheckoutSession)
-        };
-
-        populateTimezones();
-        loadUser();
-        loadCheckoutSession();
-    }, []);
-
-    const loadResponseData = (data: any) => {
-        setName(data['name']);
-        setEmail(data['email']);
-        setTimezone(data['timezone']);
-        setCards(data['cards']);
-    };
+        setName(name)
+        setEmail(email)
+        setTimezone(timezone)
+        setCards(cards)
+    }, [me])
 
     const saveGeneral = (event: any) => {
         event.preventDefault();
 
-        api.updateMe({
+        updateMe({
             name: prepareValue(name),
             email: prepareValue(email),
             timezone: prepareValue(timezone)
-        }).then((res: Response) => {
-            if (res.ok) {
-                toaster.send('Changes saved');
-
-                res.json().then(loadResponseData)
-            } else {
-                res.text().then((error: string) => {
-                    toaster.send(`Something went wrong: ${error}`);
-                })
-            }
         })
     };
 
     const prepareValue = (value: string) => {
-        return (value === '') ? null : value;
+        return (value === '') ? undefined : value;
     };
 
     const savePassword = (event: any) => {
@@ -88,12 +63,10 @@ const Account = (props: AccountProps) => {
 
         if (!isPasswordFormValid()) return;
 
-        api.updatePassword(oldPassword, password)
-            .then((res: any) => {
-                toaster.send((res.ok) ? 'Password saved' : 'Something went wrong');
-            });
+        updatePassword(oldPassword, password)
     };
 
+    // TODO: Print to form instead of toasting
     const isPasswordFormValid = () => {
         let passed = true;
 
@@ -115,26 +88,30 @@ const Account = (props: AccountProps) => {
         return passed;
     };
 
-    const updatePaymentDetails = () => {
-        const sessionId = getSessionId();
+    const updatePaymentDetails = async () => {
+        const sessionId = await getSessionId();
 
         if (sessionId === null) {
             toaster.send('Checkout session error');
             return;
         }
 
-        api.updateCheckoutSessionId(sessionId);
+        await updateMe({
+            'checkout_session_id': sessionId
+        })
 
-        redirect();
+        await redirect();
     };
 
-    const redirect = () => {
+    const redirect = async () => {
+        await checkoutSession
+
         if (checkoutSession == null) return;
 
         const stripe = window.Stripe(window.stripe_key);
 
         stripe.redirectToCheckout({
-            sessionId: getSessionId()
+            sessionId: await getSessionId()
         }).then((result: any) => {
             // If `redirectToCheckout` fails due to a browser or network
             // error, display the localized error message to your customer
@@ -146,13 +123,15 @@ const Account = (props: AccountProps) => {
         });
     };
 
-    const getSessionId = () => {
-        if (checkoutSession == null) return null;
+    const getSessionId = async () => {
+        if (checkoutSession == null) return;
 
-        return checkoutSession.id;
+        const {id = null} = await checkoutSession
+
+        return id
     };
 
-    return <div className={'page-account'}>
+    return <div className={`page-account ${isFetching || isLoading ? 'loading' : 'idle'}`}>
         <h1>Account</h1>
 
         <form onSubmit={saveGeneral}>
@@ -181,7 +160,7 @@ const Account = (props: AccountProps) => {
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
             >
-                {timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
+                {timezones ? timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>) : null}
             </select>
 
             <input type="submit" value={'Save'}/>
@@ -229,7 +208,7 @@ const Account = (props: AccountProps) => {
 
         <h2>Beeminder Integration</h2>
 
-        <BeeminderSettings />
+        <BeeminderSettings/>
     </div>
 }
 

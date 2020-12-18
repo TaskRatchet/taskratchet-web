@@ -1,0 +1,48 @@
+.organism-taskForm .page-tasks__inputs {
+  display: flex;
+  flex-wrap: wrap;
+}
+.organism-taskForm .page-tasks__inputs label {
+  font-size: 0.75em;
+  font-weight: bold;
+  margin-bottom: 1em;
+  flex-grow: 1;
+  padding: 2px;
+}
+.organism-taskForm .page-tasks__inputs input {
+  font-size: 1rem;
+  margin-top: 0.25rem;
+  width: 100%;
+  padding: 1px;
+  height: 1.75rem;
+}
+.organism-taskForm .page-tasks__description {
+  flex: 0 0 100%;
+}
+.organism-taskForm .page-tasks__due .react-datepicker-wrapper {
+  display: block;
+}
+.organism-taskForm .page-tasks__dollars {
+  max-width: 10rem;
+  position: relative;
+}
+.organism-taskForm .page-tasks__dollars input {
+  padding-left: 1.2em;
+}
+.organism-taskForm .page-tasks__dollars:before, .organism-taskForm .page-tasks__dollars:after {
+  position: absolute;
+  bottom: 0.35em;
+  font-weight: normal;
+  font-size: 1rem;
+  opacity: 0.5;
+}
+.organism-taskForm .page-tasks__dollars:before {
+  content: "$";
+  left: 0.5em;
+}
+.organism-taskForm .page-tasks__dollars:after {
+  content: "USD";
+  right: 0.5em;
+}
+
+/*# sourceMappingURL=TaskForm.css.map */

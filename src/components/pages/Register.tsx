@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../lib/Api';
+import api from '../../lib/LegacyApi';
 import toaster from "../../lib/Toaster";
-
-interface CheckoutSession {
-    id: string
-}
+import {useCheckoutSession, useTimezones} from "../../lib/api";
 
 interface RegisterProps {
 }
@@ -14,41 +11,27 @@ const Register = (props: RegisterProps) => {
         [email, setEmail] = useState<string>(''),
         [password, setPassword] = useState<string>(''),
         [password2, setPassword2] = useState<string>(''),
-        [timezones, setTimezones] = useState<string[]>([]),
+        {data: timezones} = useTimezones(),
+        checkoutSession = useCheckoutSession(),
         [timezone, setTimezone] = useState<string>(''),
-        [agreed, setAgreed] = useState<boolean>(false),
-        [checkoutSession, setCheckoutSession] = useState<CheckoutSession | null>(null);
+        [agreed, setAgreed] = useState<boolean>(false);
 
+
+    // TODO: Stop using react-query to manage timezones in this component
     useEffect(() => {
+        const populateTimezones = () => {
+            setTimezone(timezones[0])
+        };
+
         populateTimezones();
-        loadCheckoutSession();
-    }, []);
-
-    const populateTimezones = () => {
-        api.getTimezones()
-            .then((res: any) => res.json())
-            .then((data) => {
-                setTimezones(data);
-                setTimezone(data[0]);
-            });
-    };
-
-    const loadCheckoutSession = () => {
-        api.getCheckoutSession()
-            .then((res: any) => res.json())
-            .then((session) => setCheckoutSession(session));
-    };
+    }, [timezones]);
 
     const register = async (event: any) => {
         event.preventDefault();
 
-        console.log('registering');
-
         const passes = validateRegistrationForm();
 
         if (!passes) return;
-
-        console.log('posting registration');
 
         const response = await api.register(
             name,
@@ -155,7 +138,7 @@ const Register = (props: RegisterProps) => {
         /><br/>
 
         <select name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
-            {timezones.map((tz, i) => <option value={tz} key={i}>{tz}</option>)}
+            {timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>)}
         </select><br/>
 
         <p>

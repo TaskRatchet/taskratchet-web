@@ -1,18 +1,25 @@
-/**  * @jest-environment jsdom-fourteen  */
-
-import {getByPlaceholderText, render, RenderResult, waitFor} from "@testing-library/react";
+import {render, RenderResult, waitFor} from "@testing-library/react";
 import React from "react";
 import BeeminderSettings from "./BeeminderSettings";
-import api from "../../lib/Api";
-import {expectLoadingOverlay, loadMe, loadMeWithBeeminder, loadUrlParams, makeResponse} from "../../lib/test/helpers";
+import api from "../../lib/LegacyApi";
+import * as new_api from '../../lib/api'
+import {
+    expectLoadingOverlay,
+    loadMe,
+    loadMeWithBeeminder,
+    loadUrlParams,
+    renderWithQueryProvider
+} from "../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
 import toaster from "../../lib/Toaster";
 
-jest.mock('../../lib/Api')
+jest.mock('../../lib/api/getMe')
+jest.mock('../../lib/api/updateMe')
+jest.mock('../../lib/LegacyApi')
 jest.mock('../../lib/Toaster')
 
 const renderBeeminderSettings = async (): Promise<RenderResult> => {
-    return render(<BeeminderSettings/>)
+    return renderWithQueryProvider(<BeeminderSettings/>)
 }
 
 describe("BeeminderSettings component", () => {
@@ -26,19 +33,19 @@ describe("BeeminderSettings component", () => {
     })
 
     it("renders", async () => {
-        render(<BeeminderSettings/>)
+        renderBeeminderSettings()
     })
 
     it("includes enable link", async () => {
-        const {getByText} = await render(<BeeminderSettings/>)
+        const {getByText} = await renderBeeminderSettings()
 
         expect(getByText("Enable Beeminder integration")).toBeDefined()
     })
 
     it("gets me", async () => {
-        await render(<BeeminderSettings/>)
+        await renderBeeminderSettings()
 
-        expect(api.getMe).toBeCalled()
+        expect(new_api.getMe).toBeCalled()
     })
 
     it("does not include enable link if enabled", async () => {
@@ -46,13 +53,13 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings();
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         expect(() => getByText("Enable Beeminder integration")).toThrow();
     })
 
     it('sets enable link href', async () => {
-        const {getByText} = await render(<BeeminderSettings/>),
+        const {getByText} = await renderBeeminderSettings(),
             link = getByText("Enable Beeminder integration")
 
         expect((link as HTMLAnchorElement).href).toContain('https://www.beeminder.com')
@@ -63,7 +70,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings();
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         expect(getByText('Beeminder user: bm_user')).toBeDefined()
     })
@@ -73,7 +80,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings();
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         expect(getByText('Post new tasks to goal:')).toBeDefined()
     })
@@ -83,7 +90,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByDisplayValue} = await renderBeeminderSettings();
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         expect(getByDisplayValue('bm_goal')).toBeDefined()
     })
@@ -93,7 +100,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings();
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         expect(getByText('Save')).toBeDefined()
     })
@@ -103,12 +110,12 @@ describe("BeeminderSettings component", () => {
 
         const {getByText, getByRole} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         await userEvent.type(getByRole('textbox'), 'goal_name')
         userEvent.click(getByText('Save'))
 
-        await waitFor(() => expect(api.updateMe).toBeCalled())
+        await waitFor(() => expect(new_api.updateMe).toBeCalled())
     })
 
     it('allows goal name change', async () => {
@@ -116,7 +123,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByDisplayValue} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         const input = getByDisplayValue('bm_goal')
 
@@ -130,7 +137,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByDisplayValue, getByText} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         const input = getByDisplayValue('bm_goal')
 
@@ -138,9 +145,9 @@ describe("BeeminderSettings component", () => {
 
         userEvent.click(getByText('Save'))
 
-        expect(api.updateMe).toBeCalledWith({
+        await waitFor(() => expect(new_api.updateMe).toBeCalledWith({
             beeminder_goal_new_tasks: 'bm_goal_new'
-        })
+        }))
     })
 
     it('saves new integration', async () => {
@@ -151,28 +158,17 @@ describe("BeeminderSettings component", () => {
 
         await renderBeeminderSettings();
 
-        expect(api.updateMe).toBeCalledWith({
+        await waitFor(() => expect(new_api.updateMe).toBeCalledWith({
             beeminder_token: 'the_token',
             beeminder_user: 'the_user'
-        })
-    })
-
-    it('skips loadMe call on new connection', async () => {
-        loadMeWithBeeminder('the_user')
-
-        loadUrlParams({
-            access_token: 'the_token',
-            username: 'the_user'
-        })
-
-        const {getByText} = await renderBeeminderSettings();
-
-        await waitFor(() => expect(getByText('Beeminder user: the_user')).toBeDefined())
-
-        expect(api.getMe).not.toBeCalled()
+        }))
     })
 
     it('uses loading class', async () => {
+        jest.spyOn(new_api, 'getMe').mockImplementation(() => {
+            return new Promise((resolve) => setTimeout(resolve, 200))
+        })
+
         const {container} = await renderBeeminderSettings();
 
         expectLoadingOverlay(container);
@@ -181,7 +177,7 @@ describe("BeeminderSettings component", () => {
     it('removes loading class', async () => {
         const {container} = await renderBeeminderSettings();
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('removes loading overlay after new connection', async () => {
@@ -194,7 +190,7 @@ describe("BeeminderSettings component", () => {
 
         const {container} = await renderBeeminderSettings();
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('removes loading overlay after save', async () => {
@@ -202,53 +198,41 @@ describe("BeeminderSettings component", () => {
 
         const {getByText, container} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('removes loading overlay after save error', async () => {
         loadMeWithBeeminder()
 
-        jest.spyOn(api, 'updateMe').mockRejectedValue('error')
+        jest.spyOn(new_api, 'updateMe').mockRejectedValue('error')
 
         const {getByText, container} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
 
-        await waitFor(() => expectLoadingOverlay(container, false));
+        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
     })
 
     it('toasts save errors', async () => {
         loadMeWithBeeminder()
 
-        jest.spyOn(api, 'updateMe').mockRejectedValue('error')
+        jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
+            throw new Error('error')
+        })
 
         const {getByText} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
 
         await waitFor(() => expect(toaster.send).toBeCalled())
-    })
-
-    it('toasts error when response not ok', async () => {
-        loadMeWithBeeminder()
-
-        const {getByText} = await renderBeeminderSettings()
-
-        await waitFor(() => expect(api.getMe).toBeCalled());
-
-        loadMe({json: 'error_message', ok: false})
-
-        userEvent.click(getByText('Save'))
-
-        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
     })
 
     it('toasts update error', async () => {
@@ -257,11 +241,14 @@ describe("BeeminderSettings component", () => {
             username: 'the_user'
         })
 
-        loadMe({json: 'error_message', ok: false})
+        // loadMe({json: 'error_message', ok: false})
+        jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
+            throw new Error('error_message')
+        })
 
         await renderBeeminderSettings()
 
-        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
+        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: error_message'))
     })
 
     it('does not toast error if no url params set', async () => {
@@ -276,11 +263,13 @@ describe("BeeminderSettings component", () => {
     })
 
     it('toasts initial load error', async () => {
-        loadMe({json: 'error_message', ok: false})
+        jest.spyOn(new_api, 'getMe').mockImplementation(() => {
+            throw new Error('error_message')
+        })
 
         await renderBeeminderSettings()
 
-        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: "error_message"'))
+        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: error_message'))
     })
 
     it('rejects invalid goal names', async () => {
@@ -288,11 +277,11 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
 
-        expect(api.updateMe).not.toBeCalled()
+        expect(new_api.updateMe).not.toBeCalled()
     })
 
     it('allows goal names with hyphens', async () => {
@@ -300,11 +289,11 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
 
-        expect(api.updateMe).toBeCalled()
+        await waitFor(() => expect(new_api.updateMe).toBeCalled())
     })
 
     it('displays error message', async () => {
@@ -312,7 +301,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
 
@@ -324,7 +313,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByText} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
 
@@ -338,7 +327,7 @@ describe("BeeminderSettings component", () => {
 
         const {getByText, getByRole} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(api.getMe).toBeCalled());
+        await waitFor(() => expect(new_api.getMe).toBeCalled());
 
         userEvent.click(getByText('Save'))
         await userEvent.type(getByRole('textbox'), '{backspace}new_name')
@@ -348,4 +337,12 @@ describe("BeeminderSettings component", () => {
 
         expect(getError).toThrow()
     })
+
+    // BLOCKERS
+
+    // TODO: test enable beeminder integration
+
+    // PUNTERS
+
+    // TODO: Add ability to disconnect from Beeminder
 })

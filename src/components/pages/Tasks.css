@@ -1,26 +1,3 @@
-.page-tasks form .page-tasks__inputs label {
-  font-size: 0.75em;
-  font-weight: bold;
-  margin-bottom: 1em;
-  flex-grow: 1;
-  padding: 2px;
-}
-.page-tasks form .page-tasks__inputs input {
-  font-size: 1rem;
-  margin-top: 0.25rem;
-  width: 100%;
-  padding: 1px;
-  height: 1.75rem;
-}
-.page-tasks form .page-tasks__description {
-  flex: 0 0 100%;
-}
-.page-tasks form .page-tasks__summary {
-  display: flex;
-}
-.page-tasks form .page-tasks__summary > * {
-  flex-basis: 50%;
-}
 .page-tasks .page-tasks__list {
   padding-left: 0;
 }
@@ -31,18 +8,7 @@
   background-color: #ededed;
 }
 .page-tasks .page-tasks__toggleLabel {
-  color: blue;
-  text-decoration: underline;
   cursor: pointer;
-}
-.page-tasks .page-tasks__toggleInput {
-  display: none;
-}
-.page-tasks .page-tasks__archive {
-  display: none;
-}
-.page-tasks .page-tasks__toggleInput:checked + .page-tasks__archive {
-  display: block;
 }
 
 /*# sourceMappingURL=Tasks.css.map */

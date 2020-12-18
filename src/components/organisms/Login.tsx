@@ -1,15 +1,15 @@
 import React from 'react';
-import api from '../../lib/Api';
 import './Login.css'
 import {useMachine} from '@xstate/react';
 import Input from "../molecules/Input";
 import createLoginMachine from './Login.machine'
+import {useSession} from "../../lib/api/useSession";
 
 const machine = createLoginMachine();
 
 const Login = () => {
     const [state, send] = useMachine(machine),
-        session = api.getSession();
+        session = useSession();
 
     const isLoading = () => {
         return state.matches('authenticating') || state.matches('resetting');
