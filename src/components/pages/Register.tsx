@@ -17,14 +17,14 @@ const Register = (props: RegisterProps) => {
         [agreed, setAgreed] = useState<boolean>(false);
 
 
-
+    // TODO: Stop using react-query to manage timezones in this component
     useEffect(() => {
         const populateTimezones = () => {
             setTimezone(timezones[0])
         };
 
         populateTimezones();
-    }, []);
+    }, [timezones]);
 
     const register = async (event: any) => {
         event.preventDefault();
