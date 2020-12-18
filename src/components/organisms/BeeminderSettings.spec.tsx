@@ -208,7 +208,7 @@ describe("BeeminderSettings component", () => {
     it('removes loading overlay after save error', async () => {
         loadMeWithBeeminder()
 
-        jest.spyOn(api, 'updateMe').mockRejectedValue('error')
+        jest.spyOn(new_api, 'updateMe').mockRejectedValue('error')
 
         const {getByText, container} = await renderBeeminderSettings()
 
@@ -337,4 +337,13 @@ describe("BeeminderSettings component", () => {
 
         expect(getError).toThrow()
     })
+
+    // BLOCKERS
+
+    // TODO: fix beeminder goal save
+    // TODO: test enable beeminder integration
+
+    // PUNTERS
+
+    // TODO: Add ability to disconnect from Beeminder
 })

@@ -46,7 +46,9 @@ export function loadTimezones(timezones: string[] = []) {
 }
 
 export function loadCheckoutSession() {
-    jest.spyOn(new_api, 'getCheckoutSession').mockResolvedValue('session')
+    jest.spyOn(new_api, 'getCheckoutSession').mockResolvedValue({
+        id: 'session'
+    })
 }
 
 export const loadUrlParams = (params: ParsedQuery) => {

@@ -16,7 +16,7 @@ const Register = (props: RegisterProps) => {
         [password, setPassword] = useState<string>(''),
         [password2, setPassword2] = useState<string>(''),
         {data: timezones} = useTimezones(),
-        {data: checkoutSession} = useCheckoutSession(),
+        checkoutSession = useCheckoutSession(),
         [timezone, setTimezone] = useState<string>(''),
         [agreed, setAgreed] = useState<boolean>(false);
 

@@ -4,7 +4,7 @@ import {updateMe as mutator} from './updateMe'
 
 import {useMutation} from "react-query";
 import {getMe} from "./getMe";
-import {UseQueryOptions, UseMutationOptions} from 'react-query/types';
+import {UseQueryOptions} from 'react-query/types';
 import toaster from "../Toaster";
 
 const onError = (error: unknown) => {

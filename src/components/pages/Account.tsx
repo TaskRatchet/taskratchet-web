@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from 'react';
-import api from '../../lib/LegacyApi';
 import './Account.css'
 import toaster from "../../lib/Toaster";
 import Input from "../molecules/Input";
@@ -13,16 +12,12 @@ interface Card {
     last4: string,
 }
 
-interface CheckoutSession {
-    id: string
-}
-
 interface AccountProps {
 }
 
 const Account = (props: AccountProps) => {
     const isFetching = useIsFetching(),
-        {data: checkoutSession} = useCheckoutSession(),
+        checkoutSession = useCheckoutSession(),
         {data: timezones} = useTimezones(),
         {me, updateMe} = useMe(),
         [name, setName] = useState<string>(''),
@@ -129,6 +124,8 @@ const Account = (props: AccountProps) => {
     };
 
     const getSessionId = async () => {
+        if (checkoutSession == null) return;
+
         const {id = null} = await checkoutSession
 
         return id

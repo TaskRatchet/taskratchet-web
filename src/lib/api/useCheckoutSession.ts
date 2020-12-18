@@ -1,6 +1,19 @@
 import {useQuery} from "react-query";
 import {getCheckoutSession} from "./getCheckoutSession";
+import {useEffect, useState} from "react";
+
+interface CheckoutSession {
+    id: string
+}
 
 export function useCheckoutSession() {
-    return useQuery('checkoutSession', getCheckoutSession)
+    const [checkoutSession, setCheckoutSession] = useState<CheckoutSession|null>(null)
+
+    useEffect( () => {
+        getCheckoutSession().then((session: CheckoutSession) => {
+            setCheckoutSession(session)
+        })
+    }, [])
+
+    return checkoutSession
 }

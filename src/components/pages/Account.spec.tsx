@@ -20,6 +20,11 @@ jest.mock('../../lib/api/apiFetch')
 jest.mock('../../lib/api/updatePassword')
 
 describe('account page', () => {
+    beforeEach(() => {
+        jest.resetAllMocks()
+        loadCheckoutSession()
+    })
+
     it('includes Beeminder integration settings', async () => {
         loadTimezones();
         loadMe({})
@@ -131,9 +136,22 @@ describe('account page', () => {
         await waitFor(() => expect(getByText('visa ending with 1111')).toBeInTheDocument())
     })
 
-    // TODO: test replace payment method
-    // TODO: load beeminder integration
-    // TODO: test enable beeminder integration
+    it('gets checkout session only once', async () => {
+       const {queryClient} = await renderWithQueryProvider(<Account />)
+
+       queryClient.invalidateQueries('checkoutSession')
+
+        expect(api.getCheckoutSession).toBeCalledTimes(1)
+    })
+
+
+    // BLOCKERS
+
+    // TODO: test registration
+
+    // PUNTERS
+
     // TODO: break sections into their own components
     // TODO: get rid of test run terminal errors
+    // TODO: use loading overlay on payment details until both cards and checkout session loaded
 })
