@@ -144,13 +144,6 @@ describe('account page', () => {
         expect(api.getCheckoutSession).toBeCalledTimes(1)
     })
 
-
-    // BLOCKERS
-
-    // TODO: test registration
-
-    // PUNTERS
-
     // TODO: break sections into their own components
     // TODO: get rid of test run terminal errors
     // TODO: use loading overlay on payment details until both cards and checkout session loaded

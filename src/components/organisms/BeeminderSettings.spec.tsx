@@ -339,8 +339,7 @@ describe("BeeminderSettings component", () => {
     })
 
     // BLOCKERS
-
-    // TODO: fix beeminder goal save
+    
     // TODO: test enable beeminder integration
 
     // PUNTERS
