@@ -36,10 +36,17 @@ const Account = (props: AccountProps) => {
 
     useEffect(() => {
         // console.log('propagating me changes')
-        const {name = '', email = '', timezone = ''} = me || {}
+        const {
+            name = '',
+            email = '',
+            timezone = '',
+            cards = []
+        } = me || {}
+
         setName(name)
         setEmail(email)
         setTimezone(timezone)
+        setCards(cards)
     }, [me])
 
     const saveGeneral = (event: any) => {

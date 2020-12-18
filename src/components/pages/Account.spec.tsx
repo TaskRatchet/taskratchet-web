@@ -116,8 +116,21 @@ describe('account page', () => {
         await waitFor(() => expectLoadingOverlay(container, {extraClasses: 'page-account'}))
     })
 
-    // TODO: manually test password reset form
-    // TODO: load payment method
+    it('loads payment methods', async () => {
+        loadMe({
+            json: {
+                cards: [{
+                    brand: "visa",
+                    last4: "1111"
+                }]
+            }
+        })
+
+        const {getByText} = await renderWithQueryProvider(<Account/>)
+
+        await waitFor(() => expect(getByText('visa ending with 1111')).toBeInTheDocument())
+    })
+
     // TODO: test replace payment method
     // TODO: load beeminder integration
     // TODO: test enable beeminder integration
