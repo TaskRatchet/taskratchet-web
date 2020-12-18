@@ -27,7 +27,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
     const {task, due, cents, timezone, error, onChange, onSubmit} = props
 
     if (cents === null) {
-        onChange(task, due, 100)
+        onChange(task, due, 500)
     }
 
     if (due === null) {
