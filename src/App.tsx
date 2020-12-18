@@ -18,6 +18,9 @@ import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {isProduction} from "./tr_constants"
 import Footer from "./components/organisms/Footer"
+import {ReactQueryDevtools} from 'react-query/devtools'
+import {QueryClient, QueryClientProvider} from "react-query";
+import LoadingIndicator from "./components/molecules/LoadingIndicator";
 
 toast.configure();
 
@@ -26,6 +29,8 @@ window.stripe_key = isProduction ?
     'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp';
 
 ReactGA.initialize('G-Y074NE79ML');
+
+const queryClient = new QueryClient()
 
 function usePageViews() {
     let location = useLocation();
@@ -36,7 +41,11 @@ function usePageViews() {
     }, [location])
 }
 
-const App = () => {
+// TODO: Add global react-query loading indicator
+// TODO: Add error message if user tries to close app while mutations pending
+// TODO: Turn on typescript strict mode
+
+export function App() {
     useEffect(() => {
         document.title = 'TaskRatchet';
     }, []);
@@ -44,47 +53,54 @@ const App = () => {
     usePageViews()
 
     return <div className={'page-base'}>
-        <SessionWidget />
+        <QueryClientProvider client={queryClient}>
+            <LoadingIndicator />
 
-        <h2><Link to={'/'}>TaskRatchet</Link></h2>
+            <SessionWidget/>
 
-        <div className={'page-base__content'}>
-            <Switch>
-                <Route path={'/register'}>
-                    <RegisterForm />
-                </Route>
+            <h2><Link to={'/'}>TaskRatchet</Link></h2>
 
-                <Route path={'/success'}>
-                    Your payment method has been saved successfully.
-                </Route>
+            <div className={'page-base__content'}>
+                <Switch>
+                    <Route path={'/register'}>
+                        <RegisterForm/>
+                    </Route>
 
-                <Route path={'/cancel'}>
-                    Your payment method could not be saved. Please contact
-                    <a href="mailto:nathan@taskratchet.com" target={'_blank'}
-                       rel="noopener noreferrer">nathan@taskratchet.com</a>
-                    for assistance.
-                </Route>
+                    <Route path={'/success'}>
+                        Your payment method has been saved successfully.
+                    </Route>
 
-                <Route path={'/account'}>
-                    <Authenticated>
-                        <Account />
-                    </Authenticated>
-                </Route>
+                    <Route path={'/cancel'}>
+                        Your payment method could not be saved. Please contact
+                        <a href="mailto:nathan@taskratchet.com" target={'_blank'}
+                           rel="noopener noreferrer">nathan@taskratchet.com</a>
+                        for assistance.
+                    </Route>
 
-                <Route path={'/reset'}>
-                    <ResetPassword />
-                </Route>
+                    <Route path={'/account'}>
+                        <Authenticated>
+                            <Account/>
+                        </Authenticated>
+                    </Route>
 
-                <Route path={'/'}>
-                    <Authenticated>
-                        <Tasks />
-                    </Authenticated>
-                </Route>
-            </Switch>
-        </div>
+                    <Route path={'/reset'}>
+                        <ResetPassword/>
+                    </Route>
 
-        <Footer />
+                    <Route path={'/'}>
+                        <Authenticated>
+                            <Tasks/>
+                        </Authenticated>
+                    </Route>
+                </Switch>
+            </div>
+
+            <Footer/>
+            <ReactQueryDevtools initialIsOpen={false}/>
+        </QueryClientProvider>
     </div>
 }
 
-export default () => <Router><App/></Router>;
+export default function AppWithRouter() {
+    return <Router><App/></Router>
+};

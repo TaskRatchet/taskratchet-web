@@ -1,19 +1,39 @@
 import React, {useState} from 'react';
 import './Tasks.css'
 import Task from '../molecules/Task'
-import DatePicker from 'react-datepicker'
 import 'react-datepicker/dist/react-datepicker.min.css'
-import createTasksMachine from './Tasks.machine'
-import {useMachine} from '@xstate/react';
-
-const machine = createTasksMachine()
+import {useMe, useTasks} from "../../lib/api";
+import {useSetComplete} from "../../lib/api/useSetComplete";
+import _ from "lodash";
+import {useAddTask} from "../../lib/api/useAddTask";
+import {useBeforeunload} from "react-beforeunload";
+import {getUnloadMessage} from "../../lib/getUnloadMessage";
+import {useQueryClient} from "react-query";
+import TaskForm from "../organisms/TaskForm";
 
 interface TasksProps {
 }
 
+// TODO: Break entry and list portions of this component into
+//   sibling components to avoid list length affecting input
+//   performance when lots of items in list(s)
 const Tasks = (props: TasksProps) => {
-    const [state, send] = useMachine(machine)
+    const {data: tasks, isLoading} = useTasks();
+    // TODO: extract useTimezone hook
+    const {me} = useMe()
+    const timezone = _.get(me, 'timezone')
+    const setComplete = useSetComplete()
+    const addTask = useAddTask()
+    const [task, setTask] = useState<string>('')
+    const [due, setDue] = useState<Date | null>(null)
+    const [cents, setCents] = useState<number | null>(null)
+    const [error, setError] = useState<string>('')
     const [showArchive, setShowArchive] = useState<boolean>(false)
+
+    const client = useQueryClient()
+    useBeforeunload(() => getUnloadMessage(client))
+
+    // console.log({m: 'rendering', tasks})
 
     // TODO: Fix compare function
     const compareTasks = (a: Task, b: Task) => {
@@ -26,7 +46,9 @@ const Tasks = (props: TasksProps) => {
     };
 
     const getSortedTasks = () => {
-        return state.context.tasks.sort(compareTasks);
+        if (!tasks) return []
+
+        return tasks.sort(compareTasks);
     };
 
     const getActiveTasks = () => {
@@ -42,49 +64,58 @@ const Tasks = (props: TasksProps) => {
     };
 
     const makeTaskListItems = (tasks: Task[]) => {
-        return tasks.map(t => <li key={t.id}><Task task={t} onToggle={() => send({
-            type: "TOGGLE_TASK",
-            value: t.id
-        })}/></li>);
+        return tasks.map(t => <li key={t.id}><Task task={t} onToggle={setComplete}/></li>);
     };
 
-    return <div className={`page-tasks ${state.value === "idle" ? null : "loading"}`}>
+    const onChange = (task: string, due: Date | null, cents: number | null) => {
+        setTask(task)
+        setDue(due)
+        setCents(cents)
+    };
+
+    function onSubmit() {
+        // console.log('submitting!')
+
+        setError(task ? '' : 'Task is required')
+        if (!due || !cents) {
+            // console.log('aborting')
+            return
+        }
+        const dueString = due.toLocaleDateString("en-US", {
+            year: 'numeric',
+            month: 'numeric',
+            day: 'numeric',
+            hour: 'numeric',
+            minute: 'numeric'
+        });
+        addTask(task, dueString, cents)
+        setTask('')
+        setDue(null)
+        setCents(null)
+    }
+
+    return <div className={`page-tasks ${isLoading ? "loading" : "idle"}`}>
         <h1>Tasks</h1>
 
-        <form onSubmit={e => {
-            e.preventDefault();
-            send("SAVE_TASK")
-        }}>
-            <div className="page-tasks__inputs">
-                {state.context.formError ? <p>{state.context.formError}</p> : null}
+        <TaskForm
+            task={task}
+            due={due}
+            cents={cents}
+            timezone={timezone}
+            error={error}
+            onChange={onChange}
+            onSubmit={onSubmit}
+        />
 
-                <label className={'page-tasks__description'}>Task <input
-                    type="text"
-                    placeholder={'Task'}
-                    value={state.context.task}
-                    onChange={e => {
-                        send({
-                            type: 'SET_TASK',
-                            value: e.target.value
-                        })
-                    }}
-                /></label>
-                <label className={'page-tasks__due'}>Due {state.context.timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{state.context.timezone}</a>)</> : null} <DatePicker
-                    selected={state.context.due} onChange={value => send({type: 'SET_DUE', value})} showTimeSelect timeIntervals={5} dateFormat="MMMM d, yyyy h:mm aa" minDate={new Date()} /></label>
-                <label className={'page-tasks__dollars'}>Stakes <input
-                    type="number"
-                    placeholder={'USD'}
-                    min={1}
-                    max={2500}
-                    value={state.context.cents / 100}
-                    onChange={e => send({
-                        type: 'SET_CENTS',
-                        value: parseInt(e.target.value) * 100
-                    })}
-                /></label>
-            </div>
-            <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
-        </form>
+        {/*<FreeEntry*/}
+        {/*    task={task}*/}
+        {/*    due={due}*/}
+        {/*    cents={cents}*/}
+        {/*    timezone={timezone}*/}
+        {/*    error={error}*/}
+        {/*    onChange={onChange}*/}
+        {/*    onSubmit={onSubmit}*/}
+        {/*/>*/}
 
         <ul className={'page-tasks__list'}>{makeTaskListItems(getActiveTasks())}</ul>
 

@@ -1,10 +1,10 @@
 import {assign, createMachine, StateMachine} from "xstate";
-import live_api, { Api } from "../../lib/Api";
+import live_api, { LegacyApi } from "../../lib/LegacyApi";
 
 // https://xstate.js.org/viz/
 
 export interface LoginContext {
-    api: Api,
+    api: LegacyApi,
     email: string,
     password: string,
     emailError: string,
@@ -13,7 +13,7 @@ export interface LoginContext {
 }
 
 interface CreateLoginMachineOptions {
-    api?: Api
+    api?: LegacyApi
 }
 
 const createLoginMachine = (options: CreateLoginMachineOptions = {}): StateMachine<LoginContext, any, any> => {

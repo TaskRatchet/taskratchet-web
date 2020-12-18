@@ -1,8 +1,8 @@
 import createLoginMachine, {LoginContext} from './Login.machine'
-import api, {Api} from "../../lib/Api";
+import api, {LegacyApi} from "../../lib/LegacyApi";
 import {interpret, Interpreter} from "xstate";
 
-let service: Interpreter<LoginContext>, mockApi: Api;
+let service: Interpreter<LoginContext>, mockApi: LegacyApi;
 
 const createService = () => {
     const machine = createLoginMachine({ api: mockApi });
