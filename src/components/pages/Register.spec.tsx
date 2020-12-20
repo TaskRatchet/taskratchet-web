@@ -81,6 +81,5 @@ describe('registration page', () => {
     })
 
     // TODO: test validates timezone field
-    // TODO: manually test full registration flow
     // TODO: stop toasting validation errors; print, instead
 })
