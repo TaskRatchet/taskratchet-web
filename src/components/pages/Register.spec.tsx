@@ -2,6 +2,8 @@ import {loadTimezones, renderWithQueryProvider} from "../../lib/test/helpers";
 import React from "react";
 import Register from "./Register";
 import {waitFor} from "@testing-library/dom";
+import userEvent from "@testing-library/user-event";
+import {getTimezones} from "../../lib/api";
 
 describe('registration page', () => {
     it('uses timezone loading placeholder', async () => {
@@ -40,6 +42,21 @@ describe('registration page', () => {
         const {getByLabelText} = await renderWithQueryProvider(<Register />)
 
         expect(getByLabelText('Retype Password')).toBeInTheDocument()
+    })
+
+    it('submits registration', async () => {
+        loadTimezones(['the_timezone'])
+
+        const {getByLabelText} = await renderWithQueryProvider(<Register />)
+
+        userEvent.type(getByLabelText('Name'), 'the_name')
+        userEvent.type(getByLabelText('Email'), 'the_email')
+        userEvent.type(getByLabelText('Password'), 'the_password')
+        userEvent.type(getByLabelText('Retype Password'), 'the_password')
+
+        await waitFor(() => expect(getTimezones).toBeCalled())
+
+        userEvent.selectOptions(getByLabelText('Timezone'), 'the_timezone')
     })
 
     // TODO: add full-process test

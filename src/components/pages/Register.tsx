@@ -3,6 +3,7 @@ import api from '../../lib/LegacyApi';
 import toaster from "../../lib/Toaster";
 import {useCheckoutSession, useTimezones} from "../../lib/api";
 import Input from "../molecules/Input";
+import Field from "../molecules/Field";
 
 interface RegisterProps {
 }
@@ -111,7 +112,7 @@ const Register = (props: RegisterProps) => {
             onChange={e => setName(e.target.value)}
             label={'Name'}
             id={'name'}
-        /><br/>
+        />
 
         <Input
             type="email"
@@ -119,7 +120,7 @@ const Register = (props: RegisterProps) => {
             onChange={e => setEmail(e.target.value)}
             id={'email'}
             label={'Email'}
-        /><br/>
+        />
 
         <Input
             type="password"
@@ -127,7 +128,7 @@ const Register = (props: RegisterProps) => {
             onChange={e => setPassword(e.target.value)}
             id={'password'}
             label={'Password'}
-        /><br/>
+        />
 
         <Input
             type="password"
@@ -135,11 +136,13 @@ const Register = (props: RegisterProps) => {
             onChange={e => setPassword2(e.target.value)}
             id={'password2'}
             label={'Retype Password'}
-        /><br/>
+        />
 
-        <select name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
-            {getTimezoneOptions()}
-        </select><br/>
+        <Field label={'Timezone'} id={'timezone'}>
+            <select id="timezone" name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
+                {getTimezoneOptions()}
+            </select>
+        </Field>
 
         <p>
             <label>
