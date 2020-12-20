@@ -2,21 +2,39 @@ import {useMutation, useQueryClient} from "react-query"
 import {addTask} from "./addTask";
 import toaster from "../Toaster";
 
+interface Input {
+    task: string,
+    due: string,
+    cents: number
+}
+
 export function useAddTask() {
     const queryClient = useQueryClient()
 
-    // TODO: replace any type
-    const {mutate} = useMutation((variables: any) => {
-        const {task, due, cents} = variables
-
+    const {mutate} = useMutation(({task, due, cents}: Input) => {
         return addTask(task, due, cents)
     }, {
+        onMutate: async (newTask: Input) => {
+            await queryClient.cancelQueries('tasks')
+
+            const snapshot: TaskType[] | undefined = queryClient.getQueryData('tasks') || []
+
+            queryClient.setQueryData('tasks', [...snapshot, {
+                ...newTask
+            }])
+
+            return {snapshot}
+        },
+        onError: (error: Error, newTask: Input, context) => {
+            const {snapshot = null} = context || {}
+            if (snapshot !== null) {
+                queryClient.setQueryData('tasks', snapshot)
+            }
+            toaster.send(error.toString())
+        },
         onSettled: async () => {
             await queryClient.invalidateQueries('tasks')
         },
-        onError: (error: Error) => {
-            toaster.send(error.toString())
-        }
     })
 
     return (task: string, due: string, cents: number) => {

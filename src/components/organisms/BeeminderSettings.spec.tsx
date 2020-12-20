@@ -8,7 +8,7 @@ import {
     loadMe,
     loadMeWithBeeminder,
     loadUrlParams,
-    renderWithQueryProvider
+    renderWithQueryProvider, resolveWithDelay
 } from "../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
 import toaster from "../../lib/Toaster";
@@ -165,9 +165,7 @@ describe("BeeminderSettings component", () => {
     })
 
     it('uses loading class', async () => {
-        jest.spyOn(new_api, 'getMe').mockImplementation(() => {
-            return new Promise((resolve) => setTimeout(resolve, 200))
-        })
+        resolveWithDelay(jest.spyOn(new_api, 'getMe'), 200)
 
         const {container} = await renderBeeminderSettings();
 

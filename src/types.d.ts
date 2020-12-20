@@ -3,13 +3,13 @@ type Session = {
     email: string
 }
 
-type Task = {
-    complete: boolean,
+type TaskType = {
     due: int,
-    id: number,
     cents: number,
     task: string,
-    charge_locked: int | null,
-    charge_authorized: int | null,
-    charge_captured: int | null,
+    complete?: boolean,
+    id?: number,
+    charge_locked?: int | null,
+    charge_authorized?: int | null,
+    charge_captured?: int | null,
 }

@@ -1,0 +1,20 @@
+.molecule-field {
+  margin-bottom: 0.5em;
+}
+.molecule-field label, .molecule-field input {
+  display: block;
+}
+.molecule-field label {
+  font-size: 0.75em;
+  font-weight: bold;
+}
+.molecule-field.molecule-field__hasError {
+  padding: 0.25em;
+  border: 1px solid red;
+}
+.molecule-field .molecule-field__error {
+  font-weight: bold;
+  color: darkred;
+}
+
+/*# sourceMappingURL=Field.css.map */

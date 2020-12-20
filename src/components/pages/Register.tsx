@@ -1,7 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import api from '../../lib/LegacyApi';
 import toaster from "../../lib/Toaster";
 import {useCheckoutSession, useTimezones} from "../../lib/api";
+import Input from "../molecules/Input";
+import Field from "../molecules/Field";
 
 interface RegisterProps {
 }
@@ -15,16 +17,6 @@ const Register = (props: RegisterProps) => {
         checkoutSession = useCheckoutSession(),
         [timezone, setTimezone] = useState<string>(''),
         [agreed, setAgreed] = useState<boolean>(false);
-
-
-    // TODO: Stop using react-query to manage timezones in this component
-    useEffect(() => {
-        const populateTimezones = () => {
-            setTimezone(timezones[0])
-        };
-
-        populateTimezones();
-    }, [timezones]);
 
     const register = async (event: any) => {
         event.preventDefault();
@@ -40,9 +32,6 @@ const Register = (props: RegisterProps) => {
             timezone,
             getSessionId(),
         );
-
-        const payload = await response.json();
-        console.log(payload)
 
         if (response.ok) {
             toaster.send('Redirecting...')
@@ -102,44 +91,55 @@ const Register = (props: RegisterProps) => {
         return passes;
     };
 
+    const getTimezoneOptions = () => {
+        if (!timezones) return <option value={""} disabled>Loading...</option>
+
+        return <>
+            {<option value={""} disabled>Choose your timezone...</option>}
+            {timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>)}
+        </>
+    }
+
     return <form onSubmit={register}>
         <h1>Register</h1>
 
-        <input
+        <Input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
-            name={'name'}
-            placeholder={'Name'}
-        /><br/>
+            label={'Name'}
+            id={'name'}
+        />
 
-        <input
+        <Input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            name={'email'}
-            placeholder={'Email'}
-        /><br/>
+            id={'email'}
+            label={'Email'}
+        />
 
-        <input
+        <Input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            name={'password'}
-            placeholder={'Password'}
-        /><br/>
+            id={'password'}
+            label={'Password'}
+        />
 
-        <input
+        <Input
             type="password"
             value={password2}
             onChange={e => setPassword2(e.target.value)}
-            name={'password2'}
-            placeholder={'Retype Password'}
-        /><br/>
+            id={'password2'}
+            label={'Retype Password'}
+        />
 
-        <select name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
-            {timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>)}
-        </select><br/>
+        <Field label={'Timezone'} id={'timezone'}>
+            <select id="timezone" name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
+                {getTimezoneOptions()}
+            </select>
+        </Field>
 
         <p>
             <label>

@@ -1,4 +1,4 @@
-.molecule-input {
+.molecule-field {
   margin-bottom: .5em;
   label, input {
     display: block;
@@ -7,11 +7,11 @@
     font-size: .75em;
     font-weight: bold;
   }
-  &.molecule-input__hasError {
+  &.molecule-field__hasError {
     padding: .25em;
     border: 1px solid red;
   }
-  .molecule-input__error {
+  .molecule-field__error {
     font-weight: bold;
     color: darkred;
   }

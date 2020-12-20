@@ -1,5 +1,5 @@
 import React, {ChangeEventHandler} from "react";
-import './Input.css';
+import Field from "./Field";
 
 interface InputProps {
     label: string,
@@ -12,8 +12,7 @@ interface InputProps {
 }
 
 const Input = ({label, type="text", value, onChange, id, error, pattern}: InputProps) => {
-    return <div className={`molecule-input ${error ? 'molecule-input__hasError' : ''}`}>
-        <label htmlFor={id}>{label}</label>
+    return <Field label={label} id={id} error={error}>
         <input
             type={type}
             value={value}
@@ -22,8 +21,7 @@ const Input = ({label, type="text", value, onChange, id, error, pattern}: InputP
             name={id}
             pattern={pattern}
         />
-        {error ? <div className={'molecule-input__error'}>{error}</div> : ''}
-    </div>
+    </Field>
 }
 
 export default Input
