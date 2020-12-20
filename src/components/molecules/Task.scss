@@ -1,33 +1,46 @@
 .molecule-task {
-  padding: .5em .5em 2em .5em;
-  position: relative;
-  .molecule-task__description {
-    margin-left: .5em;
-  }
-  .molecule-task__labels {
-    padding-left: 0;
-    position: absolute;
-    top: .5em;
-    right: .5em;
-    li {
-      list-style-type: none;
-      display: inline-block;
-      background-color: #d9d9d9;
-      color: #737373;
-      padding: .5px 4px;
+  display: flex;
+  align-items: center;
+
+  .molecule-task__left {
+    position: relative;
+    padding: .5em .5em 2em .5em;
+    flex: 1 1 auto;
+
+    .molecule-task__description {
       margin-left: .5em;
-      border-radius: 4px;
+    }
+
+    .molecule-task__labels {
+      padding-left: 0;
+      position: absolute;
+      top: .5em;
+      right: .5em;
+
+      li {
+        list-style-type: none;
+        display: inline-block;
+        background-color: #d9d9d9;
+        color: #737373;
+        padding: .5px 4px;
+        margin-left: .5em;
+        border-radius: 4px;
+      }
+    }
+
+    .molecule-task__due, .molecule-task__dollars {
+      position: absolute;
+      bottom: .5em;
+      opacity: .5;
+    }
+
+    .molecule-task__due {
+      left: 2em;
+    }
+
+    .molecule-task__dollars {
+      right: .5em;
     }
   }
-  .molecule-task__due, .molecule-task__dollars {
-    position: absolute;
-    bottom: .5em;
-    opacity: .5;
-  }
-  .molecule-task__due {
-    left: 2em;
-  }
-  .molecule-task__dollars {
-    right: .5em;
-  }
+
 }

@@ -1,13 +1,16 @@
 import {apiFetch} from "./apiFetch";
 
+export interface TaskInput {
+    complete?: boolean
+    uncle?: boolean
+}
+
 // Requires that user be authenticated.
-export function setComplete(taskId: number | string, complete: boolean) {
+export function updateTask(taskId: number | string, data: TaskInput) {
     return apiFetch(
         'me/tasks/' + taskId,
         true,
         'PUT',
-        {
-            'complete': complete
-        }
+        data
     );
 }

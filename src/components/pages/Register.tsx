@@ -150,7 +150,7 @@ const Register = (props: RegisterProps) => {
             </label>
         </p>
 
-        <p>Pressing the button below to be redirected to our payments provider to add your payment method.</p>
+        <p>Press the button below to be redirected to our payments provider to add your payment method.</p>
 
         <input type="submit" value={'Add payment method'} disabled={checkoutSession == null}/>
     </form>

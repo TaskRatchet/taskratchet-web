@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.11.2",
+    "@material-ui/icons": "^4.11.2",
     "@types/jest": "^24.0.18",
     "@types/lodash": "^4.14.161",
     "@types/node": "^12.12.54",

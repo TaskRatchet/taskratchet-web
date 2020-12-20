@@ -2,12 +2,11 @@ import React, {useState} from "react";
 import Task from "../molecules/Task";
 import {sortTasks} from "../../lib/sortTasks";
 import {useTasks} from "../../lib/api";
-import {useSetComplete} from "../../lib/api/useSetComplete";
 
 const TaskList = () => {
     const {data: tasks} = useTasks();
 
-    const setComplete = useSetComplete()
+
 
     const [showArchive, setShowArchive] = useState<boolean>(false)
 
@@ -31,7 +30,7 @@ const TaskList = () => {
 
     const makeTaskListItems = (tasks: TaskType[]) => {
         return tasks.map((t, i) => {
-            return <li key={i}><Task task={t} onToggle={setComplete}/></li>}
+            return <li key={i}><Task task={t} /></li>}
         );
     };
 

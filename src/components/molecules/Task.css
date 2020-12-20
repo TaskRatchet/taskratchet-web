@@ -1,17 +1,22 @@
 .molecule-task {
-  padding: 0.5em 0.5em 2em 0.5em;
-  position: relative;
+  display: flex;
+  align-items: center;
 }
-.molecule-task .molecule-task__description {
+.molecule-task .molecule-task__left {
+  position: relative;
+  padding: 0.5em 0.5em 2em 0.5em;
+  flex: 1 1 auto;
+}
+.molecule-task .molecule-task__left .molecule-task__description {
   margin-left: 0.5em;
 }
-.molecule-task .molecule-task__labels {
+.molecule-task .molecule-task__left .molecule-task__labels {
   padding-left: 0;
   position: absolute;
   top: 0.5em;
   right: 0.5em;
 }
-.molecule-task .molecule-task__labels li {
+.molecule-task .molecule-task__left .molecule-task__labels li {
   list-style-type: none;
   display: inline-block;
   background-color: #d9d9d9;
@@ -20,15 +25,15 @@
   margin-left: 0.5em;
   border-radius: 4px;
 }
-.molecule-task .molecule-task__due, .molecule-task .molecule-task__dollars {
+.molecule-task .molecule-task__left .molecule-task__due, .molecule-task .molecule-task__left .molecule-task__dollars {
   position: absolute;
   bottom: 0.5em;
   opacity: 0.5;
 }
-.molecule-task .molecule-task__due {
+.molecule-task .molecule-task__left .molecule-task__due {
   left: 2em;
 }
-.molecule-task .molecule-task__dollars {
+.molecule-task .molecule-task__left .molecule-task__dollars {
   right: 0.5em;
 }
 
