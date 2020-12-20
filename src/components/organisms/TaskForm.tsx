@@ -26,7 +26,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 
             return due;
         };
-        
+
         // TODO: Default to stakes of last-added task
         if (cents === null) {
             onChange(task, due, 500)
@@ -36,7 +36,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
         if (due === null) {
             onChange(task, getDefaultDue(), cents)
         }
-    }, [task, due, cents])
+    }, [task, due, cents, onChange])
 
     const dollars = cents ? cents / 100 : 0
 
