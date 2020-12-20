@@ -1,11 +1,19 @@
-import {loadTimezones, renderWithQueryProvider} from "../../lib/test/helpers";
+import {loadCheckoutSession, loadTimezones, renderWithQueryProvider} from "../../lib/test/helpers";
 import React from "react";
 import Register from "./Register";
 import {waitFor} from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import {getTimezones} from "../../lib/api";
+import api from "../../lib/LegacyApi";
+
+jest.mock('../../lib/api/getCheckoutSession')
 
 describe('registration page', () => {
+    beforeEach(() => {
+        jest.resetAllMocks()
+        loadCheckoutSession()
+    })
+
     it('uses timezone loading placeholder', async () => {
         const {getByText} = await renderWithQueryProvider(<Register />)
 
@@ -47,7 +55,9 @@ describe('registration page', () => {
     it('submits registration', async () => {
         loadTimezones(['the_timezone'])
 
-        const {getByLabelText} = await renderWithQueryProvider(<Register />)
+        jest.spyOn(api, 'register')
+
+        const {getByLabelText, getByText} = await renderWithQueryProvider(<Register />)
 
         userEvent.type(getByLabelText('Name'), 'the_name')
         userEvent.type(getByLabelText('Email'), 'the_email')
@@ -57,9 +67,19 @@ describe('registration page', () => {
         await waitFor(() => expect(getTimezones).toBeCalled())
 
         userEvent.selectOptions(getByLabelText('Timezone'), 'the_timezone')
+        userEvent.click(getByLabelText('I have read and agree to TaskRatchet\'s privacy policy and terms of service.'))
+
+        userEvent.click(getByText('Add payment method'))
+
+        expect(api.register).toBeCalledWith(
+            'the_name',
+            'the_email',
+            'the_password',
+            'the_timezone',
+            'session'
+        )
     })
 
-    // TODO: add full-process test
     // TODO: test validates timezone field
     // TODO: manually test full registration flow
     // TODO: stop toasting validation errors; print, instead

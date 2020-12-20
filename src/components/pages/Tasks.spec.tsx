@@ -632,5 +632,6 @@ describe("tasks page", () => {
     // TODO: Add task-complete animation so it doesn't instantly disappear
     // TODO: Pull initial stakes & due date from most-recently added task
     // TODO: Uncomment and fix tasks related to free-entry form
+    // TODO: Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574
 })
 

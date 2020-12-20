@@ -33,9 +33,6 @@ const Register = (props: RegisterProps) => {
             getSessionId(),
         );
 
-        const payload = await response.json();
-        console.log(payload)
-
         if (response.ok) {
             toaster.send('Redirecting...')
             redirect();
