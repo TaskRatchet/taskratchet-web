@@ -1,6 +1,7 @@
 import React from "react";
 import './Task.css'
 import browser from "../../lib/Browser";
+import {useSetComplete} from "../../lib/api/useSetComplete";
 
 interface Flag {
     label: string,
@@ -9,11 +10,12 @@ interface Flag {
 }
 
 interface TaskProps {
-    task: TaskType,
-    onToggle: (id: string | number, complete: boolean) => void
+    task: TaskType
 }
 
 const Task = (props: TaskProps) => {
+    const setComplete = useSetComplete()
+
     const dueDate = new Date(props.task.due),
         dateString = browser.getDateString(dueDate),
         timeString = browser.getTimeString(dueDate),
@@ -52,7 +54,7 @@ const Task = (props: TaskProps) => {
     return <div className={`molecule-task ${extraClasses}`}>
         <input type="checkbox" onChange={() => {
             if (!props.task.id) return
-            props.onToggle(props.task.id, !props.task.complete)
+            setComplete(props.task.id, !props.task.complete)
         }} checked={props.task.complete} disabled={!props.task.id}/>
         <span className="molecule-task__description">
             {props.task.task || '[Description Missing]'}
