@@ -1,11 +1,10 @@
-import api from "../../lib/LegacyApi";
 import * as new_api from "../../lib/api"
 import toaster from "../../lib/Toaster"
 import {fireEvent, getByPlaceholderText, queryByText, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
-import {expectLoadingOverlay, loadNow, makeResponse} from "../../lib/test/helpers";
+import {expectLoadingOverlay, loadNow, makeResponse, resolveWithDelay, makeTask} from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {setComplete} from "../../lib/api";
 import {getMe} from "../../lib/api";
@@ -43,7 +42,7 @@ const loadApiResponse = (
 }
 
 const loadApiData = (
-    {tasks = [], me = {}}: { tasks?: Task[], me?: object } = {}
+    {tasks = [], me = {}}: { tasks?: TaskType[], me?: object } = {}
 ) => {
     // loadApiResponse(api.getTasks, {json: tasks || []});
     // loadApiResponse(api.getMe, {json: me || {}});
@@ -53,30 +52,6 @@ const loadApiData = (
 
     loadApiResponse(setComplete);
     loadApiResponse(addTask)
-}
-
-const makeTask = (
-    {
-        complete = false,
-        due = "5/22/2020, 11:59 PM",
-        id = Math.random(),
-        cents = 0,
-        task = 'the_task',
-        charge_locked = null,
-        charge_authorized = null,
-        charge_captured = null
-    } = {}
-): Task => {
-    return {
-        complete,
-        due,
-        id,
-        cents,
-        task,
-        charge_locked,
-        charge_authorized,
-        charge_captured,
-    }
 }
 
 const expectTaskSave = async (
@@ -533,15 +508,10 @@ describe("tasks page", () => {
 
         // Load slow query response to clobber
 
-        jest.spyOn(new_api, 'getTasks').mockImplementation(() => {
-            return new Promise(resolve => setTimeout(() => {
-                // console.log('clobbering!')
-                resolve([
-                    makeTask({task: 'first', id: 3, complete: true}),
-                    makeTask({task: 'second', id: 4}),
-                ])
-            }, 100))
-        })
+        resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
+            makeTask({task: 'first', id: 3, complete: true}),
+            makeTask({task: 'second', id: 4}),
+        ])
 
         // Check first task
 
@@ -579,12 +549,88 @@ describe("tasks page", () => {
         expect(getByText("Stakes")).toBeInTheDocument()
     })
 
-    // TODO: Warn on app close if mutation in progress
-    // TODO: Optimistic updates for add (wait until input forms done)
+    it('adds task optimistically', async () => {
+        const {taskInput, addButton, getByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        await userEvent.type(taskInput, "the_task")
+        userEvent.click(addButton)
+
+        await waitFor(() => expect(getByText('the_task')).toBeInTheDocument())
+    })
+
+    it('roles back task add if mutation fails', async () => {
+        jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+            throw new Error('Oops!')
+        })
+
+        const {taskInput, addButton, getByText, queryByText} = renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 50, [
+            makeTask()
+        ])
+
+        await userEvent.type(taskInput, "the_task")
+        userEvent.click(addButton)
+
+        await waitFor(() => {
+            expect(getByText('the_task')).toBeInTheDocument()
+        })
+        await waitFor(() => {
+            expect(queryByText('the_task')).toBeNull()
+        })
+    })
+
+    it('cancels fetches on-mutate', async () => {
+        // Setup & initial render
+
+        loadApiData()
+
+        const {taskInput, addButton, getByText} = await renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        // Load slow query response to clobber
+
+        resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
+            makeTask({task: 'first', id: 3}),
+        ])
+
+        // Add first task
+
+        await userEvent.type(taskInput, "first")
+        userEvent.click(addButton)
+
+        // Wait for slow response to be requested
+
+        await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2))
+
+        // Load second, fast response
+
+        jest.spyOn(new_api, 'getTasks').mockResolvedValue([
+            makeTask({task: 'first', id: 3}),
+            makeTask({task: 'second', id: 4}),
+        ])
+
+        // Add second task
+
+        await userEvent.type(taskInput, "second")
+        userEvent.click(addButton)
+
+        // Sleep 200ms
+
+        await new Promise((resolve) => setTimeout(resolve, 200))
+
+        // Check that first, slow response didn't clobber second, fast response
+
+        expect(getByText('second')).toBeInTheDocument()
+    })
+
     // TODO: Add task-complete animation so it doesn't instantly disappear
     // TODO: Pull initial stakes & due date from most-recently added task
     // TODO: Uncomment and fix tasks related to free-entry form
-
-
 })
 

@@ -4,7 +4,7 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import {renderHook} from "@testing-library/react-hooks"
 import {useSetComplete} from "./api/useSetComplete";
 import * as api from "./api"
-import {renderWithQueryProvider} from "./test/helpers";
+import {renderWithQueryProvider, resolveWithDelay} from "./test/helpers";
 
 jest.mock('./api/setComplete')
 
@@ -16,9 +16,7 @@ describe('getUnloadMessage', () => {
     })
 
     it('returns message if pending task toggle', async () => {
-        jest.spyOn(api, 'setComplete').mockImplementation(() => {
-            return new Promise((resolve) => setTimeout(resolve, 200))
-        })
+        resolveWithDelay(jest.spyOn(api, 'setComplete'), 200)
 
         const Component = () => {
             const setComplete = useSetComplete()

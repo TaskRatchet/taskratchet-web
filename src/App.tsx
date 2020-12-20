@@ -41,8 +41,6 @@ function usePageViews() {
     }, [location])
 }
 
-// TODO: Add global react-query loading indicator
-// TODO: Add error message if user tries to close app while mutations pending
 // TODO: Turn on typescript strict mode
 
 export function App() {

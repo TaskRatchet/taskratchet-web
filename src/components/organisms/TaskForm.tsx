@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect} from "react";
 import DatePicker from 'react-datepicker'
 import './TaskForm.css'
 import browser from "../../lib/Browser";
@@ -13,28 +13,30 @@ interface TaskFormProps {
     onSubmit: () => void
 }
 
-const getDefaultDue = () => {
-    const due = browser.getNow();
-
-    due.setDate(due.getDate() + 7);
-    due.setHours(23);
-    due.setMinutes(59);
-
-    return due;
-};
-
 const TaskForm = (props: TaskFormProps): JSX.Element => {
     const {task, due, cents, timezone, error, onChange, onSubmit} = props
 
-    // TODO: Default to stakes of last-added task
-    if (cents === null) {
-        onChange(task, due, 500)
-    }
+    useEffect(() => {
+        const getDefaultDue = () => {
+            const due = browser.getNow();
 
-    // TODO: Default to due offset of last-added task
-    if (due === null) {
-        onChange(task, getDefaultDue(), cents)
-    }
+            due.setDate(due.getDate() + 7);
+            due.setHours(23);
+            due.setMinutes(59);
+
+            return due;
+        };
+        
+        // TODO: Default to stakes of last-added task
+        if (cents === null) {
+            onChange(task, due, 500)
+        }
+
+        // TODO: Default to due offset of last-added task
+        if (due === null) {
+            onChange(task, getDefaultDue(), cents)
+        }
+    }, [task, due, cents])
 
     const dollars = cents ? cents / 100 : 0
 

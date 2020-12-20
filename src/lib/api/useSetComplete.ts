@@ -3,7 +3,7 @@ import toaster from "../Toaster";
 import {setComplete} from "./setComplete";
 
 interface Context {
-    previousTasks: Task[] | undefined
+    previousTasks: TaskType[] | undefined
 }
 
 export function useSetComplete() {
@@ -14,28 +14,23 @@ export function useSetComplete() {
         (variables: any) => {
             const {id, complete} = variables
 
-            // console.log({m: 'completing', id, complete})
-
             return setComplete(id, complete)
         }, {
             onMutate: async (variables): Promise<Context> => {
                 await queryClient.cancelQueries('tasks')
 
                 const {id, complete} = variables
-                const previousTasks: Task[] | undefined = queryClient.getQueryData('tasks')
+                const previousTasks: TaskType[] | undefined = queryClient.getQueryData('tasks')
 
                 if (!previousTasks) return {previousTasks}
 
-                const newTasks = previousTasks.map((t: Task) => (t.id === id) ? {...t, complete} : t)
-
-                // console.log({variables, previousTasks, newTasks})
+                const newTasks = previousTasks.map((t: TaskType) => (t.id === id) ? {...t, complete} : t)
 
                 queryClient.setQueryData('tasks', () => newTasks)
 
                 return {previousTasks}
             },
             onError: (error: Error, variables, context) => {
-                // console.log({m: 'handling error', variables, context})
                 queryClient.setQueryData('tasks', (context as Context).previousTasks)
                 toaster.send(error.toString())
             },

@@ -6,7 +6,7 @@ import {
     loadCheckoutSession,
     loadMe,
     loadTimezones,
-    renderWithQueryProvider
+    renderWithQueryProvider, resolveWithDelay
 } from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import userEvent from "@testing-library/user-event";
@@ -105,7 +105,7 @@ describe('account page', () => {
     it('uses loading screen when saving password', async () => {
         loadMe({})
 
-        jest.spyOn(api, 'updatePassword').mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)))
+        resolveWithDelay(jest.spyOn(api, 'updatePassword'), 100)
 
         const {container, getAllByText, getByLabelText} = await renderWithQueryProvider(<Account/>)
 

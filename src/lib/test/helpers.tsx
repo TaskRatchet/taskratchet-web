@@ -1,11 +1,9 @@
-import api from "../LegacyApi";
 import * as new_api from "../../lib/api"
 import {ParsedQuery} from "query-string";
 import browser from "../Browser";
 import {QueryClient, QueryClientProvider} from "react-query";
 import React, {ReactElement} from "react";
 import {render} from "@testing-library/react";
-import _ from "lodash";
 
 jest.mock('../../lib/api/getTimezones')
 
@@ -85,5 +83,39 @@ export async function renderWithQueryProvider(ui: ReactElement) {
     return {
         ...result,
         queryClient
+    }
+}
+
+export function sleep({ms = 50, value = undefined}: {ms?: number, value?: any} = {}) {
+    return new Promise((resolve) => setTimeout(() => {
+        resolve(value)
+    }, ms))
+}
+
+export function resolveWithDelay(mock:  jest.SpyInstance, ms: number = 50, value: any = undefined) {
+    mock.mockImplementation(() => sleep({ms, value}))
+}
+
+export function makeTask(
+    {
+        complete = false,
+        due = "5/22/2020, 11:59 PM",
+        id = Math.random(),
+        cents = 0,
+        task = 'the_task',
+        charge_locked = null,
+        charge_authorized = null,
+        charge_captured = null
+    } = {}
+): TaskType {
+    return {
+        complete,
+        due,
+        id,
+        cents,
+        task,
+        charge_locked,
+        charge_authorized,
+        charge_captured,
     }
 }
