@@ -6,7 +6,7 @@ import React from "react";
 import userEvent from '@testing-library/user-event'
 import {expectLoadingOverlay, loadNow, makeResponse, resolveWithDelay, makeTask} from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
-import {setComplete} from "../../lib/api";
+import {updateTask} from "../../lib/api";
 import {getMe} from "../../lib/api";
 import {addTask} from "../../lib/api";
 import _ from "lodash";
@@ -15,7 +15,7 @@ import {getUnloadMessage} from "../../lib/getUnloadMessage";
 jest.mock('../../lib/api/apiFetch')
 jest.mock('../../lib/api/getTasks')
 jest.mock('../../lib/api/getMe')
-jest.mock('../../lib/api/setComplete')
+jest.mock('../../lib/api/updateTask')
 jest.mock('../../lib/api/getTimezones')
 jest.mock('../../lib/api/addTask')
 jest.mock("../../lib/Toaster")
@@ -50,7 +50,7 @@ const loadApiData = (
     jest.spyOn(new_api, "getTasks").mockResolvedValue(tasks || [])
     jest.spyOn(new_api, "getMe").mockResolvedValue(me || {})
 
-    loadApiResponse(setComplete);
+    loadApiResponse(updateTask);
     loadApiResponse(addTask)
 }
 
@@ -222,7 +222,7 @@ describe("tasks page", () => {
 
         clickCheckbox()
 
-        await waitFor(() => expect(setComplete).toBeCalledWith(3, true))
+        await waitFor(() => expect(updateTask).toBeCalledWith(3, {complete: true}))
     })
 
     it("reloads tasks", async () => {
@@ -279,7 +279,7 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         });
 
-        jest.spyOn(new_api, 'setComplete').mockImplementation(() => {
+        jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
             // console.log('throwing')
             throw Error("Oops!")
         })
@@ -456,7 +456,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
-        jest.spyOn(new_api, 'setComplete').mockImplementation(() => {
+        jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
             throw new Error('Oops!')
         })
 

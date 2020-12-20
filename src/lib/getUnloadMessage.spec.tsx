@@ -1,12 +1,10 @@
 import {getUnloadMessage} from "./getUnloadMessage";
 import React from "react";
-import {QueryClient, QueryClientProvider} from "react-query";
-import {renderHook} from "@testing-library/react-hooks"
-import {useSetComplete} from "./api/useSetComplete";
+import {useUpdateTask} from "./api/useUpdateTask";
 import * as api from "./api"
 import {renderWithQueryProvider, resolveWithDelay} from "./test/helpers";
 
-jest.mock('./api/setComplete')
+jest.mock('./api/updateTask')
 
 describe('getUnloadMessage', () => {
     it('does not return message if no pending mutations', async () => {
@@ -16,12 +14,12 @@ describe('getUnloadMessage', () => {
     })
 
     it('returns message if pending task toggle', async () => {
-        resolveWithDelay(jest.spyOn(api, 'setComplete'), 200)
+        resolveWithDelay(jest.spyOn(api, 'updateTask'), 200)
 
         const Component = () => {
-            const setComplete = useSetComplete()
+            const updateTask = useUpdateTask()
 
-            setComplete(-1, true)
+            updateTask(-1, {complete: true})
 
             return <div>Component</div>
         }
