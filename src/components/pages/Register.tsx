@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import api from '../../lib/LegacyApi';
 import toaster from "../../lib/Toaster";
 import {useCheckoutSession, useTimezones} from "../../lib/api";
@@ -15,16 +15,6 @@ const Register = (props: RegisterProps) => {
         checkoutSession = useCheckoutSession(),
         [timezone, setTimezone] = useState<string>(''),
         [agreed, setAgreed] = useState<boolean>(false);
-
-
-    // TODO: Stop using react-query to manage timezones in this component
-    useEffect(() => {
-        const populateTimezones = () => {
-            setTimezone(timezones[0])
-        };
-
-        populateTimezones();
-    }, [timezones]);
 
     const register = async (event: any) => {
         event.preventDefault();
@@ -102,6 +92,15 @@ const Register = (props: RegisterProps) => {
         return passes;
     };
 
+    const getTimezoneOptions = () => {
+        if (!timezones) return <option value={""} disabled>Loading...</option>
+
+        return <>
+            {<option value={""} disabled>Choose your timezone...</option>}
+            {timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>)}
+        </>
+    }
+
     return <form onSubmit={register}>
         <h1>Register</h1>
 
@@ -138,7 +137,7 @@ const Register = (props: RegisterProps) => {
         /><br/>
 
         <select name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
-            {timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>)}
+            {getTimezoneOptions()}
         </select><br/>
 
         <p>
