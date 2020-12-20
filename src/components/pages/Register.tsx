@@ -2,6 +2,7 @@ import React, {useState} from 'react';
 import api from '../../lib/LegacyApi';
 import toaster from "../../lib/Toaster";
 import {useCheckoutSession, useTimezones} from "../../lib/api";
+import Input from "../molecules/Input";
 
 interface RegisterProps {
 }
@@ -104,36 +105,36 @@ const Register = (props: RegisterProps) => {
     return <form onSubmit={register}>
         <h1>Register</h1>
 
-        <input
+        <Input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
-            name={'name'}
-            placeholder={'Name'}
+            label={'Name'}
+            id={'name'}
         /><br/>
 
-        <input
+        <Input
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            name={'email'}
-            placeholder={'Email'}
+            id={'email'}
+            label={'Email'}
         /><br/>
 
-        <input
+        <Input
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
-            name={'password'}
-            placeholder={'Password'}
+            id={'password'}
+            label={'Password'}
         /><br/>
 
-        <input
+        <Input
             type="password"
             value={password2}
             onChange={e => setPassword2(e.target.value)}
-            name={'password2'}
-            placeholder={'Retype Password'}
+            id={'password2'}
+            label={'Retype Password'}
         /><br/>
 
         <select name="timezone" value={timezone} onChange={e => setTimezone(e.target.value)}>
