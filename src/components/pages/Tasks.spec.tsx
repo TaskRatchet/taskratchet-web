@@ -4,7 +4,14 @@ import {fireEvent, getByPlaceholderText, queryByText, render, waitFor} from "@te
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
-import {expectLoadingOverlay, loadNow, makeResponse, resolveWithDelay, makeTask} from "../../lib/test/helpers";
+import {
+    expectLoadingOverlay,
+    loadNow,
+    makeResponse,
+    resolveWithDelay,
+    makeTask,
+    rejectWithDelay
+} from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {updateTask} from "../../lib/api";
 import {getMe} from "../../lib/api";
@@ -447,7 +454,7 @@ describe("tasks page", () => {
 
     it('rolls back checkbox optimistic update', async () => {
         loadApiData({
-            tasks: [makeTask({id: 3})]
+            tasks: [makeTask({id: 3, status: 'pending'})]
         })
 
         const {clickCheckbox, getByText, archiveButton} = renderTasksPage()
@@ -456,9 +463,7 @@ describe("tasks page", () => {
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
-        jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
-            throw new Error('Oops!')
-        })
+        jest.spyOn(new_api, 'updateTask').mockRejectedValue('Oops!')
 
         clickCheckbox()
 
@@ -509,8 +514,8 @@ describe("tasks page", () => {
         // Load slow query response to clobber
 
         resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
-            makeTask({task: 'first', id: 3, complete: true}),
-            makeTask({task: 'second', id: 4}),
+            makeTask({task: 'first', id: 3, status: 'complete', complete: true}),
+            makeTask({task: 'second', id: 4, status: 'pending'}),
         ])
 
         // Check first task
@@ -524,8 +529,8 @@ describe("tasks page", () => {
         // Load second, fast response
 
         jest.spyOn(new_api, 'getTasks').mockResolvedValue([
-            makeTask({task: 'first', id: 3, complete: true}),
-            makeTask({task: 'second', id: 4, complete: true}),
+            makeTask({task: 'first', id: 3, status: 'complete', complete: true}),
+            makeTask({task: 'second', id: 4, status: 'complete', complete: true}),
         ])
 
         // Check second task
@@ -560,18 +565,12 @@ describe("tasks page", () => {
         await waitFor(() => expect(getByText('the_task')).toBeInTheDocument())
     })
 
-    it('roles back task add if mutation fails', async () => {
-        jest.spyOn(new_api, 'addTask').mockImplementation(() => {
-            throw new Error('Oops!')
-        })
+    it('rolls back task add if mutation fails', async () => {
+        jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!')
 
         const {taskInput, addButton, getByText, queryByText} = renderTasksPage()
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-
-        resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 50, [
-            makeTask()
-        ])
 
         await userEvent.type(taskInput, "the_task")
         userEvent.click(addButton)
@@ -579,6 +578,7 @@ describe("tasks page", () => {
         await waitFor(() => {
             expect(getByText('the_task')).toBeInTheDocument()
         })
+
         await waitFor(() => {
             expect(queryByText('the_task')).toBeNull()
         })

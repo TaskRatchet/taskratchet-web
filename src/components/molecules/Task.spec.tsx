@@ -12,7 +12,8 @@ describe('Task componet', () =>  {
         const {container} = await renderWithQueryProvider(<Task task={{
             due: 'the_due',
             cents: 100,
-            task: 'the_task'
+            task: 'the_task',
+            status: 'pending'
         }} />)
 
         const checkbox = container.querySelector('input')
@@ -25,7 +26,8 @@ describe('Task componet', () =>  {
             due: 'the_due',
             cents: 100,
             task: 'the_task',
-            id: 'the_id'
+            id: 'the_id',
+            status: 'pending'
         }} />)
 
         expect(getByLabelText('Menu')).toBeInTheDocument()
@@ -36,7 +38,8 @@ describe('Task componet', () =>  {
             due: 'the_due',
             cents: 100,
             task: 'the_task',
-            id: 'the_id'
+            id: 'the_id',
+            status: 'pending'
         }} />)
 
         const menuButton = getByLabelText('Menu')
@@ -51,7 +54,8 @@ describe('Task componet', () =>  {
             due: 'the_due',
             cents: 100,
             task: 'the_task',
-            id: 'the_id'
+            id: 'the_id',
+            status: 'pending'
         }} />)
 
         userEvent.click(getByLabelText('Menu'))
@@ -62,16 +66,16 @@ describe('Task componet', () =>  {
         }))
     })
 
-    it('flags tasks as charging that have charge email sent', async () => {
+    it('uses status', async () => {
         const {getByText} = await renderWithQueryProvider(<Task task={{
             due: 'the_due',
             cents: 100,
             task: 'the_task',
             id: 'the_id',
-            charge_email_sent: true
+            status: 'expired'
         }} />)
 
-        expect(getByText('Charging')).toBeInTheDocument()
+        expect(getByText('expired')).toBeInTheDocument()
     })
 
     // Punt
