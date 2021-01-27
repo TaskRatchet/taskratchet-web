@@ -92,8 +92,14 @@ export function sleep({ms = 50, value = undefined}: {ms?: number, value?: any} =
     }, ms))
 }
 
-export function resolveWithDelay(mock:  jest.SpyInstance, ms: number = 50, value: any = undefined) {
+export function resolveWithDelay(mock: jest.SpyInstance, ms: number = 50, value: any = undefined) {
     mock.mockImplementation(() => sleep({ms, value}))
+}
+
+export function rejectWithDelay(mock: jest.SpyInstance, ms: number = 50) {
+    mock.mockImplementation(() => new Promise((resolve, reject) => {
+        setTimeout(() => reject('Delayed rejection'), ms)
+    }))
 }
 
 export function makeTask(
@@ -103,10 +109,8 @@ export function makeTask(
         id = Math.random(),
         cents = 0,
         task = 'the_task',
-        charge_locked = null,
-        charge_authorized = null,
-        charge_captured = null
-    } = {}
+        status = 'pending',
+    }: Partial<TaskType> = {}
 ): TaskType {
     return {
         complete,
@@ -114,8 +118,6 @@ export function makeTask(
         id,
         cents,
         task,
-        charge_locked,
-        charge_authorized,
-        charge_captured,
+        status
     }
 }

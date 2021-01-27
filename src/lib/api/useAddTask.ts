@@ -12,6 +12,7 @@ export function useAddTask() {
     const queryClient = useQueryClient()
 
     const {mutate} = useMutation(({task, due, cents}: Input) => {
+        // TODO: Refactor addTask to make closure unnecessary
         return addTask(task, due, cents)
     }, {
         onMutate: async (newTask: Input) => {
@@ -20,6 +21,7 @@ export function useAddTask() {
             const snapshot: TaskType[] | undefined = queryClient.getQueryData('tasks') || []
 
             queryClient.setQueryData('tasks', [...snapshot, {
+                status: 'pending',
                 ...newTask
             }])
 

@@ -33,7 +33,7 @@ describe("BeeminderSettings component", () => {
     })
 
     it("renders", async () => {
-        renderBeeminderSettings()
+        await renderBeeminderSettings()
     })
 
     it("includes enable link", async () => {

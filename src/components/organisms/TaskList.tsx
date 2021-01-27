@@ -5,9 +5,6 @@ import {useTasks} from "../../lib/api";
 
 const TaskList = () => {
     const {data: tasks} = useTasks();
-
-
-
     const [showArchive, setShowArchive] = useState<boolean>(false)
 
     const getSortedTasks = () => {
@@ -16,15 +13,15 @@ const TaskList = () => {
         return sortTasks(tasks);
     };
 
-    const getActiveTasks = () => {
+    const getPendingTasks = () => {
         return getSortedTasks().filter((t: TaskType) => {
-            return !t.complete && !t.charge_captured;
+            return t.status === 'pending';
         });
     };
 
     const getArchivedTasks = () => {
         return getSortedTasks().filter((t: TaskType) => {
-            return t.complete || t.charge_captured;
+            return t.status !== 'pending';
         });
     };
 
@@ -35,7 +32,7 @@ const TaskList = () => {
     };
 
     return <>
-        <ul className={'page-tasks__list'}>{makeTaskListItems(getActiveTasks())}</ul>
+        <ul className={'page-tasks__list'}>{makeTaskListItems(getPendingTasks())}</ul>
 
         <button className={'page-tasks__toggleLabel'} onClick={() => setShowArchive(!showArchive)}>Archived Tasks</button>
 

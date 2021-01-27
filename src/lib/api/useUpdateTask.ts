@@ -24,7 +24,17 @@ export function useUpdateTask() {
 
                 if (!previousTasks) return {previousTasks}
 
-                const newTasks = previousTasks.map((t: TaskType) => (t.id === id) ? {...t, ...data} : t)
+                const newTasks = previousTasks.map((t: TaskType) => {
+                    if (t.id !== id) return t
+
+                    let newTask = {...t, ...data}
+
+                    if (data.hasOwnProperty('complete')) {
+                        newTask['status'] = data['complete'] ? 'complete' : 'pending'
+                    }
+
+                    return newTask
+                })
 
                 queryClient.setQueryData('tasks', () => newTasks)
 
