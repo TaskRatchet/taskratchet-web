@@ -1,6 +1,6 @@
 import * as new_api from "../../lib/api"
 import toaster from "../../lib/Toaster"
-import {fireEvent, getByPlaceholderText, queryByText, render, waitFor} from "@testing-library/react"
+import {fireEvent, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
 import React from "react";
 import userEvent from '@testing-library/user-event'
@@ -10,7 +10,8 @@ import {
     makeResponse,
     resolveWithDelay,
     makeTask,
-    rejectWithDelay
+    rejectWithDelay,
+    sleep
 } from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {updateTask} from "../../lib/api";
@@ -83,6 +84,13 @@ const expectTaskSave = async (
     await waitFor(() => expect(addTask).toBeCalledWith(task, dueString, cents))
 }
 
+const expectCheckboxState = (task: string, expected: boolean, getByText: any) => {
+    const taskEl = getByText(task)
+    const checkbox = taskEl.previousElementSibling
+
+    expect(checkbox.checked).toEqual(expected)
+}
+
 const renderTasksPage = () => {
     const queryClient = new QueryClient()
     const getters = render(<QueryClientProvider client={queryClient}><Tasks/></QueryClientProvider>),
@@ -91,7 +99,6 @@ const renderTasksPage = () => {
     return {
         taskInput: getByPlaceholderText("Task"),
         addButton: getByText("Add"),
-        archiveButton: getByText("Archived Tasks"),
         clickCheckbox: (task = "the_task") => {
             const desc = getByText(task),
                 checkbox = desc.previousElementSibling
@@ -437,9 +444,7 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3})]
         })
 
-        const {clickCheckbox, getByText, archiveButton} = renderTasksPage()
-
-        userEvent.click(archiveButton)
+        const {clickCheckbox, getByText} = renderTasksPage()
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
@@ -457,9 +462,7 @@ describe("tasks page", () => {
             tasks: [makeTask({id: 3, status: 'pending'})]
         })
 
-        const {clickCheckbox, getByText, archiveButton} = renderTasksPage()
-
-        userEvent.click(archiveButton)
+        const {clickCheckbox, getByText} = renderTasksPage()
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
@@ -507,7 +510,7 @@ describe("tasks page", () => {
             ]
         })
 
-        const {clickCheckbox, queryByText} = await renderTasksPage()
+        const {clickCheckbox, getByText} = await renderTasksPage()
 
         await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
@@ -543,7 +546,7 @@ describe("tasks page", () => {
 
         // Check that first, slow response didn't clobber second, fast response
 
-        expect(queryByText('second')).toBeNull()
+        expectCheckboxState('second', true, getByText)
     })
 
     it('has stakes form', async () => {
@@ -629,7 +632,21 @@ describe("tasks page", () => {
         expect(getByText('second')).toBeInTheDocument()
     })
 
-    // TODO: Add task-complete animation so it doesn't instantly disappear
+    it('shows all tasks', async () => {
+        loadApiData({
+            tasks: [makeTask({complete: true})]
+        })
+
+        const {getByText} = await renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        expect(getByText('the_task')).toBeInTheDocument()
+    })
+
+    // TODO: add date headings
+    // TODO: restyle tasks based on state
+    // TODO: add pending filter
     // TODO: Pull initial stakes & due date from most-recently added task
     // TODO: Uncomment and fix tasks related to free-entry form
     // TODO: Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574

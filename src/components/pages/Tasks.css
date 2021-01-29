@@ -1,12 +1,3 @@
-.page-tasks .page-tasks__list {
-  padding-left: 0;
-}
-.page-tasks .page-tasks__list > li {
-  list-style-type: none;
-}
-.page-tasks .page-tasks__list > li:nth-child(odd) {
-  background-color: #ededed;
-}
 .page-tasks .page-tasks__toggleLabel {
   cursor: pointer;
 }

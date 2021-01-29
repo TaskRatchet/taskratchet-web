@@ -1,13 +1,4 @@
 .page-tasks {
-  .page-tasks__list {
-    padding-left: 0;
-    > li {
-      list-style-type: none;
-      &:nth-child(odd) {
-        background-color: #ededed;
-      }
-    }
-  }
   .page-tasks__toggleLabel {
     cursor: pointer;
   }

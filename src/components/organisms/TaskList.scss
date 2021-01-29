@@ -1,0 +1,9 @@
+.organism-taskList {
+  padding-left: 0;
+  > li {
+    list-style-type: none;
+    &:nth-child(odd) {
+      background-color: #ededed;
+    }
+  }
+}
