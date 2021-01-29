@@ -3,22 +3,26 @@ import Task from "../molecules/Task";
 import {sortTasks} from "../../lib/sortTasks";
 import {useTasks} from "../../lib/api";
 import './TaskList.css'
+import _ from "lodash";
+import browser from "../../lib/Browser";
 
 const TaskList = () => {
     const {data: tasks} = useTasks();
 
-    // TODO: use _.groupBy to group tasks under heading by due date
-    // https://lodash.com/docs/4.17.15#groupBy
+    const sorted = sortTasks(tasks || [])
 
-    const makeEntries = () => {
-        const _tasks = sortTasks(tasks || [])
-        return _tasks.map((t, i) => (
-            <li key={i}><Task task={t} /></li>
-        ));
-    };
+    const dateGroups = _.groupBy(sorted, (t) => {
+        return browser.getString(new Date(t.due))
+    })
 
     return <ul className={'organism-taskList'}>
-        {makeEntries()}
+        {Object.keys(dateGroups).map((dateString: string) => (<>
+            <h3>{dateString}</h3>
+            {dateGroups[dateString].map((t, i) => (
+                <li key={i}><Task task={t}/></li>
+            ))}
+        </>)
+        )}
     </ul>
 }
 

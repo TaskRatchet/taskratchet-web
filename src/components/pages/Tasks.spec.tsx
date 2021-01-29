@@ -644,6 +644,18 @@ describe("tasks page", () => {
         expect(getByText('the_task')).toBeInTheDocument()
     })
 
+    it('shows date headings', async () => {
+        loadApiData({tasks: [
+            makeTask({due: "5/22/2020, 11:59 PM"})
+        ]})
+
+        const {getByText} = await renderTasksPage()
+
+        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+        expect(getByText('May 22, 2020')).toBeInTheDocument()
+    })
+
     // TODO: add date headings
     // TODO: restyle tasks based on state
     // TODO: add pending filter

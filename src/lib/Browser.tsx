@@ -19,6 +19,14 @@ export class Browser {
         return days[date.getDay()];
     }
 
+    getString(date: Date): string {
+        return date.toLocaleString(browser.getLanguages(), {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        })
+    }
+
     getDateString(date: Date): string {
         return date.toLocaleDateString(browser.getLanguages())
     }
