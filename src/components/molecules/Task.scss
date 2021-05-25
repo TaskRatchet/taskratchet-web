@@ -1,6 +1,7 @@
 .molecule-task {
   display: flex;
   align-items: center;
+  margin-bottom: 1px;
 
   .molecule-task__left {
     position: relative;
@@ -20,11 +21,9 @@
       li {
         list-style-type: none;
         display: inline-block;
-        background-color: #d9d9d9;
-        color: #737373;
-        padding: .5px 4px;
         margin-left: .5em;
         border-radius: 4px;
+        opacity: 0.5;
       }
     }
 
@@ -41,6 +40,16 @@
     .molecule-task__dollars {
       right: .5em;
     }
+  }
+
+  &.molecule-task__pending {
+    background-color: #dfe5f6;
+  }
+  &.molecule-task__expired {
+    background-color: #f6dfdf;
+  }
+  &.molecule-task__complete {
+    background-color: #e2eee2;
   }
 
 }

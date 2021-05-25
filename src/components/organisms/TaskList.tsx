@@ -1,10 +1,13 @@
 import React from "react";
-import Task from "../molecules/Task";
+import Task, {TaskProps} from "../molecules/Task";
 import {sortTasks} from "../../lib/sortTasks";
 import {useTasks} from "../../lib/api";
 import './TaskList.css'
 import _ from "lodash";
 import browser from "../../lib/Browser";
+import {List, ListItem} from "@material-ui/core";
+
+const ListItemComponent = React.forwardRef((props: TaskProps, ref) => <Task ref_={ref} {...props} />)
 
 const TaskList = () => {
     const {data: tasks} = useTasks();
@@ -15,15 +18,17 @@ const TaskList = () => {
         return browser.getString(new Date(t.due))
     })
 
-    return <ul className={'organism-taskList'}>
-        {Object.keys(dateGroups).map((dateString: string) => (<>
+    return <div className={'organism-taskList'}>
+        <List>
+        {Object.keys(dateGroups).map((dateString: string) => (<div key={dateString}>
             <h3>{dateString}</h3>
-            {dateGroups[dateString].map((t, i) => (
-                <li key={i}><Task task={t}/></li>
+            {dateGroups[dateString].map((t: TaskType) => (
+                <ListItem component={ListItemComponent} task={t} key={JSON.stringify(t)} />
             ))}
-        </>)
+        </div>)
         )}
-    </ul>
+        </List>
+    </div>
 }
 
 export default TaskList

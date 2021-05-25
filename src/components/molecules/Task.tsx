@@ -1,22 +1,22 @@
-import React from "react";
+import React, {Ref} from "react";
 import './Task.css'
 import browser from "../../lib/Browser";
 import TaskMenu from "./TaskMenu";
 import {useSetComplete} from "../../lib/api/useSetComplete";
 
-interface TaskProps {
-    task: TaskType
+export interface TaskProps {
+    task: TaskType,
+    ref_?: Ref<any>
 }
 
-const Task = ({task}: TaskProps) => {
+const Task = ({task, ref_}: TaskProps) => {
     const setComplete = useSetComplete()
 
     const dueDate = new Date(task.due),
         dateString = browser.getDateString(dueDate),
         timeString = browser.getTimeString(dueDate);
 
-    return <div className={`molecule-task`}>
-        <style>test</style>
+    return <div className={`molecule-task molecule-task__${task.status}`} ref={ref_}>
         <div className={'molecule-task__left'}>
             <input type="checkbox" onChange={() => {
                 if (!task.id) return

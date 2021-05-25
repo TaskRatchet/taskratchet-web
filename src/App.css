@@ -2,22 +2,27 @@
   box-sizing: border-box;
 }
 
+html, body, #root, .page-base {
+  height: 100vh;
+}
+
 html {
-  background-color: #c6d1d8;
   font-family: sans-serif;
+  overflow: hidden;
+}
+
+body {
+  margin: 0;
+}
+
+.page-base {
   display: flex;
-  justify-content: center;
-  padding-top: 1rem;
-  padding-bottom: 1rem;
+  flex-direction: column;
 }
 
 .page-base__content {
-  width: 38rem;
-  max-width: 95vw;
-  padding: 1rem;
-  background-color: white;
-  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
+  flex: 1 1 0;
+  overflow: scroll;
 }
 
 a, .link {

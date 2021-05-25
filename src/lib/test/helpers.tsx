@@ -1,7 +1,7 @@
 import * as new_api from "../../lib/api"
 import {ParsedQuery} from "query-string";
 import browser from "../Browser";
-import {QueryClient, QueryClientProvider} from "react-query";
+import {QueryClient, QueryClientProvider, setLogger} from "react-query";
 import React, {ReactElement} from "react";
 import {render} from "@testing-library/react";
 
@@ -120,4 +120,16 @@ export function makeTask(
         task,
         status
     }
+}
+
+export async function withMutedReactQueryLogger(callback: () => any) {
+    setLogger({
+        log: () => {},
+        warn: () => {},
+        error: () => {},
+    });
+
+    await callback()
+
+    setLogger(window.console);
 }

@@ -12,8 +12,6 @@ const Tasks = () => {
     useCloseWarning()
 
     return <div className={`page-tasks ${isLoading ? "loading" : "idle"}`}>
-        <h1>Tasks</h1>
-
         <TaskEntry />
         <TaskList />
     </div>

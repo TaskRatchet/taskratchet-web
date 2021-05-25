@@ -8,7 +8,7 @@ import {
     loadMe,
     loadMeWithBeeminder,
     loadUrlParams,
-    renderWithQueryProvider, resolveWithDelay
+    renderWithQueryProvider, resolveWithDelay, withMutedReactQueryLogger
 } from "../../lib/test/helpers";
 import userEvent from '@testing-library/user-event'
 import toaster from "../../lib/Toaster";
@@ -204,49 +204,54 @@ describe("BeeminderSettings component", () => {
     })
 
     it('removes loading overlay after save error', async () => {
-        loadMeWithBeeminder()
+        await withMutedReactQueryLogger(async () => {
+            loadMeWithBeeminder()
 
-        jest.spyOn(new_api, 'updateMe').mockRejectedValue('error')
+            jest.spyOn(new_api, 'updateMe').mockRejectedValue('error')
 
-        const {getByText, container} = await renderBeeminderSettings()
+            const {getByText, container} = await renderBeeminderSettings()
 
-        await waitFor(() => expect(new_api.getMe).toBeCalled());
+            await waitFor(() => expect(new_api.getMe).toBeCalled());
 
-        userEvent.click(getByText('Save'))
+            userEvent.click(getByText('Save'))
 
-        await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
+            await waitFor(() => expectLoadingOverlay(container, {shouldExist: false}));
+        })
     })
 
     it('toasts save errors', async () => {
-        loadMeWithBeeminder()
+        await withMutedReactQueryLogger(async () => {
+            loadMeWithBeeminder()
 
-        jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
-            throw new Error('error')
+            jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
+                throw new Error('error')
+            })
+
+            const {getByText} = await renderBeeminderSettings()
+
+            await waitFor(() => expect(new_api.getMe).toBeCalled());
+
+            userEvent.click(getByText('Save'))
+
+            await waitFor(() => expect(toaster.send).toBeCalled())
         })
-
-        const {getByText} = await renderBeeminderSettings()
-
-        await waitFor(() => expect(new_api.getMe).toBeCalled());
-
-        userEvent.click(getByText('Save'))
-
-        await waitFor(() => expect(toaster.send).toBeCalled())
     })
 
     it('toasts update error', async () => {
-        loadUrlParams({
-            access_token: 'the_token',
-            username: 'the_user'
+        await withMutedReactQueryLogger(async () => {
+            loadUrlParams({
+                access_token: 'the_token',
+                username: 'the_user'
+            })
+
+            jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
+                throw new Error('error_message')
+            })
+
+            await renderBeeminderSettings()
+
+            await waitFor(() => expect(toaster.send).toBeCalledWith('Error: error_message'))
         })
-
-        // loadMe({json: 'error_message', ok: false})
-        jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
-            throw new Error('error_message')
-        })
-
-        await renderBeeminderSettings()
-
-        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: error_message'))
     })
 
     it('does not toast error if no url params set', async () => {
@@ -261,13 +266,15 @@ describe("BeeminderSettings component", () => {
     })
 
     it('toasts initial load error', async () => {
-        jest.spyOn(new_api, 'getMe').mockImplementation(() => {
-            throw new Error('error_message')
+        await withMutedReactQueryLogger(async () => {
+            jest.spyOn(new_api, 'getMe').mockImplementation(() => {
+                throw new Error('error_message')
+            })
+
+            await renderBeeminderSettings()
+
+            await waitFor(() => expect(toaster.send).toBeCalledWith('Error: error_message'))
         })
-
-        await renderBeeminderSettings()
-
-        await waitFor(() => expect(toaster.send).toBeCalledWith('Error: error_message'))
     })
 
     it('rejects invalid goal names', async () => {

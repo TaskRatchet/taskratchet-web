@@ -9,9 +9,7 @@ import {
     loadNow,
     makeResponse,
     resolveWithDelay,
-    makeTask,
-    rejectWithDelay,
-    sleep
+    makeTask, withMutedReactQueryLogger,
 } from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
 import {updateTask} from "../../lib/api";
@@ -254,58 +252,63 @@ describe("tasks page", () => {
     })
 
     it("toasts task creation failure", async () => {
-        loadApiData()
-        jest.spyOn(new_api, 'addTask').mockImplementation(() => {
-            throw new Error('Failed to add task')
+        await withMutedReactQueryLogger(async () => {
+            loadApiData()
+            jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+                throw new Error('Failed to add task')
+            })
+
+            const {taskInput, addButton} = renderTasksPage()
+
+            await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+            await userEvent.type(taskInput, "the_task by Friday or pay $5")
+            userEvent.click(addButton)
+
+            await waitFor(() => expect(toaster.send)
+                .toBeCalledWith("Error: Failed to add task"))
         })
-
-        const {taskInput, addButton} = renderTasksPage()
-
-        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-
-        await userEvent.type(taskInput, "the_task by Friday or pay $5")
-        userEvent.click(addButton)
-
-        await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Error: Failed to add task"))
     })
 
     it("toasts task creation exception", async () => {
-        loadApiData();
+        await withMutedReactQueryLogger(async () => {
+            loadApiData();
 
-        jest.spyOn(new_api, 'addTask').mockImplementation(() => {
-            throw Error("Oops!")
+            jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+                throw Error("Oops!")
+            })
+
+            const {taskInput, addButton} = renderTasksPage()
+
+            await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+            await userEvent.type(taskInput, "the_task by Friday or pay $5")
+            userEvent.click(addButton)
+
+            await waitFor(() => expect(toaster.send)
+                .toBeCalledWith("Error: Oops!"))
         })
-
-        const {taskInput, addButton} = renderTasksPage()
-
-        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-
-        await userEvent.type(taskInput, "the_task by Friday or pay $5")
-        userEvent.click(addButton)
-
-        await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Error: Oops!"))
     })
 
     it("toasts task toggle exception", async () => {
-        loadApiData({
-            tasks: [makeTask({id: 3})]
-        });
+        await withMutedReactQueryLogger(async () => {
+            loadApiData({
+                tasks: [makeTask({id: 3})]
+            });
 
-        jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
-            // console.log('throwing')
-            throw Error("Oops!")
+            jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
+                throw Error("Oops!")
+            })
+
+            const {clickCheckbox} = renderTasksPage()
+
+            await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+
+            clickCheckbox()
+
+            await waitFor(() => expect(toaster.send)
+                .toBeCalledWith("Error: Oops!"))
         })
-
-        const {clickCheckbox} = renderTasksPage()
-
-        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-
-        clickCheckbox()
-
-        await waitFor(() => expect(toaster.send)
-            .toBeCalledWith("Error: Oops!"))
     })
 
     // it("parses date", async () => {
@@ -458,28 +461,30 @@ describe("tasks page", () => {
     })
 
     it('rolls back checkbox optimistic update', async () => {
-        loadApiData({
-            tasks: [makeTask({id: 3, status: 'pending'})]
-        })
+        await withMutedReactQueryLogger(async () => {
+            loadApiData({
+                tasks: [makeTask({id: 3, status: 'pending'})]
+            })
 
-        const {clickCheckbox, getByText} = renderTasksPage()
+            const {clickCheckbox, getByText} = renderTasksPage()
 
-        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+            await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
-        jest.spyOn(new_api, 'updateTask').mockRejectedValue('Oops!')
+            jest.spyOn(new_api, 'updateTask').mockRejectedValue('Oops!')
 
-        clickCheckbox()
+            clickCheckbox()
 
-        await waitFor(() => {
-            const taskDesc = getByText('the_task')
-            const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
-            expect(taskCheckbox.checked).toBeTruthy()
-        })
+            await waitFor(() => {
+                const taskDesc = getByText('the_task')
+                const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
+                expect(taskCheckbox.checked).toBeTruthy()
+            })
 
-        await waitFor(() => {
-            const taskDesc = getByText('the_task')
-            const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
-            expect(taskCheckbox.checked).toBeFalsy()
+            await waitFor(() => {
+                const taskDesc = getByText('the_task')
+                const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
+                expect(taskCheckbox.checked).toBeFalsy()
+            })
         })
     })
 
@@ -569,21 +574,25 @@ describe("tasks page", () => {
     })
 
     it('rolls back task add if mutation fails', async () => {
-        jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!')
+        await withMutedReactQueryLogger(async () => {
+            loadApiData()
 
-        const {taskInput, addButton, getByText, queryByText} = renderTasksPage()
+            jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!')
 
-        await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+            const {taskInput, addButton, getByText, queryByText} = renderTasksPage()
 
-        await userEvent.type(taskInput, "the_task")
-        userEvent.click(addButton)
+            await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
 
-        await waitFor(() => {
-            expect(getByText('the_task')).toBeInTheDocument()
-        })
+            await userEvent.type(taskInput, "the_task")
+            userEvent.click(addButton)
 
-        await waitFor(() => {
-            expect(queryByText('the_task')).toBeNull()
+            await waitFor(() => {
+                expect(getByText('the_task')).toBeInTheDocument()
+            })
+
+            await waitFor(() => {
+                expect(queryByText('the_task')).toBeNull()
+            })
         })
     })
 
@@ -656,7 +665,6 @@ describe("tasks page", () => {
         expect(getByText('May 22, 2020')).toBeInTheDocument()
     })
 
-    // TODO: add date headings
     // TODO: restyle tasks based on state
     // TODO: add pending filter
     // TODO: Pull initial stakes & due date from most-recently added task

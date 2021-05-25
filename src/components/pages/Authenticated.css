@@ -1,5 +1,8 @@
-.page-authenticated > div > *:first-child {
-  margin-top: 0;
+.page-authenticated {
+  display: table;
+  margin-top: 1rem;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /*# sourceMappingURL=Authenticated.css.map */

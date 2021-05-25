@@ -1,4 +1,14 @@
 .page-tasks {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  h3 {
+    margin-left: 1rem;
+  }
+  .organism-taskList {
+    flex: 1 1 0;
+    overflow: scroll;
+  }
   .page-tasks__toggleLabel {
     cursor: pointer;
   }
