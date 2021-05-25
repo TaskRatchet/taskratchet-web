@@ -677,10 +677,27 @@ describe("tasks page", () => {
 
         if (!list) throw new Error('could not find list')
 
-        expect(list.childNodes[2].textContent).toContain('Today')
+        expect(list.childNodes[1].textContent).toContain('Today')
     })
 
-    // TODO: Displays current day marker
+    it('shows today marker at end with no future dues', async () => {
+        loadNow(new Date('3/22/2020'))
+
+        loadApiData({tasks: [
+                makeTask({due: "1/22/2020, 11:59 PM"})
+            ]})
+
+        const {getByText, container} = await renderTasksPage()
+
+        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+
+        const list = container.querySelector('.organism-taskList > ul')
+
+        if (!list) throw new Error('could not find list')
+
+        expect(list.childNodes[1].textContent).toContain('Today')
+    })
+
     // TODO: scroll to today on page load
 
     // box.scrollTo({behavior: 'smooth', top: 300})

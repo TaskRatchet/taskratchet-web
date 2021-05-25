@@ -8,10 +8,8 @@
 .organism-taskList > li:nth-child(odd) {
   background-color: #ededed;
 }
-.organism-taskList .organism-taskList__todayDivider {
-  margin-top: 1rem;
-}
 .organism-taskList .organism-taskList__today {
+  margin-top: 1rem;
   text-align: center;
 }
 

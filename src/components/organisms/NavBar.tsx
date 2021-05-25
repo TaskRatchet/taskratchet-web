@@ -15,12 +15,12 @@ export default function NavBar() {
             <Typography className={'organism-navBar__title'} variant="h6" component="div">
                 <Button component={Link} to={'/'} color={'inherit'}>TaskRatchet</Button>
             </Typography>
-            {session && <span>{session.email}</span>}
             <IconButton onClick={toggleMenu} edge="start" color="inherit" aria-label="menu">
                 <MenuIcon/>
             </IconButton>
-            <Drawer anchor={'right'} open={isOpen} onClose={toggleMenu}>
+            <Drawer className={'organism-navBar__drawer'} anchor={'right'} open={isOpen} onClose={toggleMenu}>
                 {session && <>
+                    <Typography>{session.email}</Typography>
                     <Button className={'link'} onClick={logout} color="inherit">Logout</Button>
                     <Button component={Link} to={'/account'} color="inherit">Account</Button>
                 </>}

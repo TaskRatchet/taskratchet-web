@@ -22,35 +22,37 @@ const TaskList = () => {
     })
     const dateStrings = Object.keys(dateGroups);
     const nextDue = futureDues && futureDues[0]
-    const nextDuePretty = browser.getString(new Date(nextDue))
+    const nextDuePretty = nextDue && browser.getString(new Date(nextDue))
 
-    console.log({today, sortedDues, futureDues, nextDue})
+    const divider = <li key={'today'} className={'organism-taskList__today'}>
+        <Divider/>
+        <Typography
+            color="textSecondary"
+            display="block"
+            variant="caption"
+        >
+            {/*TODO: display ticking time, too*/}
+            {`Today: ${todayString}`}
+        </Typography>
+    </li>
+
 
     return <div className={'organism-taskList'}>
         <List>
             {dateStrings.map((s: string) => {
+                    const shouldShowBefore = s === nextDuePretty
+                    const shouldShowAfter = !nextDuePretty && s === dateStrings[dateStrings.length - 1]
 
-                    return <>
-                        {s === nextDuePretty && <>
-                            <Divider component="li" key={'today-divider'} className={'organism-taskList__todayDivider'} />
-                            <li key={'today'} className={'organism-taskList__today'}>
-                                <Typography
-                                    color="textSecondary"
-                                    display="block"
-                                    variant="caption"
-                                >
-                                    {/*TODO: display ticking time, too*/}
-                                    {`Today: ${todayString}`}
-                                </Typography>
-                            </li>
-                        </>}
+                    return [
+                        shouldShowBefore && divider,
                         <li key={s}>
                             <h3>{s}</h3>
                             {dateGroups[s].map((t: TaskType) => (
                                 <ListItem component={ListItemComponent} task={t} key={JSON.stringify(t)}/>
                             ))}
-                        </li>
-                    </>
+                        </li>,
+                        shouldShowAfter && divider
+                    ]
                 }
             )}
         </List>

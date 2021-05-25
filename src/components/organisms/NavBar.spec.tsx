@@ -20,7 +20,9 @@ describe('NavBar',  () => {
             email: 'the_email'
         })
 
-        const {getByText} = await renderComponent()
+        const {getByText,getByLabelText} = await renderComponent()
+
+        userEvent.click(getByLabelText('menu'))
 
         expect(getByText('the_email')).toBeInTheDocument()
     })
