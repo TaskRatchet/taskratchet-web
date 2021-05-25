@@ -80,4 +80,5 @@ describe('Task componet', () =>  {
 
     // TODO: test uncle button is disabled if task already charging
     // TODO: test uncle button confirms action
+    // TODO: Make checkboxes for expired tasks unclickable
 })

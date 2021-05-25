@@ -665,7 +665,9 @@ describe("tasks page", () => {
         expect(getByText('May 22, 2020')).toBeInTheDocument()
     })
 
-    // TODO: restyle tasks based on state
+    // TODO: Displays current day marker
+
+
     // TODO: add pending filter
     // TODO: Pull initial stakes & due date from most-recently added task
     // TODO: Uncomment and fix tasks related to free-entry form
