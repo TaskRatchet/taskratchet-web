@@ -1,4 +1,5 @@
 import * as new_api from "../../lib/api"
+import {addTask, getMe, updateTask} from "../../lib/api"
 import toaster from "../../lib/Toaster"
 import {fireEvent, render, waitFor} from "@testing-library/react"
 import Tasks from "./Tasks"
@@ -8,13 +9,11 @@ import {
     expectLoadingOverlay,
     loadNow,
     makeResponse,
+    makeTask,
     resolveWithDelay,
-    makeTask, withMutedReactQueryLogger,
+    withMutedReactQueryLogger,
 } from "../../lib/test/helpers";
 import {QueryClient, QueryClientProvider} from "react-query";
-import {updateTask} from "../../lib/api";
-import {getMe} from "../../lib/api";
-import {addTask} from "../../lib/api";
 import _ from "lodash";
 import {getUnloadMessage} from "../../lib/getUnloadMessage";
 
@@ -50,9 +49,6 @@ const loadApiResponse = (
 const loadApiData = (
     {tasks = [], me = {}}: { tasks?: TaskType[], me?: object } = {}
 ) => {
-    // loadApiResponse(api.getTasks, {json: tasks || []});
-    // loadApiResponse(api.getMe, {json: me || {}});
-
     jest.spyOn(new_api, "getTasks").mockResolvedValue(tasks || [])
     jest.spyOn(new_api, "getMe").mockResolvedValue(me || {})
 
@@ -665,7 +661,29 @@ describe("tasks page", () => {
         expect(getByText('May 22, 2020')).toBeInTheDocument()
     })
 
+    it('shows today marker', async () => {
+        loadNow(new Date('3/22/2020'))
+
+        loadApiData({tasks: [
+            makeTask({due: "1/22/2020, 11:59 PM"}),
+            makeTask({due: "5/22/2020, 11:59 PM"})
+        ]})
+
+        const {getByText, container} = await renderTasksPage()
+
+        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+
+        const list = container.querySelector('.organism-taskList > ul')
+
+        if (!list) throw new Error('could not find list')
+
+        expect(list.childNodes[2].textContent).toContain('Today')
+    })
+
     // TODO: Displays current day marker
+    // TODO: scroll to today on page load
+
+    // box.scrollTo({behavior: 'smooth', top: 300})
 
 
     // TODO: add pending filter
