@@ -76,4 +76,14 @@ describe('NavBar',  () => {
 
         expect(queryByText('Logout')).not.toBeInTheDocument()
     })
+
+    it('has today button', async () => {
+       const {getByLabelText} = await renderComponent()
+
+       expect(getByLabelText('today')).toBeInTheDocument()
+    })
 })
+
+// TODO:
+// today button scrolls to today when viewing tasks
+// today button navigates to tasks when not on tasks page
