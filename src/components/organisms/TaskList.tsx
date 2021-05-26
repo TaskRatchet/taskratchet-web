@@ -9,7 +9,11 @@ import {Divider, List, ListItem, Typography} from "@material-ui/core";
 
 const ListItemComponent = React.forwardRef((props: TaskProps, ref) => <Task ref_={ref} {...props} />)
 
-const TaskList = () => {
+interface TaskListProps {
+    lastToday: Date|undefined
+}
+
+const TaskList = ({lastToday}: TaskListProps) => {
     const {data: tasks} = useTasks();
     const [didScroll, setDidScroll] = useState<boolean>(false)
 
@@ -38,6 +42,10 @@ const TaskList = () => {
             {`Today: ${todayString}`}
         </Typography>
     </li>
+
+    useEffect(() => {
+        setDidScroll(false)
+    }, [lastToday, setDidScroll])
 
     useEffect(() => {
         if (didScroll || !todayRef.current) return

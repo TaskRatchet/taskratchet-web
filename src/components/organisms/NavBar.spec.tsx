@@ -100,5 +100,4 @@ describe('NavBar',  () => {
 })
 
 // TODO:
-// today button scrolls to today when viewing tasks
-// today button navigates to tasks when not on tasks page
+// buttons can be pressed while loading indicator present

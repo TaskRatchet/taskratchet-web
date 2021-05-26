@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import RegisterForm from './components/pages/Register';
 import Tasks from './components/pages/Tasks';
@@ -19,6 +19,7 @@ import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from "react-query";
 import LoadingIndicator from "./components/molecules/LoadingIndicator";
 import NavBar from "./components/organisms/NavBar";
+import browser from "./lib/Browser";
 
 toast.configure();
 
@@ -42,6 +43,11 @@ function usePageViews() {
 // TODO: Turn on typescript strict mode
 
 export function App() {
+    const [lastToday, setLastToday] = useState<Date>()
+    const handleTodayClick = () => {
+        setLastToday(browser.getNow())
+    }
+
     useEffect(() => {
         document.title = 'TaskRatchet';
     }, []);
@@ -50,7 +56,7 @@ export function App() {
 
     return <div className={'page-base'}>
         <QueryClientProvider client={queryClient}>
-            <NavBar />
+            <NavBar onTodayClick={handleTodayClick} />
 
             <LoadingIndicator />
 
@@ -83,7 +89,7 @@ export function App() {
 
                     <Route path={'/'}>
                         <Authenticated>
-                            <Tasks/>
+                            <Tasks lastToday={lastToday} />
                         </Authenticated>
                     </Route>
                 </Switch>

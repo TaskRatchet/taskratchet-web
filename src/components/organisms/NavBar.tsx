@@ -5,13 +5,22 @@ import './NavBar.css'
 import MenuIcon from "@material-ui/icons/Menu";
 import TodayIcon from '@material-ui/icons/Today';
 import {logout, useSession} from "../../lib/api/useSession";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useHistory } from 'react-router-dom';
 
-export default function NavBar() {
+interface NavBarProps {
+    onTodayClick?: () => void
+}
+
+export default function NavBar({onTodayClick}: NavBarProps) {
     const session = useSession();
     const location = useLocation()
+    const history = useHistory()
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const toggleMenu = () => setIsOpen(!isOpen)
+    const handleTodayClick = () => {
+        onTodayClick && onTodayClick()
+        history.push('/')
+    }
 
     useEffect(() => setIsOpen(false), [location])
 
@@ -21,7 +30,7 @@ export default function NavBar() {
                 <Button component={Link} to={'/'} color={'inherit'}>TaskRatchet</Button>
             </Typography>
             <span>
-                <IconButton component={Link} to={'/'} edge="start" color="inherit" aria-label="today">
+                <IconButton onClick={handleTodayClick} edge="start" color="inherit" aria-label="today">
                     <TodayIcon />
                 </IconButton>
 

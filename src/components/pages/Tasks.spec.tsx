@@ -7,8 +7,7 @@ import React from "react";
 import userEvent from '@testing-library/user-event'
 import {
     expectLoadingOverlay,
-    loadNow,
-    makeResponse,
+    loadNow, loadTasksApiData,
     makeTask,
     resolveWithDelay,
     withMutedReactQueryLogger,
@@ -39,23 +38,6 @@ global.document.createRange = () => ({
         ownerDocument: document,
     }
 } as any)
-
-const loadApiResponse = (
-    mock: any,
-    response: { json?: any, ok?: boolean } = {json: null, ok: true}
-) => {
-    (mock as jest.Mock).mockReturnValue(makeResponse(response))
-}
-
-const loadApiData = (
-    {tasks = [], me = {}}: { tasks?: TaskType[], me?: object } = {}
-) => {
-    jest.spyOn(new_api, "getTasks").mockResolvedValue(tasks || [])
-    jest.spyOn(new_api, "getMe").mockResolvedValue(me || {})
-
-    loadApiResponse(updateTask);
-    loadApiResponse(addTask)
-}
 
 const expectTaskSave = async (
     {
@@ -111,7 +93,7 @@ const renderTasksPage = () => {
 async function testParsesDueString(task: string, expected: string, ref: Date) {
     loadNow(ref)
 
-    loadApiData()
+    loadTasksApiData()
 
     const {taskInput, getByText} = await renderTasksPage()
 
@@ -130,7 +112,7 @@ describe("tasks page", () => {
     })
 
     it("loads tasks", async () => {
-        loadApiData({tasks: [makeTask()]})
+        loadTasksApiData({tasks: [makeTask()]})
 
         const {getByText} = renderTasksPage()
 
@@ -156,7 +138,7 @@ describe("tasks page", () => {
 
     it("saves task", async () => {
         loadNow(new Date('10/29/2020'))
-        loadApiData()
+        loadTasksApiData()
 
         const {taskInput, addButton} = renderTasksPage()
 
@@ -173,7 +155,7 @@ describe("tasks page", () => {
     })
 
     it("resets task input", async () => {
-        loadApiData()
+        loadTasksApiData()
 
         const {taskInput, addButton} = renderTasksPage()
 
@@ -188,7 +170,7 @@ describe("tasks page", () => {
     })
 
     it("doesn't accept empty task", async () => {
-        loadApiData()
+        loadTasksApiData()
 
         const {addButton} = renderTasksPage()
 
@@ -200,7 +182,7 @@ describe("tasks page", () => {
     })
 
     it("displays error on empty task submit", async () => {
-        loadApiData()
+        loadTasksApiData()
 
         const {addButton, getByText} = renderTasksPage()
 
@@ -212,7 +194,7 @@ describe("tasks page", () => {
     })
 
     it("displays timezone", async () => {
-        loadApiData({me: {timezone: "the_timezone"}})
+        loadTasksApiData({me: {timezone: "the_timezone"}})
 
         const {getByText} = renderTasksPage()
 
@@ -222,7 +204,7 @@ describe("tasks page", () => {
     })
 
     it("tells api task is complete", async () => {
-        loadApiData({
+        loadTasksApiData({
             tasks: [makeTask({id: 3})]
         })
 
@@ -236,7 +218,7 @@ describe("tasks page", () => {
     })
 
     it("reloads tasks", async () => {
-        loadApiData({
+        loadTasksApiData({
             tasks: [makeTask({id: 3})]
         })
 
@@ -251,7 +233,7 @@ describe("tasks page", () => {
 
     it("toasts task creation failure", async () => {
         await withMutedReactQueryLogger(async () => {
-            loadApiData()
+            loadTasksApiData()
             jest.spyOn(new_api, 'addTask').mockImplementation(() => {
                 throw new Error('Failed to add task')
             })
@@ -270,7 +252,7 @@ describe("tasks page", () => {
 
     it("toasts task creation exception", async () => {
         await withMutedReactQueryLogger(async () => {
-            loadApiData();
+            loadTasksApiData();
 
             jest.spyOn(new_api, 'addTask').mockImplementation(() => {
                 throw Error("Oops!")
@@ -290,7 +272,7 @@ describe("tasks page", () => {
 
     it("toasts task toggle exception", async () => {
         await withMutedReactQueryLogger(async () => {
-            loadApiData({
+            loadTasksApiData({
                 tasks: [makeTask({id: 3})]
             });
 
@@ -433,7 +415,7 @@ describe("tasks page", () => {
     // })
 
     it('uses loading overlay', async () => {
-        loadApiData()
+        loadTasksApiData()
 
         const {container} = renderTasksPage()
 
@@ -441,7 +423,7 @@ describe("tasks page", () => {
     })
 
     it('updates checkboxes optimistically', async () => {
-        loadApiData({
+        loadTasksApiData({
             tasks: [makeTask({id: 3})]
         })
 
@@ -460,7 +442,7 @@ describe("tasks page", () => {
 
     it('rolls back checkbox optimistic update', async () => {
         await withMutedReactQueryLogger(async () => {
-            loadApiData({
+            loadTasksApiData({
                 tasks: [makeTask({id: 3, status: 'pending'})]
             })
 
@@ -487,7 +469,7 @@ describe("tasks page", () => {
     })
 
     it('gets unload warning', async () => {
-        loadApiData({
+        loadTasksApiData({
             tasks: [makeTask({id: 3})]
         })
 
@@ -506,7 +488,7 @@ describe("tasks page", () => {
     it('checking multiple tasks not clobbered by invalidated queries', async () => {
         // Setup & initial render
 
-        loadApiData({
+        loadTasksApiData({
             tasks: [
                 makeTask({task: 'first', id: 3}),
                 makeTask({task: 'second', id: 4}),
@@ -553,7 +535,7 @@ describe("tasks page", () => {
     })
 
     it('has stakes form', async () => {
-        loadApiData()
+        loadTasksApiData()
 
         const {getByText} = renderTasksPage()
 
@@ -573,7 +555,7 @@ describe("tasks page", () => {
 
     it('rolls back task add if mutation fails', async () => {
         await withMutedReactQueryLogger(async () => {
-            loadApiData()
+            loadTasksApiData()
 
             jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!')
 
@@ -597,7 +579,7 @@ describe("tasks page", () => {
     it('cancels fetches on-mutate', async () => {
         // Setup & initial render
 
-        loadApiData()
+        loadTasksApiData()
 
         const {taskInput, addButton, getByText} = await renderTasksPage()
 
@@ -640,7 +622,7 @@ describe("tasks page", () => {
     })
 
     it('shows all tasks', async () => {
-        loadApiData({
+        loadTasksApiData({
             tasks: [makeTask({complete: true})]
         })
 
@@ -652,7 +634,7 @@ describe("tasks page", () => {
     })
 
     it('shows date headings', async () => {
-        loadApiData({
+        loadTasksApiData({
             tasks: [
                 makeTask({due: "5/22/2020, 11:59 PM"})
             ]
@@ -668,7 +650,7 @@ describe("tasks page", () => {
     it('shows today marker', async () => {
         loadNow(new Date('3/22/2020'))
 
-        loadApiData({
+        loadTasksApiData({
             tasks: [
                 makeTask({due: "1/22/2020, 11:59 PM"}),
                 makeTask({due: "5/22/2020, 11:59 PM"})
@@ -689,7 +671,7 @@ describe("tasks page", () => {
     it('shows today marker at end with no future dues', async () => {
         loadNow(new Date('3/22/2020'))
 
-        loadApiData({
+        loadTasksApiData({
             tasks: [
                 makeTask({due: "1/22/2020, 11:59 PM"})
             ]
@@ -709,7 +691,7 @@ describe("tasks page", () => {
     it('scrolls task box', async () => {
         loadNow(new Date('3/22/2020'))
 
-        loadApiData({
+        loadTasksApiData({
             tasks: [
                 makeTask({due: "1/22/2020, 11:59 PM"})
             ]
@@ -729,7 +711,7 @@ describe("tasks page", () => {
     it('scrolls only once', async () => {
         loadNow(new Date('3/22/2020'))
 
-        loadApiData({
+        loadTasksApiData({
             tasks: [
                 makeTask({due: "1/22/2020, 11:59 PM"})
             ]
@@ -749,10 +731,6 @@ describe("tasks page", () => {
 
         expect(browser.scrollIntoView).toHaveBeenCalledTimes(1)
     })
-
-    // TODO: scroll to today on page load
-
-    // box.scrollTo({behavior: 'smooth', top: 300})
 
     // TODO: lazy loads past tasks
 
