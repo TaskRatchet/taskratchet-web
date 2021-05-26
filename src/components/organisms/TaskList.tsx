@@ -5,7 +5,7 @@ import {useTasks} from "../../lib/api";
 import './TaskList.css'
 import _ from "lodash";
 import browser from "../../lib/Browser";
-import {Divider, List, ListItem, Typography} from "@material-ui/core";
+import {Divider, ListItem, Typography} from "@material-ui/core";
 import LazyList from "../molecules/LazyList";
 
 const ListItemComponent = React.forwardRef((props: TaskProps, ref) => <Task ref_={ref} {...props} />)
@@ -53,6 +53,8 @@ const TaskList = ({lastToday}: TaskListProps) => {
         </Typography>
     </li>
 
+    let index;
+
     const reducer = (prev: JSX.Element[] = [], s: string) => {
         const shouldShowBefore = s === nextDuePretty
         const shouldShowAfter = !nextDuePretty && s === dateStrings[dateStrings.length - 1]
@@ -65,10 +67,12 @@ const TaskList = ({lastToday}: TaskListProps) => {
         </li>
 
         if (shouldShowBefore) {
+            index = prev.length
             return [...prev, divider, item]
         }
 
         if (shouldShowAfter) {
+            index = prev.length + 2
             return [...prev, item, divider]
         }
 
@@ -78,7 +82,7 @@ const TaskList = ({lastToday}: TaskListProps) => {
     const entries = dateStrings.reduce(reducer, []);
 
     return <div className={'organism-taskList'}>
-        <LazyList items={entries} />
+        <LazyList items={entries} initialIndex={index} />
     </div>
 }
 
