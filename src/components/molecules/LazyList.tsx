@@ -9,14 +9,21 @@ interface LazyListProps {
 
 export default function LazyList({items, initialIndex = 0}: LazyListProps) {
     const [forwardDelta, setForwardDelta] = useState<number>(0)
+    const [reverseDelta, setReverseDelta] = useState<number>(0)
 
     const page = 10
-    const start = initialIndex - page
+    const start = initialIndex - (page + (page * reverseDelta))
     const end = initialIndex + page + (page * forwardDelta)
 
     const onScroll = (e: any) => {
-        if (browser.getScrollPercentage(e.target as Element) > .8) {
+        const scrollPercentage = browser.getScrollPercentage(e.target as Element);
+
+        if (scrollPercentage > .8) {
             setForwardDelta(forwardDelta + 1)
+        }
+
+        if (scrollPercentage < .2) {
+            setReverseDelta(reverseDelta + 1)
         }
     };
 

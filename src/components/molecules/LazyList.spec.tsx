@@ -50,4 +50,32 @@ describe('LazyList', () => {
 
         expect(queryByText('Item 11')).not.toBeInTheDocument()
     })
+
+    it('loads in reverse', async () => {
+        jest.spyOn(browser, 'getScrollPercentage').mockReturnValue(0)
+
+        const {container, getByText} = await renderComponent(12, 12)
+
+        const list = container.querySelector('ul')
+
+        if (!list) throw new Error('could not find list')
+
+        fireEvent.scroll(list, { target: { scrollY: 100 } });
+
+        expect(getByText('Item 0')).toBeInTheDocument()
+    })
+
+    it('only loads in reverse if scroll position less than 20%', async () => {
+        jest.spyOn(browser, 'getScrollPercentage').mockReturnValue(.2)
+
+        const {container, queryByText} = await renderComponent(12, 12)
+
+        const list = container.querySelector('ul')
+
+        if (!list) throw new Error('could not find list')
+
+        fireEvent.scroll(list, { target: { scrollY: 100 } });
+
+        expect(queryByText('Item 0')).not.toBeInTheDocument()
+    })
 })
