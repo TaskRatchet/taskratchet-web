@@ -45,6 +45,10 @@ export class Browser {
     getUrlParams(): ParsedQuery {
         return queryString.parse(window.location.search)
     }
+
+    scrollIntoView(el: Element) {
+        el.scrollIntoView()
+    }
 }
 
 const browser = new Browser();

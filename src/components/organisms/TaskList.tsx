@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Task, {TaskProps} from "../molecules/Task";
 import {sortTasks} from "../../lib/sortTasks";
 import {useTasks} from "../../lib/api";
@@ -11,6 +11,7 @@ const ListItemComponent = React.forwardRef((props: TaskProps, ref) => <Task ref_
 
 const TaskList = () => {
     const {data: tasks} = useTasks();
+    const [didScroll, setDidScroll] = useState<boolean>(false)
 
     const sorted = sortTasks(tasks || [])
     const sortedDues = sorted.map((t) => t.due)
@@ -24,7 +25,9 @@ const TaskList = () => {
     const nextDue = futureDues && futureDues[0]
     const nextDuePretty = nextDue && browser.getString(new Date(nextDue))
 
-    const divider = <li key={'today'} className={'organism-taskList__today'}>
+    const todayRef = React.createRef<HTMLLIElement>()
+
+    const divider = <li key={'today'} ref={todayRef} className={'organism-taskList__today'}>
         <Divider/>
         <Typography
             color="textSecondary"
@@ -36,6 +39,11 @@ const TaskList = () => {
         </Typography>
     </li>
 
+    useEffect(() => {
+        if (didScroll || !todayRef.current) return
+        browser.scrollIntoView(todayRef.current)
+        setDidScroll(true)
+    }, [todayRef,didScroll,setDidScroll])
 
     return <div className={'organism-taskList'}>
         <List>

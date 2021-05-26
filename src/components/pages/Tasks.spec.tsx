@@ -16,6 +16,7 @@ import {
 import {QueryClient, QueryClientProvider} from "react-query";
 import _ from "lodash";
 import {getUnloadMessage} from "../../lib/getUnloadMessage";
+import browser from "../../lib/Browser";
 
 jest.mock('../../lib/api/apiFetch')
 jest.mock('../../lib/api/getTasks')
@@ -125,6 +126,7 @@ describe("tasks page", () => {
     beforeEach(() => {
         jest.resetAllMocks()
         loadNow(new Date('10/29/2020'))
+        jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined)
     })
 
     it("loads tasks", async () => {
@@ -650,9 +652,11 @@ describe("tasks page", () => {
     })
 
     it('shows date headings', async () => {
-        loadApiData({tasks: [
-            makeTask({due: "5/22/2020, 11:59 PM"})
-        ]})
+        loadApiData({
+            tasks: [
+                makeTask({due: "5/22/2020, 11:59 PM"})
+            ]
+        })
 
         const {getByText} = await renderTasksPage()
 
@@ -664,10 +668,12 @@ describe("tasks page", () => {
     it('shows today marker', async () => {
         loadNow(new Date('3/22/2020'))
 
-        loadApiData({tasks: [
-            makeTask({due: "1/22/2020, 11:59 PM"}),
-            makeTask({due: "5/22/2020, 11:59 PM"})
-        ]})
+        loadApiData({
+            tasks: [
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "5/22/2020, 11:59 PM"})
+            ]
+        })
 
         const {getByText, container} = await renderTasksPage()
 
@@ -683,9 +689,11 @@ describe("tasks page", () => {
     it('shows today marker at end with no future dues', async () => {
         loadNow(new Date('3/22/2020'))
 
-        loadApiData({tasks: [
+        loadApiData({
+            tasks: [
                 makeTask({due: "1/22/2020, 11:59 PM"})
-            ]})
+            ]
+        })
 
         const {getByText, container} = await renderTasksPage()
 
@@ -698,9 +706,55 @@ describe("tasks page", () => {
         expect(list.childNodes[1].textContent).toContain('Today')
     })
 
+    it('scrolls task box', async () => {
+        loadNow(new Date('3/22/2020'))
+
+        loadApiData({
+            tasks: [
+                makeTask({due: "1/22/2020, 11:59 PM"})
+            ]
+        })
+
+        const {getByText, container} = await renderTasksPage()
+
+        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+
+        const marker = container.querySelector('.organism-taskList__today')
+
+        if (!marker) throw new Error('could not find marker')
+
+        expect(browser.scrollIntoView).toHaveBeenCalledWith(marker)
+    })
+
+    it('scrolls only once', async () => {
+        loadNow(new Date('3/22/2020'))
+
+        loadApiData({
+            tasks: [
+                makeTask({due: "1/22/2020, 11:59 PM"})
+            ]
+        })
+
+        const {getByText, container, clickCheckbox} = await renderTasksPage()
+
+        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+
+        const marker = container.querySelector('.organism-taskList__today')
+
+        if (!marker) throw new Error('could not find marker')
+
+        clickCheckbox()
+
+        await waitFor(() => expect(updateTask).toBeCalled())
+
+        expect(browser.scrollIntoView).toHaveBeenCalledTimes(1)
+    })
+
     // TODO: scroll to today on page load
 
     // box.scrollTo({behavior: 'smooth', top: 300})
+
+    // TODO: lazy loads past tasks
 
 
     // TODO: add pending filter

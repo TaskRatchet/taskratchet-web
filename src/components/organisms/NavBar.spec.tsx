@@ -82,6 +82,21 @@ describe('NavBar',  () => {
 
        expect(getByLabelText('today')).toBeInTheDocument()
     })
+
+    it('closes drawer on navigate', async () => {
+        mockUseSession.mockReturnValue({
+            email: 'the_email'
+        })
+
+        const {getByText, getByLabelText, queryByText} = await renderComponent()
+
+        userEvent.click(getByLabelText('menu'))
+        userEvent.click(getByText('Account'))
+
+        await waitFor(() => {
+            expect(queryByText('Logout')).not.toBeInTheDocument()
+        })
+    })
 })
 
 // TODO:

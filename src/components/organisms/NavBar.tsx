@@ -1,15 +1,19 @@
 import {AppBar, Button, Drawer, IconButton, Toolbar, Typography} from "@material-ui/core";
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import './NavBar.css'
 import MenuIcon from "@material-ui/icons/Menu";
 import TodayIcon from '@material-ui/icons/Today';
 import {logout, useSession} from "../../lib/api/useSession";
+import { useLocation } from 'react-router-dom';
 
 export default function NavBar() {
     const session = useSession();
+    const location = useLocation()
     const [isOpen, setIsOpen] = useState<boolean>(false)
     const toggleMenu = () => setIsOpen(!isOpen)
+
+    useEffect(() => setIsOpen(false), [location])
 
     return <AppBar className={'organism-navBar'} position="static">
         <Toolbar>
@@ -17,7 +21,7 @@ export default function NavBar() {
                 <Button component={Link} to={'/'} color={'inherit'}>TaskRatchet</Button>
             </Typography>
             <span>
-                <IconButton edge="start" color="inherit" aria-label="today">
+                <IconButton component={Link} to={'/'} edge="start" color="inherit" aria-label="today">
                     <TodayIcon />
                 </IconButton>
 
