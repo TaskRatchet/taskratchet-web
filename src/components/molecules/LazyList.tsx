@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
 import {List} from "@material-ui/core";
+import browser from "../../lib/Browser";
 
 interface LazyListProps {
     items: JSX.Element[],
@@ -12,18 +13,12 @@ export default function LazyList({items, initialIndex = 0}: LazyListProps) {
     const page = 10
     const start = initialIndex - page
     const end = initialIndex + page + (page * forwardDelta)
-    const listRef = React.createRef<HTMLUListElement>()
 
-    if (listRef.current) {
-        listRef.current.onscroll = () => {
-            console.log('onscroll')
+    const onScroll = (e: any) => {
+        if (browser.getScrollPercentage(e.target as Element) > .8) {
             setForwardDelta(forwardDelta + 1)
         }
-    }
+    };
 
-    // List ref
-    // ref.onscroll = () => { ... }
-    // check if percentage is within 10% of either side
-
-    return <List ref={listRef}>{items.slice(start, end)}</List>
+    return <List onScroll={onScroll}>{items.slice(start, end)}</List>
 }
