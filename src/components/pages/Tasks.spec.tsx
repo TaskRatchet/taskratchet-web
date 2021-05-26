@@ -70,7 +70,7 @@ const expectCheckboxState = (task: string, expected: boolean, getByText: any) =>
 
 const renderTasksPage = () => {
     const queryClient = new QueryClient()
-    const getters = render(<QueryClientProvider client={queryClient}><Tasks/></QueryClientProvider>),
+    const getters = render(<QueryClientProvider client={queryClient}><Tasks lastToday={undefined} /></QueryClientProvider>),
         {getByText, getByPlaceholderText} = getters
 
     return {
@@ -732,7 +732,49 @@ describe("tasks page", () => {
         expect(browser.scrollIntoView).toHaveBeenCalledTimes(1)
     })
 
+    it('does not load all tasks initially', async () => {
+        loadNow(new Date('3/22/2020'))
+
+        loadTasksApiData({
+            tasks: [
+                makeTask({due: "1/1/2020, 11:59 PM", task: "task 1"}),
+                makeTask({due: "1/2/2020, 11:59 PM", task: "task 2"}),
+                makeTask({due: "1/3/2020, 11:59 PM", task: "task 3"}),
+                makeTask({due: "1/4/2020, 11:59 PM", task: "task 4"}),
+                makeTask({due: "1/5/2020, 11:59 PM", task: "task 5"}),
+                makeTask({due: "1/6/2020, 11:59 PM", task: "task 6"}),
+                makeTask({due: "1/7/2020, 11:59 PM", task: "task 7"}),
+                makeTask({due: "1/8/2020, 11:59 PM", task: "task 8"}),
+                makeTask({due: "1/9/2020, 11:59 PM", task: "task 9"}),
+                makeTask({due: "1/10/2020, 11:59 PM", task: "task 10"}),
+                makeTask({due: "1/11/2020, 11:59 PM", task: "task 11"}),
+                makeTask({due: "1/12/2020, 11:59 PM", task: "task 12"}),
+                makeTask({due: "1/13/2020, 11:59 PM", task: "task 13"}),
+                makeTask({due: "1/14/2020, 11:59 PM", task: "task 14"}),
+                makeTask({due: "1/15/2020, 11:59 PM", task: "task 15"}),
+            ]
+        })
+
+        const {getByText, queryByText} = await renderTasksPage()
+
+        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+
+        expect(queryByText('task 1')).not.toBeInTheDocument()
+    })
+
     // TODO: lazy loads past tasks
+    // TODO: lazy loads future tasks
+    // page size: 50
+    // load first 50 on initial load--25 ahead, 25 behind?
+    // getTasks({ahead: 50, behind: 50})
+    // add 50 to appropriate prop on each scroll ~bump
+    // don't request again when less than requested was returned on previous request
+    // could use a cursor, instead, that takes positive and negative integers
+    // API should return prevCursor and nextCursor to allow for react-query to iterate over all fetched pages when query becomes stale
+
+    // just lazy-load react nodes, not api data
+    // list component that detects when it has scrolled all the way to top or bottom
+    // runs callback to add nodes when this happens
 
 
     // TODO: add pending filter

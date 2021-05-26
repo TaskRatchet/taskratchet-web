@@ -8,7 +8,6 @@
 }
 .page-tasks .organism-taskList {
   flex: 1 1 0;
-  overflow: scroll;
 }
 .page-tasks .page-tasks__toggleLabel {
   cursor: pointer;

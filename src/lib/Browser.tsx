@@ -49,6 +49,10 @@ export class Browser {
     scrollIntoView(el: Element) {
         el.scrollIntoView()
     }
+
+    getScrollPercentage(el: Element) {
+        return el.scrollTop / (el.scrollHeight - el.clientHeight) * 100;
+    }
 }
 
 const browser = new Browser();

@@ -6,6 +6,7 @@ import './TaskList.css'
 import _ from "lodash";
 import browser from "../../lib/Browser";
 import {Divider, List, ListItem, Typography} from "@material-ui/core";
+import LazyList from "../molecules/LazyList";
 
 const ListItemComponent = React.forwardRef((props: TaskProps, ref) => <Task ref_={ref} {...props} />)
 
@@ -16,6 +17,17 @@ interface TaskListProps {
 const TaskList = ({lastToday}: TaskListProps) => {
     const {data: tasks} = useTasks();
     const [didScroll, setDidScroll] = useState<boolean>(false)
+    const todayRef = React.createRef<HTMLLIElement>()
+
+    useEffect(() => {
+        setDidScroll(false)
+    }, [lastToday, setDidScroll])
+
+    useEffect(() => {
+        if (didScroll || !todayRef.current) return
+        browser.scrollIntoView(todayRef.current)
+        setDidScroll(true)
+    }, [todayRef,didScroll,setDidScroll])
 
     const sorted = sortTasks(tasks || [])
     const sortedDues = sorted.map((t) => t.due)
@@ -29,8 +41,6 @@ const TaskList = ({lastToday}: TaskListProps) => {
     const nextDue = futureDues && futureDues[0]
     const nextDuePretty = nextDue && browser.getString(new Date(nextDue))
 
-    const todayRef = React.createRef<HTMLLIElement>()
-
     const divider = <li key={'today'} ref={todayRef} className={'organism-taskList__today'}>
         <Divider/>
         <Typography
@@ -43,35 +53,32 @@ const TaskList = ({lastToday}: TaskListProps) => {
         </Typography>
     </li>
 
-    useEffect(() => {
-        setDidScroll(false)
-    }, [lastToday, setDidScroll])
+    const reducer = (prev: JSX.Element[] = [], s: string) => {
+        const shouldShowBefore = s === nextDuePretty
+        const shouldShowAfter = !nextDuePretty && s === dateStrings[dateStrings.length - 1]
 
-    useEffect(() => {
-        if (didScroll || !todayRef.current) return
-        browser.scrollIntoView(todayRef.current)
-        setDidScroll(true)
-    }, [todayRef,didScroll,setDidScroll])
+        const item = <li key={s}>
+            <h3>{s}</h3>
+            {dateGroups[s].map((t: TaskType) => (
+                <ListItem component={ListItemComponent} task={t} key={JSON.stringify(t)}/>
+            ))}
+        </li>
+
+        if (shouldShowBefore) {
+            return [...prev, divider, item]
+        }
+
+        if (shouldShowAfter) {
+            return [...prev, item, divider]
+        }
+
+        return [...prev, item]
+    };
+
+    const entries = dateStrings.reduce(reducer, []);
 
     return <div className={'organism-taskList'}>
-        <List>
-            {dateStrings.map((s: string) => {
-                    const shouldShowBefore = s === nextDuePretty
-                    const shouldShowAfter = !nextDuePretty && s === dateStrings[dateStrings.length - 1]
-
-                    return [
-                        shouldShowBefore && divider,
-                        <li key={s}>
-                            <h3>{s}</h3>
-                            {dateGroups[s].map((t: TaskType) => (
-                                <ListItem component={ListItemComponent} task={t} key={JSON.stringify(t)}/>
-                            ))}
-                        </li>,
-                        shouldShowAfter && divider
-                    ]
-                }
-            )}
-        </List>
+        <LazyList items={entries} />
     </div>
 }
 

@@ -1,11 +1,13 @@
 .organism-taskList {
   padding-left: 0;
-  padding-bottom: 3rem;
-  > li {
-    list-style-type: none;
-    &:nth-child(odd) {
-      background-color: #ededed;
-    }
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  > ul {
+    flex: 1 1 0;
+    overflow: scroll;
+    min-height: 0;
+    padding-bottom: 4rem;
   }
   .organism-taskList__today {
     margin-top: 1rem;
