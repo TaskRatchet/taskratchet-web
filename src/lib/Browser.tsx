@@ -19,6 +19,14 @@ export class Browser {
         return days[date.getDay()];
     }
 
+    getString(date: Date): string {
+        return date.toLocaleString(browser.getLanguages(), {
+            month: 'long',
+            day: 'numeric',
+            year: 'numeric'
+        })
+    }
+
     getDateString(date: Date): string {
         return date.toLocaleDateString(browser.getLanguages())
     }
@@ -36,6 +44,14 @@ export class Browser {
 
     getUrlParams(): ParsedQuery {
         return queryString.parse(window.location.search)
+    }
+
+    scrollIntoView(el: Element) {
+        el.scrollIntoView()
+    }
+
+    getScrollPercentage(el: Element) {
+        return el.scrollTop / (el.scrollHeight - el.clientHeight);
     }
 }
 

@@ -1,11 +1,15 @@
-.page-tasks .page-tasks__list {
-  padding-left: 0;
+.page-tasks {
+  display: flex;
+  flex-direction: column;
+  max-height: 100%;
+  flex: 1 1 0;
 }
-.page-tasks .page-tasks__list > li {
-  list-style-type: none;
+.page-tasks h3 {
+  margin-left: 1rem;
 }
-.page-tasks .page-tasks__list > li:nth-child(odd) {
-  background-color: #ededed;
+.page-tasks .organism-taskList {
+  flex: 1 1 0;
+  overflow: scroll;
 }
 .page-tasks .page-tasks__toggleLabel {
   cursor: pointer;

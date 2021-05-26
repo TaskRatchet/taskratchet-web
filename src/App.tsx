@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 import RegisterForm from './components/pages/Register';
 import Tasks from './components/pages/Tasks';
@@ -7,20 +7,19 @@ import {
     BrowserRouter as Router,
     Switch,
     Route,
-    Link,
     useLocation,
 } from "react-router-dom";
-import SessionWidget from './components/molecules/SessionWidget'
 import Account from './components/pages/Account'
 import Authenticated from './components/pages/Authenticated'
 import ResetPassword from "./components/pages/ResetPassword";
 import {toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {isProduction} from "./tr_constants"
-import Footer from "./components/organisms/Footer"
 import {ReactQueryDevtools} from 'react-query/devtools'
 import {QueryClient, QueryClientProvider} from "react-query";
 import LoadingIndicator from "./components/molecules/LoadingIndicator";
+import NavBar from "./components/organisms/NavBar";
+import browser from "./lib/Browser";
 
 toast.configure();
 
@@ -44,6 +43,11 @@ function usePageViews() {
 // TODO: Turn on typescript strict mode
 
 export function App() {
+    const [lastToday, setLastToday] = useState<Date>()
+    const handleTodayClick = () => {
+        setLastToday(browser.getNow())
+    }
+
     useEffect(() => {
         document.title = 'TaskRatchet';
     }, []);
@@ -52,11 +56,9 @@ export function App() {
 
     return <div className={'page-base'}>
         <QueryClientProvider client={queryClient}>
+            <NavBar onTodayClick={handleTodayClick} />
+
             <LoadingIndicator />
-
-            <SessionWidget/>
-
-            <h2><Link to={'/'}>TaskRatchet</Link></h2>
 
             <div className={'page-base__content'}>
                 <Switch>
@@ -87,13 +89,11 @@ export function App() {
 
                     <Route path={'/'}>
                         <Authenticated>
-                            <Tasks/>
+                            <Tasks lastToday={lastToday} />
                         </Authenticated>
                     </Route>
                 </Switch>
             </div>
-
-            <Footer/>
             <ReactQueryDevtools initialIsOpen={false}/>
         </QueryClientProvider>
     </div>

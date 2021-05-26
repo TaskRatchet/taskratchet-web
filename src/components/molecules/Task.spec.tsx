@@ -78,8 +78,7 @@ describe('Task componet', () =>  {
         expect(getByText('expired')).toBeInTheDocument()
     })
 
-    // Punt
-
     // TODO: test uncle button is disabled if task already charging
     // TODO: test uncle button confirms action
+    // TODO: Make checkboxes for expired tasks unclickable
 })

@@ -1,43 +1,89 @@
-import React, {useState} from "react";
-import Task from "../molecules/Task";
+import React, {useEffect, useState} from "react";
+import Task, {TaskProps} from "../molecules/Task";
 import {sortTasks} from "../../lib/sortTasks";
 import {useTasks} from "../../lib/api";
+import './TaskList.css'
+import _ from "lodash";
+import browser from "../../lib/Browser";
+import {Divider, ListItem, Typography} from "@material-ui/core";
+import LazyList from "../molecules/LazyList";
 
-const TaskList = () => {
+const ListItemComponent = React.forwardRef((props: TaskProps, ref) => <Task ref_={ref} {...props} />)
+
+interface TaskListProps {
+    lastToday: Date|undefined
+}
+
+const TaskList = ({lastToday}: TaskListProps) => {
     const {data: tasks} = useTasks();
-    const [showArchive, setShowArchive] = useState<boolean>(false)
+    const [didScroll, setDidScroll] = useState<boolean>(false)
+    const todayRef = React.createRef<HTMLLIElement>()
 
-    const getSortedTasks = () => {
-        if (!tasks) return []
+    useEffect(() => {
+        setDidScroll(false)
+    }, [lastToday, setDidScroll])
 
-        return sortTasks(tasks);
+    useEffect(() => {
+        if (didScroll || !todayRef.current) return
+        browser.scrollIntoView(todayRef.current)
+        setDidScroll(true)
+    }, [todayRef,didScroll,setDidScroll])
+
+    const sorted = sortTasks(tasks || [])
+    const sortedDues = sorted.map((t) => t.due)
+    const today = browser.getNow()
+    const todayString = browser.getString(today)
+    const futureDues = sortedDues.filter((d) => new Date(d) >= today)
+    const dateGroups = _.groupBy(sorted, (t) => {
+        return browser.getString(new Date(t.due))
+    })
+    const dateStrings = Object.keys(dateGroups);
+    const nextDue = futureDues && futureDues[0]
+    const nextDuePretty = nextDue && browser.getString(new Date(nextDue))
+
+    const divider = <li key={'today'} ref={todayRef} className={'organism-taskList__today'}>
+        <Divider/>
+        <Typography
+            color="textSecondary"
+            display="block"
+            variant="caption"
+        >
+            {/*TODO: display ticking time, too*/}
+            {`Today: ${todayString}`}
+        </Typography>
+    </li>
+
+    let index;
+
+    const reducer = (prev: JSX.Element[] = [], s: string) => {
+        const shouldShowBefore = s === nextDuePretty
+        const shouldShowAfter = !nextDuePretty && s === dateStrings[dateStrings.length - 1]
+
+        const item = <li key={s}>
+            <h3>{s}</h3>
+            {dateGroups[s].map((t: TaskType) => (
+                <ListItem component={ListItemComponent} task={t} key={JSON.stringify(t)}/>
+            ))}
+        </li>
+
+        if (shouldShowBefore) {
+            index = prev.length
+            return [...prev, divider, item]
+        }
+
+        if (shouldShowAfter) {
+            index = prev.length + 2
+            return [...prev, item, divider]
+        }
+
+        return [...prev, item]
     };
 
-    const getPendingTasks = () => {
-        return getSortedTasks().filter((t: TaskType) => {
-            return t.status === 'pending';
-        });
-    };
+    const entries = dateStrings.reduce(reducer, []);
 
-    const getArchivedTasks = () => {
-        return getSortedTasks().filter((t: TaskType) => {
-            return t.status !== 'pending';
-        });
-    };
-
-    const makeTaskListItems = (tasks: TaskType[]) => {
-        return tasks.map((t, i) => {
-            return <li key={i}><Task task={t} /></li>}
-        );
-    };
-
-    return <>
-        <ul className={'page-tasks__list'}>{makeTaskListItems(getPendingTasks())}</ul>
-
-        <button className={'page-tasks__toggleLabel'} onClick={() => setShowArchive(!showArchive)}>Archived Tasks</button>
-
-        {showArchive && <ul className={'page-tasks__list page-tasks__archive'}>{makeTaskListItems(getArchivedTasks())}</ul>}
-    </>
+    return <div className={'organism-taskList'}>
+        <LazyList items={entries} initialIndex={index} />
+    </div>
 }
 
 export default TaskList

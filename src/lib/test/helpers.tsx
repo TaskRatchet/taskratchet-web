@@ -1,9 +1,10 @@
 import * as new_api from "../../lib/api"
 import {ParsedQuery} from "query-string";
 import browser from "../Browser";
-import {QueryClient, QueryClientProvider} from "react-query";
+import {QueryClient, QueryClientProvider, setLogger} from "react-query";
 import React, {ReactElement} from "react";
 import {render} from "@testing-library/react";
+import {addTask, updateTask} from "../../lib/api";
 
 jest.mock('../../lib/api/getTimezones')
 
@@ -120,4 +121,33 @@ export function makeTask(
         task,
         status
     }
+}
+
+export async function withMutedReactQueryLogger(callback: () => any) {
+    setLogger({
+        log: () => {},
+        warn: () => {},
+        error: () => {},
+    });
+
+    await callback()
+
+    setLogger(window.console);
+}
+
+const loadApiResponse = (
+    mock: any,
+    response: { json?: any, ok?: boolean } = {json: null, ok: true}
+) => {
+    (mock as jest.Mock).mockReturnValue(makeResponse(response))
+}
+
+export const loadTasksApiData = (
+    {tasks = [], me = {}}: { tasks?: TaskType[], me?: object } = {}
+) => {
+    jest.spyOn(new_api, "getTasks").mockResolvedValue(tasks || [])
+    jest.spyOn(new_api, "getMe").mockResolvedValue(me || {})
+
+    loadApiResponse(updateTask);
+    loadApiResponse(addTask)
 }
