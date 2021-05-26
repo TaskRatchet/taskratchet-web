@@ -51,7 +51,7 @@ export class Browser {
     }
 
     getScrollPercentage(el: Element) {
-        return el.scrollTop / (el.scrollHeight - el.clientHeight) * 100;
+        return el.scrollTop / (el.scrollHeight - el.clientHeight);
     }
 }
 

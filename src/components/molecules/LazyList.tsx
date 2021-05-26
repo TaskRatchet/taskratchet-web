@@ -12,9 +12,8 @@ export default function LazyList({items, initialIndex = 0}: LazyListProps) {
     const [reverseDelta, setReverseDelta] = useState<number>(0)
 
     const page = 10
-    const start = initialIndex - (page + (page * reverseDelta))
+    const start = Math.max(0, initialIndex - (page + (page * reverseDelta)))
     const end = initialIndex + page + (page * forwardDelta)
-
     const onScroll = (e: any) => {
         const scrollPercentage = browser.getScrollPercentage(e.target as Element);
 

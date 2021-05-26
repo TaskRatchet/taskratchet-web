@@ -7,7 +7,7 @@ function renderComponent(count: number, index: number = 0) {
     const indices = Array.from((new Array(count)).keys())
     const items = indices.map((k) => <li key={k}>Item {k}</li>);
 
-    return render(<LazyList items={items} />)
+    return render(<LazyList items={items} initialIndex={index} />)
 }
 
 describe('LazyList', () => {
@@ -77,5 +77,11 @@ describe('LazyList', () => {
         fireEvent.scroll(list, { target: { scrollY: 100 } });
 
         expect(queryByText('Item 0')).not.toBeInTheDocument()
+    })
+
+    it('calculates boundaries correctly', async () => {
+        const {getByText} = await renderComponent(21)
+
+        expect(getByText('Item 0')).toBeInTheDocument()
     })
 })
