@@ -762,21 +762,7 @@ describe("tasks page", () => {
         expect(queryByText('task 1')).not.toBeInTheDocument()
     })
 
-    // TODO: lazy loads past tasks
-    // TODO: lazy loads future tasks
-    // page size: 50
-    // load first 50 on initial load--25 ahead, 25 behind?
-    // getTasks({ahead: 50, behind: 50})
-    // add 50 to appropriate prop on each scroll ~bump
-    // don't request again when less than requested was returned on previous request
-    // could use a cursor, instead, that takes positive and negative integers
-    // API should return prevCursor and nextCursor to allow for react-query to iterate over all fetched pages when query becomes stale
-
-    // just lazy-load react nodes, not api data
-    // list component that detects when it has scrolled all the way to top or bottom
-    // runs callback to add nodes when this happens
-
-
+    // TODO: lazy load API data for tasks
     // TODO: add pending filter
     // TODO: Pull initial stakes & due date from most-recently added task
     // TODO: Uncomment and fix tasks related to free-entry form
