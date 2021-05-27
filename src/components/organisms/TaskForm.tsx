@@ -67,7 +67,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                     label="Stakes"
                     required
                     type="number"
-                    value={dollars}
+                    value={dollars > 0 ? dollars : ''}
                     onChange={e => {
                         onChange(task, due, parseInt(e.target.value) * 100)
                     }}
@@ -77,7 +77,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                 {/* value={dollars > 0 ? dollars : null} */}
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={7}>
                 {/* TODO: Add minimum date == today */}
                 <KeyboardDatePicker
                     id="page-tasks__dueDate"
@@ -95,7 +95,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                 />
             </Grid>
 
-            <Grid item xs={6}>
+            <Grid item xs={5}>
                 <KeyboardTimePicker
                     id="page-tasks__dueTime"
                     label="Due Time"

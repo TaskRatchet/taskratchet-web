@@ -94,6 +94,14 @@ describe('TaskForm', () => {
 
         expect(onChange).toBeCalledWith('', null, 100)
     })
+
+    it('allows deleting all stakes digits', async () => {
+        const {centsInput} = await renderComponent()
+
+        await userEvent.type(centsInput, "{backspace}")
+
+        expect(centsInput).toHaveValue(null)
+    })
 })
 
 // TODO:
@@ -103,3 +111,4 @@ describe('TaskForm', () => {
 // prevent entering date in the past
 // prevent adding task where date and time is in the past
 // allow using keyboard to modify date and time
+// prevents submitting task with zero stakes
