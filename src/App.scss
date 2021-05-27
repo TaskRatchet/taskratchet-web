@@ -12,12 +12,15 @@ html {
 }
 
 body {
-  margin: 0;
+  background-color: #e6eff1;
+  margin: 0 auto;
+  max-width: 35rem;
 }
 
 .page-base {
   display: flex;
   flex-direction: column;
+  background-color: white;
 }
 
 .page-base__content {

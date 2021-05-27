@@ -20,6 +20,8 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import LoadingIndicator from "./components/molecules/LoadingIndicator";
 import NavBar from "./components/organisms/NavBar";
 import browser from "./lib/Browser";
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
+import DateFnsUtils from '@date-io/date-fns';
 
 toast.configure();
 
@@ -55,47 +57,49 @@ export function App() {
     usePageViews()
 
     return <div className={'page-base'}>
-        <QueryClientProvider client={queryClient}>
-            <NavBar onTodayClick={handleTodayClick} />
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <QueryClientProvider client={queryClient}>
+                <NavBar onTodayClick={handleTodayClick}/>
 
-            <LoadingIndicator />
+                <LoadingIndicator/>
 
-            <div className={'page-base__content'}>
-                <Switch>
-                    <Route path={'/register'}>
-                        <RegisterForm/>
-                    </Route>
+                <div className={'page-base__content'}>
+                    <Switch>
+                        <Route path={'/register'}>
+                            <RegisterForm/>
+                        </Route>
 
-                    <Route path={'/success'}>
-                        Your payment method has been saved successfully.
-                    </Route>
+                        <Route path={'/success'}>
+                            Your payment method has been saved successfully.
+                        </Route>
 
-                    <Route path={'/cancel'}>
-                        Your payment method could not be saved. Please contact
-                        <a href="mailto:nathan@taskratchet.com" target={'_blank'}
-                           rel="noopener noreferrer">nathan@taskratchet.com</a>
-                        for assistance.
-                    </Route>
+                        <Route path={'/cancel'}>
+                            Your payment method could not be saved. Please contact
+                            <a href="mailto:nathan@taskratchet.com" target={'_blank'}
+                               rel="noopener noreferrer">nathan@taskratchet.com</a>
+                            for assistance.
+                        </Route>
 
-                    <Route path={'/account'}>
-                        <Authenticated>
-                            <Account/>
-                        </Authenticated>
-                    </Route>
+                        <Route path={'/account'}>
+                            <Authenticated>
+                                <Account/>
+                            </Authenticated>
+                        </Route>
 
-                    <Route path={'/reset'}>
-                        <ResetPassword/>
-                    </Route>
+                        <Route path={'/reset'}>
+                            <ResetPassword/>
+                        </Route>
 
-                    <Route path={'/'}>
-                        <Authenticated>
-                            <Tasks lastToday={lastToday} />
-                        </Authenticated>
-                    </Route>
-                </Switch>
-            </div>
-            <ReactQueryDevtools initialIsOpen={false}/>
-        </QueryClientProvider>
+                        <Route path={'/'}>
+                            <Authenticated>
+                                <Tasks lastToday={lastToday}/>
+                            </Authenticated>
+                        </Route>
+                    </Switch>
+                </div>
+                <ReactQueryDevtools initialIsOpen={false}/>
+            </QueryClientProvider>
+        </MuiPickersUtilsProvider>
     </div>
 }
 

@@ -1,7 +1,8 @@
 import React, {useEffect} from "react";
-import DatePicker from 'react-datepicker'
 import './TaskForm.css'
 import browser from "../../lib/Browser";
+import {Button, Grid, InputAdornment, TextField} from "@material-ui/core";
+import {KeyboardDatePicker, KeyboardTimePicker} from "@material-ui/pickers";
 
 interface TaskFormProps {
     task: string,
@@ -15,6 +16,8 @@ interface TaskFormProps {
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
     const {task, due, cents, timezone, error, onChange, onSubmit} = props
+
+    // console.log({due})
 
     useEffect(() => {
         const getDefaultDue = () => {
@@ -44,41 +47,93 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
         e.preventDefault();
         onSubmit()
     }} className={'organism-taskForm'}>
-        <div className="page-tasks__inputs">
-            {error ? <p>{error}</p> : null}
+        <Grid container spacing={2}>
+            {error ? <Grid item xs={12}>{error}</Grid> : null}
 
-            <label className={'page-tasks__description'}>Task <input
-                type="text"
-                placeholder={'Task'}
-                value={task}
-                onChange={e => {
-                    onChange(e.target.value, due, cents)
-                }}
-            /></label>
+            <Grid item xs={9}>
+                <TextField
+                    id="page-tasks__task"
+                    label="Task"
+                    required
+                    value={task}
+                    onChange={e => {
+                        onChange(e.target.value, due, cents)
+                    }}
+                    fullWidth
+                />
+            </Grid>
 
-            <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker
-                selected={due}
-                onChange={value => {
-                    onChange(task, value, cents)
-                }}
-                showTimeSelect
-                timeIntervals={5}
-                dateFormat="MMMM d, yyyy h:mm aa"
-                minDate={new Date()}
-            /></label>
+            <Grid item xs={3}>
+                <TextField
+                    id="page-tasks__dollars"
+                    label="Stakes"
+                    required
+                    type="number"
+                    value={dollars > 0 ? dollars : ''}
+                    onChange={e => {
+                        onChange(task, due, parseInt(e.target.value) * 100)
+                    }}
+                    fullWidth
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        endAdornment: <InputAdornment position="end">USD</InputAdornment>
+                    }}
+                />
+            </Grid>
 
-            <label className={'page-tasks__dollars'}>Stakes <input
-                type="number"
-                placeholder={'USD'}
-                min={1}
-                max={2500}
-                value={dollars}
-                onChange={e => {
-                    onChange(task, due, parseInt(e.target.value) * 100)
-                }}
-            /></label>
-        </div>
-        <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
+            <Grid item xs={7}>
+                {/* TODO: Add minimum date == today */}
+                <KeyboardDatePicker
+                    id="page-tasks__dueDate"
+                    label="Due Date"
+                    required
+                    format="MM/dd/yyyy"
+                    value={due}
+                    onChange={(value: Date | null) => {
+                        if (!value || isNaN(value.getTime())) return;
+                        if (due) value.setHours(due?.getHours(), due?.getMinutes())
+                        onChange(task, value, cents);
+                    }}
+                    KeyboardButtonProps={{
+                        'aria-label': 'change date',
+                    }}
+                    fullWidth
+                    disablePast
+                />
+            </Grid>
+
+            <Grid item xs={5}>
+                <KeyboardTimePicker
+                    id="page-tasks__dueTime"
+                    label="Due Time"
+                    required
+                    value={due}
+                    onChange={(value: Date | null) => {
+                        if (!value || isNaN(value.getTime())) return;
+                        if (due) value.setFullYear(due.getFullYear(), due.getMonth(), due.getDate())
+                        onChange(task, value, cents)
+                    }}
+                    KeyboardButtonProps={{
+                        'aria-label': 'change time',
+                    }}
+                    fullWidth
+                />
+            </Grid>
+
+            <Grid item xs>
+                <Button
+                    href={'https://docs.taskratchet.com/timezones.html'}
+                    target={'_blank'}
+                    rel={"noopener noreferrer"}
+                    size={'small'}
+                >{timezone}</Button>
+            </Grid>
+
+            <Grid item xs={3}>
+                <Button variant="contained" size={'small'} type="submit" color="primary">Add</Button>
+            </Grid>
+        </Grid>
+
     </form>
 }
 

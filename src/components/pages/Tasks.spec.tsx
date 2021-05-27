@@ -16,6 +16,8 @@ import {QueryClient, QueryClientProvider} from "react-query";
 import _ from "lodash";
 import {getUnloadMessage} from "../../lib/getUnloadMessage";
 import browser from "../../lib/Browser";
+import DateFnsUtils from "@date-io/date-fns";
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
 
 jest.mock('../../lib/api/apiFetch')
 jest.mock('../../lib/api/getTasks')
@@ -70,11 +72,11 @@ const expectCheckboxState = (task: string, expected: boolean, getByText: any) =>
 
 const renderTasksPage = () => {
     const queryClient = new QueryClient()
-    const getters = render(<QueryClientProvider client={queryClient}><Tasks lastToday={undefined} /></QueryClientProvider>),
-        {getByText, getByPlaceholderText} = getters
+    const getters = render(<MuiPickersUtilsProvider utils={DateFnsUtils}><QueryClientProvider client={queryClient}><Tasks lastToday={undefined} /></QueryClientProvider></MuiPickersUtilsProvider>),
+        {getByText, getByLabelText} = getters
 
     return {
-        taskInput: getByPlaceholderText("Task"),
+        taskInput: getByLabelText("Task *"),
         addButton: getByText("Add"),
         clickCheckbox: (task = "the_task") => {
             const desc = getByText(task),
