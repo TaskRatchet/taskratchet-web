@@ -47,10 +47,10 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 
     return {
         ...result,
-        taskInput: result.getByLabelText('Task *'),
-        dueDateInput: result.getByLabelText('Due Date *'),
-        dueTimeInput: result.getByLabelText('Due Time *'),
-        centsInput: result.getByLabelText("Stakes *"),
+        taskInput: result.getByLabelText('Task *') as HTMLInputElement,
+        dueDateInput: result.getByLabelText('Due Date *') as HTMLInputElement,
+        dueTimeInput: result.getByLabelText('Due Time *') as HTMLInputElement,
+        centsInput: result.getByLabelText("Stakes *") as HTMLInputElement,
     }
 }
 
@@ -102,13 +102,37 @@ describe('TaskForm', () => {
 
         expect(centsInput).toHaveValue(null)
     })
+
+    it('preserves time when editing date', async () => {
+        const onChange = jest.fn()
+
+        const {dueDateInput} = await renderComponent({
+            due: new Date('1/1/2021 11:59 PM'),
+            cents: 500,
+            onChange
+        })
+
+        await userEvent.type(dueDateInput, "{backspace}2{enter}")
+
+        expect(onChange).toBeCalledWith('', new Date('1/1/2022 11:59 PM'), 500)
+    })
+
+    it('preserves date when editing time', async () => {
+        const onChange = jest.fn()
+
+        const {dueTimeInput} = await renderComponent({
+            due: new Date('1/1/2020 11:59 PM'),
+            cents: 500,
+            onChange
+        })
+
+        await userEvent.type(dueTimeInput, "{backspace}M{enter}")
+
+        expect(onChange).toBeCalledWith('', new Date('1/1/2020 11:59 PM'), 500)
+    })
 })
 
 // TODO:
 // remembers last stakes
 // remembers last due
-// allow deleting initial zero
-// prevent entering date in the past
 // prevent adding task where date and time is in the past
-// allow using keyboard to modify date and time
-// prevents submitting task with zero stakes

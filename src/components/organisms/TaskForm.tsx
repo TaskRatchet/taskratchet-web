@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import './TaskForm.css'
 import browser from "../../lib/Browser";
-import {Button, Grid, TextField} from "@material-ui/core";
+import {Button, Grid, InputAdornment, TextField} from "@material-ui/core";
 import {KeyboardDatePicker, KeyboardTimePicker} from "@material-ui/pickers";
 
 interface TaskFormProps {
@@ -16,6 +16,8 @@ interface TaskFormProps {
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
     const {task, due, cents, timezone, error, onChange, onSubmit} = props
+
+    // console.log({due})
 
     useEffect(() => {
         const getDefaultDue = () => {
@@ -72,9 +74,11 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                         onChange(task, due, parseInt(e.target.value) * 100)
                     }}
                     fullWidth
+                    InputProps={{
+                        startAdornment: <InputAdornment position="start">$</InputAdornment>,
+                        endAdornment: <InputAdornment position="end">USD</InputAdornment>
+                    }}
                 />
-                {/* TODO: allow deleting zero */}
-                {/* value={dollars > 0 ? dollars : null} */}
             </Grid>
 
             <Grid item xs={7}>
@@ -86,12 +90,15 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                     format="MM/dd/yyyy"
                     value={due}
                     onChange={(value: Date | null) => {
-                        onChange(task, value, cents)
+                        if (!value || isNaN(value.getTime())) return;
+                        if (due) value.setHours(due?.getHours(), due?.getMinutes())
+                        onChange(task, value, cents);
                     }}
                     KeyboardButtonProps={{
                         'aria-label': 'change date',
                     }}
                     fullWidth
+                    disablePast
                 />
             </Grid>
 
@@ -102,6 +109,8 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                     required
                     value={due}
                     onChange={(value: Date | null) => {
+                        if (!value || isNaN(value.getTime())) return;
+                        if (due) value.setFullYear(due.getFullYear(), due.getMonth(), due.getDate())
                         onChange(task, value, cents)
                     }}
                     KeyboardButtonProps={{
@@ -111,18 +120,18 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                 />
             </Grid>
 
+            <Grid item xs>
+                <Button
+                    href={'https://docs.taskratchet.com/timezones.html'}
+                    target={'_blank'}
+                    rel={"noopener noreferrer"}
+                    size={'small'}
+                >{timezone}</Button>
+            </Grid>
+
             <Grid item xs={3}>
                 <Button variant="contained" size={'small'} type="submit" color="primary">Add</Button>
             </Grid>
-            <Grid item xs>
-            <Button
-                href={'https://docs.taskratchet.com/timezones.html'}
-                target={'_blank'}
-                rel={"noopener noreferrer"}
-                size={'small'}
-            >{timezone}</Button>
-            </Grid>
-
         </Grid>
 
     </form>
