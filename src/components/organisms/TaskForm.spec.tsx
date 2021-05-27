@@ -53,7 +53,7 @@ const renderComponent = (props: RenderComponentProps = {}) => {
         ...result,
         taskInput: result.getByLabelText('Task *'),
         dueInput,
-        centsInput: result.getByPlaceholderText("USD"),
+        centsInput: result.getByLabelText("Stakes *"),
     }
 }
 
@@ -98,3 +98,8 @@ describe('TaskForm', () => {
         expect(onChange).toBeCalledWith('', null, 100)
     })
 })
+
+// TODO:
+// remembers last stakes
+// remembers last due
+// allow deleting initial zero

@@ -48,11 +48,19 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
         <div className="page-tasks__inputs">
             {error ? <p>{error}</p> : null}
 
-            <TextField id="page-tasks__task" label="Task" required value={task} onChange={e => {
-                onChange(e.target.value, due, cents)
-            }} />
+            <TextField
+                id="page-tasks__task"
+                label="Task"
+                required
+                value={task}
+                onChange={e => {
+                    onChange(e.target.value, due, cents)
+                }}
+            />
 
-            <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker
+            <label className={'page-tasks__due'}>Due {timezone ? <>(<a
+                href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'}
+                rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker
                 selected={due}
                 onChange={value => {
                     onChange(task, value, cents)
@@ -63,16 +71,18 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
                 minDate={new Date()}
             /></label>
 
-            <label className={'page-tasks__dollars'}>Stakes <input
+            <TextField
+                id="page-tasks__dollars"
+                label="Stakes"
+                required
                 type="number"
-                placeholder={'USD'}
-                min={1}
-                max={2500}
                 value={dollars}
                 onChange={e => {
                     onChange(task, due, parseInt(e.target.value) * 100)
                 }}
-            /></label>
+            />
+            {/* TODO: allow deleting zero */}
+            {/* value={dollars > 0 ? dollars : null} */}
         </div>
         <input className={'page-tasks__addButton'} type="submit" value={'Add'}/>
     </form>
