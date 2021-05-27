@@ -2,6 +2,8 @@ import TaskForm from './TaskForm'
 import React from "react";
 import {render, RenderResult} from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import DateFnsUtils from "@date-io/date-fns";
+import {MuiPickersUtilsProvider} from "@material-ui/pickers";
 
 global.document.createRange = () => ({
     setStart: () => {
@@ -37,22 +39,17 @@ const renderComponent = (props: RenderComponentProps = {}) => {
         }
     } = props
 
-    const result: RenderResult = render(<TaskForm {...{task, due, cents, timezone, error, onChange, onSubmit}} />)
-
-    // @ts-ignore
-    const dueInput = result.getByText("Due")
-        .firstElementChild
-        .firstElementChild
-        .firstElementChild
-
-    if (!dueInput) {
-        throw Error("Missing due input")
-    }
+    const result: RenderResult = render(
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <TaskForm {...{task, due, cents, timezone, error, onChange, onSubmit}} />
+        </MuiPickersUtilsProvider>
+    )
 
     return {
         ...result,
         taskInput: result.getByLabelText('Task *'),
-        dueInput,
+        dueDateInput: result.getByLabelText('Due Date *'),
+        dueTimeInput: result.getByLabelText('Due Time *'),
         centsInput: result.getByLabelText("Stakes *"),
     }
 }
@@ -81,9 +78,9 @@ describe('TaskForm', () => {
     it('calls onChange when due modified', async () => {
         const onChange = jest.fn()
 
-        const {dueInput} = await renderComponent({onChange})
+        const {dueTimeInput} = await renderComponent({onChange})
 
-        await userEvent.type(dueInput, "{backspace}{backspace}AM")
+        await userEvent.type(dueTimeInput, "{backspace}{backspace}AM")
 
         expect(onChange).toBeCalled()
     })
@@ -103,3 +100,6 @@ describe('TaskForm', () => {
 // remembers last stakes
 // remembers last due
 // allow deleting initial zero
+// prevent entering date in the past
+// prevent adding task where date and time is in the past
+// allow using keyboard to modify date and time

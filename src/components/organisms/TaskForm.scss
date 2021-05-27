@@ -2,27 +2,8 @@
   padding: 1rem;
   box-shadow: rgba(0, 0, 0, 0.05) 0 0.5rem 0.5rem;
 
-  .page-tasks__inputs {
-    display: flex;
-    flex-wrap: wrap;
 
-    label {
-      font-size: .75em;
-      font-weight: bold;
-      margin-bottom: 1em;
-      flex-grow: 1;
-      padding: 2px;
-    }
-
-    input {
-      font-size: 1rem;
-      margin-top: .25rem;
-      width: 100%;
-      padding: 1px;
-      height: 1.75rem;
-    }
-  }
-
+  
   .page-tasks__description {
     flex: 0 0 100%;
   }
