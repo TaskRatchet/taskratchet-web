@@ -71,10 +71,10 @@ const expectCheckboxState = (task: string, expected: boolean, getByText: any) =>
 const renderTasksPage = () => {
     const queryClient = new QueryClient()
     const getters = render(<QueryClientProvider client={queryClient}><Tasks lastToday={undefined} /></QueryClientProvider>),
-        {getByText, getByPlaceholderText} = getters
+        {getByText, getByLabelText} = getters
 
     return {
-        taskInput: getByPlaceholderText("Task"),
+        taskInput: getByLabelText("Task *"),
         addButton: getByText("Add"),
         clickCheckbox: (task = "the_task") => {
             const desc = getByText(task),

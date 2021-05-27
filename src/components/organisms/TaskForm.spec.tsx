@@ -51,7 +51,7 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 
     return {
         ...result,
-        taskInput: result.getByPlaceholderText('Task'),
+        taskInput: result.getByLabelText('Task *'),
         dueInput,
         centsInput: result.getByPlaceholderText("USD"),
     }
@@ -63,9 +63,9 @@ describe('TaskForm', () => {
     })
 
     it('has task input', async () => {
-        const {getByPlaceholderText} = await renderComponent()
+        const {getByLabelText} = await renderComponent()
 
-        expect(getByPlaceholderText('Task')).toBeInTheDocument()
+        expect(getByLabelText('Task *')).toBeInTheDocument()
     })
 
     it('calls onChange when task modified', async () => {

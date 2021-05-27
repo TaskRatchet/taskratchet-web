@@ -2,6 +2,7 @@ import React, {useEffect} from "react";
 import DatePicker from 'react-datepicker'
 import './TaskForm.css'
 import browser from "../../lib/Browser";
+import {TextField} from "@material-ui/core";
 
 interface TaskFormProps {
     task: string,
@@ -47,14 +48,9 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
         <div className="page-tasks__inputs">
             {error ? <p>{error}</p> : null}
 
-            <label className={'page-tasks__description'}>Task <input
-                type="text"
-                placeholder={'Task'}
-                value={task}
-                onChange={e => {
-                    onChange(e.target.value, due, cents)
-                }}
-            /></label>
+            <TextField id="page-tasks__task" label="Task" required value={task} onChange={e => {
+                onChange(e.target.value, due, cents)
+            }} />
 
             <label className={'page-tasks__due'}>Due {timezone ? <>(<a href={'https://docs.taskratchet.com/timezones.html'} target={'_blank'} rel={"noopener noreferrer"}>{timezone}</a>)</> : null} <DatePicker
                 selected={due}
