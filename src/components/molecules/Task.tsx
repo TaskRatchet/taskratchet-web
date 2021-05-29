@@ -16,7 +16,7 @@ const Task = ({task, ref_}: TaskProps) => {
         dateString = browser.getDateString(dueDate),
         timeString = browser.getTimeString(dueDate);
 
-    return <div className={`molecule-task molecule-task__${task.status}`} ref={ref_}>
+    return <li className={`molecule-task molecule-task__${task.status}`} ref={ref_}>
         <div className={'molecule-task__left'}>
             <input type="checkbox" onChange={() => {
                 if (!task.id) return
@@ -32,7 +32,7 @@ const Task = ({task, ref_}: TaskProps) => {
             <span className={'molecule-task__dollars'}>${task.cents / 100}</span>
         </div>
         <TaskMenu task={task}/>
-    </div>
+    </li>
 };
 
 export default Task

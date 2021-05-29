@@ -9,6 +9,10 @@
   overflow: scroll;
   min-height: 0;
   padding-bottom: 4rem;
+  padding-top: 0;
+}
+.organism-taskList li {
+  background-color: white;
 }
 .organism-taskList .organism-taskList__today {
   margin-top: 1rem;

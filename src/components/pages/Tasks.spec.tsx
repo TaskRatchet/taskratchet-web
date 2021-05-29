@@ -667,7 +667,7 @@ describe("tasks page", () => {
 
         if (!list) throw new Error('could not find list')
 
-        expect(list.childNodes[1].textContent).toContain('Today')
+        expect(list.childNodes[2].textContent).toContain('Today')
     })
 
     it('shows today marker at end with no future dues', async () => {
@@ -687,7 +687,7 @@ describe("tasks page", () => {
 
         if (!list) throw new Error('could not find list')
 
-        expect(list.childNodes[1].textContent).toContain('Today')
+        expect(list.childNodes[list.childNodes.length-1].textContent).toContain('Today')
     })
 
     it('scrolls task box', async () => {
@@ -708,30 +708,6 @@ describe("tasks page", () => {
         if (!marker) throw new Error('could not find marker')
 
         expect(browser.scrollIntoView).toHaveBeenCalledWith(marker)
-    })
-
-    it('scrolls only once', async () => {
-        loadNow(new Date('3/22/2020'))
-
-        loadTasksApiData({
-            tasks: [
-                makeTask({due: "1/22/2020, 11:59 PM"})
-            ]
-        })
-
-        const {getByText, container, clickCheckbox} = await renderTasksPage()
-
-        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
-
-        const marker = container.querySelector('.organism-taskList__today')
-
-        if (!marker) throw new Error('could not find marker')
-
-        clickCheckbox()
-
-        await waitFor(() => expect(updateTask).toBeCalled())
-
-        expect(browser.scrollIntoView).toHaveBeenCalledTimes(1)
     })
 
     it('does not load all tasks initially', async () => {
@@ -764,10 +740,32 @@ describe("tasks page", () => {
         expect(queryByText('task 1')).not.toBeInTheDocument()
     })
 
-    // TODO: lazy load API data for tasks
-    // TODO: add pending filter
-    // TODO: Pull initial stakes & due date from most-recently added task
-    // TODO: Uncomment and fix tasks related to free-entry form
-    // TODO: Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574
+    it('scrolls new task into view', async () => {
+        loadTasksApiData()
+
+        const {taskInput, addButton,getByText} = await renderTasksPage()
+
+        loadTasksApiData({
+            tasks: [
+                makeTask({task: 'new_task'})
+            ]
+        })
+
+        userEvent.type(taskInput, 'new_task')
+        userEvent.click(addButton)
+
+        await waitFor(() => {
+            expect(getByText('new_task')).toBeInTheDocument()
+        })
+
+        expect(browser.scrollIntoView).toBeCalledWith(getByText('new_task').parentElement?.parentElement)
+    })
 })
+
+// TODO:
+// lazy load API data for tasks
+// add pending filter
+// Pull initial stakes & due date from most-recently added task
+// Uncomment and fix tasks related to free-entry form
+// Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574
 

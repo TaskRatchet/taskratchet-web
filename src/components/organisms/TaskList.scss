@@ -8,6 +8,10 @@
     overflow: scroll;
     min-height: 0;
     padding-bottom: 4rem;
+    padding-top: 0;
+  }
+  li {
+    background-color: white;
   }
   .organism-taskList__today {
     margin-top: 1rem;

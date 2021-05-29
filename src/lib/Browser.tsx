@@ -47,7 +47,7 @@ export class Browser {
     }
 
     scrollIntoView(el: Element) {
-        el.scrollIntoView({behavior: "smooth"})
+        el.scrollIntoView()
     }
 
     getScrollPercentage(el: Element) {
