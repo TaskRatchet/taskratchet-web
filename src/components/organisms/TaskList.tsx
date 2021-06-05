@@ -4,7 +4,7 @@ import {sortTasks} from "../../lib/sortTasks";
 import {useTasks} from "../../lib/api";
 import './TaskList.css'
 import browser from "../../lib/Browser";
-import {Divider, ListItem, ListSubheader, Typography} from "@material-ui/core";
+import {ListItem, ListSubheader} from "@material-ui/core";
 import LazyList from "../molecules/LazyList";
 import usePrevious from "../../lib/usePrevious";
 import _ from "lodash";
@@ -20,29 +20,29 @@ function createListItems(sortedTasks: TaskType[], previousTasks: TaskType[] | un
     i: number,
     accumulator: JSX.Element[],
     lastAction: 'init' | 'title' | 'today' | 'task',
-    todayRef: RefObject<HTMLLIElement>,
-    todayIndex?: number,
+    nextRef: RefObject<HTMLLIElement>,
+    nextIndex?: number,
     now: Date,
     highlights: number[]
 } = {
     i: 0,
     accumulator: [],
     lastAction: 'init',
-    todayRef: React.createRef<HTMLLIElement>(),
+    nextRef: React.createRef<HTMLLIElement>(),
     now: browser.getNow(),
     highlights: []
 }): {
     entries: JSX.Element[],
-    todayRef: RefObject<HTMLLIElement>,
-    todayIndex?: number,
+    nextRef: RefObject<HTMLLIElement>,
+    nextIndex?: number,
     highlights: number[]
 } {
     const {
         i,
         accumulator,
         lastAction,
-        todayRef,
-        todayIndex,
+        nextRef,
+        nextIndex,
         now,
         highlights
     } = vals
@@ -50,37 +50,25 @@ function createListItems(sortedTasks: TaskType[], previousTasks: TaskType[] | un
     const l = i > 0 ? sortedTasks[i - 1] : null
     const n = sortedTasks.length ? sortedTasks[i] : null
 
-    const lDue = l && new Date(l.due)
-    const nDue = n && new Date(n.due)
-    const isAtTodayBoundary = (!lDue || lDue <= now) && (!nDue || nDue > now);
-
-    if (todayIndex === undefined && isAtTodayBoundary) {
-        const marker = <li key={'today'} ref={todayRef} className={'organism-taskList__today'}>
-            <Divider/>
-            <Typography
-                color="textSecondary"
-                display="block"
-                variant="caption"
-            >
-                {/*TODO: display ticking time, too*/}
-                {`Today: ${browser.getString(now)}`}
-            </Typography>
-        </li>
-        return createListItems(sortedTasks, previousTasks, {
-            ...vals,
-            accumulator: [...accumulator,marker],
-            lastAction: 'today',
-            todayIndex: accumulator.length
-        })
-    }
-
     if (lastAction !== 'title' && n && (l && makeTitle(l)) !== makeTitle(n)) {
-        const s = makeTitle(n)
-        const title = <ListSubheader key={`${s}__heading`}>{s}</ListSubheader>
+        const lDue = l && new Date(l.due)
+        const nDue = n && new Date(n.due)
+        const headingsRemaining = sortedTasks.slice(i).map(makeTitle)
+        const isAtTodayBoundary = (!lDue || lDue <= now) && (!nDue || nDue > now);
+        const isLastHeading = headingsRemaining.length === 1;
+        const shouldScrollToHeading = nextIndex === undefined && (isAtTodayBoundary || isLastHeading);
+
+        const title = <ListSubheader
+            key={`${headingsRemaining[0]}__heading`}
+            className={shouldScrollToHeading ? 'organism-taskList__next' : ''}
+            ref={shouldScrollToHeading ? nextRef : undefined}
+        >{headingsRemaining[0]}</ListSubheader>
+
         return createListItems(sortedTasks, previousTasks, {
             ...vals,
             accumulator: [...accumulator,title],
             lastAction: 'title',
+            nextIndex: shouldScrollToHeading ? accumulator.length : nextIndex
         })
     }
 
@@ -108,7 +96,7 @@ function createListItems(sortedTasks: TaskType[], previousTasks: TaskType[] | un
         })
     }
 
-    return {entries: accumulator, todayRef, todayIndex, highlights}
+    return {entries: accumulator, nextRef, nextIndex, highlights}
 }
 
 interface TaskListProps {
@@ -123,8 +111,8 @@ const TaskList = ({lastToday}: TaskListProps) => {
 
     const {
         entries,
-        todayRef,
-        todayIndex,
+        nextRef,
+        nextIndex,
         highlights
     } = createListItems(sorted, previousTasks)
 
@@ -133,13 +121,13 @@ const TaskList = ({lastToday}: TaskListProps) => {
     }, [lastToday, setDidScroll])
 
     useEffect(() => {
-        if (didScroll || !todayRef.current) return
-        browser.scrollIntoView(todayRef.current)
+        if (didScroll || !nextRef.current) return
+        browser.scrollIntoView(nextRef.current)
         setDidScroll(true)
-    }, [todayRef,didScroll,setDidScroll])
+    }, [nextRef,didScroll,setDidScroll])
 
     return <div className={'organism-taskList'}>
-        <LazyList items={entries} initialIndex={todayIndex} highlights={highlights} />
+        <LazyList items={entries} initialIndex={nextIndex} highlights={highlights} />
     </div>
 }
 

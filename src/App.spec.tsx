@@ -38,17 +38,17 @@ describe('App', () => {
 
         loadTasksApiData({
             tasks: [
-                makeTask({due: "1/22/2020, 11:59 PM"})
+                makeTask({due: "1/22/2024, 11:59 PM"})
             ]
         })
 
         const {getByText, container, getByLabelText} = await renderPage()
 
-        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+        await waitFor(() => expect(getByText((s) => s.indexOf('January') !== -1)).toBeInTheDocument())
 
-        const marker = container.querySelector('.organism-taskList__today')
+        const heading = getByText((s) => s.indexOf('January') !== -1)
 
-        if (!marker) throw new Error('could not find marker')
+        if (!heading) throw new Error('could not find marker')
 
         await waitFor(() => {
             expect(browser.scrollIntoView).toHaveBeenCalled()

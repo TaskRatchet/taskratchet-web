@@ -9,12 +9,12 @@
     min-height: 0;
     padding-bottom: 4rem;
     padding-top: 0;
-  }
-  li {
-    background-color: white;
+    > li {
+      background-color: white;
+    }
   }
   .organism-taskList__today {
-    margin-top: 1rem;
+    padding-top: 3rem;
     text-align: center;
   }
 }

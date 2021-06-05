@@ -11,11 +11,11 @@
   padding-bottom: 4rem;
   padding-top: 0;
 }
-.organism-taskList li {
+.organism-taskList > ul > li {
   background-color: white;
 }
 .organism-taskList .organism-taskList__today {
-  margin-top: 1rem;
+  padding-top: 3rem;
   text-align: center;
 }
 

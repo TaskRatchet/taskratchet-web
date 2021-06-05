@@ -649,65 +649,46 @@ describe("tasks page", () => {
         expect(getByText('May 22, 2020')).toBeInTheDocument()
     })
 
-    it('shows today marker', async () => {
+    it('scrolls next section into view', async () => {
         loadNow(new Date('3/22/2020'))
 
         loadTasksApiData({
             tasks: [
                 makeTask({due: "1/22/2020, 11:59 PM"}),
-                makeTask({due: "5/22/2020, 11:59 PM"})
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "1/22/2020, 11:59 PM"}),
+                makeTask({due: "5/22/2020, 11:59 PM"}),
+                makeTask({due: "7/22/2020, 11:59 PM"}),
             ]
         })
 
         const {getByText, container} = await renderTasksPage()
 
-        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+        await waitFor(() => expect(getByText((s) => s.indexOf('May') !== -1)).toBeInTheDocument())
 
-        const list = container.querySelector('.organism-taskList > ul')
+        const heading = getByText((s) => s.indexOf('May') !== -1)
 
-        if (!list) throw new Error('could not find list')
+        if (!heading) throw new Error('could not find next heading')
 
-        expect(list.childNodes[2].textContent).toContain('Today')
-    })
-
-    it('shows today marker at end with no future dues', async () => {
-        loadNow(new Date('3/22/2020'))
-
-        loadTasksApiData({
-            tasks: [
-                makeTask({due: "1/22/2020, 11:59 PM"})
-            ]
-        })
-
-        const {getByText, container} = await renderTasksPage()
-
-        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
-
-        const list = container.querySelector('.organism-taskList > ul')
-
-        if (!list) throw new Error('could not find list')
-
-        expect(list.childNodes[list.childNodes.length-1].textContent).toContain('Today')
-    })
-
-    it('scrolls task box', async () => {
-        loadNow(new Date('3/22/2020'))
-
-        loadTasksApiData({
-            tasks: [
-                makeTask({due: "1/22/2020, 11:59 PM"})
-            ]
-        })
-
-        const {getByText, container} = await renderTasksPage()
-
-        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
-
-        const marker = container.querySelector('.organism-taskList__today')
-
-        if (!marker) throw new Error('could not find marker')
-
-        expect(browser.scrollIntoView).toHaveBeenCalledWith(marker)
+        expect(browser.scrollIntoView).toHaveBeenCalledWith(heading)
     })
 
     it('does not load all tasks initially', async () => {
@@ -733,9 +714,9 @@ describe("tasks page", () => {
             ]
         })
 
-        const {getByText, queryByText} = await renderTasksPage()
+        const {getAllByText, queryByText} = await renderTasksPage()
 
-        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
+        await waitFor(() => expect(getAllByText((s) => s.indexOf('January') !== -1)[0]).toBeInTheDocument())
 
         expect(queryByText('task 1')).not.toBeInTheDocument()
     })
@@ -761,6 +742,12 @@ describe("tasks page", () => {
         expect(browser.scrollIntoView).toBeCalledWith(getByText('new_task').parentElement?.parentElement)
     })
 })
+
+// has filter menu
+// filters by complete
+// filters by pending
+// filters by expired
+// loads from cookie
 
 // TODO:
 // lazy load API data for tasks
