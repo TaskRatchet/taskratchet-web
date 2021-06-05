@@ -10,4 +10,5 @@ type TaskType = {
     complete?: boolean,
     id?: number | string,
     status: 'pending' | 'complete' | 'expired',
+    isNew?: boolean
 }

@@ -1,56 +1,40 @@
-import React, {useEffect, useState} from 'react'
+import React, {useState} from 'react'
 import {List} from "@material-ui/core";
 import browser from "../../lib/Browser";
 import './LazyList.css'
 
 interface LazyListProps {
     items: JSX.Element[],
-    initialIndex?: number,
-    highlights?: number[]
+    focused?: number[]
 }
 
-export default function LazyList({items, initialIndex = 0, highlights = []}: LazyListProps) {
-    const [forwardDelta, setForwardDelta] = useState<number>(0)
-    const [reverseDelta, setReverseDelta] = useState<number>(0)
+export default function LazyList({items, focused = [0]}: LazyListProps) {
+    const [forwardDelta, setForwardDelta] = useState<number>(1)
+    const [reverseDelta, setReverseDelta] = useState<number>(1)
 
     const page = 10
     const {min, max} = Math
 
-    const startByPage = initialIndex - (page + (page * reverseDelta));
-    const startByHighlight = min(...highlights)
-    const startInclusive = max(0, min(startByPage, startByHighlight))
+    const maxForwardDelta = Math.ceil(items.length / page)
+    const maxReverseDelta = Math.ceil(items.length / page)
 
-    const endByPage = initialIndex + page + (page * forwardDelta);
-    const endByHighlight = max(...highlights) + 1
-    const endExclusive = max(endByPage, endByHighlight)
+    const reverseCount = page * reverseDelta;
+    const startInclusive = max(0, min(...focused) - reverseCount)
 
-    const ref = React.createRef<HTMLUListElement>()
-
-    useEffect(() => {
-        function isDefined<T>(arg: T | undefined): arg is T {
-            return arg !== undefined
-        }
-
-        const children: Element[] = Array.from(ref.current?.children || [])
-        const items: Element[] = highlights.map((i) => children[i]).filter(isDefined)
-
-        children.map((el) => el.classList.remove('molecule-lazyList__highlight'))
-        items.map((el) => el.classList.add('molecule-lazyList__highlight'))
-
-        if (items.length > 0) browser.scrollIntoView(items[0]);
-    }, [ref, highlights])
+    const forwardCount = page * forwardDelta;
+    const endExclusive = max(...focused) + forwardCount + 1
 
     const onScroll = (e: any) => {
         const scrollPercentage = browser.getScrollPercentage(e.target as Element);
 
-        if (scrollPercentage > .8) {
+        if (scrollPercentage > .8 && forwardDelta < maxForwardDelta) {
             setForwardDelta(forwardDelta + 1)
         }
 
-        if (scrollPercentage < .2) {
+        if (scrollPercentage < .2 && reverseDelta < maxReverseDelta) {
             setReverseDelta(reverseDelta + 1)
         }
     };
 
-    return <List onScroll={onScroll} ref={ref}>{items.slice(startInclusive, endExclusive)}</List>
+    return <List onScroll={onScroll}>{items.slice(startInclusive, endExclusive)}</List>
 }

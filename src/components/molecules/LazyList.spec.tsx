@@ -1,4 +1,4 @@
-import {fireEvent, render, RenderResult} from "@testing-library/react";
+import {fireEvent, render} from "@testing-library/react";
 import LazyList from "./LazyList";
 import React from "react";
 import browser from "../../lib/Browser";
@@ -6,15 +6,13 @@ import {waitFor} from "@testing-library/dom";
 
 interface RenderComponentOptions {
     count: number,
-    index?: number,
-    highlights?: number[],
+    focused?: number[],
 }
 
 function renderComponent(
     {
         count,
-        index = 0,
-        highlights = [],
+        focused = [0],
     }: RenderComponentOptions
 ) {
     const indices = Array.from((new Array(count)).keys())
@@ -22,14 +20,13 @@ function renderComponent(
 
     return render(<LazyList
         items={items}
-        initialIndex={index}
-        highlights={highlights}
+        focused={focused}
     />)
 }
 
 describe('LazyList', () => {
     beforeEach(() => {
-        jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined)
+        jest.restoreAllMocks()
     })
 
     it('lists elements', async () => {
@@ -75,7 +72,7 @@ describe('LazyList', () => {
     it('loads in reverse', async () => {
         jest.spyOn(browser, 'getScrollPercentage').mockReturnValue(0)
 
-        const {container, getByText} = await renderComponent({count: 12, index: 12})
+        const {container, getByText} = await renderComponent({count: 12, focused: [12]})
 
         const list = container.querySelector('ul')
 
@@ -89,7 +86,7 @@ describe('LazyList', () => {
     it('only loads in reverse if scroll position less than 20%', async () => {
         jest.spyOn(browser, 'getScrollPercentage').mockReturnValue(.2)
 
-        const {container, queryByText} = await renderComponent({count: 12, index: 12})
+        const {container, queryByText} = await renderComponent({count: 12, focused: [12]})
 
         const list = container.querySelector('ul')
 
@@ -107,38 +104,23 @@ describe('LazyList', () => {
     })
 
     it('displays forward highlights', async () => {
-        const {getByText} = await renderComponent({count: 12, highlights: [11]})
+        const {getByText} = await renderComponent({count: 12, focused: [11]})
 
         expect(getByText('Item 11')).toBeInTheDocument()
     })
 
     it('displays reverse highlights', async () => {
-        const {getByText} = await renderComponent({count: 12, index: 11, highlights: [0]})
+        const {getByText} = await renderComponent({count: 12, focused: [0,11]})
 
         expect(getByText('Item 0')).toBeInTheDocument()
     })
 
-    it('scrolls to highlight', async () => {
-        const {getByText} = await renderComponent({count: 1, highlights: [0]})
-
-        expect(browser.scrollIntoView).toBeCalledWith(getByText('Item 0'))
-    })
-
-    it('classes highlights', async () => {
-        const {container} = await renderComponent({count: 1, highlights: [0]})
-
-        await waitFor(() => {
-            expect(container.querySelectorAll('.molecule-lazyList__highlight')).toHaveLength(1)
-        })
-    })
-
     it('resets highlight classes', async () => {
-        const {rerender, container} = await renderComponent({count: 1, highlights: [0]})
+        const {rerender, container} = await renderComponent({count: 1, focused: [0]})
 
         rerender(<LazyList
             items={[<li key={0}>Item 0</li>]}
-            initialIndex={0}
-            highlights={[]}
+            focused={[0]}
         />)
 
         await waitFor(() => {

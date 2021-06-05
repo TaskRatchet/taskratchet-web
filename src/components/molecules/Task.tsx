@@ -1,4 +1,4 @@
-import React, {Ref} from "react";
+import React, {Ref, useEffect} from "react";
 import './Task.css'
 import browser from "../../lib/Browser";
 import TaskMenu from "./TaskMenu";
@@ -12,17 +12,25 @@ export interface TaskProps {
 const Task = ({task, ref_}: TaskProps) => {
     const setComplete = useSetComplete()
 
-    const dueDate = new Date(task.due),
-        dateString = browser.getDateString(dueDate),
-        timeString = browser.getTimeString(dueDate);
+    const dueDate = new Date(task.due);
+    const dateString = browser.getDateString(dueDate);
+    const timeString = browser.getTimeString(dueDate);
 
-    return <li className={`molecule-task molecule-task__${task.status}`} ref={ref_}>
+    const descRef = React.createRef<HTMLSpanElement>()
+
+    useEffect(() => {
+        if (!task.isNew || !descRef.current) return;
+        browser.scrollIntoView(descRef.current)
+    }, [descRef, task])
+
+    return <li className={`molecule-task molecule-task__${task.status} ${task.isNew ? 'molecule-task__highlight' : ''}`}
+               ref={ref_}>
         <div className={'molecule-task__left'}>
             <input type="checkbox" onChange={() => {
                 if (!task.id) return
                 setComplete(task.id, !task.complete)
             }} checked={task.complete} disabled={!task.id}/>
-            <span className="molecule-task__description">
+            <span className="molecule-task__description" ref={descRef}>
                 {task.task || '[Description Missing]'}
             </span>
             <ul className={'molecule-task__labels'}>

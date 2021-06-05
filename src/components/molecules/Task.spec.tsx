@@ -4,10 +4,15 @@ import {renderWithQueryProvider, sleep} from "../../lib/test/helpers";
 import userEvent from "@testing-library/user-event";
 import {updateTask} from "../../lib/api";
 import {waitFor} from "@testing-library/dom";
+import browser from "../../lib/Browser";
 
 jest.mock('../../lib/api/updateTask')
 
 describe('Task componet', () =>  {
+    beforeEach(() => {
+        jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined)
+    })
+
     it('disables checkbox for tasks without id', async () => {
         const {container} = await renderWithQueryProvider(<Task task={{
             due: 'the_due',

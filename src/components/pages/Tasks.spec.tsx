@@ -680,7 +680,7 @@ describe("tasks page", () => {
             ]
         })
 
-        const {getByText, container} = await renderTasksPage()
+        const {getByText} = await renderTasksPage()
 
         await waitFor(() => expect(getByText((s) => s.indexOf('May') !== -1)).toBeInTheDocument())
 
@@ -739,7 +739,7 @@ describe("tasks page", () => {
             expect(getByText('new_task')).toBeInTheDocument()
         })
 
-        expect(browser.scrollIntoView).toBeCalledWith(getByText('new_task').parentElement?.parentElement)
+        expect(browser.scrollIntoView).toBeCalledWith(getByText('new_task'))
     })
 })
 

@@ -22,6 +22,7 @@ export function useAddTask() {
 
             queryClient.setQueryData('tasks', [...snapshot, {
                 status: 'pending',
+                isNew: true,
                 ...newTask
             }])
 

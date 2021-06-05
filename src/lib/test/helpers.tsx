@@ -111,6 +111,7 @@ export function makeTask(
         cents = 0,
         task = 'the_task',
         status = 'pending',
+        isNew = undefined
     }: Partial<TaskType> = {}
 ): TaskType {
     return {
@@ -119,7 +120,8 @@ export function makeTask(
         id,
         cents,
         task,
-        status
+        status,
+        isNew
     }
 }
 

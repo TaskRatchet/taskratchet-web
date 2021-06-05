@@ -7,7 +7,6 @@ import browser from "../../lib/Browser";
 import {ListItem, ListSubheader} from "@material-ui/core";
 import LazyList from "../molecules/LazyList";
 import usePrevious from "../../lib/usePrevious";
-import _ from "lodash";
 
 function makeTitle(task: TaskType) {
     return browser.getString(new Date(task.due))
@@ -20,31 +19,31 @@ function createListItems(sortedTasks: TaskType[], previousTasks: TaskType[] | un
     i: number,
     accumulator: JSX.Element[],
     lastAction: 'init' | 'title' | 'today' | 'task',
-    nextRef: RefObject<HTMLLIElement>,
-    nextIndex?: number,
+    nextHeadingRef: RefObject<HTMLLIElement>,
+    nextHeadingFound: boolean,
     now: Date,
-    highlights: number[]
+    focused: number[]
 } = {
     i: 0,
     accumulator: [],
     lastAction: 'init',
-    nextRef: React.createRef<HTMLLIElement>(),
+    nextHeadingRef: React.createRef<HTMLLIElement>(),
+    nextHeadingFound: false,
     now: browser.getNow(),
-    highlights: []
+    focused: []
 }): {
     entries: JSX.Element[],
-    nextRef: RefObject<HTMLLIElement>,
-    nextIndex?: number,
-    highlights: number[]
+    nextHeadingRef: RefObject<HTMLLIElement>,
+    focused: number[]
 } {
     const {
         i,
         accumulator,
         lastAction,
-        nextRef,
-        nextIndex,
+        nextHeadingRef,
+        nextHeadingFound,
         now,
-        highlights
+        focused
     } = vals
 
     const l = i > 0 ? sortedTasks[i - 1] : null
@@ -53,37 +52,42 @@ function createListItems(sortedTasks: TaskType[], previousTasks: TaskType[] | un
     if (lastAction !== 'title' && n && (l && makeTitle(l)) !== makeTitle(n)) {
         const lDue = l && new Date(l.due)
         const nDue = n && new Date(n.due)
-        const headingsRemaining = sortedTasks.slice(i).map(makeTitle)
+        const headingsRemaining = Array.from(new Set(sortedTasks.slice(i).map(makeTitle)))
         const isAtTodayBoundary = (!lDue || lDue <= now) && (!nDue || nDue > now);
         const isLastHeading = headingsRemaining.length === 1;
-        const shouldScrollToHeading = nextIndex === undefined && (isAtTodayBoundary || isLastHeading);
+        const shouldScrollToHeading = isAtTodayBoundary || (isLastHeading && !nextHeadingFound);
 
         const title = <ListSubheader
             key={`${headingsRemaining[0]}__heading`}
             className={shouldScrollToHeading ? 'organism-taskList__next' : ''}
-            ref={shouldScrollToHeading ? nextRef : undefined}
+            ref={shouldScrollToHeading ? nextHeadingRef : undefined}
         >{headingsRemaining[0]}</ListSubheader>
 
         return createListItems(sortedTasks, previousTasks, {
             ...vals,
             accumulator: [...accumulator,title],
             lastAction: 'title',
-            nextIndex: shouldScrollToHeading ? accumulator.length : nextIndex
+            focused: shouldScrollToHeading ? [...focused, accumulator.length] : focused,
+            nextHeadingFound: shouldScrollToHeading || nextHeadingFound
         })
     }
 
     if (i < sortedTasks.length) {
         // WORKAROUND: https://github.com/mui-org/material-ui/issues/14971
-        const item = <ListItem button={false as any} component={ListItemComponent as any} task={n} key={JSON.stringify(n)} />
+        // TODO: Set a `highlight` and `scroll` bool on the `ListItem` component
+        const item = <ListItem
+            button={false as any}
+            component={ListItemComponent as any}
+            task={n}
+            key={JSON.stringify(n)}
+        />
 
         const updateHighlights = (
             n: TaskType | null,
             previousTasks: undefined | TaskType[],
             highlights: number[]
         ): number[] => {
-            if (previousTasks === undefined) return [];
-            const isInPrevious = previousTasks.some((t) => _.isEqual(n,t));
-            if (!n || isInPrevious) return highlights;
+            if (!n?.isNew) return highlights;
             return [...highlights, accumulator.length]
         }
 
@@ -92,11 +96,11 @@ function createListItems(sortedTasks: TaskType[], previousTasks: TaskType[] | un
             accumulator: [...accumulator,item],
             lastAction: 'task',
             i: i + 1,
-            highlights: updateHighlights(n, previousTasks, highlights)
+            focused: updateHighlights(n, previousTasks, focused)
         })
     }
 
-    return {entries: accumulator, nextRef, nextIndex, highlights}
+    return {entries: accumulator, nextHeadingRef, focused}
 }
 
 interface TaskListProps {
@@ -111,9 +115,8 @@ const TaskList = ({lastToday}: TaskListProps) => {
 
     const {
         entries,
-        nextRef,
-        nextIndex,
-        highlights
+        nextHeadingRef,
+        focused
     } = createListItems(sorted, previousTasks)
 
     useEffect(() => {
@@ -121,13 +124,13 @@ const TaskList = ({lastToday}: TaskListProps) => {
     }, [lastToday, setDidScroll])
 
     useEffect(() => {
-        if (didScroll || !nextRef.current) return
-        browser.scrollIntoView(nextRef.current)
+        if (didScroll || !nextHeadingRef.current) return
+        browser.scrollIntoView(nextHeadingRef.current)
         setDidScroll(true)
-    }, [nextRef,didScroll,setDidScroll])
+    }, [nextHeadingRef,didScroll,setDidScroll])
 
     return <div className={'organism-taskList'}>
-        <LazyList items={entries} initialIndex={nextIndex} highlights={highlights} />
+        <LazyList items={entries} focused={focused} />
     </div>
 }
 
