@@ -44,7 +44,11 @@
 		"test": "DEBUG_PRINT_LIMIT=9999999 react-scripts test --silent=false --verbose=false",
 		"eject": "react-scripts eject",
 		"storybook": "start-storybook -p 9009 -s public",
-		"build-storybook": "build-storybook -s public"
+		"build-storybook": "build-storybook -s public",
+		"checkTs": "tsc --noEmit",
+		"format": "prettier --write .",
+		"lint": "eslint --max-warnings 0 --ext .ts --ext .tsx --ext .js --ext .jsx src/",
+		"lint:fix": "eslint --max-warnings 0 --fix --ext .ts --ext .tsx --ext .js --ext .jsx src/"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
