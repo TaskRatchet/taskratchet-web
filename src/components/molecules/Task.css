@@ -25,7 +25,8 @@
   border-radius: 4px;
   opacity: 0.5;
 }
-.molecule-task .molecule-task__left .molecule-task__due, .molecule-task .molecule-task__left .molecule-task__dollars {
+.molecule-task .molecule-task__left .molecule-task__due,
+.molecule-task .molecule-task__left .molecule-task__dollars {
   position: absolute;
   bottom: 0.5em;
   opacity: 0.5;

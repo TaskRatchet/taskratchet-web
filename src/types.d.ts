@@ -1,14 +1,14 @@
 type Session = {
-    token: string,
-    email: string
-}
+	token: string;
+	email: string;
+};
 
 type TaskType = {
-    due: int,
-    cents: number,
-    task: string,
-    complete?: boolean,
-    id?: number | string,
-    status: 'pending' | 'complete' | 'expired',
-    isNew?: boolean
-}
+	due: int;
+	cents: number;
+	task: string;
+	complete?: boolean;
+	id?: number | string;
+	status: 'pending' | 'complete' | 'expired';
+	isNew?: boolean;
+};

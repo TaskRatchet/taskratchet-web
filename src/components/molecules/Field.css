@@ -1,7 +1,8 @@
 .molecule-field {
   margin-bottom: 0.5em;
 }
-.molecule-field label, .molecule-field input {
+.molecule-field label,
+.molecule-field input {
   display: block;
 }
 .molecule-field label {

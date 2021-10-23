@@ -1,7 +1,8 @@
 .page-account {
   padding: 1rem 1rem 3rem;
 }
-.page-account label, .page-account input {
+.page-account label,
+.page-account input {
   display: block;
 }
 .page-account label {
@@ -9,7 +10,8 @@
   font-size: 0.75em;
   font-weight: bold;
 }
-.page-account input, .page-account select {
+.page-account input,
+.page-account select {
   margin-bottom: 1.5em;
 }
 

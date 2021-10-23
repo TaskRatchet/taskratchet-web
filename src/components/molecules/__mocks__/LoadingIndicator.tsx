@@ -1,5 +1,5 @@
-import React from "react";
+import React from 'react';
 
-const LoadingIndicator = () => <>[Loading Indicator]</>
+const LoadingIndicator = () => <>[Loading Indicator]</>;
 
-export default LoadingIndicator
+export default LoadingIndicator;

@@ -1,18 +1,19 @@
-import {getCheckoutSession} from "./getCheckoutSession";
-import {useEffect, useState} from "react";
+import { getCheckoutSession } from './getCheckoutSession';
+import { useEffect, useState } from 'react';
 
 interface CheckoutSession {
-    id: string
+	id: string;
 }
 
 export function useCheckoutSession() {
-    const [checkoutSession, setCheckoutSession] = useState<CheckoutSession|null>(null)
+	const [checkoutSession, setCheckoutSession] =
+		useState<CheckoutSession | null>(null);
 
-    useEffect( () => {
-        getCheckoutSession().then((session: CheckoutSession) => {
-            setCheckoutSession(session)
-        })
-    }, [])
+	useEffect(() => {
+		getCheckoutSession().then((session: CheckoutSession) => {
+			setCheckoutSession(session);
+		});
+	}, []);
 
-    return checkoutSession
+	return checkoutSession;
 }

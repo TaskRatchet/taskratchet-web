@@ -1,18 +1,19 @@
 .molecule-field {
-  margin-bottom: .5em;
-  label, input {
-    display: block;
-  }
-  label {
-    font-size: .75em;
-    font-weight: bold;
-  }
-  &.molecule-field__hasError {
-    padding: .25em;
-    border: 1px solid red;
-  }
-  .molecule-field__error {
-    font-weight: bold;
-    color: darkred;
-  }
+	margin-bottom: 0.5em;
+	label,
+	input {
+		display: block;
+	}
+	label {
+		font-size: 0.75em;
+		font-weight: bold;
+	}
+	&.molecule-field__hasError {
+		padding: 0.25em;
+		border: 1px solid red;
+	}
+	.molecule-field__error {
+		font-weight: bold;
+		color: darkred;
+	}
 }

@@ -1,82 +1,92 @@
-import queryString, {ParsedQuery} from "query-string";
+import queryString, { ParsedQuery } from 'query-string';
 
 // https://htmldom.dev/get-the-first-scrollable-parent-of-an-element/
-const isScrollable = function(el: Element) {
-    const hasScrollableContent = el.scrollHeight > el.clientHeight;
+const isScrollable = function (el: Element) {
+	const hasScrollableContent = el.scrollHeight > el.clientHeight;
 
-    const overflowYStyle = window.getComputedStyle(el).overflowY;
-    const isOverflowHidden = overflowYStyle.indexOf('hidden') !== -1;
+	const overflowYStyle = window.getComputedStyle(el).overflowY;
+	const isOverflowHidden = overflowYStyle.indexOf('hidden') !== -1;
 
-    return hasScrollableContent && !isOverflowHidden;
+	return hasScrollableContent && !isOverflowHidden;
 };
 
-const getScrollableParent = function(el: Element | null): Element {
-    return (!el || el === document.body)
-      ? document.body
-      : (isScrollable(el) ? el : getScrollableParent(el.parentElement));
+const getScrollableParent = function (el: Element | null): Element {
+	return !el || el === document.body
+		? document.body
+		: isScrollable(el)
+		? el
+		: getScrollableParent(el.parentElement);
 };
 
 export class Browser {
-    getLanguages(): string[] {
-        return navigator.languages.slice()
-    }
+	getLanguages(): string[] {
+		return navigator.languages.slice();
+	}
 
-    getDateTimeString(date: Date): string {
-        const day = this.getDayName(date);
-        const dateString = this.getDateString(date);
-        const timeString = this.getTimeString(date);
+	getDateTimeString(date: Date): string {
+		const day = this.getDayName(date);
+		const dateString = this.getDateString(date);
+		const timeString = this.getTimeString(date);
 
-        return `${day}, ${dateString}, ${timeString}`
-    }
+		return `${day}, ${dateString}, ${timeString}`;
+	}
 
-    getDayName(date: Date): string {
-        const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+	getDayName(date: Date): string {
+		const days = [
+			'Sunday',
+			'Monday',
+			'Tuesday',
+			'Wednesday',
+			'Thursday',
+			'Friday',
+			'Saturday',
+		];
 
-        return days[date.getDay()];
-    }
+		return days[date.getDay()];
+	}
 
-    getString(date: Date): string {
-        return date.toLocaleString(browser.getLanguages(), {
-            month: 'long',
-            day: 'numeric',
-            year: 'numeric'
-        })
-    }
+	getString(date: Date): string {
+		return date.toLocaleString(browser.getLanguages(), {
+			month: 'long',
+			day: 'numeric',
+			year: 'numeric',
+		});
+	}
 
-    getDateString(date: Date): string {
-        return date.toLocaleDateString(browser.getLanguages())
-    }
+	getDateString(date: Date): string {
+		return date.toLocaleDateString(browser.getLanguages());
+	}
 
-    getTimeString(date: Date): string {
-        return date.toLocaleTimeString(browser.getLanguages(), {
-            hour: '2-digit',
-            minute: '2-digit'
-        })
-    }
+	getTimeString(date: Date): string {
+		return date.toLocaleTimeString(browser.getLanguages(), {
+			hour: '2-digit',
+			minute: '2-digit',
+		});
+	}
 
-    getNow(): Date {
-        return new Date()
-    }
+	getNow(): Date {
+		return new Date();
+	}
 
-    getUrlParams(): ParsedQuery {
-        return queryString.parse(window.location.search)
-    }
+	getUrlParams(): ParsedQuery {
+		return queryString.parse(window.location.search);
+	}
 
-    scrollIntoView(el: Element, options: {offset?: number} = {}) {
-        const {offset = 0} = options
-        const pos = el.getBoundingClientRect().top;
-        const scrollableParent = getScrollableParent(el);
+	scrollIntoView(el: Element, options: { offset?: number } = {}) {
+		const { offset = 0 } = options;
+		const pos = el.getBoundingClientRect().top;
+		const scrollableParent = getScrollableParent(el);
 
-        console.log({pos, offset})
+		console.log({ pos, offset });
 
-        scrollableParent.scrollTo({
-            top: pos - offset,
-        });
-    }
+		scrollableParent.scrollTo({
+			top: pos - offset,
+		});
+	}
 
-    getScrollPercentage(el: Element) {
-        return el.scrollTop / (el.scrollHeight - el.clientHeight);
-    }
+	getScrollPercentage(el: Element) {
+		return el.scrollTop / (el.scrollHeight - el.clientHeight);
+	}
 }
 
 const browser = new Browser();
