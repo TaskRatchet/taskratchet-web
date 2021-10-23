@@ -55,7 +55,14 @@ export const loadUrlParams = (params: ParsedQuery) => {
 }
 
 export const loadNow = (date: Date) => {
-    jest.spyOn(browser, 'getNow').mockReturnValue(date)
+    const clone = new Date(date.getTime())
+    // console.log({m: 'loading now', clone})
+    // console.log(new Error().stack);
+    jest.spyOn(browser, 'getNow').mockImplementation(() => {
+        const ret = new Date(clone.getTime())
+        // console.log({m: 'mocked loadNow', ret})
+        return ret;
+    })
 }
 
 export function expectLoadingOverlay(container: HTMLElement, options: {

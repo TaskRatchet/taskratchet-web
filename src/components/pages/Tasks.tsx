@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from "react";
 import './Tasks.css'
 import 'react-datepicker/dist/react-datepicker.min.css'
 import {useTasks} from "../../lib/api";
@@ -12,12 +12,16 @@ interface TasksProps {
 
 const Tasks = ({lastToday}: TasksProps) => {
     const {isLoading} = useTasks();
+    const [newTask, setNewTask] = useState<TaskType>()
 
     useCloseWarning()
 
     return <div className={`page-tasks ${isLoading ? "loading" : "idle"}`}>
-        <TaskEntry />
-        <TaskList lastToday={lastToday} />
+        <TaskEntry onSave={(t) => {
+        setNewTask(t)
+        }
+        } />
+        <TaskList lastToday={lastToday} newTask={newTask} />
     </div>
 };
 

@@ -1,5 +1,21 @@
 import queryString, {ParsedQuery} from "query-string";
 
+// https://htmldom.dev/get-the-first-scrollable-parent-of-an-element/
+const isScrollable = function(el: Element) {
+    const hasScrollableContent = el.scrollHeight > el.clientHeight;
+
+    const overflowYStyle = window.getComputedStyle(el).overflowY;
+    const isOverflowHidden = overflowYStyle.indexOf('hidden') !== -1;
+
+    return hasScrollableContent && !isOverflowHidden;
+};
+
+const getScrollableParent = function(el: Element | null): Element {
+    return (!el || el === document.body)
+      ? document.body
+      : (isScrollable(el) ? el : getScrollableParent(el.parentElement));
+};
+
 export class Browser {
     getLanguages(): string[] {
         return navigator.languages.slice()
@@ -46,8 +62,16 @@ export class Browser {
         return queryString.parse(window.location.search)
     }
 
-    scrollIntoView(el: Element) {
-        el.scrollIntoView()
+    scrollIntoView(el: Element, options: {offset?: number} = {}) {
+        const {offset = 0} = options
+        const pos = el.getBoundingClientRect().top;
+        const scrollableParent = getScrollableParent(el);
+
+        console.log({pos, offset})
+
+        scrollableParent.scrollTo({
+            top: pos - offset,
+        });
     }
 
     getScrollPercentage(el: Element) {

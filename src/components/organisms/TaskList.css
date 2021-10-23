@@ -14,9 +14,5 @@
 .organism-taskList > ul > li {
   background-color: white;
 }
-.organism-taskList .organism-taskList__today {
-  padding-top: 3rem;
-  text-align: center;
-}
 
 /*# sourceMappingURL=TaskList.css.map */

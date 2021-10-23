@@ -18,10 +18,12 @@ const Task = ({task, ref_}: TaskProps) => {
 
     const descRef = React.createRef<HTMLSpanElement>()
 
-    useEffect(() => {
-        if (!task.isNew || !descRef.current) return;
-        browser.scrollIntoView(descRef.current)
-    }, [descRef, task])
+    // useEffect(() => {
+    //     if (!task.isNew || !descRef.current) return;
+    //     browser.scrollIntoView(descRef.current, {
+    //         offset: 48
+    //     })
+    // }, [descRef, task])
 
     return <li className={`molecule-task molecule-task__${task.status} ${task.isNew ? 'molecule-task__highlight' : ''}`}
                ref={ref_}>

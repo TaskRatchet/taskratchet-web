@@ -8,7 +8,7 @@ interface Input {
     cents: number
 }
 
-export function useAddTask() {
+export function useAddTask(onSave: (t: TaskType) => void) {
     const queryClient = useQueryClient()
 
     const {mutate} = useMutation(({task, due, cents}: Input) => {
@@ -20,11 +20,14 @@ export function useAddTask() {
 
             const snapshot: TaskType[] | undefined = queryClient.getQueryData('tasks') || []
 
-            queryClient.setQueryData('tasks', [...snapshot, {
+            const t = {
                 status: 'pending',
                 isNew: true,
                 ...newTask
-            }])
+            } as TaskType;
+
+            onSave(t)
+            queryClient.setQueryData('tasks', [...snapshot, t])
 
             return {snapshot}
         },
