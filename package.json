@@ -48,7 +48,9 @@
 		"checkTs": "tsc --noEmit",
 		"format": "prettier --write .",
 		"lint": "eslint --max-warnings 0 --ext .ts --ext .tsx --ext .js --ext .jsx src/",
-		"lint:fix": "eslint --max-warnings 0 --fix --ext .ts --ext .tsx --ext .js --ext .jsx src/"
+		"lint:fix": "eslint --max-warnings 0 --fix --ext .ts --ext .tsx --ext .js --ext .jsx src/",
+		"precommit": "npm run format && npm run lint:fix && npm run checkTs",
+		"prepare": "husky install"
 	},
 	"eslintConfig": {
 		"extends": "react-app"
@@ -81,6 +83,7 @@
 		"ts-jest": "^26.4.3",
 		"tslint": "^6.1.3",
 		"tslint-config-prettier": "^1.18.0",
-		"typescript": "^3.9.10"
+		"typescript": "^3.9.10",
+		"husky": "^7.0.0"
 	}
 }

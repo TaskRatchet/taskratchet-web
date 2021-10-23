@@ -1,4 +1,4 @@
-import React, { Ref, useEffect } from 'react';
+import React, { Ref } from 'react';
 import './Task.css';
 import browser from '../../lib/Browser';
 import TaskMenu from './TaskMenu';
@@ -11,19 +11,10 @@ export interface TaskProps {
 
 const Task = ({ task, ref_ }: TaskProps) => {
 	const setComplete = useSetComplete();
-
 	const dueDate = new Date(task.due);
 	const dateString = browser.getDateString(dueDate);
 	const timeString = browser.getTimeString(dueDate);
-
 	const descRef = React.createRef<HTMLSpanElement>();
-
-	// useEffect(() => {
-	//     if (!task.isNew || !descRef.current) return;
-	//     browser.scrollIntoView(descRef.current, {
-	//         offset: 48
-	//     })
-	// }, [descRef, task])
 
 	return (
 		<li

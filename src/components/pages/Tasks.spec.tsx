@@ -33,8 +33,12 @@ jest.mock('react-ga');
 
 global.document.createRange = () =>
 	({
-		setStart: () => {},
-		setEnd: () => {},
+		setStart: () => {
+			/* noop */
+		},
+		setEnd: () => {
+			/* noop */
+		},
 		commonAncestorContainer: {
 			nodeName: 'BODY',
 			ownerDocument: document,
@@ -75,21 +79,21 @@ const expectCheckboxState = (
 const renderTasksPage = () => {
 	const queryClient = new QueryClient();
 	const getters = render(
-			<MuiPickersUtilsProvider utils={DateFnsUtils}>
-				<QueryClientProvider client={queryClient}>
-					<Tasks lastToday={undefined} />
-				</QueryClientProvider>
-			</MuiPickersUtilsProvider>
-		),
-		{ getByText, getByLabelText } = getters;
+		<MuiPickersUtilsProvider utils={DateFnsUtils}>
+			<QueryClientProvider client={queryClient}>
+				<Tasks lastToday={undefined} />
+			</QueryClientProvider>
+		</MuiPickersUtilsProvider>
+	);
+	const { getByText, getByLabelText } = getters;
 
 	return {
 		taskInput: getByLabelText('Task *') as HTMLInputElement,
 		dueInput: getByLabelText('Due Date *') as HTMLInputElement,
 		addButton: getByText('Add') as HTMLButtonElement,
 		clickCheckbox: (task = 'the_task') => {
-			const desc = getByText(task),
-				checkbox = desc.previousElementSibling;
+			const desc = getByText(task);
+			const checkbox = desc.previousElementSibling;
 
 			if (!checkbox) {
 				throw Error('Missing task checkbox');
@@ -100,20 +104,6 @@ const renderTasksPage = () => {
 		...getters,
 	};
 };
-
-async function testParsesDueString(task: string, expected: string, ref: Date) {
-	loadNow(ref);
-
-	loadTasksApiData();
-
-	const { taskInput, getByText } = await renderTasksPage();
-
-	await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-	await userEvent.type(taskInput, task);
-
-	expect(getByText(expected)).toBeInTheDocument();
-}
 
 describe('tasks page', () => {
 	beforeEach(() => {
@@ -774,8 +764,7 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { taskInput, dueInput, addButton, getByText, baseElement } =
-			renderTasksPage();
+		const { taskInput, dueInput, addButton, getByText } = renderTasksPage();
 
 		await waitFor(() => {
 			expect(getByText('task 1')).toBeInTheDocument();

@@ -1,7 +1,6 @@
 import { loadNow, loadTasksApiData, makeTask } from './lib/test/helpers';
 import browser from './lib/Browser';
 import { render, waitFor } from '@testing-library/react';
-import { updateTask } from './lib/api';
 import React from 'react';
 import { App } from './App';
 import userEvent from '@testing-library/user-event';
@@ -35,8 +34,8 @@ function renderPage() {
 		dueInput: getByLabelText('Due Date *') as HTMLInputElement,
 		addButton: getByText('Add') as HTMLButtonElement,
 		clickCheckbox: (task = 'the_task') => {
-			const desc = getByText(task),
-				checkbox = desc.previousElementSibling;
+			const desc = getByText(task);
+			const checkbox = desc.previousElementSibling;
 
 			if (!checkbox) {
 				throw Error('Missing task checkbox');

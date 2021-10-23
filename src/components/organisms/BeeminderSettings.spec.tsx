@@ -1,11 +1,9 @@
-import { render, RenderResult, waitFor } from '@testing-library/react';
+import { RenderResult, waitFor } from '@testing-library/react';
 import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
-import api from '../../lib/LegacyApi';
 import * as new_api from '../../lib/api';
 import {
 	expectLoadingOverlay,
-	loadMe,
 	loadMeWithBeeminder,
 	loadUrlParams,
 	renderWithQueryProvider,
@@ -61,8 +59,8 @@ describe('BeeminderSettings component', () => {
 	});
 
 	it('sets enable link href', async () => {
-		const { getByText } = await renderBeeminderSettings(),
-			link = getByText('Enable Beeminder integration');
+		const { getByText } = await renderBeeminderSettings();
+		const link = getByText('Enable Beeminder integration');
 
 		expect((link as HTMLAnchorElement).href).toContain(
 			'https://www.beeminder.com'

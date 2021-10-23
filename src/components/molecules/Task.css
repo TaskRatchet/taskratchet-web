@@ -1,69 +1,69 @@
 .molecule-task {
-  display: flex;
-  align-items: center;
-  margin-bottom: 1px;
-  margin-left: 1rem;
+	display: flex;
+	align-items: center;
+	margin-bottom: 1px;
+	margin-left: 1rem;
 }
 .molecule-task .molecule-task__left {
-  position: relative;
-  padding: 0.5em 0.5em 2em 0.5em;
-  flex: 1 1 auto;
+	position: relative;
+	padding: 0.5em 0.5em 2em 0.5em;
+	flex: 1 1 auto;
 }
 .molecule-task .molecule-task__left .molecule-task__description {
-  margin-left: 0.5em;
+	margin-left: 0.5em;
 }
 .molecule-task .molecule-task__left .molecule-task__labels {
-  padding-left: 0;
-  position: absolute;
-  top: 0.5em;
-  right: 0.5em;
+	padding-left: 0;
+	position: absolute;
+	top: 0.5em;
+	right: 0.5em;
 }
 .molecule-task .molecule-task__left .molecule-task__labels li {
-  list-style-type: none;
-  display: inline-block;
-  margin-left: 0.5em;
-  border-radius: 4px;
-  opacity: 0.5;
+	list-style-type: none;
+	display: inline-block;
+	margin-left: 0.5em;
+	border-radius: 4px;
+	opacity: 0.5;
 }
 .molecule-task .molecule-task__left .molecule-task__due,
 .molecule-task .molecule-task__left .molecule-task__dollars {
-  position: absolute;
-  bottom: 0.5em;
-  opacity: 0.5;
+	position: absolute;
+	bottom: 0.5em;
+	opacity: 0.5;
 }
 .molecule-task .molecule-task__left .molecule-task__due {
-  left: 2em;
+	left: 2em;
 }
 .molecule-task .molecule-task__left .molecule-task__dollars {
-  right: 0.5em;
+	right: 0.5em;
 }
 .molecule-task.molecule-task__pending {
-  background-color: #dfe5f6;
+	background-color: #dfe5f6;
 }
 .molecule-task.molecule-task__expired {
-  background-color: #f6dfdf;
+	background-color: #f6dfdf;
 }
 .molecule-task.molecule-task__complete {
-  background-color: #e2eee2;
+	background-color: #e2eee2;
 }
 .molecule-task.molecule-task__highlight {
-  animation: 2s highlight;
+	animation: 2s highlight;
 }
 @keyframes highlight {
-  0% {
-    box-shadow: none;
-  }
-  25% {
-    box-shadow: inset 0 0 0 1000px gold;
-    color: black;
-  }
-  75% {
-    box-shadow: inset 0 0 0 1000px gold;
-    color: black;
-  }
-  100% {
-    box-shadow: none;
-  }
+	0% {
+		box-shadow: none;
+	}
+	25% {
+		box-shadow: inset 0 0 0 1000px gold;
+		color: black;
+	}
+	75% {
+		box-shadow: inset 0 0 0 1000px gold;
+		color: black;
+	}
+	100% {
+		box-shadow: none;
+	}
 }
 
 /*# sourceMappingURL=Task.css.map */

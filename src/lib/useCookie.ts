@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 // https://dev.to/dqunbp/store-state-in-cookies-with-use-cookie-value-react-hook-4i4f
 // https://codesandbox.io/s/usecookie-sandbox-3cpls?file=/src/useCookie.jsx

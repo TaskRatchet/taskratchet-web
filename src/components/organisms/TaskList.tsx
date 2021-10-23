@@ -1,19 +1,9 @@
-import React, {
-	ReactNode,
-	RefObject,
-	useEffect,
-	useRef,
-	useState,
-} from 'react';
-import Task, { TaskProps } from '../molecules/Task';
+import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api';
 import './TaskList.css';
-import browser from '../../lib/Browser';
-import { ListItem, ListSubheader } from '@material-ui/core';
 import AutoSizer from 'react-virtualized-auto-sizer';
 import { VariableSizeList } from 'react-window';
-import usePrevious from '../../lib/usePrevious';
 import createListItems from '../../lib/createListItems';
 
 interface TaskListProps {
