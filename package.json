@@ -40,7 +40,7 @@
 	},
 	"scripts": {
 		"start": "react-scripts start",
-		"build": "react-scripts build",
+		"build": "npx browserslist@latest --update-db && react-scripts build",
 		"test": "DEBUG_PRINT_LIMIT=9999999 react-scripts test --silent=false --verbose=false",
 		"eject": "react-scripts eject",
 		"storybook": "start-storybook -p 9009 -s public",
