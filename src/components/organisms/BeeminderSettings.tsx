@@ -20,7 +20,7 @@ const beeminderClientId: string = isProduction
 const BeeminderSettings = () => {
 	const [error, setError] = useState<string>('');
 	const { me, updateMe, isLoading } = useMe({
-		onSuccess: (data) => {
+		onSuccess: (data: User) => {
 			// TODO: Make sure this doesn't result in field being populated after initial page load
 			if (bmGoal) return;
 			const goal = _.get(data, 'integrations.beeminder.goal_new_tasks', '');

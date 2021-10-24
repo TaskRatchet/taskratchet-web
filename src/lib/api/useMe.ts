@@ -4,7 +4,7 @@ import { MeInput, updateMe as mutator } from './updateMe';
 
 import { useMutation, UseMutateFunction } from 'react-query';
 import { getMe } from './getMe';
-import { UseQueryOptions } from 'react-query/types';
+import { UseQueryOptions } from 'react-query';
 import toaster from '../Toaster';
 
 const onError = (error: unknown) => {
@@ -20,17 +20,14 @@ interface UseMeReturnType {
 
 // TODO: fix updateMe type
 export function useMe(
-	queryOptions: UseQueryOptions | undefined = {}
+	queryOptions: UseQueryOptions<User> | undefined = {}
 ): UseMeReturnType {
 	const queryClient = useQueryClient();
 	const {
 		data: me,
 		isLoading,
 		isFetching,
-	} = useQuery('me', getMe, {
-		onError,
-		...queryOptions,
-	});
+	} = useQuery({ queryKey: 'me', queryFn: getMe, onError, ...queryOptions });
 
 	const { mutate: updateMe } = useMutation(mutator, {
 		onSuccess: async () => {
