@@ -10,6 +10,7 @@ function makeTitle(task: TaskType) {
 const ListItemComponent = React.forwardRef((props: TaskProps, ref) => (
 	<Task ref_={ref as RefObject<HTMLDivElement>} {...props} />
 ));
+ListItemComponent.displayName = 'ListItemComponent';
 
 export default function createListItems(
 	sortedTasks: TaskType[],

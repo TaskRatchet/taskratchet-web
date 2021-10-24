@@ -170,7 +170,7 @@ const Register = () => {
 							setAgreed(e.target.value === 'yes');
 						}}
 					/>
-					&nbsp;I have read and agree to TaskRatchet's{' '}
+					&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
 					<a
 						href="https://taskratchet.com/privacy/"
 						target={'_blank'}
