@@ -30,7 +30,7 @@
 		"react-google-login": "^5.0.5",
 		"react-query": "^3.2.0",
 		"react-router-dom": "^5.1.2",
-		"react-scripts": "4.0.0",
+		"react-scripts": "4.0.3",
 		"react-toastify": "^5.5.0",
 		"react-topbar-progress-indicator": "^4.1.0",
 		"react-virtualized-auto-sizer": "^1.0.6",
@@ -43,8 +43,6 @@
 		"build": "npx browserslist@latest --update-db && react-scripts build",
 		"test": "DEBUG_PRINT_LIMIT=9999999 react-scripts test --silent=false --verbose=false",
 		"eject": "react-scripts eject",
-		"storybook": "start-storybook -p 9009 -s public",
-		"build-storybook": "build-storybook -s public",
 		"checkTs": "tsc --noEmit",
 		"format": "prettier --write .",
 		"lint": "eslint --max-warnings 0 --ext .ts --ext .tsx --ext .js --ext .jsx src/",
@@ -68,10 +66,6 @@
 		]
 	},
 	"devDependencies": {
-		"@storybook/addon-actions": "^6.3.12",
-		"@storybook/addon-links": "^5.3.21",
-		"@storybook/addons": "^5.3.21",
-		"@storybook/react": "^6.3.12",
 		"@testing-library/dom": "^7.23.0",
 		"@testing-library/jest-dom": "^5.11.5",
 		"@testing-library/react": "^10.4.9",
