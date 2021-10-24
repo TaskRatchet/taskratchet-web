@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { MouseEvent } from 'react';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -9,12 +9,11 @@ import _ from 'lodash';
 const ITEM_HEIGHT = 48;
 
 export default function TaskMenu({ task }: { task: TaskType }) {
-	const [anchorEl, setAnchorEl] = React.useState(null);
+	const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 	const open = Boolean(anchorEl);
 	const setUncle = useSetUncle();
 
-	// TODO: replace any type
-	const handleClick = (event: any) => {
+	const handleClick = (event: MouseEvent) => {
 		setAnchorEl(event.currentTarget);
 	};
 

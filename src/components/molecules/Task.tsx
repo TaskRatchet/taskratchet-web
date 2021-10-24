@@ -6,7 +6,7 @@ import { useSetComplete } from '../../lib/api/useSetComplete';
 
 export interface TaskProps {
 	task: TaskType;
-	ref_?: Ref<any>;
+	ref_?: Ref<HTMLDivElement>;
 }
 
 const Task = ({ task, ref_ }: TaskProps) => {

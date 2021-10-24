@@ -15,15 +15,14 @@ function subscribeToSession(callback: CallableFunction) {
 }
 
 function unsubscribeFromSession(callback: CallableFunction) {
-	// TODO: Use proper type for x
-	sessionSubs = sessionSubs.filter((x: any) => x !== callback);
+	sessionSubs = sessionSubs.filter((x: CallableFunction) => x !== callback);
 }
 
 // TODO: Should this function be in separate file?
 export function publishSession() {
 	const session = getSession();
 
-	sessionSubs.forEach((x: any) => x(session));
+	sessionSubs.forEach((x: CallableFunction) => x(session));
 }
 
 // TODO: Should this function be in separate file?

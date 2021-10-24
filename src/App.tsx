@@ -34,7 +34,7 @@ ReactGA.initialize('G-Y074NE79ML');
 const queryClient = new QueryClient();
 
 function usePageViews() {
-	let location = useLocation();
+	const location = useLocation();
 
 	React.useEffect(() => {
 		ReactGA.set({ page: location.pathname });

@@ -1,20 +1,20 @@
 import { apiFetch } from './apiFetch';
 import _ from 'lodash';
 
-interface MeInput {
-	name?: string;
-	email?: string;
-	timezone?: string;
-	beeminder_token?: string;
-	beeminder_user?: string;
-	beeminder_goal_new_tasks?: string;
-	checkout_session_id?: string;
+export interface MeInput {
+	name?: string | null;
+	email?: string | null;
+	timezone?: string | null;
+	beeminder_token?: string | null;
+	beeminder_user?: string | null;
+	beeminder_goal_new_tasks?: string | null;
+	checkout_session_id?: string | null;
 }
 
 const pipe = (
 	input: MeInput,
 	inputPath: string,
-	output: any,
+	output: Record<string, unknown>,
 	outputPath: string
 ) => {
 	const value = _.get(input, inputPath);
@@ -27,13 +27,13 @@ const pipe = (
 };
 
 const pipeMap = (input: MeInput, pathPairs: string[][]) => {
-	return pathPairs.reduce((prev: any, pair: string[]) => {
+	return pathPairs.reduce((prev: Record<string, unknown>, pair: string[]) => {
 		return pipe(input, pair[0], prev, pair[1]);
 	}, {});
 };
 
 export async function updateMe(input: MeInput) {
-	let payload = pipeMap(input, [
+	const payload = pipeMap(input, [
 		['beeminder_token', 'integrations.beeminder.token'],
 		['beeminder_user', 'integrations.beeminder.user'],
 		['beeminder_goal_new_tasks', 'integrations.beeminder.goal_new_tasks'],

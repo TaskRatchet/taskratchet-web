@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import './Account.css';
 import toaster from '../../lib/Toaster';
 import Input from '../molecules/Input';
@@ -7,14 +7,7 @@ import { useCheckoutSession, useMe, useTimezones } from '../../lib/api';
 import { useIsFetching } from 'react-query';
 import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
 
-interface Card {
-	brand: string;
-	last4: string;
-}
-
-interface AccountProps {}
-
-const Account = (props: AccountProps) => {
+const Account = () => {
 	const isFetching = useIsFetching(),
 		checkoutSession = useCheckoutSession(),
 		{ data: timezones } = useTimezones(),
@@ -29,7 +22,6 @@ const Account = (props: AccountProps) => {
 		{ updatePassword, isLoading } = useUpdatePassword();
 
 	useEffect(() => {
-		// console.log('propagating me changes')
 		const { name = '', email = '', timezone = '', cards = [] } = me || {};
 
 		setName(name);
@@ -38,7 +30,7 @@ const Account = (props: AccountProps) => {
 		setCards(cards);
 	}, [me]);
 
-	const saveGeneral = (event: any) => {
+	const saveGeneral = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		updateMe({
@@ -52,7 +44,7 @@ const Account = (props: AccountProps) => {
 		return value === '' ? undefined : value;
 	};
 
-	const savePassword = (event: any) => {
+	const savePassword = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		if (!isPasswordFormValid()) return;
@@ -108,7 +100,7 @@ const Account = (props: AccountProps) => {
 			.redirectToCheckout({
 				sessionId: await getSessionId(),
 			})
-			.then((result: any) => {
+			.then((result: { error: { message: string } }) => {
 				// If `redirectToCheckout` fails due to a browser or network
 				// error, display the localized error message to your customer
 				// using `result.error.message`.
@@ -159,13 +151,12 @@ const Account = (props: AccountProps) => {
 					value={timezone}
 					onChange={(e) => setTimezone(e.target.value)}
 				>
-					{timezones
-						? timezones.map((tz: string, i: number) => (
-								<option value={tz} key={i}>
-									{tz}
-								</option>
-						  ))
-						: null}
+					{timezones &&
+						timezones.map((tz: string, i: number) => (
+							<option value={tz} key={i}>
+								{tz}
+							</option>
+						))}
 				</select>
 
 				<input type="submit" value={'Save'} />

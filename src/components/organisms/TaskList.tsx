@@ -13,7 +13,7 @@ interface TaskListProps {
 
 const TaskList = ({ lastToday, newTask }: TaskListProps) => {
 	const { data: tasks } = useTasks();
-	const listRef = useRef<VariableSizeList<any>>();
+	const listRef = useRef<VariableSizeList>(null);
 	const [entries, setEntries] = useState<JSX.Element[]>([]);
 	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
 	const [newTaskIndex, setNewTaskIndex] = useState<number>();
@@ -33,13 +33,13 @@ const TaskList = ({ lastToday, newTask }: TaskListProps) => {
 	}, [tasks, newTask]);
 
 	useEffect(() => {
-		if (listRef.current === undefined || nextHeadingIndex === undefined) return;
-		(listRef.current as any).scrollToItem(nextHeadingIndex, 'start');
+		if (listRef.current === null || nextHeadingIndex === undefined) return;
+		listRef.current.scrollToItem(nextHeadingIndex, 'start');
 	}, [nextHeadingIndex, listRef, lastToday]);
 
 	useEffect(() => {
-		if (listRef.current === undefined || newTaskIndex === undefined) return;
-		(listRef.current as any).scrollToItem(newTaskIndex);
+		if (listRef.current === null || newTaskIndex === undefined) return;
+		listRef.current.scrollToItem(newTaskIndex);
 	}, [newTaskIndex, listRef]);
 
 	return (
@@ -51,7 +51,7 @@ const TaskList = ({ lastToday, newTask }: TaskListProps) => {
 						itemCount={entries.length}
 						width={width}
 						height={height}
-						ref={listRef as any}
+						ref={listRef}
 					>
 						{({ index, style }) => <div style={style}>{entries[index]}</div>}
 					</VariableSizeList>

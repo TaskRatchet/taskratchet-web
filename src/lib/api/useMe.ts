@@ -1,8 +1,8 @@
 import { useQuery, useQueryClient } from 'react-query';
 
-import { updateMe as mutator } from './updateMe';
+import { MeInput, updateMe as mutator } from './updateMe';
 
-import { useMutation } from 'react-query';
+import { useMutation, UseMutateFunction } from 'react-query';
 import { getMe } from './getMe';
 import { UseQueryOptions } from 'react-query/types';
 import toaster from '../Toaster';
@@ -12,8 +12,8 @@ const onError = (error: unknown) => {
 };
 
 interface UseMeReturnType {
-	me: any;
-	updateMe: any;
+	me: User;
+	updateMe: UseMutateFunction<Response, unknown, MeInput>;
 	isLoading: boolean;
 	isFetching: boolean;
 }
@@ -32,14 +32,12 @@ export function useMe(
 		...queryOptions,
 	});
 
-	// TODO: fix types
 	const { mutate: updateMe } = useMutation(mutator, {
-		onSuccess: async (data) => {
+		onSuccess: async () => {
 			await queryClient.invalidateQueries('me');
 		},
 		onError,
 	});
 
-	// TODO: Fix me type
-	return { me, updateMe, isLoading, isFetching };
+	return { me, updateMe, isLoading, isFetching } as UseMeReturnType;
 }

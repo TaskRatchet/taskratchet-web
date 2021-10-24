@@ -1,13 +1,11 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import api from '../../lib/LegacyApi';
 import toaster from '../../lib/Toaster';
 import { useCheckoutSession, useTimezones } from '../../lib/api';
 import Input from '../molecules/Input';
 import Field from '../molecules/Field';
 
-interface RegisterProps {}
-
-const Register = (props: RegisterProps) => {
+const Register = () => {
 	const [name, setName] = useState<string>(''),
 		[email, setEmail] = useState<string>(''),
 		[password, setPassword] = useState<string>(''),
@@ -17,7 +15,7 @@ const Register = (props: RegisterProps) => {
 		[timezone, setTimezone] = useState<string>(''),
 		[agreed, setAgreed] = useState<boolean>(false);
 
-	const register = async (event: any) => {
+	const register = async (event: FormEvent) => {
 		event.preventDefault();
 
 		const passes = validateRegistrationForm();
@@ -49,7 +47,7 @@ const Register = (props: RegisterProps) => {
 			.redirectToCheckout({
 				sessionId: getSessionId(),
 			})
-			.then((result: any) => {
+			.then((result: { error: { message: string } }) => {
 				// If `redirectToCheckout` fails due to a browser or network
 				// error, display the localized error message to your customer
 				// using `result.error.message`.

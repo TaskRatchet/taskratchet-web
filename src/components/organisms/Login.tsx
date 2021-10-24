@@ -37,7 +37,7 @@ const Login = () => {
 							send({
 								type: 'EMAIL',
 								value: e.target.value,
-							} as any)
+							})
 						}
 						label={'Email'}
 						error={state.context.emailError}
@@ -51,7 +51,7 @@ const Login = () => {
 							send({
 								type: 'PASSWORD',
 								value: e.target.value,
-							} as any)
+							})
 						}
 						label={'Password'}
 						error={state.context.passwordError}

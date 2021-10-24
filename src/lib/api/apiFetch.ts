@@ -24,9 +24,9 @@ const _trim = (s: string, c: string) => {
 
 export async function apiFetch(
 	route: string,
-	protected_: boolean = false,
-	method: string = 'GET',
-	data: any = null
+	protected_ = false,
+	method = 'GET',
+	data: unknown = null
 ): Promise<Response> {
 	const session = cookies.get('tr_session'),
 		route_ = _trim(route, '/'),
@@ -36,6 +36,7 @@ export async function apiFetch(
 		throw new Error('User not logged in');
 	}
 
+	// noinspection SpellCheckingInspection
 	const response = await fetch(base + route_, {
 		method: method,
 		body: data ? JSON.stringify(data) : undefined,

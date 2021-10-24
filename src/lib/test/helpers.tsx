@@ -1,17 +1,17 @@
-import * as new_api from '../../lib/api';
+import * as new_api from '../api';
 import { ParsedQuery } from 'query-string';
 import browser from '../Browser';
 import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render } from '@testing-library/react';
-import { addTask, updateTask } from '../../lib/api';
+import { addTask, updateTask } from '../api';
 
 jest.mock('../../lib/api/getTimezones');
 
 export const makeResponse = (
 	args: {
 		ok?: boolean;
-		json?: any;
+		json?: Record<string, unknown>;
 	} = {}
 ): Partial<Response> => {
 	const { ok = true, json = null } = args;
@@ -29,19 +29,16 @@ export const loadMe = ({
 	json = {},
 	ok = true,
 }: {
-	json?: any;
+	json?: Partial<User>;
 	ok?: boolean;
 }) => {
 	const response = makeResponse({ json, ok });
 
-	jest.spyOn(new_api, 'getMe').mockResolvedValue(json);
+	jest.spyOn(new_api, 'getMe').mockResolvedValue(json as User);
 	jest.spyOn(new_api, 'updateMe').mockResolvedValue(response as Response);
 };
 
-export const loadMeWithBeeminder = (
-	user: string = 'bm_user',
-	goal: string = 'bm_goal'
-) => {
+export const loadMeWithBeeminder = (user = 'bm_user', goal = 'bm_goal') => {
 	loadMe({
 		json: {
 			integrations: {
@@ -67,13 +64,9 @@ export const loadUrlParams = (params: ParsedQuery) => {
 
 export const loadNow = (date: Date) => {
 	const clone = new Date(date.getTime());
-	// console.log({m: 'loading now', clone})
-	// console.log(new Error().stack);
-	jest.spyOn(browser, 'getNow').mockImplementation(() => {
-		const ret = new Date(clone.getTime());
-		// console.log({m: 'mocked loadNow', ret})
-		return ret;
-	});
+	jest
+		.spyOn(browser, 'getNow')
+		.mockImplementation(() => new Date(clone.getTime()));
 };
 
 export function expectLoadingOverlay(
@@ -109,10 +102,10 @@ export async function renderWithQueryProvider(ui: ReactElement) {
 	};
 }
 
-export function sleep({
+export function sleep<Type>({
 	ms = 50,
 	value = undefined,
-}: { ms?: number; value?: any } = {}) {
+}: { ms?: number; value?: Type } = {}): Promise<Type> {
 	return new Promise((resolve) =>
 		setTimeout(() => {
 			resolve(value);
@@ -122,19 +115,10 @@ export function sleep({
 
 export function resolveWithDelay(
 	mock: jest.SpyInstance,
-	ms: number = 50,
-	value: any = undefined
-) {
+	ms = 50,
+	value: unknown = undefined
+): void {
 	mock.mockImplementation(() => sleep({ ms, value }));
-}
-
-export function rejectWithDelay(mock: jest.SpyInstance, ms: number = 50) {
-	mock.mockImplementation(
-		() =>
-			new Promise((resolve, reject) => {
-				setTimeout(() => reject('Delayed rejection'), ms);
-			})
-	);
 }
 
 export function makeTask({
@@ -157,11 +141,17 @@ export function makeTask({
 	};
 }
 
-export async function withMutedReactQueryLogger(callback: () => any) {
+export async function withMutedReactQueryLogger(callback: () => void) {
 	setLogger({
-		log: () => {},
-		warn: () => {},
-		error: () => {},
+		log: () => {
+			/* noop */
+		},
+		warn: () => {
+			/* noop */
+		},
+		error: () => {
+			/* noop */
+		},
 	});
 
 	await callback();
@@ -170,19 +160,22 @@ export async function withMutedReactQueryLogger(callback: () => any) {
 }
 
 const loadApiResponse = (
-	mock: any,
-	response: { json?: any; ok?: boolean } = { json: null, ok: true }
+	mock: jest.Mock,
+	response: { json?: Record<string, unknown>; ok?: boolean } = {
+		json: undefined,
+		ok: true,
+	}
 ) => {
-	(mock as jest.Mock).mockReturnValue(makeResponse(response));
+	mock.mockReturnValue(makeResponse(response));
 };
 
 export const loadTasksApiData = ({
 	tasks = [],
 	me = {},
-}: { tasks?: TaskType[]; me?: object } = {}) => {
-	jest.spyOn(new_api, 'getTasks').mockResolvedValue(tasks || []);
-	jest.spyOn(new_api, 'getMe').mockResolvedValue(me || {});
+}: { tasks?: TaskType[]; me?: Partial<User> } = {}) => {
+	jest.spyOn(new_api, 'getTasks').mockResolvedValue(tasks);
+	jest.spyOn(new_api, 'getMe').mockResolvedValue(me as User);
 
-	loadApiResponse(updateTask);
-	loadApiResponse(addTask);
+	loadApiResponse(updateTask as jest.Mock);
+	loadApiResponse(addTask as jest.Mock);
 };

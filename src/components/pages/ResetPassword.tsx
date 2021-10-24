@@ -1,12 +1,10 @@
-import React, { useState } from 'react';
+import React, { FormEvent, useState } from 'react';
 import api from '../../lib/LegacyApi';
 import { useLocation } from 'react-router-dom';
 
-interface ResetPasswordProps {}
-
-function ResetPassword(props: ResetPasswordProps) {
+function ResetPassword() {
 	const useToken = () => {
-		let query = new URLSearchParams(useLocation().search);
+		const query = new URLSearchParams(useLocation().search);
 
 		return query.get('t') || '';
 	};
@@ -16,14 +14,14 @@ function ResetPassword(props: ResetPasswordProps) {
 	const [password2, setPassword2] = useState<string>('');
 	const token = useToken();
 
-	const resetPassword = (event: any) => {
+	const resetPassword = (event: FormEvent) => {
 		event.preventDefault();
 
 		clearMessages();
 
 		if (!validateForm()) return;
 
-		api.resetPassword(token, password).then((res: any) => {
+		api.resetPassword(token, password).then((res: Response) => {
 			if (res.ok) {
 				pushMessage('Password reset successfully');
 			} else {

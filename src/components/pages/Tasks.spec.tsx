@@ -1,7 +1,13 @@
 import * as new_api from '../../lib/api';
 import { addTask, getMe, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import {
+	fireEvent,
+	Matcher,
+	render,
+	SelectorMatcherOptions,
+	waitFor,
+} from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -43,7 +49,7 @@ global.document.createRange = () =>
 			nodeName: 'BODY',
 			ownerDocument: document,
 		},
-	} as any);
+	} as unknown as Range);
 
 const expectTaskSave = async ({
 	task,
@@ -68,10 +74,14 @@ const expectTaskSave = async ({
 const expectCheckboxState = (
 	task: string,
 	expected: boolean,
-	getByText: any
+	getByText: (
+		text: Matcher,
+		options?: SelectorMatcherOptions | undefined,
+		waitForElementOptions?: unknown
+	) => HTMLElement
 ) => {
 	const taskEl = getByText(task);
-	const checkbox = taskEl.previousElementSibling;
+	const checkbox = taskEl.previousElementSibling as HTMLInputElement;
 
 	expect(checkbox.checked).toEqual(expected);
 };

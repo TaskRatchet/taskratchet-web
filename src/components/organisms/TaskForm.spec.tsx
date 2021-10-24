@@ -7,13 +7,13 @@ import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 
 global.document.createRange = () =>
 	({
-		setStart: () => {},
-		setEnd: () => {},
+		setStart: () => undefined,
+		setEnd: () => undefined,
 		commonAncestorContainer: {
 			nodeName: 'BODY',
 			ownerDocument: document,
 		},
-	} as any);
+	} as unknown as Range);
 
 interface RenderComponentProps {
 	task?: string;
@@ -32,8 +32,8 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 		cents = null,
 		timezone = '',
 		error = '',
-		onChange = (task, due, cents) => {},
-		onSubmit = () => {},
+		onChange = () => undefined,
+		onSubmit = () => undefined,
 	} = props;
 
 	const result: RenderResult = render(

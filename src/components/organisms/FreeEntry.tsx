@@ -34,9 +34,9 @@ const FreeEntry = (props: FreeEntryProps) => {
 			.parse(task, browser.getNow(), { forwardDate: true })
 			.pop();
 
-		let due = null,
-			safe = _.escape(task),
-			taskHighlighted = null;
+		let due = null;
+		let taskHighlighted = null;
+		const safe = _.escape(task);
 
 		if (response) {
 			due = response.date();

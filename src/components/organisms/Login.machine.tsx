@@ -1,7 +1,15 @@
-import { assign, createMachine, StateMachine } from 'xstate';
+import {
+	assign,
+	createMachine,
+	EventObject,
+	StateMachine,
+	StateSchema,
+} from 'xstate';
 import live_api, { LegacyApi } from '../../lib/LegacyApi';
 
 // https://xstate.js.org/viz/
+
+// TODO: Replace this machine with react-query
 
 export interface LoginContext {
 	api: LegacyApi;
@@ -18,7 +26,11 @@ interface CreateLoginMachineOptions {
 
 const createLoginMachine = (
 	options: CreateLoginMachineOptions = {}
-): StateMachine<LoginContext, any, any> => {
+): StateMachine<
+	LoginContext,
+	StateSchema<LoginContext>,
+	EventObject & { value: string }
+> => {
 	const { api = live_api } = options;
 	return createMachine(
 		{
@@ -73,10 +85,10 @@ const createLoginMachine = (
 		},
 		{
 			services: {
-				loginService: (ctx: LoginContext, e: any) => {
+				loginService: (ctx: LoginContext) => {
 					return ctx.api.login(ctx.email, ctx.password);
 				},
-				resetService: (ctx: LoginContext, e: any) =>
+				resetService: (ctx: LoginContext) =>
 					ctx.api.requestResetEmail(ctx.email),
 			},
 			guards: {
@@ -103,20 +115,22 @@ const createLoginMachine = (
 					emailError: '',
 					passwordError: '',
 					message: '',
-				} as any),
+				} as unknown as LoginContext),
 				setEmail: assign({
-					email: (ctx: any, e: any): string => e.value,
-				} as any),
+					email: (ctx: LoginContext, e: { value: string }): string => e.value,
+				} as unknown as LoginContext),
 				setPassword: assign({
-					password: (ctx: any, e: any): string => e.value,
-				} as any),
+					password: (ctx: LoginContext, e: { value: string }): string =>
+						e.value,
+				} as unknown as LoginContext),
 				storeLoginResponse: assign({
-					message: (ctx: any, e: any) => (!e.data ? 'Login failed' : ''),
-				} as any),
+					message: (ctx: LoginContext, e: { data: Response }) =>
+						!e.data ? 'Login failed' : '',
+				} as unknown as LoginContext),
 				storeResetResponse: assign({
-					message: (ctx: any, e: any) =>
+					message: (ctx: LoginContext, e: { data: Response }) =>
 						!e.data.ok ? 'Reset failed' : `Instructions sent to ${ctx.email}`,
-				} as any),
+				} as unknown as LoginContext),
 			},
 		}
 	);

@@ -39,13 +39,9 @@ const BeeminderSettings = () => {
 	useEffect(() => {
 		const { username, access_token } = browser.getUrlParams();
 
-		const shouldConnect =
-			!!username &&
-			!!access_token &&
-			_.isString(username) &&
-			_.isString(access_token);
-
-		if (!shouldConnect) return;
+		if (typeof username !== 'string' || typeof access_token !== 'string') {
+			return;
+		}
 
 		updateMe({
 			beeminder_user: username,

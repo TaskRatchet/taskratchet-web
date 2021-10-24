@@ -1,5 +1,5 @@
 import browser from './Browser';
-import React from 'react';
+import React, { RefObject } from 'react';
 import Task, { TaskProps } from '../components/molecules/Task';
 import { ListItem, ListSubheader } from '@material-ui/core';
 
@@ -8,7 +8,7 @@ function makeTitle(task: TaskType) {
 }
 
 const ListItemComponent = React.forwardRef((props: TaskProps, ref) => (
-	<Task ref_={ref} {...props} />
+	<Task ref_={ref as RefObject<HTMLDivElement>} {...props} />
 ));
 
 export default function createListItems(
@@ -83,11 +83,9 @@ export default function createListItems(
 	}
 
 	if (i < sortedTasks.length) {
-		// WORKAROUND: https://github.com/mui-org/material-ui/issues/14971
 		const item = (
 			<ListItem
-				button={false as any}
-				component={ListItemComponent as any}
+				component={ListItemComponent as any} // eslint-disable-line @typescript-eslint/no-explicit-any
 				task={n}
 				key={JSON.stringify(n)}
 			/>

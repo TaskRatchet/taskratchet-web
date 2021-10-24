@@ -1,6 +1,6 @@
 import { apiFetch } from './apiFetch';
 
-export async function getMe() {
+export async function getMe(): Promise<User> {
 	const response = await apiFetch('me', true);
 
 	if (!response.ok) {

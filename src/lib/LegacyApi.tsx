@@ -12,7 +12,7 @@ export class LegacyApi {
 		return apiFetch('account/login', false, 'POST', {
 			email: email,
 			password: password,
-		}).then((res: any) => {
+		}).then((res: Response) => {
 			if (!res.ok) return false;
 
 			res

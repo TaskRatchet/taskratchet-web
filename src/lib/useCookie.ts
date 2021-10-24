@@ -3,7 +3,7 @@ import { useState } from 'react';
 // https://dev.to/dqunbp/store-state-in-cookies-with-use-cookie-value-react-hook-4i4f
 // https://codesandbox.io/s/usecookie-sandbox-3cpls?file=/src/useCookie.jsx
 
-const getItem = (key: string): any => {
+const getItem = (key: string): unknown => {
 	const stringValue = document.cookie
 		.split('; ')
 		.reduce((total, currentCookie) => {
@@ -17,7 +17,7 @@ const getItem = (key: string): any => {
 	return JSON.parse(stringValue);
 };
 
-const setItem = (key: string, value: any, numberOfDays: number): void => {
+const setItem = (key: string, value: unknown, numberOfDays: number): void => {
 	const now = new Date();
 	now.setTime(now.getTime() + numberOfDays * 60 * 60 * 24 * 1000);
 
@@ -26,11 +26,11 @@ const setItem = (key: string, value: any, numberOfDays: number): void => {
 	document.cookie = `${key}=${stringValue}; expires=${now.toUTCString()}; path=/`;
 };
 
-const useCookie = (key: string, defaultValue: any) => {
+const useCookie = (key: string, defaultValue: unknown) => {
 	const getCookie = () => getItem(key) || defaultValue;
 	const [cookie, setCookie] = useState(getCookie());
 
-	const updateCookie = (value: any, numberOfDays: number) => {
+	const updateCookie = (value: unknown, numberOfDays: number) => {
 		setCookie(value);
 		setItem(key, value, numberOfDays);
 	};

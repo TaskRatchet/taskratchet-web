@@ -29,9 +29,9 @@ export function useUpdateTask() {
 				const newTasks = previousTasks.map((t: TaskType) => {
 					if (t.id !== id) return t;
 
-					let newTask = { ...t, ...data };
+					const newTask = { ...t, ...data };
 
-					if (data.hasOwnProperty('complete')) {
+					if ('complete' in data) {
 						newTask['status'] = data['complete'] ? 'complete' : 'pending';
 					}
 
