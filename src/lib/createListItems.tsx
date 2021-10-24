@@ -65,6 +65,7 @@ export default function createListItems(
 			<ListSubheader
 				key={`${headingsRemaining[0]}__heading`}
 				className={classes}
+				component={'div'}
 			>
 				{headingsRemaining[0]}
 			</ListSubheader>

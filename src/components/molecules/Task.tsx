@@ -17,7 +17,7 @@ const Task = ({ task, ref_ }: TaskProps) => {
 	const descRef = React.createRef<HTMLSpanElement>();
 
 	return (
-		<li
+		<div
 			className={`molecule-task molecule-task__${task.status} ${
 				task.isNew ? 'molecule-task__highlight' : ''
 			}`}
@@ -45,7 +45,7 @@ const Task = ({ task, ref_ }: TaskProps) => {
 				<span className={'molecule-task__dollars'}>${task.cents / 100}</span>
 			</div>
 			<TaskMenu task={task} />
-		</li>
+		</div>
 	);
 };
 
