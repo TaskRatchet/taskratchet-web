@@ -2,6 +2,7 @@ import * as new_api from '../../lib/api';
 import { addTask, getMe, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
 import {
+	act,
 	fireEvent,
 	Matcher,
 	render,
@@ -181,27 +182,31 @@ describe('tasks page', () => {
 	});
 
 	it("doesn't accept empty task", async () => {
-		loadTasksApiData();
+		await act(async () => {
+			loadTasksApiData();
 
-		const { addButton } = renderTasksPage();
+			const { addButton } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-		userEvent.click(addButton);
+			userEvent.click(addButton);
 
-		expect(new_api.addTask).not.toHaveBeenCalled();
+			expect(new_api.addTask).not.toHaveBeenCalled();
+		});
 	});
 
 	it('displays error on empty task submit', async () => {
-		loadTasksApiData();
+		await act(async () => {
+			loadTasksApiData();
 
-		const { addButton, getByText } = renderTasksPage();
+			const { addButton, getByText } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-		userEvent.click(addButton);
+			userEvent.click(addButton);
 
-		expect(getByText('Task is required')).toBeDefined();
+			expect(getByText('Task is required')).toBeDefined();
+		});
 	});
 
 	it('displays timezone', async () => {
@@ -592,50 +597,53 @@ describe('tasks page', () => {
 	});
 
 	it('cancels fetches on-mutate', async () => {
-		// Setup & initial render
+		await act(async () => {
+			// Setup & initial render
 
-		loadTasksApiData();
+			loadTasksApiData();
 
-		const { taskInput, addButton, getByText } = await renderTasksPage();
+			const { taskInput, addButton, getByText } = await renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-		// Load slow query response to clobber
+			// Load slow query response to clobber
 
-		resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
-			makeTask({ task: 'first', id: 3 }),
-		]);
-
-		// Add first task
-
-		await userEvent.type(taskInput, 'first');
-		userEvent.click(addButton);
-
-		// Wait for slow response to be requested
-
-		await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
-
-		// Load second, fast response
-
-		jest
-			.spyOn(new_api, 'getTasks')
-			.mockResolvedValue([
+			resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
 				makeTask({ task: 'first', id: 3 }),
-				makeTask({ task: 'second', id: 4 }),
 			]);
 
-		// Add second task
+			// Add first task
 
-		await userEvent.type(taskInput, 'second');
-		userEvent.click(addButton);
+			await userEvent.type(taskInput, 'first');
+			userEvent.click(addButton);
 
-		// Sleep 200ms
+			// Wait for slow response to be requested
 
-		await new Promise((resolve) => setTimeout(resolve, 200));
+			await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
 
-		// Check that first, slow response didn't clobber second, fast response
+			// Load second, fast response
 
-		expect(getByText('second')).toBeInTheDocument();
+			jest
+				.spyOn(new_api, 'getTasks')
+				.mockResolvedValue([
+					makeTask({ task: 'first', id: 3 }),
+					makeTask({ task: 'second', id: 4 }),
+				]);
+
+			// Add second task
+
+			await userEvent.type(taskInput, 'second');
+
+			userEvent.click(addButton);
+
+			// Sleep 200ms
+
+			await new Promise((resolve) => setTimeout(resolve, 200));
+
+			// Check that first, slow response didn't clobber second, fast response
+
+			expect(getByText('second')).toBeInTheDocument();
+		});
 	});
 
 	it('shows all tasks', async () => {

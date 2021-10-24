@@ -1,4 +1,4 @@
-import { render, waitFor } from '@testing-library/react';
+import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
 import {
@@ -27,148 +27,168 @@ describe('account page', () => {
 	});
 
 	it('includes Beeminder integration settings', async () => {
-		loadTimezones();
-		loadMe({});
-		loadCheckoutSession();
+		await act(async () => {
+			loadTimezones();
+			loadMe({});
+			loadCheckoutSession();
 
-		// TODO: extract renderWithClientProvider to helpers
-		const queryClient = new QueryClient();
-		const { getByText } = await render(
-			<QueryClientProvider client={queryClient}>
-				<Account />
-			</QueryClientProvider>
-		);
+			// TODO: extract renderWithClientProvider to helpers
+			const queryClient = new QueryClient();
+			const { getByText } = await render(
+				<QueryClientProvider client={queryClient}>
+					<Account />
+				</QueryClientProvider>
+			);
 
-		expect(getByText('Enable Beeminder integration')).toBeDefined();
+			expect(getByText('Enable Beeminder integration')).toBeDefined();
+		});
 	});
 
 	it('loads name', async () => {
-		loadMe({
-			json: {
-				name: 'the_name',
-			},
+		await act(async () => {
+			loadMe({
+				json: {
+					name: 'the_name',
+				},
+			});
+
+			const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
+
+			await waitFor(() =>
+				expect(getByDisplayValue('the_name')).toBeInTheDocument()
+			);
 		});
-
-		const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
-
-		await waitFor(() =>
-			expect(getByDisplayValue('the_name')).toBeInTheDocument()
-		);
 	});
 
 	it('loads email', async () => {
-		loadMe({
-			json: {
-				email: 'the_email',
-			},
+		await act(async () => {
+			loadMe({
+				json: {
+					email: 'the_email',
+				},
+			});
+
+			const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
+
+			await waitFor(() =>
+				expect(getByDisplayValue('the_email')).toBeInTheDocument()
+			);
 		});
-
-		const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
-
-		await waitFor(() =>
-			expect(getByDisplayValue('the_email')).toBeInTheDocument()
-		);
 	});
 
 	it('uses loading overlay', async () => {
-		loadMe({});
+		await act(async () => {
+			loadMe({});
 
-		const { container } = await renderWithQueryProvider(<Account />);
+			const { container } = await renderWithQueryProvider(<Account />);
 
-		expectLoadingOverlay(container, { extraClasses: 'page-account' });
+			await waitFor(() =>
+				expectLoadingOverlay(container, { extraClasses: 'page-account' })
+			);
+		});
 	});
 
 	it('loads timezone', async () => {
-		loadTimezones(['first', 'America/Indiana/Knox', 'third']);
+		await act(async () => {
+			loadTimezones(['first', 'America/Indiana/Knox', 'third']);
 
-		loadMe({
-			json: {
-				timezone: 'America/Indiana/Knox',
-			},
+			loadMe({
+				json: {
+					timezone: 'America/Indiana/Knox',
+				},
+			});
+
+			const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
+
+			await waitFor(() =>
+				expect(getByDisplayValue('America/Indiana/Knox')).toBeInTheDocument()
+			);
 		});
-
-		const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
-
-		await waitFor(() =>
-			expect(getByDisplayValue('America/Indiana/Knox')).toBeInTheDocument()
-		);
 	});
 
 	it('uses loading overlay on fetch', async () => {
-		loadMe({});
+		await act(async () => {
+			loadMe({});
 
-		const { container, getAllByText } = await renderWithQueryProvider(
-			<Account />
-		);
+			const { container, getAllByText } = await renderWithQueryProvider(
+				<Account />
+			);
 
-		const button = getAllByText('Save')[0];
+			const button = getAllByText('Save')[0];
 
-		await waitFor(() =>
-			expectLoadingOverlay(container, {
-				extraClasses: 'page-account',
-				shouldExist: false,
-			})
-		);
+			await waitFor(() =>
+				expectLoadingOverlay(container, {
+					extraClasses: 'page-account',
+					shouldExist: false,
+				})
+			);
 
-		userEvent.click(button);
+			userEvent.click(button);
 
-		await waitFor(() =>
-			expectLoadingOverlay(container, { extraClasses: 'page-account' })
-		);
+			await waitFor(() =>
+				expectLoadingOverlay(container, { extraClasses: 'page-account' })
+			);
+		});
 	});
 
 	it('uses loading screen when saving password', async () => {
-		loadMe({});
+		await act(async () => {
+			loadMe({});
 
-		resolveWithDelay(jest.spyOn(api, 'updatePassword'), 100);
+			resolveWithDelay(jest.spyOn(api, 'updatePassword'), 100);
 
-		const { container, getAllByText, getByLabelText } =
-			await renderWithQueryProvider(<Account />);
+			const { container, getAllByText, getByLabelText } =
+				await renderWithQueryProvider(<Account />);
 
-		const button = getAllByText('Save')[1];
+			const button = getAllByText('Save')[1];
 
-		await waitFor(() =>
-			expectLoadingOverlay(container, {
-				extraClasses: 'page-account',
-				shouldExist: false,
-			})
-		);
+			await waitFor(() =>
+				expectLoadingOverlay(container, {
+					extraClasses: 'page-account',
+					shouldExist: false,
+				})
+			);
 
-		userEvent.type(getByLabelText('Old Password'), 'old');
-		userEvent.type(getByLabelText('New Password'), 'new');
-		userEvent.type(getByLabelText('Retype Password'), 'new');
-		userEvent.click(button);
+			userEvent.type(getByLabelText('Old Password'), 'old');
+			userEvent.type(getByLabelText('New Password'), 'new');
+			userEvent.type(getByLabelText('Retype Password'), 'new');
+			userEvent.click(button);
 
-		await waitFor(() =>
-			expectLoadingOverlay(container, { extraClasses: 'page-account' })
-		);
+			await waitFor(() =>
+				expectLoadingOverlay(container, { extraClasses: 'page-account' })
+			);
+		});
 	});
 
 	it('loads payment methods', async () => {
-		loadMe({
-			json: {
-				cards: [
-					{
-						brand: 'visa',
-						last4: '1111',
-					},
-				],
-			},
+		await act(async () => {
+			loadMe({
+				json: {
+					cards: [
+						{
+							brand: 'visa',
+							last4: '1111',
+						},
+					],
+				},
+			});
+
+			const { getByText } = await renderWithQueryProvider(<Account />);
+
+			await waitFor(() =>
+				expect(getByText('visa ending with 1111')).toBeInTheDocument()
+			);
 		});
-
-		const { getByText } = await renderWithQueryProvider(<Account />);
-
-		await waitFor(() =>
-			expect(getByText('visa ending with 1111')).toBeInTheDocument()
-		);
 	});
 
 	it('gets checkout session only once', async () => {
-		const { queryClient } = await renderWithQueryProvider(<Account />);
+		await act(async () => {
+			const { queryClient } = await renderWithQueryProvider(<Account />);
 
-		queryClient.invalidateQueries('checkoutSession');
+			await queryClient.invalidateQueries('checkoutSession');
 
-		expect(api.getCheckoutSession).toBeCalledTimes(1);
+			await waitFor(() => expect(api.getCheckoutSession).toBeCalledTimes(1));
+		});
 	});
 
 	// TODO: break sections into their own components

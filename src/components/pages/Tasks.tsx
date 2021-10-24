@@ -18,11 +18,7 @@ const Tasks = ({ lastToday }: TasksProps) => {
 
 	return (
 		<div className={`page-tasks ${isLoading ? 'loading' : 'idle'}`}>
-			<TaskEntry
-				onSave={(t) => {
-					setNewTask(t);
-				}}
-			/>
+			<TaskEntry onSave={setNewTask} />
 			<TaskList lastToday={lastToday} newTask={newTask} />
 		</div>
 	);
