@@ -2,9 +2,10 @@ import React, { ReactNode, useEffect, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api';
 import './TaskList.css';
-import AutoSizer from 'react-virtualized-auto-sizer';
+import AutoSizer, { Size } from 'react-virtualized-auto-sizer';
 import { VariableSizeList } from 'react-window';
 import createListItems from '../../lib/createListItems';
+import useCellMeasurer from '../../lib/useCellMeasurer';
 
 interface TaskListProps {
 	lastToday?: Date;
@@ -17,6 +18,8 @@ const TaskList = ({ lastToday, newTask }: TaskListProps) => {
 	const [entries, setEntries] = useState<JSX.Element[]>([]);
 	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
 	const [newTaskIndex, setNewTaskIndex] = useState<number>();
+	const [size, setSize] = useState<Size>();
+	const cellMeasurerProps = useCellMeasurer({ items: entries, size });
 
 	useEffect(() => {
 		const sorted = sortTasks(tasks || []);
@@ -44,14 +47,13 @@ const TaskList = ({ lastToday, newTask }: TaskListProps) => {
 
 	return (
 		<div className={'organism-taskList'}>
-			<AutoSizer>
+			<AutoSizer onResize={(size) => setSize(size)}>
 				{({ height, width }): ReactNode => (
 					<VariableSizeList
-						itemSize={() => 65}
-						itemCount={entries.length}
 						width={width}
 						height={height}
 						ref={listRef}
+						{...cellMeasurerProps}
 					>
 						{({ index, style }) => <div style={style}>{entries[index]}</div>}
 					</VariableSizeList>
