@@ -1,11 +1,9 @@
-import React, { ReactNode, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api';
 import './TaskList.css';
-import AutoSizer, { Size } from 'react-virtualized-auto-sizer';
-import { VariableSizeList } from 'react-window';
 import createListItems from '../../lib/createListItems';
-import useCellMeasurer from '../../lib/useCellMeasurer';
+import ReactList from 'react-list';
 
 interface TaskListProps {
 	lastToday?: Date;
@@ -14,12 +12,11 @@ interface TaskListProps {
 
 const TaskList = ({ lastToday, newTask }: TaskListProps) => {
 	const { data: tasks } = useTasks();
-	const listRef = useRef<VariableSizeList>(null);
+	const listRef = useRef<ReactList>(null);
 	const [entries, setEntries] = useState<JSX.Element[]>([]);
 	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
 	const [newTaskIndex, setNewTaskIndex] = useState<number>();
-	const [size, setSize] = useState<Size>();
-	const cellMeasurerProps = useCellMeasurer({ items: entries, size });
+	const [index, setIndex] = useState<number>(0);
 
 	useEffect(() => {
 		const sorted = sortTasks(tasks || []);
@@ -37,28 +34,26 @@ const TaskList = ({ lastToday, newTask }: TaskListProps) => {
 
 	useEffect(() => {
 		if (listRef.current === null || nextHeadingIndex === undefined) return;
-		listRef.current.scrollToItem(nextHeadingIndex, 'start');
+		listRef.current.scrollTo(nextHeadingIndex);
+		setIndex(nextHeadingIndex);
 	}, [nextHeadingIndex, listRef, lastToday]);
 
 	useEffect(() => {
 		if (listRef.current === null || newTaskIndex === undefined) return;
-		listRef.current.scrollToItem(newTaskIndex);
+		listRef.current.scrollTo(newTaskIndex);
+		setIndex(newTaskIndex);
 	}, [newTaskIndex, listRef]);
 
 	return (
 		<div className={'organism-taskList'}>
-			<AutoSizer onResize={(size) => setSize(size)}>
-				{({ height, width }): ReactNode => (
-					<VariableSizeList
-						width={width}
-						height={height}
-						ref={listRef}
-						{...cellMeasurerProps}
-					>
-						{({ index, style }) => <div style={style}>{entries[index]}</div>}
-					</VariableSizeList>
-				)}
-			</AutoSizer>
+			<ReactList
+				initialIndex={index}
+				itemRenderer={(i: number) => entries[i]}
+				itemSizeEstimator={() => 60}
+				length={entries.length}
+				type={'variable'}
+				ref={listRef}
+			/>
 		</div>
 	);
 };

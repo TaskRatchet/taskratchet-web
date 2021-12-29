@@ -67,6 +67,7 @@ export default function createListItems(
 				key={`${headingsRemaining[0]}__heading`}
 				className={classes}
 				component={'div'}
+				disableSticky={true}
 			>
 				{headingsRemaining[0]}
 			</ListSubheader>
