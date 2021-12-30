@@ -8,16 +8,22 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
+// TODO: uninstall @material-ui/* in favor of @mui/*
 import MenuIcon from '@material-ui/icons/Menu';
 import TodayIcon from '@material-ui/icons/Today';
 import { useLocation, useHistory } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
+import FilterButton from '../molecules/FilterButton';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
+	onFilterChange?: (filters: Filters) => void;
 }
 
-export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
+export default function NavBar({
+	onTodayClick,
+	onFilterChange,
+}: NavBarProps): JSX.Element {
 	const location = useLocation();
 	const history = useHistory();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -42,6 +48,8 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 					</Button>
 				</Typography>
 				<span>
+					<FilterButton onChange={onFilterChange} />
+
 					<IconButton
 						onClick={handleTodayClick}
 						edge="start"

@@ -8,9 +8,10 @@ import { useCloseWarning } from '../../lib/useCloseWarning';
 
 interface TasksProps {
 	lastToday: Date | undefined;
+	filters?: Filters;
 }
 
-const Tasks = ({ lastToday }: TasksProps): JSX.Element => {
+const Tasks = ({ lastToday, filters }: TasksProps): JSX.Element => {
 	const { isLoading } = useTasks();
 	const [newTask, setNewTask] = useState<TaskType>();
 
@@ -19,7 +20,7 @@ const Tasks = ({ lastToday }: TasksProps): JSX.Element => {
 	return (
 		<div className={`page-tasks ${isLoading ? 'loading' : 'idle'}`}>
 			<TaskEntry onSave={setNewTask} />
-			<TaskList lastToday={lastToday} newTask={newTask} />
+			<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
 		</div>
 	);
 };
