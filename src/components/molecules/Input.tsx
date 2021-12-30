@@ -19,7 +19,7 @@ const Input = ({
 	id,
 	error,
 	pattern,
-}: InputProps) => {
+}: InputProps): JSX.Element => {
 	return (
 		<Field label={label} id={id} error={error}>
 			<input

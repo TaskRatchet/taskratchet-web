@@ -8,7 +8,9 @@ interface Input {
 	cents: number;
 }
 
-export function useAddTask(onSave: (t: TaskType) => void) {
+export function useAddTask(
+	onSave: (t: TaskType) => void
+): (task: string, due: string, cents: number) => void {
 	const queryClient = useQueryClient();
 
 	const { mutate } = useMutation(
@@ -47,7 +49,7 @@ export function useAddTask(onSave: (t: TaskType) => void) {
 		}
 	);
 
-	return (task: string, due: string, cents: number) => {
+	return (task: string, due: string, cents: number): void => {
 		mutate({ task, due, cents });
 	};
 }

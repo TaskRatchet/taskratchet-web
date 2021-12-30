@@ -6,12 +6,15 @@ interface Context {
 	previousTasks: TaskType[] | undefined;
 }
 
-export function useUpdateTask() {
+export function useUpdateTask(): (
+	id: string | number,
+	data: TaskInput
+) => void {
 	const queryClient = useQueryClient();
 
 	// TODO: replace any type
 	const { mutate } = useMutation(
-		(variables: { id: string | number; data: TaskInput }) => {
+		(variables: { id: string | number; data: TaskInput }): Promise<unknown> => {
 			const { id, data } = variables;
 
 			return updateTask(id, data);
@@ -52,7 +55,7 @@ export function useUpdateTask() {
 		}
 	);
 
-	return (id: string | number, data: TaskInput) => {
+	return (id: string | number, data: TaskInput): void => {
 		mutate({ id, data });
 	};
 }

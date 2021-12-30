@@ -10,7 +10,7 @@ interface TaskListProps {
 	newTask?: TaskType;
 }
 
-const TaskList = ({ lastToday, newTask }: TaskListProps) => {
+const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 	const { data: tasks } = useTasks();
 	const listRef = useRef<ReactList>(null);
 	const [entries, setEntries] = useState<JSX.Element[]>([]);

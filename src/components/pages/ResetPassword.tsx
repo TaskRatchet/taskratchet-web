@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import api from '../../lib/LegacyApi';
 import { useLocation } from 'react-router-dom';
 
-function ResetPassword() {
+function ResetPassword(): JSX.Element {
 	const useToken = () => {
 		const query = new URLSearchParams(useLocation().search);
 

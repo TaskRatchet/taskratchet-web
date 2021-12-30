@@ -5,7 +5,7 @@ import { useCheckoutSession, useTimezones } from '../../lib/api';
 import Input from '../molecules/Input';
 import Field from '../molecules/Field';
 
-const Register = () => {
+const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>(''),
 		[email, setEmail] = useState<string>(''),
 		[password, setPassword] = useState<string>(''),

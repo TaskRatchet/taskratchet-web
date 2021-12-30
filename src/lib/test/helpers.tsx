@@ -3,7 +3,7 @@ import { ParsedQuery } from 'query-string';
 import browser from '../Browser';
 import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 import React, { ReactElement } from 'react';
-import { render } from '@testing-library/react';
+import { render, RenderResult } from '@testing-library/react';
 import { addTask, updateTask } from '../api';
 
 jest.mock('../../lib/api/getTimezones');
@@ -31,14 +31,17 @@ export const loadMe = ({
 }: {
 	json?: Partial<User>;
 	ok?: boolean;
-}) => {
+}): void => {
 	const response = makeResponse({ json, ok });
 
 	jest.spyOn(new_api, 'getMe').mockResolvedValue(json as User);
 	jest.spyOn(new_api, 'updateMe').mockResolvedValue(response as Response);
 };
 
-export const loadMeWithBeeminder = (user = 'bm_user', goal = 'bm_goal') => {
+export const loadMeWithBeeminder = (
+	user = 'bm_user',
+	goal = 'bm_goal'
+): void => {
 	loadMe({
 		json: {
 			integrations: {
@@ -48,21 +51,21 @@ export const loadMeWithBeeminder = (user = 'bm_user', goal = 'bm_goal') => {
 	});
 };
 
-export function loadTimezones(timezones: string[] = []) {
+export function loadTimezones(timezones: string[] = []): void {
 	jest.spyOn(new_api, 'getTimezones').mockResolvedValue(timezones);
 }
 
-export function loadCheckoutSession() {
+export function loadCheckoutSession(): void {
 	jest.spyOn(new_api, 'getCheckoutSession').mockResolvedValue({
 		id: 'session',
 	});
 }
 
-export const loadUrlParams = (params: ParsedQuery) => {
+export const loadUrlParams = (params: ParsedQuery): void => {
 	jest.spyOn(browser, 'getUrlParams').mockReturnValue(params);
 };
 
-export const loadNow = (date: Date) => {
+export const loadNow = (date: Date): void => {
 	const clone = new Date(date.getTime());
 	jest
 		.spyOn(browser, 'getNow')
@@ -75,7 +78,7 @@ export function expectLoadingOverlay(
 		shouldExist?: boolean;
 		extraClasses?: string;
 	} = {}
-) {
+): void {
 	const { shouldExist = true, extraClasses = '' } = options;
 
 	expect(
@@ -83,7 +86,9 @@ export function expectLoadingOverlay(
 	).toBe(+shouldExist);
 }
 
-export async function renderWithQueryProvider(ui: ReactElement) {
+export async function renderWithQueryProvider(
+	ui: ReactElement
+): Promise<RenderResult & { queryClient: QueryClient }> {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -141,7 +146,9 @@ export function makeTask({
 	};
 }
 
-export async function withMutedReactQueryLogger(callback: () => void) {
+export async function withMutedReactQueryLogger(
+	callback: () => void
+): Promise<void> {
 	setLogger({
 		log: () => {
 			/* noop */
@@ -172,7 +179,7 @@ const loadApiResponse = (
 export const loadTasksApiData = ({
 	tasks = [],
 	me = {},
-}: { tasks?: TaskType[]; me?: Partial<User> } = {}) => {
+}: { tasks?: TaskType[]; me?: Partial<User> } = {}): void => {
 	jest.spyOn(new_api, 'getTasks').mockResolvedValue(tasks);
 	jest.spyOn(new_api, 'getMe').mockResolvedValue(me as User);
 

@@ -1,11 +1,7 @@
 import { getCheckoutSession } from './getCheckoutSession';
 import { useEffect, useState } from 'react';
 
-interface CheckoutSession {
-	id: string;
-}
-
-export function useCheckoutSession() {
+export function useCheckoutSession(): CheckoutSession | null {
 	const [checkoutSession, setCheckoutSession] =
 		useState<CheckoutSession | null>(null);
 

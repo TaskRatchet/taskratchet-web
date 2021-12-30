@@ -6,6 +6,9 @@ export interface TaskInput {
 }
 
 // Requires that user be authenticated.
-export function updateTask(taskId: number | string, data: TaskInput) {
+export function updateTask(
+	taskId: number | string,
+	data: TaskInput
+): Promise<Response> {
 	return apiFetch('me/tasks/' + taskId, true, 'PUT', data);
 }

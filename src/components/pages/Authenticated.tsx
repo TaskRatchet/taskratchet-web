@@ -4,7 +4,9 @@ import { Link } from 'react-router-dom';
 import { useSession } from '../../lib/api/useSession';
 import './Authenticated.css';
 
-const Authenticated = ({ children }: React.PropsWithChildren<unknown>) => {
+const Authenticated = ({
+	children,
+}: React.PropsWithChildren<unknown>): JSX.Element => {
 	const session = useSession();
 
 	if (session) return <>{children}</>;

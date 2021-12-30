@@ -17,7 +17,7 @@ const beeminderClientId: string = isProduction
 			beeminderRedirect
 		)}&response_type=token`;
 
-const BeeminderSettings = () => {
+const BeeminderSettings = (): JSX.Element => {
 	const [error, setError] = useState<string>('');
 	const { me, updateMe, isLoading } = useMe({
 		onSuccess: (data: User) => {

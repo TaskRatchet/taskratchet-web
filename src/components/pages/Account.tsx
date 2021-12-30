@@ -7,7 +7,7 @@ import { useCheckoutSession, useMe, useTimezones } from '../../lib/api';
 import { useIsFetching } from 'react-query';
 import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
 
-const Account = () => {
+const Account = (): JSX.Element => {
 	const isFetching = useIsFetching(),
 		checkoutSession = useCheckoutSession(),
 		{ data: timezones } = useTimezones(),

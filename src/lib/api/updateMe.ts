@@ -32,7 +32,7 @@ const pipeMap = (input: MeInput, pathPairs: string[][]) => {
 	}, {});
 };
 
-export async function updateMe(input: MeInput) {
+export async function updateMe(input: MeInput): Promise<Response> {
 	const payload = pipeMap(input, [
 		['beeminder_token', 'integrations.beeminder.token'],
 		['beeminder_user', 'integrations.beeminder.user'],

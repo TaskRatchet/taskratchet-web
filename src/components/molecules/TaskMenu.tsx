@@ -8,7 +8,7 @@ import _ from 'lodash';
 
 const ITEM_HEIGHT = 48;
 
-export default function TaskMenu({ task }: { task: TaskType }) {
+export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 	const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 	const open = Boolean(anchorEl);
 	const setUncle = useSetUncle();

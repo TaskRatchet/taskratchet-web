@@ -14,7 +14,7 @@ interface FreeEntryProps {
 	onSubmit: () => void;
 }
 
-const FreeEntry = (props: FreeEntryProps) => {
+const FreeEntry = (props: FreeEntryProps): JSX.Element => {
 	const { task, due, cents, timezone, error, onChange, onSubmit } = props;
 
 	const parseTask = (task: string) => {

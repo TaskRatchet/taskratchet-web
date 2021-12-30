@@ -3,6 +3,10 @@ type Session = {
 	email: string;
 };
 
+interface CheckoutSession {
+	id: string;
+}
+
 type Card = {
 	brand: string;
 	last4: string;

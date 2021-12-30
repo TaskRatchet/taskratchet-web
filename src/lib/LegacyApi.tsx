@@ -8,7 +8,7 @@ const cookies = new Cookies();
 // TODO: Delete this file
 
 export class LegacyApi {
-	login(email: string, password: string) {
+	login(email: string, password: string): Promise<boolean> {
 		return apiFetch('account/login', false, 'POST', {
 			email: email,
 			password: password,
@@ -23,7 +23,7 @@ export class LegacyApi {
 		});
 	}
 
-	_handleLoginResponse(email: string, token: string) {
+	_handleLoginResponse(email: string, token: string): void {
 		cookies.set(
 			'tr_session',
 			{
@@ -38,11 +38,11 @@ export class LegacyApi {
 		publishSession();
 	}
 
-	requestResetEmail(email: string) {
+	requestResetEmail(email: string): Promise<Response> {
 		return apiFetch('account/forgot-password', false, 'POST', { email: email });
 	}
 
-	resetPassword(token: string, password: string) {
+	resetPassword(token: string, password: string): Promise<Response> {
 		return apiFetch('account/reset-password', false, 'POST', {
 			token: token,
 			password: password,
@@ -55,7 +55,7 @@ export class LegacyApi {
 		password: string,
 		timezone: string,
 		checkoutSessionId: string | null
-	) {
+	): Promise<Response> {
 		return apiFetch('account/register', false, 'POST', {
 			name: name,
 			email: email,

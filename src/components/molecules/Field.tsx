@@ -8,7 +8,7 @@ interface InputProps {
 	children: React.ReactNode;
 }
 
-const Field = ({ label, id, error, children }: InputProps) => {
+const Field = ({ label, id, error, children }: InputProps): JSX.Element => {
 	return (
 		<div
 			className={`molecule-field ${error ? 'molecule-field__hasError' : ''}`}

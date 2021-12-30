@@ -1,5 +1,5 @@
 import React from 'react';
 
-const LoadingIndicator = () => <>[Loading Indicator]</>;
+const LoadingIndicator = (): JSX.Element => <>[Loading Indicator]</>;
 
 export default LoadingIndicator;

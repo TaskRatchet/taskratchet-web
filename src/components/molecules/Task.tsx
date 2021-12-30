@@ -9,7 +9,7 @@ export interface TaskProps {
 	ref_?: Ref<HTMLDivElement>;
 }
 
-const Task = ({ task, ref_ }: TaskProps) => {
+const Task = ({ task, ref_ }: TaskProps): JSX.Element => {
 	const setComplete = useSetComplete();
 	const dueDate = new Date(task.due);
 	const dateString = browser.getDateString(dueDate);

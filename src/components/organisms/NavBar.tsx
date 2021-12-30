@@ -18,7 +18,7 @@ interface NavBarProps {
 	onTodayClick?: () => void;
 }
 
-export default function NavBar({ onTodayClick }: NavBarProps) {
+export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 	const session = useSession();
 	const location = useLocation();
 	const history = useHistory();

@@ -10,7 +10,7 @@ interface TasksProps {
 	lastToday: Date | undefined;
 }
 
-const Tasks = ({ lastToday }: TasksProps) => {
+const Tasks = ({ lastToday }: TasksProps): JSX.Element => {
 	const { isLoading } = useTasks();
 	const [newTask, setNewTask] = useState<TaskType>();
 

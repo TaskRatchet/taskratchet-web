@@ -33,7 +33,7 @@ ReactGA.initialize('G-Y074NE79ML');
 
 const queryClient = new QueryClient();
 
-function usePageViews() {
+function usePageViews(): void {
 	const location = useLocation();
 
 	React.useEffect(() => {
@@ -44,7 +44,7 @@ function usePageViews() {
 
 // TODO: Turn on typescript strict mode
 
-export function App() {
+export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
 	const handleTodayClick = () => {
 		setLastToday(browser.getNow());
@@ -110,7 +110,7 @@ export function App() {
 	);
 }
 
-export default function AppWithRouter() {
+export default function AppWithRouter(): JSX.Element {
 	return (
 		<Router>
 			<App />

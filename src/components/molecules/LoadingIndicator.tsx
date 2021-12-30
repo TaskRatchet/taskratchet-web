@@ -10,7 +10,7 @@ TopBarProgress.config({
 	barThickness: 7,
 });
 
-const LoadingIndicator = () => {
+const LoadingIndicator = (): JSX.Element | null => {
 	const isFetching = useIsFetching();
 
 	return isFetching ? <TopBarProgress /> : null;

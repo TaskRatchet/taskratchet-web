@@ -7,7 +7,7 @@ import { useSession } from '../../lib/api/useSession';
 
 const machine = createLoginMachine();
 
-const Login = () => {
+const Login = (): JSX.Element => {
 	const [state, send] = useMachine(machine),
 		session = useSession();
 

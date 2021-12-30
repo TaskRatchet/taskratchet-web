@@ -26,7 +26,10 @@ const setItem = (key: string, value: unknown, numberOfDays: number): void => {
 	document.cookie = `${key}=${stringValue}; expires=${now.toUTCString()}; path=/`;
 };
 
-const useCookie = (key: string, defaultValue: unknown) => {
+const useCookie = (
+	key: string,
+	defaultValue: unknown
+): [unknown, (value: unknown, numberOfDays: number) => void] => {
 	const getCookie = () => getItem(key) || defaultValue;
 	const [cookie, setCookie] = useState(getCookie());
 

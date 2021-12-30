@@ -72,7 +72,7 @@ export class Browser {
 		return queryString.parse(window.location.search);
 	}
 
-	scrollIntoView(el: Element, options: { offset?: number } = {}) {
+	scrollIntoView(el: Element, options: { offset?: number } = {}): void {
 		const { offset = 0 } = options;
 		const pos = el.getBoundingClientRect().top;
 		const scrollableParent = getScrollableParent(el);
@@ -84,7 +84,7 @@ export class Browser {
 		});
 	}
 
-	getScrollPercentage(el: Element) {
+	getScrollPercentage(el: Element): number {
 		return el.scrollTop / (el.scrollHeight - el.clientHeight);
 	}
 }

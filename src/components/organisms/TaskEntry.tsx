@@ -3,8 +3,12 @@ import TaskForm from './TaskForm';
 import { useAddTask } from '../../lib/api/useAddTask';
 import { useTimezone } from '../../lib/api/useTimezone';
 
-const TaskEntry = ({ onSave }: { onSave: (t: TaskType) => void }) => {
-	const timezone = useTimezone();
+const TaskEntry = ({
+	onSave,
+}: {
+	onSave: (t: TaskType) => void;
+}): JSX.Element => {
+	const timezone = useTimezone() || '';
 	const addTask = useAddTask(onSave);
 	const [task, setTask] = useState<string>('');
 	const [due, setDue] = useState<Date | null>(null);
