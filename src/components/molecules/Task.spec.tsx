@@ -1,84 +1,111 @@
-import Task from "./Task";
-import React from "react";
-import {renderWithQueryProvider, sleep} from "../../lib/test/helpers";
-import userEvent from "@testing-library/user-event";
-import {updateTask} from "../../lib/api";
-import {waitFor} from "@testing-library/dom";
+import Task from './Task';
+import React from 'react';
+import { renderWithQueryProvider } from '../../lib/test/helpers';
+import userEvent from '@testing-library/user-event';
+import { updateTask } from '../../lib/api';
+import { waitFor } from '@testing-library/dom';
+import browser from '../../lib/Browser';
 
-jest.mock('../../lib/api/updateTask')
+jest.mock('../../lib/api/updateTask');
 
-describe('Task componet', () =>  {
-    it('disables checkbox for tasks without id', async () => {
-        const {container} = await renderWithQueryProvider(<Task task={{
-            due: 'the_due',
-            cents: 100,
-            task: 'the_task',
-            status: 'pending'
-        }} />)
+describe('Task componet', () => {
+	beforeEach(() => {
+		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+	});
 
-        const checkbox = container.querySelector('input')
+	it('disables checkbox for tasks without id', async () => {
+		const { container } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: 'the_due',
+					cents: 100,
+					task: 'the_task',
+					status: 'pending',
+				}}
+			/>
+		);
 
-        expect(checkbox && checkbox.disabled).toBeTruthy()
-    })
+		const checkbox = container.querySelector('input');
 
-    it('has task menu', async () => {
-        const {getByLabelText} = await renderWithQueryProvider(<Task task={{
-            due: 'the_due',
-            cents: 100,
-            task: 'the_task',
-            id: 'the_id',
-            status: 'pending'
-        }} />)
+		expect(checkbox && checkbox.disabled).toBeTruthy();
+	});
 
-        expect(getByLabelText('Menu')).toBeInTheDocument()
-    })
+	it('has task menu', async () => {
+		const { getByLabelText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: 'the_due',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+				}}
+			/>
+		);
 
-    it('has uncle menu item', async () => {
-        const {getByLabelText, getByText} = await renderWithQueryProvider(<Task task={{
-            due: 'the_due',
-            cents: 100,
-            task: 'the_task',
-            id: 'the_id',
-            status: 'pending'
-        }} />)
+		expect(getByLabelText('Menu')).toBeInTheDocument();
+	});
 
-        const menuButton = getByLabelText('Menu')
+	it('has uncle menu item', async () => {
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: 'the_due',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+				}}
+			/>
+		);
 
-        userEvent.click(menuButton)
+		const menuButton = getByLabelText('Menu');
 
-        expect(getByText('Charge immediately')).toBeInTheDocument()
-    })
+		userEvent.click(menuButton);
 
-    it('uncles', async () => {
-        const {getByLabelText, getByText} = await renderWithQueryProvider(<Task task={{
-            due: 'the_due',
-            cents: 100,
-            task: 'the_task',
-            id: 'the_id',
-            status: 'pending'
-        }} />)
+		expect(getByText('Charge immediately')).toBeInTheDocument();
+	});
 
-        userEvent.click(getByLabelText('Menu'))
-        userEvent.click(getByText('Charge immediately'))
+	it('uncles', async () => {
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: 'the_due',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+				}}
+			/>
+		);
 
-        await waitFor(() => expect(updateTask).toBeCalledWith('the_id', {
-            'uncle': true
-        }))
-    })
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Charge immediately'));
 
-    it('uses status', async () => {
-        const {getByText} = await renderWithQueryProvider(<Task task={{
-            due: 'the_due',
-            cents: 100,
-            task: 'the_task',
-            id: 'the_id',
-            status: 'expired'
-        }} />)
+		await waitFor(() =>
+			expect(updateTask).toBeCalledWith('the_id', {
+				uncle: true,
+			})
+		);
+	});
 
-        expect(getByText('expired')).toBeInTheDocument()
-    })
+	it('uses status', async () => {
+		const { getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: 'the_due',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'expired',
+				}}
+			/>
+		);
 
-    // TODO: test uncle button is disabled if task already charging
-    // TODO: test uncle button confirms action
-    // TODO: Make checkboxes for expired tasks unclickable
-})
+		expect(getByText('expired')).toBeInTheDocument();
+	});
+
+	// TODO: test uncle button is disabled if task already charging
+	// TODO: test uncle button confirms action
+	// TODO: Make checkboxes for expired tasks unclickable
+});

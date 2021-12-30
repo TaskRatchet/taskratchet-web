@@ -1,89 +1,61 @@
-import React, {useEffect, useState} from "react";
-import Task, {TaskProps} from "../molecules/Task";
-import {sortTasks} from "../../lib/sortTasks";
-import {useTasks} from "../../lib/api";
-import './TaskList.css'
-import _ from "lodash";
-import browser from "../../lib/Browser";
-import {Divider, ListItem, Typography} from "@material-ui/core";
-import LazyList from "../molecules/LazyList";
-
-const ListItemComponent = React.forwardRef((props: TaskProps, ref) => <Task ref_={ref} {...props} />)
+import React, { useEffect, useRef, useState } from 'react';
+import { sortTasks } from '../../lib/sortTasks';
+import { useTasks } from '../../lib/api';
+import './TaskList.css';
+import createListItems from '../../lib/createListItems';
+import ReactList from 'react-list';
 
 interface TaskListProps {
-    lastToday: Date|undefined
+	lastToday?: Date;
+	newTask?: TaskType;
 }
 
-const TaskList = ({lastToday}: TaskListProps) => {
-    const {data: tasks} = useTasks();
-    const [didScroll, setDidScroll] = useState<boolean>(false)
-    const todayRef = React.createRef<HTMLLIElement>()
+const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
+	const { data: tasks } = useTasks();
+	const listRef = useRef<ReactList>(null);
+	const [entries, setEntries] = useState<JSX.Element[]>([]);
+	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
+	const [newTaskIndex, setNewTaskIndex] = useState<number>();
+	const [index, setIndex] = useState<number>(0);
 
-    useEffect(() => {
-        setDidScroll(false)
-    }, [lastToday, setDidScroll])
+	useEffect(() => {
+		const sorted = sortTasks(tasks || []);
 
-    useEffect(() => {
-        if (didScroll || !todayRef.current) return
-        browser.scrollIntoView(todayRef.current)
-        setDidScroll(true)
-    }, [todayRef,didScroll,setDidScroll])
+		const {
+			entries: newEntries,
+			nextHeadingIndex: headingIndexUpdate,
+			newTaskIndex: taskIndexUpdate,
+		} = createListItems(sorted, newTask);
 
-    const sorted = sortTasks(tasks || [])
-    const sortedDues = sorted.map((t) => t.due)
-    const today = browser.getNow()
-    const todayString = browser.getString(today)
-    const futureDues = sortedDues.filter((d) => new Date(d) >= today)
-    const dateGroups = _.groupBy(sorted, (t) => {
-        return browser.getString(new Date(t.due))
-    })
-    const dateStrings = Object.keys(dateGroups);
-    const nextDue = futureDues && futureDues[0]
-    const nextDuePretty = nextDue && browser.getString(new Date(nextDue))
+		setEntries(newEntries);
+		setNextHeadingIndex(headingIndexUpdate);
+		setNewTaskIndex(taskIndexUpdate);
+	}, [tasks, newTask]);
 
-    const divider = <li key={'today'} ref={todayRef} className={'organism-taskList__today'}>
-        <Divider/>
-        <Typography
-            color="textSecondary"
-            display="block"
-            variant="caption"
-        >
-            {/*TODO: display ticking time, too*/}
-            {`Today: ${todayString}`}
-        </Typography>
-    </li>
+	useEffect(() => {
+		if (listRef.current === null || nextHeadingIndex === undefined) return;
+		listRef.current.scrollTo(nextHeadingIndex);
+		setIndex(nextHeadingIndex);
+	}, [nextHeadingIndex, listRef, lastToday]);
 
-    let index;
+	useEffect(() => {
+		if (listRef.current === null || newTaskIndex === undefined) return;
+		listRef.current.scrollTo(newTaskIndex);
+		setIndex(newTaskIndex);
+	}, [newTaskIndex, listRef]);
 
-    const reducer = (prev: JSX.Element[] = [], s: string) => {
-        const shouldShowBefore = s === nextDuePretty
-        const shouldShowAfter = !nextDuePretty && s === dateStrings[dateStrings.length - 1]
+	return (
+		<div className={'organism-taskList'}>
+			<ReactList
+				initialIndex={index}
+				itemRenderer={(i: number) => entries[i]}
+				itemSizeEstimator={() => 60}
+				length={entries.length}
+				type={'variable'}
+				ref={listRef}
+			/>
+		</div>
+	);
+};
 
-        const item = <li key={s}>
-            <h3>{s}</h3>
-            {dateGroups[s].map((t: TaskType) => (
-                <ListItem component={ListItemComponent} task={t} key={JSON.stringify(t)}/>
-            ))}
-        </li>
-
-        if (shouldShowBefore) {
-            index = prev.length
-            return [...prev, divider, item]
-        }
-
-        if (shouldShowAfter) {
-            index = prev.length + 2
-            return [...prev, item, divider]
-        }
-
-        return [...prev, item]
-    };
-
-    const entries = dateStrings.reduce(reducer, []);
-
-    return <div className={'organism-taskList'}>
-        <LazyList items={entries} initialIndex={index} />
-    </div>
-}
-
-export default TaskList
+export default TaskList;

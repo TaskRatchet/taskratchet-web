@@ -1,48 +1,53 @@
-import createLoginMachine, {LoginContext} from './Login.machine'
-import api, {LegacyApi} from "../../lib/LegacyApi";
-import {interpret, Interpreter} from "xstate";
+import createLoginMachine, { LoginContext } from './Login.machine';
+import api, { LegacyApi } from '../../lib/LegacyApi';
+import { EventObject, interpret, Interpreter, StateSchema } from 'xstate';
 
-let service: Interpreter<LoginContext>, mockApi: LegacyApi;
+let service: Interpreter<
+		LoginContext,
+		StateSchema<LoginContext>,
+		EventObject & { value: string }
+	>,
+	mockApi: LegacyApi;
 
 const createService = () => {
-    const machine = createLoginMachine({ api: mockApi });
-    const service = interpret(machine);
+	const machine = createLoginMachine({ api: mockApi });
+	const service = interpret(machine);
 
-    service.start();
+	service.start();
 
-    return service;
-}
+	return service;
+};
 
 const createMockApi = () => {
-    const mockApi = api;
+	const mockApi = api;
 
-    mockApi.login = jest.fn();
+	mockApi.login = jest.fn();
 
-    return mockApi
-}
+	return mockApi;
+};
 
 describe('login machine', () => {
-    service = createService()
-    mockApi = createMockApi()
+	service = createService();
+	mockApi = createMockApi();
 
-    beforeEach(() => {
-        service = createService()
-        mockApi = createMockApi()
-    })
+	beforeEach(() => {
+		service = createService();
+		mockApi = createMockApi();
+	});
 
-    it('tracks email state', () => {
-        service.send('EMAIL', {value: 'new_email'})
+	it('tracks email state', () => {
+		service.send('EMAIL', { value: 'new_email' });
 
-        expect(service.state.context.email).toBe('new_email')
-    })
+		expect(service.state.context.email).toBe('new_email');
+	});
 
-    it('sends login request', () => {
-        service.start();
+	it('sends login request', () => {
+		service.start();
 
-        service.send('EMAIL', {value: 'the_email'})
-        service.send('PASSWORD', {value: 'the_password'})
-        service.send('LOGIN')
+		service.send('EMAIL', { value: 'the_email' });
+		service.send('PASSWORD', { value: 'the_password' });
+		service.send('LOGIN');
 
-        expect(mockApi.login).toBeCalled()
-    })
-})
+		expect(mockApi.login).toBeCalled();
+	});
+});

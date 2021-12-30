@@ -1,18 +1,17 @@
 .page-tasks {
-  display: flex;
-  flex-direction: column;
-  max-height: 100%;
-  flex: 1 1 0;
+	display: flex;
+	flex-direction: column;
+	max-height: 100%;
+	flex: 1 1 100%;
 }
 .page-tasks h3 {
-  margin-left: 1rem;
+	margin-left: 1rem;
 }
 .page-tasks .organism-taskList {
-  flex: 1 1 0;
-  overflow: scroll;
+	flex: 1 1 100%;
 }
 .page-tasks .page-tasks__toggleLabel {
-  cursor: pointer;
+	cursor: pointer;
 }
 
 /*# sourceMappingURL=Tasks.css.map */

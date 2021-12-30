@@ -1,4 +1,8 @@
 interface Window {
-    Stripe: any,
-    stripe_key: string
+	Stripe: (key: string) => {
+		redirectToCheckout: (
+			options: unknown
+		) => Promise<{ error: { message: string } }>;
+	};
+	stripe_key: string;
 }

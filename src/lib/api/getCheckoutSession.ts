@@ -1,7 +1,7 @@
-import {apiFetch} from "./apiFetch";
+import { apiFetch } from './apiFetch';
 
-export async function getCheckoutSession() {
-    const response = await apiFetch('payments/checkout/session')
+export async function getCheckoutSession(): Promise<CheckoutSession> {
+	const response = await apiFetch('payments/checkout/session');
 
-    return response.json()
+	return response.json();
 }

@@ -1,63 +1,77 @@
-import {loadNow, loadTasksApiData, makeTask} from "./lib/test/helpers";
-import browser from "./lib/Browser";
-import {render, waitFor} from "@testing-library/react";
-import {updateTask} from "./lib/api";
-import React from "react";
-import {App} from "./App";
-import userEvent from "@testing-library/user-event";
-import {useSession} from "./lib/api/useSession";
-import {MemoryRouter} from 'react-router-dom'
+import { loadNow, loadTasksApiData, makeTask } from './lib/test/helpers';
+import browser from './lib/Browser';
+import { render } from '@testing-library/react';
+import React from 'react';
+import { App } from './App';
+import userEvent from '@testing-library/user-event';
+import { useSession } from './lib/api/useSession';
+import { MemoryRouter } from 'react-router-dom';
+import { mockReactListRef } from './__mocks__/react-list';
+import { waitFor } from '@testing-library/dom';
 
-jest.mock('./lib/api/getTasks')
-jest.mock('./lib/api/getMe')
-jest.mock('./lib/api/updateTask')
-jest.mock('./lib/api/addTask')
-jest.mock('./lib/api/useSession')
-jest.mock('./components/molecules/LoadingIndicator')
-jest.mock('react-ga')
+jest.mock('./lib/api/getTasks');
+jest.mock('./lib/api/getMe');
+jest.mock('./lib/api/updateTask');
+jest.mock('./lib/api/addTask');
+jest.mock('./lib/api/useSession');
+jest.mock('./components/molecules/LoadingIndicator');
+jest.mock('react-ga');
+
+const mockUseSession = useSession as jest.Mock;
 
 function renderPage() {
-    return render(<MemoryRouter initialEntries={["/"]}><App /></MemoryRouter>)
+	mockUseSession.mockReturnValue({
+		email: 'the_email',
+	});
+
+	const getters = render(
+		<MemoryRouter initialEntries={['/']}>
+			<App />
+		</MemoryRouter>
+	);
+	const { getByText, getByLabelText } = getters;
+
+	return {
+		taskInput: getByLabelText('Task *') as HTMLInputElement,
+		dueInput: getByLabelText('Due Date *') as HTMLInputElement,
+		addButton: getByText('Add') as HTMLButtonElement,
+		clickCheckbox: (task = 'the_task') => {
+			const desc = getByText(task);
+			const checkbox = desc.previousElementSibling;
+
+			if (!checkbox) {
+				throw Error('Missing task checkbox');
+			}
+
+			userEvent.click(checkbox);
+		},
+		...getters,
+	};
 }
 
 describe('App', () => {
-    const mockUseSession = (useSession as jest.Mock)
+	beforeEach(() => {
+		jest.resetAllMocks();
+		loadNow(new Date('10/29/2020'));
+		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+	});
 
-    beforeEach(() => {
-        jest.resetAllMocks()
-        loadNow(new Date('10/29/2020'))
-        jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined)
-    })
+	it('re-scrolls tasks list when today icon clicked', async () => {
+		loadNow(new Date('1/1/2020'));
 
-    it('re-scrolls tasks list when today icon clicked', async () => {
-        mockUseSession.mockReturnValue({
-            email: 'the_email'
-        })
+		loadTasksApiData({
+			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
+		});
 
-        loadNow(new Date('3/22/2020'))
+		const { getByLabelText } = renderPage();
 
-        loadTasksApiData({
-            tasks: [
-                makeTask({due: "1/22/2020, 11:59 PM"})
-            ]
-        })
+		userEvent.click(getByLabelText('today'));
 
-        const {getByText, container, getByLabelText} = await renderPage()
+		await waitFor(() => {
+			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(0);
+		});
+	});
+});
 
-        await waitFor(() => expect(getByText((s) => s.indexOf('Today: March') !== -1)).toBeInTheDocument())
-
-        const marker = container.querySelector('.organism-taskList__today')
-
-        if (!marker) throw new Error('could not find marker')
-
-        await waitFor(() => {
-            expect(browser.scrollIntoView).toHaveBeenCalled()
-        })
-
-        userEvent.click(getByLabelText('today'))
-
-        await waitFor(() => {
-            expect(browser.scrollIntoView).toHaveBeenCalledTimes(2)
-        })
-    })
-})
+// TODO: only highlights task on creation, not on re-load from server
+// do this by using a new: bool prop on newly-created tasks for highlight filtering

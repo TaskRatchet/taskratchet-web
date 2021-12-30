@@ -1,15 +1,17 @@
 .page-account {
-  padding: 1rem 1rem 3rem;
+	padding: 1rem 1rem 3rem;
 
-  label, input {
-    display: block;
-  }
-  label {
-    margin-bottom: .25em;
-    font-size: .75em;
-    font-weight: bold;
-  }
-  input, select {
-    margin-bottom: 1.5em;
-  }
+	label,
+	input {
+		display: block;
+	}
+	label {
+		margin-bottom: 0.25em;
+		font-size: 0.75em;
+		font-weight: bold;
+	}
+	input,
+	select {
+		margin-bottom: 1.5em;
+	}
 }

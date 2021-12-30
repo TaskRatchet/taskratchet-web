@@ -1,11 +1,11 @@
-import {apiFetch} from "./apiFetch";
+import { apiFetch } from './apiFetch';
 
-export async function getMe() {
-    const response = await apiFetch('me', true)
+export async function getMe(): Promise<User> {
+	const response = await apiFetch('me', true);
 
-    if (!response.ok) {
-        throw new Error('Failed to get me')
-    }
+	if (!response.ok) {
+		throw new Error('Failed to get me');
+	}
 
-    return response.json()
+	return response.json();
 }

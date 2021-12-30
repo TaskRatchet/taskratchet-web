@@ -1,41 +1,40 @@
-import {useQuery, useQueryClient} from "react-query";
+import { useQuery, useQueryClient } from 'react-query';
 
-import {updateMe as mutator} from './updateMe'
+import { MeInput, updateMe as mutator } from './updateMe';
 
-import {useMutation} from "react-query";
-import {getMe} from "./getMe";
-import {UseQueryOptions} from 'react-query/types';
-import toaster from "../Toaster";
+import { useMutation, UseMutateFunction } from 'react-query';
+import { getMe } from './getMe';
+import { UseQueryOptions } from 'react-query';
+import toaster from '../Toaster';
 
 const onError = (error: unknown) => {
-    toaster.send((error as Error).toString());
-}
+	toaster.send((error as Error).toString());
+};
 
 interface UseMeReturnType {
-    me: any
-    updateMe: any
-    isLoading: boolean
-    isFetching: boolean
+	me: User;
+	updateMe: UseMutateFunction<Response, unknown, MeInput>;
+	isLoading: boolean;
+	isFetching: boolean;
 }
 
 // TODO: fix updateMe type
 export function useMe(
-    queryOptions: UseQueryOptions | undefined = {}
+	queryOptions: UseQueryOptions<User> | undefined = {}
 ): UseMeReturnType {
-    const queryClient = useQueryClient()
-    const {data: me, isLoading, isFetching} = useQuery('me', getMe, {
-        onError,
-        ...queryOptions
-    })
+	const queryClient = useQueryClient();
+	const {
+		data: me,
+		isLoading,
+		isFetching,
+	} = useQuery({ queryKey: 'me', queryFn: getMe, onError, ...queryOptions });
 
-    // TODO: fix types
-    const {mutate: updateMe} = useMutation(mutator, {
-        onSuccess: async (data) => {
-            await queryClient.invalidateQueries('me')
-        },
-        onError
-    })
+	const { mutate: updateMe } = useMutation(mutator, {
+		onSuccess: async () => {
+			await queryClient.invalidateQueries('me');
+		},
+		onError,
+	});
 
-    // TODO: Fix me type
-    return {me, updateMe, isLoading, isFetching}
+	return { me, updateMe, isLoading, isFetching } as UseMeReturnType;
 }

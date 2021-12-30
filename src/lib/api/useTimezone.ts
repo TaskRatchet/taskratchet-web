@@ -1,8 +1,8 @@
-import {useMe} from "./useMe";
-import _ from "lodash";
+import { useMe } from './useMe';
+import _ from 'lodash';
 
-export function useTimezone() {
-    const {me} = useMe()
+export function useTimezone(): string | undefined {
+	const { me } = useMe();
 
-    return _.get(me, 'timezone')
+	return _.get(me, 'timezone');
 }

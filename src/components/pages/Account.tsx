@@ -1,215 +1,220 @@
-import React, {useEffect, useState} from 'react';
-import './Account.css'
-import toaster from "../../lib/Toaster";
-import Input from "../molecules/Input";
-import BeeminderSettings from "../organisms/BeeminderSettings";
-import {useCheckoutSession, useMe, useTimezones} from "../../lib/api";
-import {useIsFetching} from "react-query";
-import {useUpdatePassword} from "../../lib/api/useUpdatePassword";
+import React, { FormEvent, useEffect, useState } from 'react';
+import './Account.css';
+import toaster from '../../lib/Toaster';
+import Input from '../molecules/Input';
+import BeeminderSettings from '../organisms/BeeminderSettings';
+import { useCheckoutSession, useMe, useTimezones } from '../../lib/api';
+import { useIsFetching } from 'react-query';
+import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
 
-interface Card {
-    brand: string,
-    last4: string,
-}
+const Account = (): JSX.Element => {
+	const isFetching = useIsFetching(),
+		checkoutSession = useCheckoutSession(),
+		{ data: timezones } = useTimezones(),
+		{ me, updateMe } = useMe(),
+		[name, setName] = useState<string>(''),
+		[email, setEmail] = useState<string>(''),
+		[timezone, setTimezone] = useState<string>(''),
+		[cards, setCards] = useState<Card[]>([]),
+		[oldPassword, setOldPassword] = useState<string>(''),
+		[password, setPassword] = useState<string>(''),
+		[password2, setPassword2] = useState<string>(''),
+		{ updatePassword, isLoading } = useUpdatePassword();
 
-interface AccountProps {
-}
+	useEffect(() => {
+		const { name = '', email = '', timezone = '', cards = [] } = me || {};
 
-const Account = (props: AccountProps) => {
-    const isFetching = useIsFetching(),
-        checkoutSession = useCheckoutSession(),
-        {data: timezones} = useTimezones(),
-        {me, updateMe} = useMe(),
-        [name, setName] = useState<string>(''),
-        [email, setEmail] = useState<string>(''),
-        [timezone, setTimezone] = useState<string>(''),
-        [cards, setCards] = useState<Card[]>([]),
-        [oldPassword, setOldPassword] = useState<string>(''),
-        [password, setPassword] = useState<string>(''),
-        [password2, setPassword2] = useState<string>(''),
-        {updatePassword, isLoading} = useUpdatePassword();
+		setName(name);
+		setEmail(email);
+		setTimezone(timezone);
+		setCards(cards);
+	}, [me]);
 
-    useEffect(() => {
-        // console.log('propagating me changes')
-        const {
-            name = '',
-            email = '',
-            timezone = '',
-            cards = []
-        } = me || {}
+	const saveGeneral = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
 
-        setName(name)
-        setEmail(email)
-        setTimezone(timezone)
-        setCards(cards)
-    }, [me])
+		updateMe({
+			name: prepareValue(name),
+			email: prepareValue(email),
+			timezone: prepareValue(timezone),
+		});
+	};
 
-    const saveGeneral = (event: any) => {
-        event.preventDefault();
+	const prepareValue = (value: string) => {
+		return value === '' ? undefined : value;
+	};
 
-        updateMe({
-            name: prepareValue(name),
-            email: prepareValue(email),
-            timezone: prepareValue(timezone)
-        })
-    };
+	const savePassword = (event: FormEvent<HTMLFormElement>) => {
+		event.preventDefault();
 
-    const prepareValue = (value: string) => {
-        return (value === '') ? undefined : value;
-    };
+		if (!isPasswordFormValid()) return;
 
-    const savePassword = (event: any) => {
-        event.preventDefault();
+		updatePassword(oldPassword, password);
+	};
 
-        if (!isPasswordFormValid()) return;
+	// TODO: Print to form instead of toasting
+	const isPasswordFormValid = () => {
+		let passed = true;
 
-        updatePassword(oldPassword, password)
-    };
+		if (oldPassword === '') {
+			toaster.send('Old password required');
+			passed = false;
+		}
 
-    // TODO: Print to form instead of toasting
-    const isPasswordFormValid = () => {
-        let passed = true;
+		if (password === '') {
+			toaster.send('New password required');
+			passed = false;
+		}
 
-        if (oldPassword === '') {
-            toaster.send('Old password required');
-            passed = false;
-        }
+		if (password !== password2) {
+			toaster.send("New password fields don't match");
+			passed = false;
+		}
 
-        if (password === '') {
-            toaster.send('New password required');
-            passed = false;
-        }
+		return passed;
+	};
 
-        if (password !== password2) {
-            toaster.send('New password fields don\'t match');
-            passed = false;
-        }
+	const updatePaymentDetails = async () => {
+		const sessionId = await getSessionId();
 
-        return passed;
-    };
+		if (sessionId === null) {
+			toaster.send('Checkout session error');
+			return;
+		}
 
-    const updatePaymentDetails = async () => {
-        const sessionId = await getSessionId();
+		await updateMe({
+			checkout_session_id: sessionId,
+		});
 
-        if (sessionId === null) {
-            toaster.send('Checkout session error');
-            return;
-        }
+		await redirect();
+	};
 
-        await updateMe({
-            'checkout_session_id': sessionId
-        })
+	const redirect = async () => {
+		await checkoutSession;
 
-        await redirect();
-    };
+		if (checkoutSession == null) return;
 
-    const redirect = async () => {
-        await checkoutSession
+		const stripe = window.Stripe(window.stripe_key);
 
-        if (checkoutSession == null) return;
+		stripe
+			.redirectToCheckout({
+				sessionId: await getSessionId(),
+			})
+			.then((result: { error: { message: string } }) => {
+				// If `redirectToCheckout` fails due to a browser or network
+				// error, display the localized error message to your customer
+				// using `result.error.message`.
+				toaster.send(result.error.message);
 
-        const stripe = window.Stripe(window.stripe_key);
+				console.log('Checkout redirect error');
+				console.log(result);
+			});
+	};
 
-        stripe.redirectToCheckout({
-            sessionId: await getSessionId()
-        }).then((result: any) => {
-            // If `redirectToCheckout` fails due to a browser or network
-            // error, display the localized error message to your customer
-            // using `result.error.message`.
-            toaster.send(result.error.message);
+	const getSessionId = async () => {
+		if (checkoutSession == null) return;
 
-            console.log('Checkout redirect error');
-            console.log(result);
-        });
-    };
+		const { id = null } = await checkoutSession;
 
-    const getSessionId = async () => {
-        if (checkoutSession == null) return;
+		return id;
+	};
 
-        const {id = null} = await checkoutSession
+	return (
+		<div
+			className={`page-account ${isFetching || isLoading ? 'loading' : 'idle'}`}
+		>
+			<h1>Account</h1>
 
-        return id
-    };
+			<form onSubmit={saveGeneral}>
+				<label htmlFor="name">Name</label>
+				<input
+					type="text"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+					id={'name'}
+					name={'name'}
+				/>
 
-    return <div className={`page-account ${isFetching || isLoading ? 'loading' : 'idle'}`}>
-        <h1>Account</h1>
+				<label htmlFor="email">Email</label>
+				<input
+					type="email"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					id={'email'}
+					name={'email'}
+				/>
 
-        <form onSubmit={saveGeneral}>
-            <label htmlFor="name">Name</label>
-            <input
-                type="text"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                id={'name'}
-                name={'name'}
-            />
+				<label htmlFor="timezone">Timezone</label>
+				<select
+					id={'timezone'}
+					name="timezone"
+					value={timezone}
+					onChange={(e) => setTimezone(e.target.value)}
+				>
+					{timezones &&
+						timezones.map((tz: string, i: number) => (
+							<option value={tz} key={i}>
+								{tz}
+							</option>
+						))}
+				</select>
 
-            <label htmlFor="email">Email</label>
-            <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                id={'email'}
-                name={'email'}
-            />
+				<input type="submit" value={'Save'} />
+			</form>
 
-            <label htmlFor="timezone">Timezone</label>
-            <select
-                id={'timezone'}
-                name="timezone"
-                value={timezone}
-                onChange={(e) => setTimezone(e.target.value)}
-            >
-                {timezones ? timezones.map((tz: string, i: number) => <option value={tz} key={i}>{tz}</option>) : null}
-            </select>
+			<h2>Reset Password</h2>
 
-            <input type="submit" value={'Save'}/>
-        </form>
+			<form onSubmit={savePassword}>
+				<Input
+					id={'old_password'}
+					label={'Old Password'}
+					onChange={(e) => setOldPassword(e.target.value)}
+					value={oldPassword}
+					type={'password'}
+				/>
 
-        <h2>Reset Password</h2>
+				<Input
+					id={'password'}
+					label={'New Password'}
+					onChange={(e) => setPassword(e.target.value)}
+					value={password}
+					type={'password'}
+				/>
 
-        <form onSubmit={savePassword}>
-            <Input
-                id={'old_password'}
-                label={"Old Password"}
-                onChange={e => setOldPassword(e.target.value)}
-                value={oldPassword}
-                type={"password"}
-            />
+				<Input
+					id={'password2'}
+					label={'Retype Password'}
+					onChange={(e) => setPassword2(e.target.value)}
+					value={password2}
+					type={'password'}
+				/>
 
-            <Input
-                id={'password'}
-                label={'New Password'}
-                onChange={e => setPassword(e.target.value)}
-                value={password}
-                type={'password'}
-            />
+				<input type="submit" value={'Save'} />
+			</form>
 
-            <Input
-                id={'password2'}
-                label={'Retype Password'}
-                onChange={e => setPassword2(e.target.value)}
-                value={password2}
-                type={'password'}
-            />
+			<h2>Update Payment Details</h2>
 
-            <input type="submit" value={'Save'}/>
-        </form>
+			<p>Saved payment method:</p>
 
-        <h2>Update Payment Details</h2>
+			{cards ? (
+				<ul>
+					{cards.map((c, i) => (
+						<li key={i}>
+							{c.brand} ending with {c.last4}
+						</li>
+					))}
+				</ul>
+			) : (
+				<p>None</p>
+			)}
 
-        <p>Saved payment method:</p>
+			<button onClick={updatePaymentDetails}>Replace payment method</button>
 
-        {cards ? <ul>
-            {cards.map((c, i) => <li key={i}>{c.brand} ending with {c.last4}</li>)}
-        </ul> : <p>None</p>}
+			<h2>Beeminder Integration</h2>
 
-        <button onClick={updatePaymentDetails}>Replace payment method</button>
-
-        <h2>Beeminder Integration</h2>
-
-        <BeeminderSettings/>
-    </div>
-}
+			<BeeminderSettings />
+		</div>
+	);
+};
 
 export default Account;

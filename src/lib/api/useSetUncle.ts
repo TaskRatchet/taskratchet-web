@@ -1,7 +1,7 @@
-import {useUpdateTask} from "./useUpdateTask";
+import { useUpdateTask } from './useUpdateTask';
 
-export function useSetUncle() {
-    const updateTask = useUpdateTask()
+export function useSetUncle(): (id: number | string) => void {
+	const updateTask = useUpdateTask();
 
-    return (id: number | string) => updateTask(id, {uncle: true})
+	return (id: number | string) => updateTask(id, { uncle: true });
 }
