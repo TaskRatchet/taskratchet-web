@@ -3,7 +3,7 @@ import { useState } from 'react';
 // https://dev.to/dqunbp/store-state-in-cookies-with-use-cookie-value-react-hook-4i4f
 // https://codesandbox.io/s/usecookie-sandbox-3cpls?file=/src/useCookie.jsx
 
-const getItem = <T>(key: string): T => {
+const getItem = (key: string): unknown => {
 	const stringValue = document.cookie
 		.split('; ')
 		.reduce((total, currentCookie) => {
@@ -14,7 +14,7 @@ const getItem = <T>(key: string): T => {
 			return key === storedKey ? decodeURIComponent(storedValue) : total;
 		}, '');
 
-	return !stringValue ? stringValue : JSON.parse(stringValue);
+	return JSON.parse(stringValue);
 };
 
 const setItem = (key: string, value: unknown, numberOfDays: number): void => {
@@ -26,14 +26,14 @@ const setItem = (key: string, value: unknown, numberOfDays: number): void => {
 	document.cookie = `${key}=${stringValue}; expires=${now.toUTCString()}; path=/`;
 };
 
-const useCookie = <T>(
+const useCookie = (
 	key: string,
-	defaultValue: T
-): [T, (value: T, numberOfDays: number) => void] => {
-	const getCookie = () => getItem<T>(key) || defaultValue;
+	defaultValue: unknown
+): [unknown, (value: unknown, numberOfDays: number) => void] => {
+	const getCookie = () => getItem(key) || defaultValue;
 	const [cookie, setCookie] = useState(getCookie());
 
-	const updateCookie = (value: T, numberOfDays: number) => {
+	const updateCookie = (value: unknown, numberOfDays: number) => {
 		setCookie(value);
 		setItem(key, value, numberOfDays);
 	};
