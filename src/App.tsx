@@ -21,6 +21,7 @@ import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
 import { MuiPickersUtilsProvider } from '@material-ui/pickers';
 import DateFnsUtils from '@date-io/date-fns';
+import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 
 toast.configure();
 
@@ -45,6 +46,8 @@ function usePageViews(): void {
 
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
+	const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+
 	const handleTodayClick = () => {
 		setLastToday(browser.getNow());
 	};
@@ -59,7 +62,7 @@ export function App(): JSX.Element {
 		<div className={'page-base'}>
 			<MuiPickersUtilsProvider utils={DateFnsUtils}>
 				<QueryClientProvider client={queryClient}>
-					<NavBar onTodayClick={handleTodayClick} />
+					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
 
 					<LoadingIndicator />
 
@@ -97,7 +100,7 @@ export function App(): JSX.Element {
 
 							<Route path={'/'}>
 								<Authenticated>
-									<Tasks lastToday={lastToday} />
+									<Tasks lastToday={lastToday} filters={filters} />
 								</Authenticated>
 							</Route>
 						</Switch>

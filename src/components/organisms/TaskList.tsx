@@ -10,6 +10,7 @@ import Task, { TaskProps } from '../molecules/Task';
 interface TaskListProps {
 	lastToday?: Date;
 	newTask?: TaskType;
+	filters?: Filters;
 }
 
 const ListItemComponent = React.forwardRef((props: TaskProps, ref) => (
@@ -31,17 +32,18 @@ const TaskList = ({
 
 	useEffect(() => {
 		const sorted = sortTasks(tasks || []);
+		const filtered = filters ? sorted.filter((t) => filters[t.status]) : sorted;
 
 		const {
 			entries: newEntries,
 			nextHeadingIndex: headingIndexUpdate,
 			newTaskIndex: taskIndexUpdate,
-		} = createListItems(sorted, newTask);
+		} = createListItems(filtered, newTask);
 
 		setEntries(newEntries);
 		setNextHeadingIndex(headingIndexUpdate);
 		setNewTaskIndex(taskIndexUpdate);
-	}, [tasks, newTask]);
+	}, [tasks, newTask, filters]);
 
 	useEffect(() => {
 		if (listRef.current === null || nextHeadingIndex === undefined) return;
