@@ -8,14 +8,9 @@ import ReactList from 'react-list';
 interface TaskListProps {
 	lastToday?: Date;
 	newTask?: TaskType;
-	filters?: Filters;
 }
 
-const TaskList = ({
-	lastToday,
-	newTask,
-	filters,
-}: TaskListProps): JSX.Element => {
+const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 	const { data: tasks } = useTasks();
 	const listRef = useRef<ReactList>(null);
 	const [entries, setEntries] = useState<JSX.Element[]>([]);
@@ -25,18 +20,17 @@ const TaskList = ({
 
 	useEffect(() => {
 		const sorted = sortTasks(tasks || []);
-		const filtered = filters ? sorted.filter((t) => filters[t.status]) : sorted;
 
 		const {
 			entries: newEntries,
 			nextHeadingIndex: headingIndexUpdate,
 			newTaskIndex: taskIndexUpdate,
-		} = createListItems(filtered, newTask);
+		} = createListItems(sorted, newTask);
 
 		setEntries(newEntries);
 		setNextHeadingIndex(headingIndexUpdate);
 		setNewTaskIndex(taskIndexUpdate);
-	}, [tasks, newTask, filters]);
+	}, [tasks, newTask]);
 
 	useEffect(() => {
 		if (listRef.current === null || nextHeadingIndex === undefined) return;
