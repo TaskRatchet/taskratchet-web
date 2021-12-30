@@ -13,7 +13,11 @@ TopBarProgress.config({
 const LoadingIndicator = (): JSX.Element | null => {
 	const isFetching = useIsFetching();
 
-	return isFetching ? <TopBarProgress /> : null;
+	return isFetching ? (
+		<span style={{ pointerEvents: 'none' }}>
+			<TopBarProgress />
+		</span>
+	) : null;
 };
 
 export default LoadingIndicator;

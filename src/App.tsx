@@ -15,7 +15,6 @@ import ResetPassword from './components/pages/ResetPassword';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { isProduction } from './tr_constants';
-import { ReactQueryDevtools } from 'react-query/devtools';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import LoadingIndicator from './components/molecules/LoadingIndicator';
 import NavBar from './components/organisms/NavBar';
@@ -106,7 +105,6 @@ export function App(): JSX.Element {
 							</Route>
 						</Switch>
 					</div>
-					<ReactQueryDevtools initialIsOpen={false} />
 				</QueryClientProvider>
 			</MuiPickersUtilsProvider>
 		</div>

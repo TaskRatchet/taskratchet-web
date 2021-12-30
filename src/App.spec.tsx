@@ -148,6 +148,38 @@ describe('App', () => {
 
 		expect(queryByText('task 1')).not.toBeInTheDocument();
 	});
+
+	it('scrolls to new task', async () => {
+		loadNow(new Date('1/1/2020'));
+
+		const { taskInput, addButton } = renderPage();
+
+		userEvent.type(taskInput, 'task 1');
+		userEvent.click(addButton);
+
+		await waitFor(() => {
+			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(1);
+		});
+	});
+
+	it('scrolls to today', async () => {
+		loadNow(new Date('1/7/2020'));
+
+		loadTasksApiData({
+			tasks: [
+				makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' }),
+				makeTask({ due: '1/7/2020, 11:59 PM', task: 'task 1' }),
+			],
+		});
+
+		const { getByLabelText } = renderPage();
+
+		userEvent.click(getByLabelText('today'));
+
+		await waitFor(() => {
+			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(2);
+		});
+	});
 });
 
 // TODO: only highlights task on creation, not on re-load from server
