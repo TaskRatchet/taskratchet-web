@@ -7,9 +7,6 @@ interface CheckoutSession {
 	id: string;
 }
 
-type Status = 'pending' | 'complete' | 'expired';
-type Filters = Record<Status, boolean>;
-
 type Card = {
 	brand: string;
 	last4: string;
@@ -34,6 +31,6 @@ type TaskType = {
 	task: string;
 	complete?: boolean;
 	id?: number | string;
-	status: Status;
+	status: 'pending' | 'complete' | 'expired';
 	isNew?: boolean;
 };
