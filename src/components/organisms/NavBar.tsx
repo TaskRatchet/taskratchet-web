@@ -1,7 +1,6 @@
 import {
 	AppBar,
 	Button,
-	Drawer,
 	IconButton,
 	Toolbar,
 	Typography,
@@ -9,17 +8,22 @@ import {
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
+// TODO: uninstall @material-ui/* in favor of @mui/*
 import MenuIcon from '@material-ui/icons/Menu';
 import TodayIcon from '@material-ui/icons/Today';
-import { logout, useSession } from '../../lib/api/useSession';
 import { useLocation, useHistory } from 'react-router-dom';
+import NavDrawer from '../molecules/NavDrawer';
+import FilterButton from '../molecules/FilterButton';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
+	onFilterChange?: (filters: Filters) => void;
 }
 
-export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
-	const session = useSession();
+export default function NavBar({
+	onTodayClick,
+	onFilterChange,
+}: NavBarProps): JSX.Element {
 	const location = useLocation();
 	const history = useHistory();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -44,6 +48,8 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 					</Button>
 				</Typography>
 				<span>
+					<FilterButton onChange={onFilterChange} />
+
 					<IconButton
 						onClick={handleTodayClick}
 						edge="start"
@@ -63,32 +69,7 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 					</IconButton>
 				</span>
 			</Toolbar>
-			<Drawer
-				className={'organism-navBar__drawer'}
-				anchor={'right'}
-				open={isOpen}
-				onClose={toggleMenu}
-			>
-				{session && (
-					<>
-						<Typography>{session.email}</Typography>
-						<Button className={'link'} onClick={logout} color="inherit">
-							Logout
-						</Button>
-						<Button component={Link} to={'/account'} color="inherit">
-							Account
-						</Button>
-					</>
-				)}
-				{/*TODO: rel noopener etc*/}
-				<Button
-					href={'https://docs.taskratchet.com'}
-					target={'_blank'}
-					color="inherit"
-				>
-					Help
-				</Button>
-			</Drawer>
+			<NavDrawer isOpen={isOpen} onClose={toggleMenu} />
 		</AppBar>
 	);
 }

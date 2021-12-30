@@ -4,6 +4,10 @@ export const mockReactListRef = {
 	scrollTo: jest.fn(),
 };
 
+beforeEach(() => {
+	mockReactListRef.scrollTo.mockReset();
+});
+
 const ReactList = forwardRef(function ReactList(
 	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	{ itemRenderer, length }: any,
