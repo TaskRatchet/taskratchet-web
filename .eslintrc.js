@@ -39,5 +39,11 @@ module.exports = {
 				'@typescript-eslint/explicit-module-boundary-types': 'error',
 			},
 		},
+		{
+			files: '**/*.spec.+(ts|tsx)',
+			rules: {
+				'@typescript-eslint/no-explicit-any': 'off',
+			},
+		},
 	],
 };

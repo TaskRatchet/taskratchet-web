@@ -6,6 +6,7 @@ import BeeminderSettings from '../organisms/BeeminderSettings';
 import { useCheckoutSession, useMe, useTimezones } from '../../lib/api';
 import { useIsFetching } from 'react-query';
 import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
+import ApiSettings from '../organisms/ApiSettings';
 
 const Account = (): JSX.Element => {
 	const isFetching = useIsFetching(),
@@ -213,6 +214,10 @@ const Account = (): JSX.Element => {
 			<h2>Beeminder Integration</h2>
 
 			<BeeminderSettings />
+
+			<h2>API</h2>
+
+			<ApiSettings />
 		</div>
 	);
 };

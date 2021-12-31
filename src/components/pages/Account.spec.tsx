@@ -19,11 +19,18 @@ jest.mock('../../lib/api/updateMe');
 jest.mock('../../lib/api/getCheckoutSession');
 jest.mock('../../lib/api/apiFetch');
 jest.mock('../../lib/api/updatePassword');
+jest.mock('../../lib/api/useGetApiToken');
 
 describe('account page', () => {
 	beforeEach(() => {
 		jest.resetAllMocks();
 		loadCheckoutSession();
+		jest.spyOn(api, 'useGetApiToken').mockReturnValue({
+			isLoading: false,
+			mutate: () => {
+				/* noop */
+			},
+		} as any);
 	});
 
 	it('includes Beeminder integration settings', async () => {
@@ -188,6 +195,53 @@ describe('account page', () => {
 			await queryClient.invalidateQueries('checkoutSession');
 
 			await waitFor(() => expect(api.getCheckoutSession).toBeCalledTimes(1));
+		});
+	});
+
+	it('has token request button', async () => {
+		await act(async () => {
+			const { getByText } = await renderWithQueryProvider(<Account />);
+
+			expect(getByText('Request API token')).toBeInTheDocument();
+		});
+	});
+
+	it('indicates loading state', async () => {
+		await act(async () => {
+			jest.spyOn(api, 'useGetApiToken').mockReturnValue({
+				isLoading: true,
+				mutate: () => {
+					/* noop */
+				},
+			} as any);
+
+			const { getByText } = await renderWithQueryProvider(<Account />);
+
+			userEvent.click(getByText('Request API token'));
+
+			await waitFor(() => {
+				expect(getByText('Loading...')).toBeInTheDocument();
+			});
+		});
+	});
+
+	it('displays response data', async () => {
+		await act(async () => {
+			jest.spyOn(api, 'useGetApiToken').mockReturnValue({
+				isLoading: false,
+				mutate: () => {
+					/* noop */
+				},
+				data: 'the_token',
+			} as any);
+
+			const { getByText } = await renderWithQueryProvider(<Account />);
+
+			userEvent.click(getByText('Request API token'));
+
+			await waitFor(() => {
+				expect(getByText('the_token')).toBeInTheDocument();
+			});
 		});
 	});
 
