@@ -18,6 +18,10 @@ const ListItemComponent = React.forwardRef((props: TaskProps, ref) => (
 ));
 ListItemComponent.displayName = 'ListItemComponent';
 
+function isTask(value: unknown): value is TaskType {
+	return Object.prototype.hasOwnProperty.call(value, 'task');
+}
+
 const TaskList = ({
 	lastToday,
 	newTask,
@@ -63,8 +67,7 @@ const TaskList = ({
 				initialIndex={index}
 				itemRenderer={(i: number) => {
 					const entry = entries[i];
-					const isTask = Object.prototype.hasOwnProperty.call(entry, 'task');
-					return isTask ? (
+					return isTask(entry) ? (
 						<ListItem
 							component={ListItemComponent as any} // eslint-disable-line @typescript-eslint/no-explicit-any
 							task={entry}
@@ -81,7 +84,7 @@ const TaskList = ({
 						</ListSubheader>
 					);
 				}}
-				itemSizeEstimator={() => 60}
+				itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
 				length={entries.length}
 				type={'variable'}
 				ref={listRef}
