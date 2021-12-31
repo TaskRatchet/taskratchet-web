@@ -11,3 +11,4 @@ export * from './getCheckoutSession';
 export * from './updateMe';
 export * from './addTask';
 export * from './updatePassword';
+export * from './useGetApiToken';
