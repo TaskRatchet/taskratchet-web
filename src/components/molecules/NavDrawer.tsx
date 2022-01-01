@@ -1,7 +1,7 @@
-import { Button, Drawer, Typography } from '@material-ui/core';
 import { logout, useSession } from '../../lib/api/useSession';
 import { Link } from 'react-router-dom';
 import React from 'react';
+import { Button, Drawer, Typography } from '@mui/material';
 
 export default function NavDrawer({
 	isOpen,

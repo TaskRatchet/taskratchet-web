@@ -1,19 +1,11 @@
-import {
-	AppBar,
-	Button,
-	IconButton,
-	Toolbar,
-	Typography,
-} from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
-// TODO: uninstall @material-ui/* in favor of @mui/*
-import MenuIcon from '@material-ui/icons/Menu';
-import TodayIcon from '@material-ui/icons/Today';
 import { useLocation, useHistory } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
 import FilterButton from '../molecules/FilterButton';
+import { AppBar, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import { Today, Menu } from '@mui/icons-material';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
@@ -56,7 +48,7 @@ export default function NavBar({
 						color="inherit"
 						aria-label="today"
 					>
-						<TodayIcon />
+						<Today />
 					</IconButton>
 
 					<IconButton
@@ -65,7 +57,7 @@ export default function NavBar({
 						color="inherit"
 						aria-label="menu"
 					>
-						<MenuIcon />
+						<Menu />
 					</IconButton>
 				</span>
 			</Toolbar>

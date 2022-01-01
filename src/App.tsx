@@ -19,9 +19,9 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import LoadingIndicator from './components/molecules/LoadingIndicator';
 import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 toast.configure();
 
@@ -60,7 +60,7 @@ export function App(): JSX.Element {
 
 	return (
 		<div className={'page-base'}>
-			<MuiPickersUtilsProvider utils={DateFnsUtils}>
+			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<QueryClientProvider client={queryClient}>
 					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
 
@@ -106,7 +106,7 @@ export function App(): JSX.Element {
 						</Switch>
 					</div>
 				</QueryClientProvider>
-			</MuiPickersUtilsProvider>
+			</LocalizationProvider>
 		</div>
 	);
 }

@@ -24,8 +24,8 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import _ from 'lodash';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
-import DateFnsUtils from '@date-io/date-fns';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
 jest.mock('../../lib/api/apiFetch');
 jest.mock('../../lib/api/getTasks');
@@ -37,6 +37,13 @@ jest.mock('../../lib/Toaster');
 jest.mock('../../lib/LegacyApi');
 jest.mock('../../lib/getUnloadMessage');
 jest.mock('react-ga');
+
+jest.mock('@mui/lab', () => {
+	return {
+		DatePicker: jest.requireActual('@mui/lab/DesktopDatePicker').default,
+		TimePicker: jest.requireActual('@mui/lab/DesktopTimePicker').default,
+	};
+});
 
 global.document.createRange = () =>
 	({
@@ -90,17 +97,17 @@ const expectCheckboxState = (
 const renderTasksPage = () => {
 	const queryClient = new QueryClient();
 	const getters = render(
-		<MuiPickersUtilsProvider utils={DateFnsUtils}>
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<QueryClientProvider client={queryClient}>
 				<Tasks lastToday={undefined} />
 			</QueryClientProvider>
-		</MuiPickersUtilsProvider>
+		</LocalizationProvider>
 	);
 	const { getByText, getByLabelText } = getters;
 
 	return {
 		taskInput: getByLabelText('Task *') as HTMLInputElement,
-		dueInput: getByLabelText('Due Date *') as HTMLInputElement,
+		dueInput: getByLabelText('due date') as HTMLInputElement,
 		addButton: getByText('Add') as HTMLButtonElement,
 		clickCheckbox: (task = 'the_task') => {
 			const desc = getByText(task);

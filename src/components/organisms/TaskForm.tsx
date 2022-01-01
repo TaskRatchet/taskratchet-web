@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
 import './TaskForm.css';
 import browser from '../../lib/Browser';
-import { Button, Grid, InputAdornment, TextField } from '@material-ui/core';
-import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
+import { Button, Grid, InputAdornment, TextField } from '@mui/material';
+import { DatePicker, TimePicker } from '@mui/lab';
 
 interface TaskFormProps {
 	task: string;
@@ -16,8 +16,6 @@ interface TaskFormProps {
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
 	const { task, due, cents, timezone, error, onChange, onSubmit } = props;
-
-	// console.log({due})
 
 	useEffect(() => {
 		const getDefaultDue = () => {
@@ -92,34 +90,41 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				</Grid>
 
 				<Grid item xs={7}>
-					{/* TODO: Add minimum date == today */}
-					<KeyboardDatePicker
-						id="page-tasks__dueDate"
+					<DatePicker
 						label="Due Date"
-						required
-						format="MM/dd/yyyy"
+						clearable={false}
 						value={due}
-						onChange={(value: Date | null) => {
-							if (!value || isNaN(value.getTime())) return;
+						onChange={(value: unknown) => {
+							if (!(value instanceof Date)) return;
+							if (isNaN(value.getTime())) return;
 							if (due) value.setHours(due?.getHours(), due?.getMinutes());
 							onChange(task, value, cents);
 						}}
-						KeyboardButtonProps={{
+						OpenPickerButtonProps={{
 							'aria-label': 'change date',
 						}}
-						fullWidth
 						disablePast
+						renderInput={(params) => (
+							<TextField
+								required
+								fullWidth
+								InputLabelProps={{
+									'aria-label': 'due date',
+								}}
+								{...params}
+							/>
+						)}
 					/>
 				</Grid>
 
 				<Grid item xs={5}>
-					<KeyboardTimePicker
-						id="page-tasks__dueTime"
+					<TimePicker
 						label="Due Time"
-						required
+						clearable={false}
 						value={due}
-						onChange={(value: Date | null) => {
-							if (!value || isNaN(value.getTime())) return;
+						onChange={(value: unknown) => {
+							if (!(value instanceof Date)) return;
+							if (isNaN(value.getTime())) return;
 							if (due)
 								value.setFullYear(
 									due.getFullYear(),
@@ -128,10 +133,10 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 								);
 							onChange(task, value, cents);
 						}}
-						KeyboardButtonProps={{
+						OpenPickerButtonProps={{
 							'aria-label': 'change time',
 						}}
-						fullWidth
+						renderInput={(params) => <TextField required {...params} />}
 					/>
 				</Grid>
 

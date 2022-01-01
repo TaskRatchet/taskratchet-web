@@ -1,9 +1,13 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { IconButton } from '@material-ui/core';
 import React, { useEffect } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
-import { Checkbox, FormControlLabel, MenuList } from '@mui/material';
+import {
+	Checkbox,
+	FormControlLabel,
+	IconButton,
+	MenuList,
+} from '@mui/material';
 import useCookie from '../../lib/useCookie';
 
 export const DEFAULT_FILTERS = {

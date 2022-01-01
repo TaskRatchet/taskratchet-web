@@ -1,10 +1,8 @@
 import React, { MouseEvent } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useSetUncle } from '../../lib/api/useSetUncle';
 import _ from 'lodash';
+import { IconButton, Menu, MenuItem } from '@mui/material';
+import { MoreVert } from '@mui/icons-material';
 
 const ITEM_HEIGHT = 48;
 
@@ -29,7 +27,7 @@ export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 				aria-haspopup="true"
 				onClick={handleClick}
 			>
-				<MoreVertIcon />
+				<MoreVert />
 			</IconButton>
 			<Menu
 				id="long-menu"
