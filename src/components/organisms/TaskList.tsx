@@ -4,7 +4,7 @@ import { useTasks } from '../../lib/api';
 import './TaskList.css';
 import createListItems from '../../lib/createListItems';
 import ReactList from 'react-list';
-import { ListSubheader } from '@mui/material';
+import { ListSubheader, List } from '@mui/material';
 import Task from '../molecules/Task';
 
 interface TaskListProps {
@@ -75,10 +75,19 @@ const TaskList = ({
 						</ListSubheader>
 					);
 				}}
-				itemSizeEstimator={(i) => (isTask(entries[i]) ? 72 : 48)}
+				itemsRenderer={(items, ref) => (
+					<List
+						dense
+						component={({ children }) => <div ref={ref}>{children}</div>}
+					>
+						{items}
+					</List>
+				)}
+				itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
 				length={entries.length}
 				type={'variable'}
 				ref={listRef}
+				threshold={800}
 			/>
 		</div>
 	);

@@ -61,13 +61,9 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 					id={`task-${task.id}`}
 					primary={task.task || '[Description Missing]'}
 					secondary={
-						<span>
-							due by{' '}
-							<strong>
-								{dateString} {timeString}
-							</strong>{' '}
-							or pay <strong>${task.cents / 100}</strong>
-						</span>
+						<>
+							${task.cents / 100} &#8226; due by {dateString} {timeString}
+						</>
 					}
 				/>
 			</ListItemButton>
