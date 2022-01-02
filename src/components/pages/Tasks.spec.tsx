@@ -6,7 +6,7 @@ import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import {
-	expectLoadingOverlay,
+	expectLoadingSpinner,
 	loadNow,
 	loadTasksApiData,
 	makeTask,
@@ -92,9 +92,8 @@ const renderTasksPage = () => {
 	);
 	const { getByLabelText, getByText, debug } = getters;
 
-	userEvent.click(getByLabelText('add'));
-
 	return {
+		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
 		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
 		getDueInput: () => getByLabelText('due date') as HTMLInputElement,
 		getAddButton: () => getByText('Add') as HTMLButtonElement,
@@ -190,9 +189,11 @@ describe('tasks page', () => {
 		await act(async () => {
 			loadTasksApiData();
 
-			const { getAddButton } = renderTasksPage();
+			const { getAddButton, openForm } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+			await openForm();
 
 			userEvent.click(getAddButton());
 
@@ -204,9 +205,11 @@ describe('tasks page', () => {
 		await act(async () => {
 			loadTasksApiData();
 
-			const { getAddButton, getByText } = renderTasksPage();
+			const { getAddButton, getByText, openForm } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+			await openForm();
 
 			userEvent.click(getAddButton());
 
@@ -439,9 +442,9 @@ describe('tasks page', () => {
 	it('uses loading overlay', async () => {
 		loadTasksApiData();
 
-		const { container } = renderTasksPage();
+		const { getByLabelText } = renderTasksPage();
 
-		expectLoadingOverlay(container);
+		expectLoadingSpinner(getByLabelText);
 	});
 
 	it('updates checkboxes optimistically', async () => {
@@ -558,7 +561,9 @@ describe('tasks page', () => {
 	it('has stakes form', async () => {
 		loadTasksApiData();
 
-		const { getByText } = renderTasksPage();
+		const { getByText, openForm } = renderTasksPage();
+
+		await openForm();
 
 		expect(getByText('Stakes')).toBeInTheDocument();
 	});
@@ -604,7 +609,8 @@ describe('tasks page', () => {
 
 			loadTasksApiData();
 
-			const { getTaskInput, getAddButton, getByText } = renderTasksPage();
+			const { getTaskInput, getAddButton, getByText, openForm } =
+				renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -615,6 +621,8 @@ describe('tasks page', () => {
 			]);
 
 			// Add first task
+
+			await openForm();
 
 			await userEvent.type(getTaskInput(), 'first');
 			userEvent.click(getAddButton());
@@ -713,11 +721,14 @@ describe('tasks page', () => {
 	it('scrolls new task into view', async () => {
 		loadTasksApiData();
 
-		const { getTaskInput, getAddButton, getByText } = renderTasksPage();
+		const { getTaskInput, getAddButton, getByText, openForm } =
+			renderTasksPage();
 
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'new_task' })],
 		});
+
+		await openForm();
 
 		userEvent.type(getTaskInput(), 'new_task');
 		userEvent.click(getAddButton());

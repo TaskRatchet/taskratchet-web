@@ -4,8 +4,16 @@ import './NavBar.css';
 import { useLocation, useHistory } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
 import FilterButton from '../molecules/FilterButton';
-import { AppBar, Button, IconButton, Toolbar, Typography } from '@mui/material';
+import {
+	AppBar,
+	Box,
+	Button,
+	IconButton,
+	Toolbar,
+	Typography,
+} from '@mui/material';
 import { Today, Menu } from '@mui/icons-material';
+import LoadingIndicator from '../molecules/LoadingIndicator';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
@@ -29,6 +37,10 @@ export default function NavBar({
 
 	return (
 		<AppBar className={'organism-navBar'} position="relative">
+			<Box position={'absolute'} sx={{ width: 1 }}>
+				<LoadingIndicator />
+			</Box>
+
 			<Toolbar>
 				<Typography
 					className={'organism-navBar__title'}

@@ -6,7 +6,7 @@ const LoadingIndicator = (): JSX.Element | null => {
 	const isFetching = useIsFetching();
 
 	return (
-		<div style={{ pointerEvents: 'none', height: 5 }}>
+		<div style={{ pointerEvents: 'none', height: 5, flexShrink: 0 }}>
 			{isFetching ? <LinearProgress color={'secondary'} /> : null}
 		</div>
 	);

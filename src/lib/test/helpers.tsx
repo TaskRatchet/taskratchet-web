@@ -87,6 +87,22 @@ export function expectLoadingOverlay(
 	).toBe(+shouldExist);
 }
 
+export function expectLoadingSpinner(
+	getByLabelText: (text: string) => HTMLElement | null,
+	options: {
+		shouldExist?: boolean;
+		extraClasses?: string;
+	} = {}
+): void {
+	const { shouldExist = true } = options;
+
+	if (shouldExist) {
+		expect(getByLabelText('loading')).toBeInTheDocument();
+	} else {
+		expect(getByLabelText('loading')).not.toBeInTheDocument();
+	}
+}
+
 export async function renderWithQueryProvider(
 	ui: ReactElement
 ): Promise<RenderResult & { queryClient: QueryClient }> {

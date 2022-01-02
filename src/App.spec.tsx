@@ -31,9 +31,8 @@ function renderPage() {
 	);
 	const { getByText, getByLabelText } = getters;
 
-	userEvent.click(getByLabelText('add'));
-
 	return {
+		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
 		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
 		getDueInput: () => getByLabelText('Due Date *') as HTMLInputElement,
 		getAddButton: () => getByText('Add') as HTMLButtonElement,

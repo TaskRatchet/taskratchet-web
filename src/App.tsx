@@ -16,13 +16,12 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { isProduction } from './tr_constants';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import LoadingIndicator from './components/molecules/LoadingIndicator';
 import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
 import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { Box, Container, Paper, Stack } from '@mui/material';
+import { Box, Container, CssBaseline, Paper, Stack } from '@mui/material';
 
 toast.configure();
 
@@ -61,6 +60,7 @@ export function App(): JSX.Element {
 
 	return (
 		<Container maxWidth={'xs'} disableGutters component={Paper}>
+			<CssBaseline />
 			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<QueryClientProvider client={queryClient}>
 					<Stack sx={{ height: '100vh' }}>
@@ -69,9 +69,7 @@ export function App(): JSX.Element {
 							onFilterChange={setFilters}
 						/>
 
-						<LoadingIndicator />
-
-						<Box overflow={'scroll'}>
+						<Box overflow={'scroll'} flexGrow={1}>
 							<Switch>
 								<Route path={'/register'}>
 									<RegisterForm />

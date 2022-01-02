@@ -33,6 +33,7 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 			}`}
 			secondaryAction={<TaskMenu task={task} />}
 			disablePadding
+			dense
 		>
 			<ListItemButton
 				disabled={disabled}

@@ -5,14 +5,18 @@ import { useSession } from '../../lib/api/useSession';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
 import { BrowserRouter } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 jest.mock('../../lib/api/useSession');
 
 async function renderComponent() {
+	const queryClient = new QueryClient();
 	return render(
-		<BrowserRouter>
-			<NavBar />
-		</BrowserRouter>
+		<QueryClientProvider client={queryClient}>
+			<BrowserRouter>
+				<NavBar />
+			</BrowserRouter>
+		</QueryClientProvider>
 	);
 }
 
