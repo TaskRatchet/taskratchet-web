@@ -6,8 +6,12 @@ import {
 	List,
 	ListItem,
 	ListItemButton,
+	ListItemIcon,
 	ListItemText,
 } from '@mui/material';
+import LogoutIcon from '@mui/icons-material/Logout';
+import HelpIcon from '@mui/icons-material/Help';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 export default function NavDrawer({
 	isOpen,
@@ -37,11 +41,17 @@ export default function NavDrawer({
 								onClick={logout}
 								color="inherit"
 							>
+								<ListItemIcon>
+									<LogoutIcon />
+								</ListItemIcon>
 								<ListItemText primary={'Logout'} />
 							</ListItemButton>
 						</ListItem>
 						<ListItem disablePadding>
 							<ListItemButton component={Link} to={'/account'} color="inherit">
+								<ListItemIcon>
+									<AccountCircleIcon />
+								</ListItemIcon>
 								<ListItemText primary={'Account'} />
 							</ListItemButton>
 						</ListItem>
@@ -54,6 +64,9 @@ export default function NavDrawer({
 						target={'_blank'}
 						color="inherit"
 					>
+						<ListItemIcon>
+							<HelpIcon />
+						</ListItemIcon>
 						<ListItemText primary={'Help'} />
 					</ListItemButton>
 				</ListItem>
