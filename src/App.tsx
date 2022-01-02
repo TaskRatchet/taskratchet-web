@@ -22,7 +22,7 @@ import browser from './lib/Browser';
 import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { Container, Paper } from '@mui/material';
+import { Box, Container, Paper, Stack } from '@mui/material';
 
 toast.configure();
 
@@ -60,52 +60,62 @@ export function App(): JSX.Element {
 	usePageViews();
 
 	return (
-		<Container maxWidth={'xs'} disableGutters component={Paper}>
+		<Container
+			maxWidth={'xs'}
+			disableGutters
+			component={Paper}
+			// sx={{ pt: 7, overflow: 'scroll', height: '100vh' }}
+		>
 			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<QueryClientProvider client={queryClient}>
-					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
+					<Stack sx={{ height: '100vh' }}>
+						<NavBar
+							onTodayClick={handleTodayClick}
+							onFilterChange={setFilters}
+						/>
 
-					<LoadingIndicator />
+						<LoadingIndicator />
 
-					<div className={'page-base__content'}>
-						<Switch>
-							<Route path={'/register'}>
-								<RegisterForm />
-							</Route>
+						<Box overflow={'scroll'}>
+							<Switch>
+								<Route path={'/register'}>
+									<RegisterForm />
+								</Route>
 
-							<Route path={'/success'}>
-								Your payment method has been saved successfully.
-							</Route>
+								<Route path={'/success'}>
+									Your payment method has been saved successfully.
+								</Route>
 
-							<Route path={'/cancel'}>
-								Your payment method could not be saved. Please contact
-								<a
-									href="mailto:nathan@taskratchet.com"
-									target={'_blank'}
-									rel="noopener noreferrer"
-								>
-									nathan@taskratchet.com
-								</a>
-								for assistance.
-							</Route>
+								<Route path={'/cancel'}>
+									Your payment method could not be saved. Please contact
+									<a
+										href="mailto:nathan@taskratchet.com"
+										target={'_blank'}
+										rel="noopener noreferrer"
+									>
+										nathan@taskratchet.com
+									</a>
+									for assistance.
+								</Route>
 
-							<Route path={'/account'}>
-								<Authenticated>
-									<Account />
-								</Authenticated>
-							</Route>
+								<Route path={'/account'}>
+									<Authenticated>
+										<Account />
+									</Authenticated>
+								</Route>
 
-							<Route path={'/reset'}>
-								<ResetPassword />
-							</Route>
+								<Route path={'/reset'}>
+									<ResetPassword />
+								</Route>
 
-							<Route path={'/'}>
-								<Authenticated>
-									<Tasks lastToday={lastToday} filters={filters} />
-								</Authenticated>
-							</Route>
-						</Switch>
-					</div>
+								<Route path={'/'}>
+									<Authenticated>
+										<Tasks lastToday={lastToday} filters={filters} />
+									</Authenticated>
+								</Route>
+							</Switch>
+						</Box>
+					</Stack>
 				</QueryClientProvider>
 			</LocalizationProvider>
 		</Container>

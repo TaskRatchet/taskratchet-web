@@ -28,7 +28,7 @@ export default function NavBar({
 	useEffect(() => setIsOpen(false), [location]);
 
 	return (
-		<AppBar className={'organism-navBar'} position="sticky">
+		<AppBar className={'organism-navBar'} position="relative">
 			<Toolbar>
 				<Typography
 					className={'organism-navBar__title'}

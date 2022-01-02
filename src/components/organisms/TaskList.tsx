@@ -75,7 +75,7 @@ const TaskList = ({
 						</ListSubheader>
 					);
 				}}
-				itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
+				itemSizeEstimator={(i) => (isTask(entries[i]) ? 72 : 48)}
 				length={entries.length}
 				type={'variable'}
 				ref={listRef}
