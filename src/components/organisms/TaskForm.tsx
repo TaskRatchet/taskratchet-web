@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { FormEvent, useEffect } from 'react';
 import './TaskForm.css';
 import browser from '../../lib/Browser';
-import { Button, Grid, InputAdornment, TextField } from '@material-ui/core';
-import { KeyboardDatePicker, KeyboardTimePicker } from '@material-ui/pickers';
+import { Box, Button, InputAdornment, Stack, TextField } from '@mui/material';
+import { DatePicker, TimePicker } from '@mui/lab';
 
 interface TaskFormProps {
 	task: string;
@@ -16,8 +16,6 @@ interface TaskFormProps {
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
 	const { task, due, cents, timezone, error, onChange, onSubmit } = props;
-
-	// console.log({due})
 
 	useEffect(() => {
 		const getDefaultDue = () => {
@@ -44,98 +42,93 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 	const dollars = cents ? cents / 100 : 0;
 
 	return (
-		<form
-			onSubmit={(e) => {
+		<Box
+			component={'form'}
+			onSubmit={(e: FormEvent) => {
 				e.preventDefault();
 				onSubmit();
 			}}
 			className={'organism-taskForm'}
 		>
-			<Grid container spacing={2}>
-				{error ? (
-					<Grid item xs={12}>
-						{error}
-					</Grid>
-				) : null}
+			<Stack spacing={2}>
+				{error ? <p>{error}</p> : null}
 
-				<Grid item xs={9}>
-					<TextField
-						id="page-tasks__task"
-						label="Task"
-						required
-						value={task}
-						onChange={(e) => {
-							onChange(e.target.value, due, cents);
-						}}
-						fullWidth
-					/>
-				</Grid>
+				<TextField
+					id="page-tasks__task"
+					label="Task"
+					required
+					value={task}
+					onChange={(e) => {
+						onChange(e.target.value, due, cents);
+					}}
+					fullWidth
+					variant="standard"
+					multiline
+				/>
+				<TextField
+					id="page-tasks__dollars"
+					label="Stakes"
+					required
+					type="number"
+					value={dollars > 0 ? dollars : ''}
+					onChange={(e) => {
+						onChange(task, due, parseInt(e.target.value) * 100);
+					}}
+					InputProps={{
+						startAdornment: <InputAdornment position="start">$</InputAdornment>,
+						endAdornment: <InputAdornment position="end">USD</InputAdornment>,
+					}}
+					variant="standard"
+				/>
+				<DatePicker
+					label="Due Date"
+					clearable={false}
+					value={due}
+					onChange={(value: unknown) => {
+						if (!(value instanceof Date)) return;
+						if (isNaN(value.getTime())) return;
+						if (due) value.setHours(due?.getHours(), due?.getMinutes());
+						onChange(task, value, cents);
+					}}
+					OpenPickerButtonProps={{
+						'aria-label': 'change date',
+					}}
+					disablePast
+					renderInput={(params) => (
+						<TextField
+							required
+							InputLabelProps={{
+								'aria-label': 'due date',
+							}}
+							variant="standard"
+							{...params}
+						/>
+					)}
+				/>
+				<TimePicker
+					label="Due Time"
+					clearable={false}
+					value={due}
+					onChange={(value: unknown) => {
+						if (!(value instanceof Date)) return;
+						if (isNaN(value.getTime())) return;
+						if (due)
+							value.setFullYear(
+								due.getFullYear(),
+								due.getMonth(),
+								due.getDate()
+							);
+						onChange(task, value, cents);
+					}}
+					OpenPickerButtonProps={{
+						'aria-label': 'change time',
+					}}
+					renderInput={(params) => (
+						<TextField required variant="standard" {...params} />
+					)}
+				/>
 
-				<Grid item xs={3}>
-					<TextField
-						id="page-tasks__dollars"
-						label="Stakes"
-						required
-						type="number"
-						value={dollars > 0 ? dollars : ''}
-						onChange={(e) => {
-							onChange(task, due, parseInt(e.target.value) * 100);
-						}}
-						fullWidth
-						InputProps={{
-							startAdornment: (
-								<InputAdornment position="start">$</InputAdornment>
-							),
-							endAdornment: <InputAdornment position="end">USD</InputAdornment>,
-						}}
-					/>
-				</Grid>
-
-				<Grid item xs={7}>
-					{/* TODO: Add minimum date == today */}
-					<KeyboardDatePicker
-						id="page-tasks__dueDate"
-						label="Due Date"
-						required
-						format="MM/dd/yyyy"
-						value={due}
-						onChange={(value: Date | null) => {
-							if (!value || isNaN(value.getTime())) return;
-							if (due) value.setHours(due?.getHours(), due?.getMinutes());
-							onChange(task, value, cents);
-						}}
-						KeyboardButtonProps={{
-							'aria-label': 'change date',
-						}}
-						fullWidth
-						disablePast
-					/>
-				</Grid>
-
-				<Grid item xs={5}>
-					<KeyboardTimePicker
-						id="page-tasks__dueTime"
-						label="Due Time"
-						required
-						value={due}
-						onChange={(value: Date | null) => {
-							if (!value || isNaN(value.getTime())) return;
-							if (due)
-								value.setFullYear(
-									due.getFullYear(),
-									due.getMonth(),
-									due.getDate()
-								);
-							onChange(task, value, cents);
-						}}
-						KeyboardButtonProps={{
-							'aria-label': 'change time',
-						}}
-						fullWidth
-					/>
-				</Grid>
-
-				<Grid item xs>
+				<Stack direction={'row'} justifyContent={'space-between'}>
 					<Button
 						href={'https://docs.taskratchet.com/timezones.html'}
 						target={'_blank'}
@@ -144,9 +137,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					>
 						{timezone}
 					</Button>
-				</Grid>
 
-				<Grid item xs={3}>
 					<Button
 						variant="contained"
 						size={'small'}
@@ -155,9 +146,9 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					>
 						Add
 					</Button>
-				</Grid>
-			</Grid>
-		</form>
+				</Stack>
+			</Stack>
+		</Box>
 	);
 };
 

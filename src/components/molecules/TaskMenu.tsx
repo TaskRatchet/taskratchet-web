@@ -1,12 +1,8 @@
 import React, { MouseEvent } from 'react';
-import IconButton from '@material-ui/core/IconButton';
-import Menu from '@material-ui/core/Menu';
-import MenuItem from '@material-ui/core/MenuItem';
-import MoreVertIcon from '@material-ui/icons/MoreVert';
 import { useSetUncle } from '../../lib/api/useSetUncle';
 import _ from 'lodash';
-
-const ITEM_HEIGHT = 48;
+import { IconButton, Menu, MenuItem } from '@mui/material';
+import { MoreVert } from '@mui/icons-material';
 
 export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 	const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
@@ -29,7 +25,7 @@ export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 				aria-haspopup="true"
 				onClick={handleClick}
 			>
-				<MoreVertIcon />
+				<MoreVert />
 			</IconButton>
 			<Menu
 				id="long-menu"
@@ -37,14 +33,9 @@ export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 				keepMounted
 				open={open}
 				onClose={handleClose}
-				PaperProps={{
-					style: {
-						maxHeight: ITEM_HEIGHT * 4.5,
-						width: '20ch',
-					},
-				}}
 			>
 				<MenuItem
+					disabled={task.status !== 'pending'}
 					onClick={() => {
 						handleClose();
 						const taskId = _.get(task, 'id');

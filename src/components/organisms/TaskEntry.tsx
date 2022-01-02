@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import TaskForm from './TaskForm';
 import { useAddTask } from '../../lib/api/useAddTask';
 import { useTimezone } from '../../lib/api/useTimezone';
+import AddIcon from '@mui/icons-material/Add';
+import { Box, Dialog, DialogContent, DialogTitle, Fab } from '@mui/material';
 
 const TaskEntry = ({
 	onSave,
@@ -14,6 +16,7 @@ const TaskEntry = ({
 	const [due, setDue] = useState<Date | null>(null);
 	const [cents, setCents] = useState<number | null>(null);
 	const [error, setError] = useState<string>('');
+	const [isOpen, setIsOpen] = useState<boolean>(false);
 
 	const onChange = (task: string, due: Date | null, cents: number | null) => {
 		setTask(task);
@@ -40,16 +43,34 @@ const TaskEntry = ({
 	}
 
 	return (
-		<>
-			<TaskForm
-				task={task}
-				due={due}
-				cents={cents}
-				timezone={timezone}
-				error={error}
-				onChange={onChange}
-				onSubmit={onSubmit}
-			/>
+		<Box sx={{ pb: 11 }}>
+			<Fab
+				color="primary"
+				aria-label="add"
+				sx={{
+					position: 'fixed',
+					bottom: (theme) => theme.spacing(2),
+					right: (theme) => theme.spacing(2),
+				}}
+				onClick={() => setIsOpen(true)}
+			>
+				<AddIcon />
+			</Fab>
+
+			<Dialog onClose={() => setIsOpen(false)} open={isOpen} keepMounted>
+				<DialogTitle sx={{ pb: 0 }}>Add Task</DialogTitle>
+				<DialogContent>
+					<TaskForm
+						task={task}
+						due={due}
+						cents={cents}
+						timezone={timezone}
+						error={error}
+						onChange={onChange}
+						onSubmit={onSubmit}
+					/>
+				</DialogContent>
+			</Dialog>
 
 			{/*<FreeEntry*/}
 			{/*    task={task}*/}
@@ -60,7 +81,7 @@ const TaskEntry = ({
 			{/*    onChange={onChange}*/}
 			{/*    onSubmit={onSubmit}*/}
 			{/*/>*/}
-		</>
+		</Box>
 	);
 };
 

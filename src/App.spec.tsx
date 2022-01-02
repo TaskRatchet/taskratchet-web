@@ -32,9 +32,10 @@ function renderPage() {
 	const { getByText, getByLabelText } = getters;
 
 	return {
-		taskInput: getByLabelText('Task *') as HTMLInputElement,
-		dueInput: getByLabelText('Due Date *') as HTMLInputElement,
-		addButton: getByText('Add') as HTMLButtonElement,
+		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
+		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
+		getDueInput: () => getByLabelText('Due Date *') as HTMLInputElement,
+		getAddButton: () => getByText('Add') as HTMLButtonElement,
 		clickCheckbox: (task = 'the_task') => {
 			const desc = getByText(task);
 			const checkbox = desc.previousElementSibling;
@@ -152,10 +153,10 @@ describe('App', () => {
 	it('scrolls to new task', async () => {
 		loadNow(new Date('1/1/2020'));
 
-		const { taskInput, addButton } = renderPage();
+		const { getTaskInput, getAddButton } = renderPage();
 
-		userEvent.type(taskInput, 'task 1');
-		userEvent.click(addButton);
+		userEvent.type(getTaskInput(), 'task 1');
+		userEvent.click(getAddButton());
 
 		await waitFor(() => {
 			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(1);

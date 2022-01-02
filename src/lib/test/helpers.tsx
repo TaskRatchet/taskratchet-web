@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
 import { addTask, updateTask } from '../api';
+import { waitFor } from '@testing-library/dom';
 
 jest.mock('../../lib/api/getTimezones');
 
@@ -84,6 +85,22 @@ export function expectLoadingOverlay(
 	expect(
 		container.getElementsByClassName(`loading ${extraClasses}`).length
 	).toBe(+shouldExist);
+}
+
+export function expectLoadingSpinner(
+	getByLabelText: (text: string) => HTMLElement | null,
+	options: {
+		shouldExist?: boolean;
+		extraClasses?: string;
+	} = {}
+): void {
+	const { shouldExist = true } = options;
+
+	if (shouldExist) {
+		expect(getByLabelText('loading')).toBeInTheDocument();
+	} else {
+		expect(getByLabelText('loading')).not.toBeInTheDocument();
+	}
 }
 
 export async function renderWithQueryProvider(
@@ -186,3 +203,7 @@ export const loadTasksApiData = ({
 	loadApiResponse(updateTask as jest.Mock);
 	loadApiResponse(addTask as jest.Mock);
 };
+
+export async function expectNever(callable: () => unknown): Promise<void> {
+	await expect(() => waitFor(callable)).rejects.toEqual(expect.anything());
+}

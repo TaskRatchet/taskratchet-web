@@ -5,6 +5,7 @@ import { useTasks } from '../../lib/api';
 import TaskEntry from '../organisms/TaskEntry';
 import TaskList from '../organisms/TaskList';
 import { useCloseWarning } from '../../lib/useCloseWarning';
+import LoadingSpinner from '../molecules/LoadingSpinner';
 
 interface TasksProps {
 	lastToday: Date | undefined;
@@ -14,14 +15,21 @@ interface TasksProps {
 const Tasks = ({ lastToday, filters }: TasksProps): JSX.Element => {
 	const { isLoading } = useTasks();
 	const [newTask, setNewTask] = useState<TaskType>();
+	// const isLoading = true;
 
 	useCloseWarning();
 
 	return (
-		<div className={`page-tasks ${isLoading ? 'loading' : 'idle'}`}>
-			<TaskEntry onSave={setNewTask} />
-			<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
-		</div>
+		<>
+			{isLoading ? (
+				<LoadingSpinner />
+			) : (
+				<>
+					<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
+					<TaskEntry onSave={setNewTask} />
+				</>
+			)}
+		</>
 	);
 };
 

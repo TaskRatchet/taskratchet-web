@@ -1,19 +1,19 @@
+import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import './NavBar.css';
+import { useLocation, useHistory } from 'react-router-dom';
+import NavDrawer from '../molecules/NavDrawer';
+import FilterButton from '../molecules/FilterButton';
 import {
 	AppBar,
+	Box,
 	Button,
 	IconButton,
 	Toolbar,
 	Typography,
-} from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import './NavBar.css';
-// TODO: uninstall @material-ui/* in favor of @mui/*
-import MenuIcon from '@material-ui/icons/Menu';
-import TodayIcon from '@material-ui/icons/Today';
-import { useLocation, useHistory } from 'react-router-dom';
-import NavDrawer from '../molecules/NavDrawer';
-import FilterButton from '../molecules/FilterButton';
+} from '@mui/material';
+import { Today, Menu } from '@mui/icons-material';
+import LoadingIndicator from '../molecules/LoadingIndicator';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
@@ -36,39 +36,46 @@ export default function NavBar({
 	useEffect(() => setIsOpen(false), [location]);
 
 	return (
-		<AppBar className={'organism-navBar'} position="static">
+		<AppBar className={'organism-navBar'} position="relative">
+			<Box position={'absolute'} sx={{ width: 1 }}>
+				<LoadingIndicator />
+			</Box>
+
 			<Toolbar>
 				<Typography
 					className={'organism-navBar__title'}
 					variant="h6"
 					component="div"
+					sx={{ flexGrow: 1 }}
 				>
 					<Button component={Link} to={'/'} color={'inherit'}>
 						TaskRatchet
 					</Button>
 				</Typography>
-				<span>
-					<FilterButton onChange={onFilterChange} />
 
-					<IconButton
-						onClick={handleTodayClick}
-						edge="start"
-						color="inherit"
-						aria-label="today"
-					>
-						<TodayIcon />
-					</IconButton>
+				<FilterButton onChange={onFilterChange} />
 
-					<IconButton
-						onClick={toggleMenu}
-						edge="start"
-						color="inherit"
-						aria-label="menu"
-					>
-						<MenuIcon />
-					</IconButton>
-				</span>
+				<IconButton
+					onClick={handleTodayClick}
+					edge="start"
+					color="inherit"
+					aria-label="today"
+					sx={{ m: 0.1 }}
+				>
+					<Today />
+				</IconButton>
+
+				<IconButton
+					onClick={toggleMenu}
+					edge="start"
+					color="inherit"
+					aria-label="menu"
+					sx={{ m: 0.1 }}
+				>
+					<Menu />
+				</IconButton>
 			</Toolbar>
+
 			<NavDrawer isOpen={isOpen} onClose={toggleMenu} />
 		</AppBar>
 	);

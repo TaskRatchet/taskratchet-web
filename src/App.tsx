@@ -16,12 +16,12 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { isProduction } from './tr_constants';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import LoadingIndicator from './components/molecules/LoadingIndicator';
 import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
-import { MuiPickersUtilsProvider } from '@material-ui/pickers';
-import DateFnsUtils from '@date-io/date-fns';
 import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { Box, Container, CssBaseline, Paper, Stack } from '@mui/material';
 
 toast.configure();
 
@@ -59,55 +59,59 @@ export function App(): JSX.Element {
 	usePageViews();
 
 	return (
-		<div className={'page-base'}>
-			<MuiPickersUtilsProvider utils={DateFnsUtils}>
+		<Container maxWidth={'xs'} disableGutters component={Paper}>
+			<CssBaseline />
+			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<QueryClientProvider client={queryClient}>
-					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
+					<Stack sx={{ height: '100vh' }}>
+						<NavBar
+							onTodayClick={handleTodayClick}
+							onFilterChange={setFilters}
+						/>
 
-					<LoadingIndicator />
+						<Box overflow={'scroll'} flexGrow={1}>
+							<Switch>
+								<Route path={'/register'}>
+									<RegisterForm />
+								</Route>
 
-					<div className={'page-base__content'}>
-						<Switch>
-							<Route path={'/register'}>
-								<RegisterForm />
-							</Route>
+								<Route path={'/success'}>
+									Your payment method has been saved successfully.
+								</Route>
 
-							<Route path={'/success'}>
-								Your payment method has been saved successfully.
-							</Route>
+								<Route path={'/cancel'}>
+									Your payment method could not be saved. Please contact
+									<a
+										href="mailto:nathan@taskratchet.com"
+										target={'_blank'}
+										rel="noopener noreferrer"
+									>
+										nathan@taskratchet.com
+									</a>
+									for assistance.
+								</Route>
 
-							<Route path={'/cancel'}>
-								Your payment method could not be saved. Please contact
-								<a
-									href="mailto:nathan@taskratchet.com"
-									target={'_blank'}
-									rel="noopener noreferrer"
-								>
-									nathan@taskratchet.com
-								</a>
-								for assistance.
-							</Route>
+								<Route path={'/account'}>
+									<Authenticated>
+										<Account />
+									</Authenticated>
+								</Route>
 
-							<Route path={'/account'}>
-								<Authenticated>
-									<Account />
-								</Authenticated>
-							</Route>
+								<Route path={'/reset'}>
+									<ResetPassword />
+								</Route>
 
-							<Route path={'/reset'}>
-								<ResetPassword />
-							</Route>
-
-							<Route path={'/'}>
-								<Authenticated>
-									<Tasks lastToday={lastToday} filters={filters} />
-								</Authenticated>
-							</Route>
-						</Switch>
-					</div>
+								<Route path={'/'}>
+									<Authenticated>
+										<Tasks lastToday={lastToday} filters={filters} />
+									</Authenticated>
+								</Route>
+							</Switch>
+						</Box>
+					</Stack>
 				</QueryClientProvider>
-			</MuiPickersUtilsProvider>
-		</div>
+			</LocalizationProvider>
+		</Container>
 	);
 }
 
