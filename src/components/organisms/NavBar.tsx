@@ -10,6 +10,7 @@ import {
 	Button,
 	IconButton,
 	Toolbar,
+	Tooltip,
 	Typography,
 } from '@mui/material';
 import { Today, Menu } from '@mui/icons-material';
@@ -55,25 +56,29 @@ export default function NavBar({
 
 				<FilterButton onChange={onFilterChange} />
 
-				<IconButton
-					onClick={handleTodayClick}
-					edge="start"
-					color="inherit"
-					aria-label="today"
-					sx={{ m: 0.1 }}
-				>
-					<Today />
-				</IconButton>
+				<Tooltip title={'Jump to Today'}>
+					<IconButton
+						onClick={handleTodayClick}
+						edge="start"
+						color="inherit"
+						aria-label="today"
+						sx={{ m: 0.1 }}
+					>
+						<Today />
+					</IconButton>
+				</Tooltip>
 
-				<IconButton
-					onClick={toggleMenu}
-					edge="start"
-					color="inherit"
-					aria-label="menu"
-					sx={{ m: 0.1 }}
-				>
-					<Menu />
-				</IconButton>
+				<Tooltip title={'Menu'}>
+					<IconButton
+						onClick={toggleMenu}
+						edge="start"
+						color="inherit"
+						aria-label="menu"
+						sx={{ m: 0.1 }}
+					>
+						<Menu />
+					</IconButton>
+				</Tooltip>
 			</Toolbar>
 
 			<NavDrawer isOpen={isOpen} onClose={toggleMenu} />
