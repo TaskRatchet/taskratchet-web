@@ -1,7 +1,13 @@
 import { logout, useSession } from '../../lib/api/useSession';
 import { Link } from 'react-router-dom';
 import React from 'react';
-import { Button, Drawer, Typography } from '@mui/material';
+import {
+	Drawer,
+	List,
+	ListItem,
+	ListItemButton,
+	ListItemText,
+} from '@mui/material';
 
 export default function NavDrawer({
 	isOpen,
@@ -19,25 +25,39 @@ export default function NavDrawer({
 			open={isOpen}
 			onClose={onClose}
 		>
-			{session && (
-				<>
-					<Typography>{session.email}</Typography>
-					<Button className={'link'} onClick={logout} color="inherit">
-						Logout
-					</Button>
-					<Button component={Link} to={'/account'} color="inherit">
-						Account
-					</Button>
-				</>
-			)}
-			{/*TODO: rel noopener etc*/}
-			<Button
-				href={'https://docs.taskratchet.com'}
-				target={'_blank'}
-				color="inherit"
-			>
-				Help
-			</Button>
+			<List>
+				{session && (
+					<>
+						<ListItem>
+							<ListItemText>{session.email}</ListItemText>
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemButton
+								className={'link'}
+								onClick={logout}
+								color="inherit"
+							>
+								<ListItemText primary={'Logout'} />
+							</ListItemButton>
+						</ListItem>
+						<ListItem disablePadding>
+							<ListItemButton component={Link} to={'/account'} color="inherit">
+								<ListItemText primary={'Account'} />
+							</ListItemButton>
+						</ListItem>
+					</>
+				)}
+				{/*TODO: rel noopener etc*/}
+				<ListItem disablePadding>
+					<ListItemButton
+						href={'https://docs.taskratchet.com'}
+						target={'_blank'}
+						color="inherit"
+					>
+						<ListItemText primary={'Help'} />
+					</ListItemButton>
+				</ListItem>
+			</List>
 		</Drawer>
 	);
 }

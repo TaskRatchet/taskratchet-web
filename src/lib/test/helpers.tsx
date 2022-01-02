@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
 import { addTask, updateTask } from '../api';
+import { waitFor } from '@testing-library/dom';
 
 jest.mock('../../lib/api/getTimezones');
 
@@ -186,3 +187,7 @@ export const loadTasksApiData = ({
 	loadApiResponse(updateTask as jest.Mock);
 	loadApiResponse(addTask as jest.Mock);
 };
+
+export async function expectNever(callable: () => unknown): Promise<void> {
+	await expect(() => waitFor(callable)).rejects.toEqual(expect.anything());
+}

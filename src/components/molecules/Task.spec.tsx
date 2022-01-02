@@ -1,6 +1,6 @@
 import Task from './Task';
 import React from 'react';
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { expectNever, renderWithQueryProvider } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
 import { updateTask } from '../../lib/api';
 import { waitFor } from '@testing-library/dom';
@@ -25,9 +25,11 @@ describe('Task componet', () => {
 			/>
 		);
 
-		const checkbox = container.querySelector('input');
+		const checkbox = container.querySelector('input') as HTMLInputElement;
 
-		expect(checkbox && checkbox.disabled).toBeTruthy();
+		userEvent.click(checkbox);
+
+		expect(checkbox.checked).toBeFalsy();
 	});
 
 	it('has task menu', async () => {
@@ -89,7 +91,7 @@ describe('Task componet', () => {
 		);
 	});
 
-	it('uses status', async () => {
+	it('disables entry for expired tasks', async () => {
 		const { getByText } = await renderWithQueryProvider(
 			<Task
 				task={{
@@ -102,10 +104,51 @@ describe('Task componet', () => {
 			/>
 		);
 
-		expect(getByText('expired')).toBeInTheDocument();
+		const desc = getByText('the_task') as HTMLElement;
+		const button = desc.closest('[role="button"]') as HTMLElement;
+
+		userEvent.click(button);
+
+		await expectNever(() => {
+			expect(updateTask).toBeCalled();
+		});
 	});
 
-	// TODO: test uncle button is disabled if task already charging
+	it('replaces checkbox with icon for expired tasks', async () => {
+		const { container } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: 'the_due',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'expired',
+				}}
+			/>
+		);
+
+		expect(container.querySelector('input')).not.toBeInTheDocument();
+	});
+
+	it('disables uncle button if task not pending', async () => {
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: 'the_due',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'expired',
+				}}
+			/>
+		);
+
+		const menuButton = getByLabelText('Menu');
+
+		userEvent.click(menuButton);
+
+		expect(getByText('Charge immediately')).toHaveAttribute('aria-disabled');
+	});
+
 	// TODO: test uncle button confirms action
-	// TODO: Make checkboxes for expired tasks unclickable
 });

@@ -28,39 +28,42 @@ export default function NavBar({
 	useEffect(() => setIsOpen(false), [location]);
 
 	return (
-		<AppBar className={'organism-navBar'} position="static">
+		<AppBar className={'organism-navBar'} position="sticky">
 			<Toolbar>
 				<Typography
 					className={'organism-navBar__title'}
 					variant="h6"
 					component="div"
+					sx={{ flexGrow: 1 }}
 				>
 					<Button component={Link} to={'/'} color={'inherit'}>
 						TaskRatchet
 					</Button>
 				</Typography>
-				<span>
-					<FilterButton onChange={onFilterChange} />
 
-					<IconButton
-						onClick={handleTodayClick}
-						edge="start"
-						color="inherit"
-						aria-label="today"
-					>
-						<Today />
-					</IconButton>
+				<FilterButton onChange={onFilterChange} />
 
-					<IconButton
-						onClick={toggleMenu}
-						edge="start"
-						color="inherit"
-						aria-label="menu"
-					>
-						<Menu />
-					</IconButton>
-				</span>
+				<IconButton
+					onClick={handleTodayClick}
+					edge="start"
+					color="inherit"
+					aria-label="today"
+					sx={{ m: 0.1 }}
+				>
+					<Today />
+				</IconButton>
+
+				<IconButton
+					onClick={toggleMenu}
+					edge="start"
+					color="inherit"
+					aria-label="menu"
+					sx={{ m: 0.1 }}
+				>
+					<Menu />
+				</IconButton>
 			</Toolbar>
+
 			<NavDrawer isOpen={isOpen} onClose={toggleMenu} />
 		</AppBar>
 	);

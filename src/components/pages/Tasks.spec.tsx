@@ -1,14 +1,7 @@
 import * as new_api from '../../lib/api';
 import { addTask, getMe, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
-import {
-	act,
-	fireEvent,
-	Matcher,
-	render,
-	SelectorMatcherOptions,
-	waitFor,
-} from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -21,7 +14,6 @@ import {
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import _ from 'lodash';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
@@ -82,14 +74,9 @@ const expectTaskSave = async ({
 const expectCheckboxState = (
 	task: string,
 	expected: boolean,
-	getByText: (
-		text: Matcher,
-		options?: SelectorMatcherOptions | undefined,
-		waitForElementOptions?: unknown
-	) => HTMLElement
+	getCheckbox: any
 ) => {
-	const taskEl = getByText(task);
-	const checkbox = taskEl.previousElementSibling as HTMLInputElement;
+	const checkbox = getCheckbox(task);
 
 	expect(checkbox.checked).toEqual(expected);
 };
@@ -103,17 +90,26 @@ const renderTasksPage = () => {
 			</QueryClientProvider>
 		</LocalizationProvider>
 	);
-	const { getByText, getByLabelText } = getters;
+	const { getByText, getByLabelText, debug } = getters;
 
 	return {
 		taskInput: getByLabelText('Task *') as HTMLInputElement,
 		dueInput: getByLabelText('due date') as HTMLInputElement,
 		addButton: getByText('Add') as HTMLButtonElement,
+		getCheckbox: (task = 'the_task'): HTMLInputElement | null | undefined => {
+			const desc = getByText(task);
+			return desc
+				?.closest('.molecule-task')
+				?.querySelector('[type="checkbox"]');
+		},
 		clickCheckbox: (task = 'the_task') => {
 			const desc = getByText(task);
-			const checkbox = desc.previousElementSibling;
+			const checkbox = desc
+				?.closest('.molecule-task')
+				?.querySelector('[type="checkbox"]');
 
 			if (!checkbox) {
+				debug();
 				throw Error('Missing task checkbox');
 			}
 
@@ -451,16 +447,15 @@ describe('tasks page', () => {
 			tasks: [makeTask({ id: 3 })],
 		});
 
-		const { clickCheckbox, getByText } = renderTasksPage();
+		const { clickCheckbox, getCheckbox } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
 		clickCheckbox();
 
 		await waitFor(() => {
-			const taskDesc = getByText('the_task');
-			const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
-			expect(taskCheckbox.checked).toBeTruthy();
+			const taskCheckbox = getCheckbox();
+			expect(taskCheckbox?.checked).toBeTruthy();
 		});
 	});
 
@@ -470,7 +465,7 @@ describe('tasks page', () => {
 				tasks: [makeTask({ id: 3, status: 'pending' })],
 			});
 
-			const { clickCheckbox, getByText } = renderTasksPage();
+			const { clickCheckbox, getCheckbox } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -479,15 +474,13 @@ describe('tasks page', () => {
 			clickCheckbox();
 
 			await waitFor(() => {
-				const taskDesc = getByText('the_task');
-				const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
-				expect(taskCheckbox.checked).toBeTruthy();
+				const checkbox = getCheckbox();
+				expect(checkbox?.checked).toBeTruthy();
 			});
 
 			await waitFor(() => {
-				const taskDesc = getByText('the_task');
-				const taskCheckbox = _.get(taskDesc, 'parentNode.firstChild');
-				expect(taskCheckbox.checked).toBeFalsy();
+				const checkbox = getCheckbox();
+				expect(checkbox?.checked).toBeFalsy();
 			});
 		});
 	});
@@ -497,7 +490,7 @@ describe('tasks page', () => {
 			tasks: [makeTask({ id: 3 })],
 		});
 
-		const { clickCheckbox } = await renderTasksPage();
+		const { clickCheckbox } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -519,7 +512,7 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { clickCheckbox, getByText } = await renderTasksPage();
+		const { clickCheckbox, getCheckbox } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -557,7 +550,7 @@ describe('tasks page', () => {
 
 		// Check that first, slow response didn't clobber second, fast response
 
-		expectCheckboxState('second', true, getByText);
+		expectCheckboxState('second', true, getCheckbox);
 	});
 
 	it('has stakes form', async () => {
@@ -609,7 +602,7 @@ describe('tasks page', () => {
 
 			loadTasksApiData();
 
-			const { taskInput, addButton, getByText } = await renderTasksPage();
+			const { taskInput, addButton, getByText } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -658,7 +651,7 @@ describe('tasks page', () => {
 			tasks: [makeTask({ complete: true })],
 		});
 
-		const { getByText } = await renderTasksPage();
+		const { getByText } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -670,7 +663,7 @@ describe('tasks page', () => {
 			tasks: [makeTask({ due: '5/22/2020, 11:59 PM' })],
 		});
 
-		const { getByText } = await renderTasksPage();
+		const { getByText } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -708,7 +701,7 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { getByText } = await renderTasksPage();
+		const { getByText } = renderTasksPage();
 
 		await waitFor(() =>
 			expect(getByText((s) => s.indexOf('May') !== -1)).toBeInTheDocument()
@@ -718,7 +711,7 @@ describe('tasks page', () => {
 	it('scrolls new task into view', async () => {
 		loadTasksApiData();
 
-		const { taskInput, addButton, getByText } = await renderTasksPage();
+		const { taskInput, addButton, getByText } = renderTasksPage();
 
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'new_task' })],

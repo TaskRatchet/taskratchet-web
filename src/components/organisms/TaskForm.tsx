@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { FormEvent, useEffect } from 'react';
 import './TaskForm.css';
 import browser from '../../lib/Browser';
-import { Button, Grid, InputAdornment, TextField } from '@mui/material';
+import { Button, Grid, InputAdornment, Paper, TextField } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/lab';
 
 interface TaskFormProps {
@@ -42,12 +42,14 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 	const dollars = cents ? cents / 100 : 0;
 
 	return (
-		<form
-			onSubmit={(e) => {
+		<Paper
+			component={'form'}
+			onSubmit={(e: FormEvent) => {
 				e.preventDefault();
 				onSubmit();
 			}}
 			className={'organism-taskForm'}
+			sx={{ p: 2 }}
 		>
 			<Grid container spacing={2}>
 				{error ? (
@@ -56,7 +58,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					</Grid>
 				) : null}
 
-				<Grid item xs={9}>
+				<Grid item xs={8}>
 					<TextField
 						id="page-tasks__task"
 						label="Task"
@@ -66,10 +68,11 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 							onChange(e.target.value, due, cents);
 						}}
 						fullWidth
+						variant="standard"
 					/>
 				</Grid>
 
-				<Grid item xs={3}>
+				<Grid item xs={4}>
 					<TextField
 						id="page-tasks__dollars"
 						label="Stakes"
@@ -86,6 +89,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 							),
 							endAdornment: <InputAdornment position="end">USD</InputAdornment>,
 						}}
+						variant="standard"
 					/>
 				</Grid>
 
@@ -111,6 +115,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 								InputLabelProps={{
 									'aria-label': 'due date',
 								}}
+								variant="standard"
 								{...params}
 							/>
 						)}
@@ -136,10 +141,13 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						OpenPickerButtonProps={{
 							'aria-label': 'change time',
 						}}
-						renderInput={(params) => <TextField required {...params} />}
+						renderInput={(params) => (
+							<TextField required variant="standard" {...params} />
+						)}
 					/>
 				</Grid>
-
+			</Grid>
+			<Grid container justifyContent={'space-between'} sx={{ mt: 2 }}>
 				<Grid item xs>
 					<Button
 						href={'https://docs.taskratchet.com/timezones.html'}
@@ -151,7 +159,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					</Button>
 				</Grid>
 
-				<Grid item xs={3}>
+				<Grid item xs={'auto'}>
 					<Button
 						variant="contained"
 						size={'small'}
@@ -162,7 +170,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					</Button>
 				</Grid>
 			</Grid>
-		</form>
+		</Paper>
 	);
 };
 

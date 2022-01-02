@@ -22,6 +22,7 @@ import browser from './lib/Browser';
 import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { Container, Paper } from '@mui/material';
 
 toast.configure();
 
@@ -59,7 +60,7 @@ export function App(): JSX.Element {
 	usePageViews();
 
 	return (
-		<div className={'page-base'}>
+		<Container maxWidth={'xs'} disableGutters component={Paper}>
 			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<QueryClientProvider client={queryClient}>
 					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
@@ -107,7 +108,7 @@ export function App(): JSX.Element {
 					</div>
 				</QueryClientProvider>
 			</LocalizationProvider>
-		</div>
+		</Container>
 	);
 }
 

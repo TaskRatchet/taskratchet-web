@@ -75,6 +75,7 @@ export default function FilterButton({
 				aria-expanded={isOpen ? 'true' : undefined}
 				aria-label={'filters'}
 				onClick={handleClick}
+				sx={{ m: 0.1 }}
 			>
 				<FilterAltIcon />
 			</IconButton>

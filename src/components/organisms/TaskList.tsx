@@ -1,22 +1,17 @@
-import React, { RefObject, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api';
 import './TaskList.css';
 import createListItems from '../../lib/createListItems';
 import ReactList from 'react-list';
-import { ListItem, ListSubheader } from '@mui/material';
-import Task, { TaskProps } from '../molecules/Task';
+import { ListSubheader } from '@mui/material';
+import Task from '../molecules/Task';
 
 interface TaskListProps {
 	lastToday?: Date;
 	newTask?: TaskType;
 	filters?: Filters;
 }
-
-const ListItemComponent = React.forwardRef((props: TaskProps, ref) => (
-	<Task ref_={ref as RefObject<HTMLDivElement>} {...props} />
-));
-ListItemComponent.displayName = 'ListItemComponent';
 
 function isTask(value: unknown): value is TaskType {
 	return Object.prototype.hasOwnProperty.call(value, 'task');
@@ -68,11 +63,7 @@ const TaskList = ({
 				itemRenderer={(i: number) => {
 					const entry = entries[i];
 					return isTask(entry) ? (
-						<ListItem
-							component={ListItemComponent as any} // eslint-disable-line @typescript-eslint/no-explicit-any
-							task={entry}
-							key={JSON.stringify(entry)}
-						/>
+						<Task key={`${entry.id}_${entry.task}`} task={entry} />
 					) : (
 						<ListSubheader
 							key={`${entry}__heading`}

@@ -1,46 +1,5 @@
-* {
-	box-sizing: border-box;
-}
-
-html,
-body,
-#root,
-.page-base {
-	height: 100vh;
-}
-
-html {
-	font-family: sans-serif;
-	overflow: hidden;
-}
-
 body {
-	background-color: #e6eff1;
-	margin: 0 auto;
-	max-width: 35rem;
-}
-
-.page-base {
-	display: flex;
-	flex-direction: column;
-	background-color: white;
-}
-
-.page-base__content {
-	flex: 1 1 0;
-	overflow: scroll;
-	display: flex;
-	flex-direction: column;
-}
-
-a,
-.link {
-	font-size: 1em;
-	background: none;
-	border: none;
-	color: #0000ee;
-	padding: 0;
-	text-decoration: underline;
+	margin: 0;
 }
 
 .alert {

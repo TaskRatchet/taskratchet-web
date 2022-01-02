@@ -4,8 +4,6 @@ import _ from 'lodash';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
 
-const ITEM_HEIGHT = 48;
-
 export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 	const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 	const open = Boolean(anchorEl);
@@ -35,14 +33,9 @@ export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 				keepMounted
 				open={open}
 				onClose={handleClose}
-				PaperProps={{
-					style: {
-						maxHeight: ITEM_HEIGHT * 4.5,
-						width: '20ch',
-					},
-				}}
 			>
 				<MenuItem
+					disabled={task.status !== 'pending'}
 					onClick={() => {
 						handleClose();
 						const taskId = _.get(task, 'id');
