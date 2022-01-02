@@ -60,12 +60,7 @@ export function App(): JSX.Element {
 	usePageViews();
 
 	return (
-		<Container
-			maxWidth={'xs'}
-			disableGutters
-			component={Paper}
-			// sx={{ pt: 7, overflow: 'scroll', height: '100vh' }}
-		>
+		<Container maxWidth={'xs'} disableGutters component={Paper}>
 			<LocalizationProvider dateAdapter={AdapterDateFns}>
 				<QueryClientProvider client={queryClient}>
 					<Stack sx={{ height: '100vh' }}>
