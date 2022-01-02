@@ -90,12 +90,14 @@ const renderTasksPage = () => {
 			</QueryClientProvider>
 		</LocalizationProvider>
 	);
-	const { getByText, getByLabelText, debug } = getters;
+	const { getByLabelText, getByText, debug } = getters;
+
+	userEvent.click(getByLabelText('add'));
 
 	return {
-		taskInput: getByLabelText('Task *') as HTMLInputElement,
-		dueInput: getByLabelText('due date') as HTMLInputElement,
-		addButton: getByText('Add') as HTMLButtonElement,
+		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
+		getDueInput: () => getByLabelText('due date') as HTMLInputElement,
+		getAddButton: () => getByText('Add') as HTMLButtonElement,
 		getCheckbox: (task = 'the_task'): HTMLInputElement | null | undefined => {
 			const desc = getByText(task);
 			return desc
@@ -155,12 +157,12 @@ describe('tasks page', () => {
 		loadNow(new Date('10/29/2020'));
 		loadTasksApiData();
 
-		const { taskInput, addButton } = renderTasksPage();
+		const { getTaskInput, getAddButton } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-		await userEvent.type(taskInput, 'the_task');
-		userEvent.click(addButton);
+		await userEvent.type(getTaskInput(), 'the_task');
+		userEvent.click(getAddButton());
 
 		await expectTaskSave({
 			task: 'the_task',
@@ -172,27 +174,27 @@ describe('tasks page', () => {
 	it('resets task input', async () => {
 		loadTasksApiData();
 
-		const { taskInput, addButton } = renderTasksPage();
+		const { getTaskInput, getAddButton } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-		await userEvent.type(taskInput, 'new_task by Friday or pay $5');
-		userEvent.click(addButton);
+		await userEvent.type(getTaskInput(), 'new_task by Friday or pay $5');
+		userEvent.click(getAddButton());
 
 		await waitFor(() => expect(addTask).toHaveBeenCalled());
 
-		expect((taskInput as HTMLInputElement).value).toBe('');
+		expect(getTaskInput()).toHaveValue('');
 	});
 
 	it("doesn't accept empty task", async () => {
 		await act(async () => {
 			loadTasksApiData();
 
-			const { addButton } = renderTasksPage();
+			const { getAddButton } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-			userEvent.click(addButton);
+			userEvent.click(getAddButton());
 
 			expect(new_api.addTask).not.toHaveBeenCalled();
 		});
@@ -202,11 +204,11 @@ describe('tasks page', () => {
 		await act(async () => {
 			loadTasksApiData();
 
-			const { addButton, getByText } = renderTasksPage();
+			const { getAddButton, getByText } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-			userEvent.click(addButton);
+			userEvent.click(getAddButton());
 
 			expect(getByText('Task is required')).toBeDefined();
 		});
@@ -259,12 +261,12 @@ describe('tasks page', () => {
 				throw new Error('Failed to add task');
 			});
 
-			const { taskInput, addButton } = renderTasksPage();
+			const { getTaskInput, getAddButton } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-			await userEvent.type(taskInput, 'the_task by Friday or pay $5');
-			userEvent.click(addButton);
+			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			userEvent.click(getAddButton());
 
 			await waitFor(() =>
 				expect(toaster.send).toBeCalledWith('Error: Failed to add task')
@@ -280,12 +282,12 @@ describe('tasks page', () => {
 				throw Error('Oops!');
 			});
 
-			const { taskInput, addButton } = renderTasksPage();
+			const { getTaskInput, getAddButton } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-			await userEvent.type(taskInput, 'the_task by Friday or pay $5');
-			userEvent.click(addButton);
+			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			userEvent.click(getAddButton());
 
 			await waitFor(() => expect(toaster.send).toBeCalledWith('Error: Oops!'));
 		});
@@ -562,12 +564,12 @@ describe('tasks page', () => {
 	});
 
 	it('adds task optimistically', async () => {
-		const { taskInput, addButton, getByText } = renderTasksPage();
+		const { getTaskInput, getAddButton, getByText } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-		await userEvent.type(taskInput, 'the_task');
-		userEvent.click(addButton);
+		await userEvent.type(getTaskInput(), 'the_task');
+		userEvent.click(getAddButton());
 
 		await waitFor(() => expect(getByText('the_task')).toBeInTheDocument());
 	});
@@ -578,13 +580,13 @@ describe('tasks page', () => {
 
 			jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!');
 
-			const { taskInput, addButton, getByText, queryByText } =
+			const { getTaskInput, getAddButton, getByText, queryByText } =
 				renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
-			await userEvent.type(taskInput, 'the_task');
-			userEvent.click(addButton);
+			await userEvent.type(getTaskInput(), 'the_task');
+			userEvent.click(getAddButton());
 
 			await waitFor(() => {
 				expect(getByText('the_task')).toBeInTheDocument();
@@ -602,7 +604,7 @@ describe('tasks page', () => {
 
 			loadTasksApiData();
 
-			const { taskInput, addButton, getByText } = renderTasksPage();
+			const { getTaskInput, getAddButton, getByText } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -614,8 +616,8 @@ describe('tasks page', () => {
 
 			// Add first task
 
-			await userEvent.type(taskInput, 'first');
-			userEvent.click(addButton);
+			await userEvent.type(getTaskInput(), 'first');
+			userEvent.click(getAddButton());
 
 			// Wait for slow response to be requested
 
@@ -632,9 +634,9 @@ describe('tasks page', () => {
 
 			// Add second task
 
-			await userEvent.type(taskInput, 'second');
+			await userEvent.type(getTaskInput(), 'second');
 
-			userEvent.click(addButton);
+			userEvent.click(getAddButton());
 
 			// Sleep 200ms
 
@@ -711,14 +713,14 @@ describe('tasks page', () => {
 	it('scrolls new task into view', async () => {
 		loadTasksApiData();
 
-		const { taskInput, addButton, getByText } = renderTasksPage();
+		const { getTaskInput, getAddButton, getByText } = renderTasksPage();
 
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'new_task' })],
 		});
 
-		userEvent.type(taskInput, 'new_task');
-		userEvent.click(addButton);
+		userEvent.type(getTaskInput(), 'new_task');
+		userEvent.click(getAddButton());
 
 		await waitFor(() => {
 			expect(getByText('new_task')).toBeInTheDocument();
@@ -748,14 +750,15 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { taskInput, dueInput, addButton, getByText } = renderTasksPage();
+		const { getTaskInput, getDueInput, getAddButton, getByText } =
+			renderTasksPage();
 
 		await waitFor(() => {
 			expect(getByText('task 1')).toBeInTheDocument();
 		});
 
-		userEvent.type(taskInput, 'new_task');
-		userEvent.type(dueInput, '{backspace}9');
+		userEvent.type(getTaskInput(), 'new_task');
+		userEvent.type(getDueInput(), '{backspace}9');
 
 		loadTasksApiData({
 			tasks: [
@@ -778,7 +781,7 @@ describe('tasks page', () => {
 			],
 		});
 
-		userEvent.click(addButton);
+		userEvent.click(getAddButton());
 
 		await waitFor(() => {
 			const el = getByText('January 8, 2029');

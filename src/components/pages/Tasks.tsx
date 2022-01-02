@@ -19,8 +19,8 @@ const Tasks = ({ lastToday, filters }: TasksProps): JSX.Element => {
 
 	return (
 		<div className={`page-tasks ${isLoading ? 'loading' : 'idle'}`}>
-			<TaskEntry onSave={setNewTask} />
 			<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
+			<TaskEntry onSave={setNewTask} />
 		</div>
 	);
 };

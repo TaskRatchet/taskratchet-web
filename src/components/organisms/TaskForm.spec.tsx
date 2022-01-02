@@ -61,12 +61,8 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 };
 
 describe('TaskForm', () => {
-	it('renders', async () => {
-		await renderComponent();
-	});
-
 	it('has task input', async () => {
-		const { getByLabelText } = await renderComponent();
+		const { getByLabelText } = renderComponent();
 
 		expect(getByLabelText('Task *')).toBeInTheDocument();
 	});
@@ -74,7 +70,7 @@ describe('TaskForm', () => {
 	it('calls onChange when task modified', async () => {
 		const onChange = jest.fn();
 
-		const { taskInput } = await renderComponent({ onChange });
+		const { taskInput } = renderComponent({ onChange });
 
 		await userEvent.type(taskInput, 'a');
 
@@ -119,7 +115,6 @@ describe('TaskForm', () => {
 		});
 
 		await userEvent.type(dueDateInput, '{backspace}2{enter}');
-		// fireEvent.change(dueDateInput);
 
 		expect(onChange).toBeCalledWith('', new Date('1/1/2022 11:59 PM'), 500);
 	});
