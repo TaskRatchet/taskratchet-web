@@ -1,27 +1,30 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { useMe, useTimezones } from '../../lib/api';
-import { Button, Stack, TextField, Autocomplete } from '@mui/material';
+import { getMe, useMe, useTimezones } from '../../lib/api';
+import { Stack, TextField, Autocomplete } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 
 export default function GeneralSettings(): JSX.Element {
-	const { me, updateMe } = useMe(),
-		{ data: timezones } = useTimezones(),
-		[name, setName] = useState<string>(''),
-		[email, setEmail] = useState<string>(''),
-		[timezone, setTimezone] = useState<string>('');
+	const { updateMe, isUpdating } = useMe();
+	const { data: timezones } = useTimezones();
+	const [name, setName] = useState<string>('');
+	const [email, setEmail] = useState<string>('');
+	const [timezone, setTimezone] = useState<string>('');
 
 	useEffect(() => {
-		const { name = '', email = '', timezone = '' } = me || {};
+		getMe().then((me) => {
+			const { name = '', email = '', timezone = '' } = me || {};
 
-		setName(name);
-		setEmail(email);
-		setTimezone(timezone);
-	}, [me]);
+			setName(name);
+			setEmail(email);
+			setTimezone(timezone);
+		});
+	}, []);
 
 	const prepareValue = (value: string) => {
 		return value === '' ? undefined : value;
 	};
 
-	const saveGeneral = (event: FormEvent<HTMLFormElement>) => {
+	const saveGeneral = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		updateMe({
@@ -55,7 +58,9 @@ export default function GeneralSettings(): JSX.Element {
 					renderInput={(p) => <TextField {...p} label={'Timezone'} />}
 				/>
 
-				<Button type={'submit'}>Save</Button>
+				<LoadingButton type={'submit'} loading={isUpdating}>
+					Save
+				</LoadingButton>
 			</Stack>
 		</form>
 	);

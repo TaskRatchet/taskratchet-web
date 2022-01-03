@@ -22,6 +22,7 @@ jest.mock('../../lib/api/useGetApiToken');
 describe('account page', () => {
 	beforeEach(() => {
 		jest.resetAllMocks();
+		loadMe({});
 		loadCheckoutSession();
 		jest.spyOn(api, 'useGetApiToken').mockReturnValue({
 			isLoading: false,

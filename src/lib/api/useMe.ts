@@ -15,6 +15,7 @@ interface UseMeReturnType {
 	me: User;
 	updateMe: UseMutateFunction<Response, unknown, MeInput>;
 	isLoading: boolean;
+	isUpdating: boolean;
 	isFetching: boolean;
 }
 
@@ -29,12 +30,12 @@ export function useMe(
 		isFetching,
 	} = useQuery({ queryKey: 'me', queryFn: getMe, onError, ...queryOptions });
 
-	const { mutate: updateMe } = useMutation(mutator, {
+	const { mutate: updateMe, isLoading: isUpdating } = useMutation(mutator, {
 		onSuccess: async () => {
 			await queryClient.invalidateQueries('me');
 		},
 		onError,
 	});
 
-	return { me, updateMe, isLoading, isFetching } as UseMeReturnType;
+	return { me, updateMe, isLoading, isUpdating, isFetching } as UseMeReturnType;
 }
