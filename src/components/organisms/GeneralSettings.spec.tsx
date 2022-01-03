@@ -1,6 +1,4 @@
-import { loadMe } from '../../lib/test/helpers';
-import { QueryClient, QueryClientProvider } from 'react-query';
-import { render } from '@testing-library/react';
+import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
 import React from 'react';
 import GeneralSettings from './GeneralSettings';
 import userEvent from '@testing-library/user-event';
@@ -9,19 +7,13 @@ import { waitFor } from '@testing-library/dom';
 jest.mock('../../lib/api/getMe');
 jest.mock('../../lib/api/updateMe');
 
-function renderComponent() {
-	return render(
-		<QueryClientProvider client={new QueryClient()}>
-			<GeneralSettings />
-		</QueryClientProvider>
-	);
-}
-
 describe('general settings', () => {
 	it('displays loading indicator on save', async () => {
 		loadMe({});
 
-		const { container, getByText } = renderComponent();
+		const { container, getByText } = renderWithQueryProvider(
+			<GeneralSettings />
+		);
 
 		userEvent.click(getByText('Save'));
 

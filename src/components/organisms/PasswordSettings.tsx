@@ -1,13 +1,15 @@
-import Input from '../molecules/Input';
 import React, { FormEvent, useState } from 'react';
-import toaster from '../../lib/Toaster';
 import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
+import { Stack, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 
 export default function PasswordSettings(): JSX.Element {
-	const [oldPassword, setOldPassword] = useState<string>(''),
-		[password, setPassword] = useState<string>(''),
-		[password2, setPassword2] = useState<string>(''),
-		{ updatePassword } = useUpdatePassword();
+	const [oldPassword, setOldPassword] = useState<string>('');
+	const [password, setPassword] = useState<string>('');
+	const [password2, setPassword2] = useState<string>('');
+	const [shouldShowMismatch, setShouldShowMismatch] = useState<boolean>(false);
+	const { updatePassword, isLoading } = useUpdatePassword();
+	const mismatch = password !== password2;
 
 	const savePassword = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -17,55 +19,45 @@ export default function PasswordSettings(): JSX.Element {
 		updatePassword(oldPassword, password);
 	};
 
-	// TODO: Print to form instead of toasting
 	const isPasswordFormValid = () => {
-		let passed = true;
-
-		if (oldPassword === '') {
-			toaster.send('Old password required');
-			passed = false;
-		}
-
-		if (password === '') {
-			toaster.send('New password required');
-			passed = false;
-		}
-
-		if (password !== password2) {
-			toaster.send("New password fields don't match");
-			passed = false;
-		}
-
-		return passed;
+		setShouldShowMismatch(true);
+		return password === password2;
 	};
 
 	return (
 		<form onSubmit={savePassword}>
-			<Input
-				id={'old_password'}
-				label={'Old Password'}
-				onChange={(e) => setOldPassword(e.target.value)}
-				value={oldPassword}
-				type={'password'}
-			/>
+			<Stack spacing={2} alignItems={'start'}>
+				<TextField
+					label={'Old Password'}
+					onChange={(e) => setOldPassword(e.target.value)}
+					value={oldPassword}
+					type={'password'}
+					required
+				/>
 
-			<Input
-				id={'password'}
-				label={'New Password'}
-				onChange={(e) => setPassword(e.target.value)}
-				value={password}
-				type={'password'}
-			/>
+				<TextField
+					label={'New Password'}
+					onChange={(e) => setPassword(e.target.value)}
+					value={password}
+					type={'password'}
+					required
+					error={shouldShowMismatch && mismatch}
+				/>
 
-			<Input
-				id={'password2'}
-				label={'Retype Password'}
-				onChange={(e) => setPassword2(e.target.value)}
-				value={password2}
-				type={'password'}
-			/>
+				<TextField
+					label={'Retype Password'}
+					onChange={(e) => setPassword2(e.target.value)}
+					value={password2}
+					type={'password'}
+					required
+					error={shouldShowMismatch && mismatch}
+					helperText={shouldShowMismatch && mismatch && "Passwords don't match"}
+				/>
 
-			<input type="submit" value={'Save'} />
+				<LoadingButton loading={isLoading} type={'submit'}>
+					Save
+				</LoadingButton>
+			</Stack>
 		</form>
 	);
 }

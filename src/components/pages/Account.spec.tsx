@@ -1,4 +1,4 @@
-import { act, render, waitFor } from '@testing-library/react';
+import { act, waitFor } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
 import {
@@ -7,7 +7,6 @@ import {
 	loadTimezones,
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import userEvent from '@testing-library/user-event';
 import * as api from '../../lib/api';
 
@@ -38,13 +37,7 @@ describe('account page', () => {
 			loadMe({});
 			loadCheckoutSession();
 
-			// TODO: extract renderWithClientProvider to helpers
-			const queryClient = new QueryClient();
-			const { getByText } = await render(
-				<QueryClientProvider client={queryClient}>
-					<Account />
-				</QueryClientProvider>
-			);
+			const { getByText } = await renderWithQueryProvider(<Account />);
 
 			expect(getByText('Enable Beeminder integration')).toBeDefined();
 		});
