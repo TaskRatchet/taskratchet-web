@@ -7,6 +7,7 @@ import {
 	FormControlLabel,
 	IconButton,
 	MenuList,
+	Tooltip,
 } from '@mui/material';
 import useCookie from '../../lib/useCookie';
 
@@ -66,19 +67,21 @@ export default function FilterButton({
 
 	return (
 		<>
-			<IconButton
-				id="filter-button"
-				edge="start"
-				color="inherit"
-				aria-controls={isOpen ? 'filter-menu' : undefined}
-				aria-haspopup="true"
-				aria-expanded={isOpen ? 'true' : undefined}
-				aria-label={'filters'}
-				onClick={handleClick}
-				sx={{ m: 0.1 }}
-			>
-				<FilterAltIcon />
-			</IconButton>
+			<Tooltip title={'Filter Tasks'}>
+				<IconButton
+					id="filter-button"
+					edge="start"
+					color="inherit"
+					aria-controls={isOpen ? 'filter-menu' : undefined}
+					aria-haspopup="true"
+					aria-expanded={isOpen ? 'true' : undefined}
+					aria-label={'filters'}
+					onClick={handleClick}
+					sx={{ m: 0.1 }}
+				>
+					<FilterAltIcon />
+				</IconButton>
+			</Tooltip>
 			<Menu
 				id="filter-menu"
 				anchorEl={anchorEl}

@@ -2,10 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api';
 import './TaskList.css';
-import createListItems from '../../lib/createListItems';
+import createListItems, { Entries } from '../../lib/createListItems';
 import ReactList from 'react-list';
-import { ListSubheader } from '@mui/material';
 import Task from '../molecules/Task';
+import { ListSubheader } from '@mui/material';
+import flattenObject from '../../lib/flattenObject';
 
 interface TaskListProps {
 	lastToday?: Date;
@@ -17,6 +18,10 @@ function isTask(value: unknown): value is TaskType {
 	return Object.prototype.hasOwnProperty.call(value, 'task');
 }
 
+function getEntryAtIndex(i: number, entries: Entries): string | TaskType {
+	return flattenObject(entries)[i] as string | TaskType;
+}
+
 const TaskList = ({
 	lastToday,
 	newTask,
@@ -24,7 +29,8 @@ const TaskList = ({
 }: TaskListProps): JSX.Element => {
 	const { data: tasks } = useTasks();
 	const listRef = useRef<ReactList>(null);
-	const [entries, setEntries] = useState<(TaskType | string)[]>([]);
+	const [entries, setEntries] = useState<Entries>();
+	const [length, setLength] = useState<number>();
 	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
 	const [newTaskIndex, setNewTaskIndex] = useState<number>();
 	const [index, setIndex] = useState<number>(0);
@@ -40,6 +46,7 @@ const TaskList = ({
 		} = createListItems(filtered, newTask);
 
 		setEntries(newEntries);
+		setLength(flattenObject(newEntries).length);
 		setNextHeadingIndex(headingIndexUpdate);
 		setNewTaskIndex(taskIndexUpdate);
 	}, [tasks, newTask, filters]);
@@ -48,7 +55,7 @@ const TaskList = ({
 		if (listRef.current === null || nextHeadingIndex === undefined) return;
 		listRef.current.scrollTo(nextHeadingIndex);
 		setIndex(nextHeadingIndex);
-	}, [nextHeadingIndex, listRef, lastToday]);
+	}, [entries, nextHeadingIndex, listRef, lastToday]);
 
 	useEffect(() => {
 		if (listRef.current === null || newTaskIndex === undefined) return;
@@ -58,28 +65,28 @@ const TaskList = ({
 
 	return (
 		<div className={'organism-taskList'}>
-			<ReactList
-				initialIndex={index}
-				itemRenderer={(i: number) => {
-					const entry = entries[i];
-					return isTask(entry) ? (
-						<Task key={`${entry.id}_${entry.task}`} task={entry} />
-					) : (
-						<ListSubheader
-							key={`${entry}__heading`}
-							className={`organism-taskList__heading`}
-							component={'div'}
-							disableSticky={true}
-						>
-							{entry}
-						</ListSubheader>
-					);
-				}}
-				itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
-				length={entries.length}
-				type={'variable'}
-				ref={listRef}
-			/>
+			{entries && (
+				<ReactList
+					initialIndex={index}
+					itemRenderer={(i: number): JSX.Element => {
+						const entry = getEntryAtIndex(i, entries);
+						return isTask(entry) ? (
+							<Task key={JSON.stringify(entry)} task={entry} />
+						) : (
+							<ListSubheader key={entry} disableSticky>
+								{entry}
+							</ListSubheader>
+						);
+					}}
+					itemSizeEstimator={(i): number => {
+						const entry = getEntryAtIndex(i, entries);
+						return isTask(entry) ? 60 : 48;
+					}}
+					length={length}
+					type={'variable'}
+					ref={listRef}
+				/>
+			)}
 		</div>
 	);
 };

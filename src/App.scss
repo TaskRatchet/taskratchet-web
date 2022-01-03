@@ -1,6 +1,5 @@
 body {
 	margin: 0;
-	//font-family: sans-serif;
 }
 
 .alert {
@@ -12,6 +11,7 @@ body {
 	}
 }
 
+// legacy
 .loading {
 	position: relative;
 	&:before {

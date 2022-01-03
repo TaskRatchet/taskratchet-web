@@ -21,7 +21,7 @@ import browser from './lib/Browser';
 import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { Box, Container, CssBaseline, Paper, Stack } from '@mui/material';
+import { Box, Container, CssBaseline, Stack } from '@mui/material';
 
 toast.configure();
 
@@ -59,17 +59,19 @@ export function App(): JSX.Element {
 	usePageViews();
 
 	return (
-		<Container maxWidth={'xs'} disableGutters component={Paper}>
-			<CssBaseline />
-			<LocalizationProvider dateAdapter={AdapterDateFns}>
-				<QueryClientProvider client={queryClient}>
-					<Stack sx={{ height: '100vh' }}>
-						<NavBar
-							onTodayClick={handleTodayClick}
-							onFilterChange={setFilters}
-						/>
-
-						<Box overflow={'scroll'} flexGrow={1}>
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
+			<QueryClientProvider client={queryClient}>
+				<CssBaseline />
+				<Stack sx={{ height: '100vh' }}>
+					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
+					<Box overflow={'scroll'} flexGrow={1}>
+						<Container
+							maxWidth={'sm'}
+							disableGutters
+							sx={{
+								height: 1,
+							}}
+						>
 							<Switch>
 								<Route path={'/register'}>
 									<RegisterForm />
@@ -107,11 +109,11 @@ export function App(): JSX.Element {
 									</Authenticated>
 								</Route>
 							</Switch>
-						</Box>
-					</Stack>
-				</QueryClientProvider>
-			</LocalizationProvider>
-		</Container>
+						</Container>
+					</Box>
+				</Stack>
+			</QueryClientProvider>
+		</LocalizationProvider>
 	);
 }
 
