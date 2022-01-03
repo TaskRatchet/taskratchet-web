@@ -153,9 +153,7 @@ describe('App', () => {
 	it('scrolls to new task', async () => {
 		loadNow(new Date('1/1/2020'));
 
-		const { getTaskInput, getAddButton, openForm } = renderPage();
-
-		await openForm();
+		const { getTaskInput, getAddButton } = renderPage();
 
 		userEvent.type(getTaskInput(), 'task 1');
 		userEvent.click(getAddButton());

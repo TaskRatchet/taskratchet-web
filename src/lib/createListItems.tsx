@@ -1,7 +1,6 @@
 import browser from './Browser';
-import flattenObject from './flattenObject';
 
-export function makeTitle(task: TaskType): string {
+function makeTitle(task: TaskType) {
 	return browser.getString(new Date(task.due));
 }
 
@@ -11,7 +10,7 @@ const isNewTask = (t: TaskType, n: TaskType | undefined): boolean => {
 	);
 };
 
-export type Entries = Record<string, TaskType[]>;
+type Entries = (TaskType | string)[];
 
 export default function createListItems(
 	sortedTasks: TaskType[],
@@ -22,27 +21,29 @@ export default function createListItems(
 	newTaskIndex: number | undefined;
 } {
 	const now = browser.getNow();
-	let nextHeadingIndex: number | undefined;
-	let newTaskIndex: number | undefined;
+
+	let lastTitle: string;
+	let nextHeadingIndex: number | undefined = undefined;
+	let newTaskIndex: number | undefined = undefined;
 
 	const entries = sortedTasks.reduce((acc: Entries, t: TaskType): Entries => {
 		const title = makeTitle(t);
-
-		if (nextHeadingIndex === undefined && new Date(t.due) > now) {
-			nextHeadingIndex = flattenObject(acc).length;
-		}
-
-		const updated = {
-			...acc,
-			[title]: [...(acc[title] || []), t],
-		};
+		const shouldAddHeading = title !== lastTitle || !acc.length;
 
 		if (isNewTask(t, newTask)) {
-			newTaskIndex = flattenObject(updated).length - 1;
+			newTaskIndex = shouldAddHeading ? acc.length + 1 : acc.length;
 		}
 
-		return updated;
-	}, {});
+		if (shouldAddHeading) {
+			if (nextHeadingIndex === undefined && new Date(t.due) > now) {
+				nextHeadingIndex = acc.length;
+			}
+			lastTitle = title;
+			return [...acc, title, t];
+		}
+
+		return [...acc, t];
+	}, []);
 
 	return {
 		entries,
