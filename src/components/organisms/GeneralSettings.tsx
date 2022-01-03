@@ -1,5 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { useMe, useTimezones } from '../../lib/api';
+import { Button, Stack, TextField, Autocomplete } from '@mui/material';
 
 export default function GeneralSettings(): JSX.Element {
 	const { me, updateMe } = useMe(),
@@ -32,40 +33,30 @@ export default function GeneralSettings(): JSX.Element {
 
 	return (
 		<form onSubmit={saveGeneral}>
-			<label htmlFor="name">Name</label>
-			<input
-				type="text"
-				value={name}
-				onChange={(e) => setName(e.target.value)}
-				id={'name'}
-				name={'name'}
-			/>
+			<Stack spacing={2} alignItems={'start'}>
+				<TextField
+					label={'Name'}
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+				/>
 
-			<label htmlFor="email">Email</label>
-			<input
-				type="email"
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-				id={'email'}
-				name={'email'}
-			/>
+				<TextField
+					label={'Email'}
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					type={'email'}
+				/>
 
-			<label htmlFor="timezone">Timezone</label>
-			<select
-				id={'timezone'}
-				name="timezone"
-				value={timezone}
-				onChange={(e) => setTimezone(e.target.value)}
-			>
-				{timezones &&
-					timezones.map((tz: string, i: number) => (
-						<option value={tz} key={i}>
-							{tz}
-						</option>
-					))}
-			</select>
+				<Autocomplete
+					options={timezones || []}
+					value={timezone || null}
+					onChange={(e, v) => v && setTimezone(v)}
+					sx={{ width: 300 }}
+					renderInput={(p) => <TextField {...p} label={'Timezone'} />}
+				/>
 
-			<input type="submit" value={'Save'} />
+				<Button type={'submit'}>Save</Button>
+			</Stack>
 		</form>
 	);
 }

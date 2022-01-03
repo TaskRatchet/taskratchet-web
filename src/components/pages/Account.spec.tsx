@@ -2,12 +2,10 @@ import { act, render, waitFor } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
 import {
-	expectLoadingOverlay,
 	loadCheckoutSession,
 	loadMe,
 	loadTimezones,
 	renderWithQueryProvider,
-	resolveWithDelay,
 } from '../../lib/test/helpers';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import userEvent from '@testing-library/user-event';
@@ -83,18 +81,6 @@ describe('account page', () => {
 		});
 	});
 
-	it('uses loading overlay', async () => {
-		await act(async () => {
-			loadMe({});
-
-			const { container } = await renderWithQueryProvider(<Account />);
-
-			await waitFor(() =>
-				expectLoadingOverlay(container, { extraClasses: 'page-account' })
-			);
-		});
-	});
-
 	it('loads timezone', async () => {
 		await act(async () => {
 			loadTimezones(['first', 'America/Indiana/Knox', 'third']);
@@ -109,60 +95,6 @@ describe('account page', () => {
 
 			await waitFor(() =>
 				expect(getByDisplayValue('America/Indiana/Knox')).toBeInTheDocument()
-			);
-		});
-	});
-
-	it('uses loading overlay on fetch', async () => {
-		await act(async () => {
-			loadMe({});
-
-			const { container, getAllByText } = await renderWithQueryProvider(
-				<Account />
-			);
-
-			const button = getAllByText('Save')[0];
-
-			await waitFor(() =>
-				expectLoadingOverlay(container, {
-					extraClasses: 'page-account',
-					shouldExist: false,
-				})
-			);
-
-			userEvent.click(button);
-
-			await waitFor(() =>
-				expectLoadingOverlay(container, { extraClasses: 'page-account' })
-			);
-		});
-	});
-
-	it('uses loading screen when saving password', async () => {
-		await act(async () => {
-			loadMe({});
-
-			resolveWithDelay(jest.spyOn(api, 'updatePassword'), 100);
-
-			const { container, getAllByText, getByLabelText } =
-				await renderWithQueryProvider(<Account />);
-
-			const button = getAllByText('Save')[1];
-
-			await waitFor(() =>
-				expectLoadingOverlay(container, {
-					extraClasses: 'page-account',
-					shouldExist: false,
-				})
-			);
-
-			userEvent.type(getByLabelText('Old Password'), 'old');
-			userEvent.type(getByLabelText('New Password'), 'new');
-			userEvent.type(getByLabelText('Retype Password'), 'new');
-			userEvent.click(button);
-
-			await waitFor(() =>
-				expectLoadingOverlay(container, { extraClasses: 'page-account' })
 			);
 		});
 	});
