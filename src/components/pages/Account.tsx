@@ -3,19 +3,16 @@ import './Account.css';
 import toaster from '../../lib/Toaster';
 import Input from '../molecules/Input';
 import BeeminderSettings from '../organisms/BeeminderSettings';
-import { useCheckoutSession, useMe, useTimezones } from '../../lib/api';
+import { useCheckoutSession, useMe } from '../../lib/api';
 import { useIsFetching } from 'react-query';
 import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
 import ApiSettings from '../organisms/ApiSettings';
+import GeneralSettings from '../organisms/GeneralSettings';
 
 const Account = (): JSX.Element => {
 	const isFetching = useIsFetching(),
 		checkoutSession = useCheckoutSession(),
-		{ data: timezones } = useTimezones(),
 		{ me, updateMe } = useMe(),
-		[name, setName] = useState<string>(''),
-		[email, setEmail] = useState<string>(''),
-		[timezone, setTimezone] = useState<string>(''),
 		[cards, setCards] = useState<Card[]>([]),
 		[oldPassword, setOldPassword] = useState<string>(''),
 		[password, setPassword] = useState<string>(''),
@@ -23,27 +20,9 @@ const Account = (): JSX.Element => {
 		{ updatePassword, isLoading } = useUpdatePassword();
 
 	useEffect(() => {
-		const { name = '', email = '', timezone = '', cards = [] } = me || {};
-
-		setName(name);
-		setEmail(email);
-		setTimezone(timezone);
+		const { cards = [] } = me || {};
 		setCards(cards);
 	}, [me]);
-
-	const saveGeneral = (event: FormEvent<HTMLFormElement>) => {
-		event.preventDefault();
-
-		updateMe({
-			name: prepareValue(name),
-			email: prepareValue(email),
-			timezone: prepareValue(timezone),
-		});
-	};
-
-	const prepareValue = (value: string) => {
-		return value === '' ? undefined : value;
-	};
 
 	const savePassword = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -126,42 +105,7 @@ const Account = (): JSX.Element => {
 		>
 			<h1>Account</h1>
 
-			<form onSubmit={saveGeneral}>
-				<label htmlFor="name">Name</label>
-				<input
-					type="text"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					id={'name'}
-					name={'name'}
-				/>
-
-				<label htmlFor="email">Email</label>
-				<input
-					type="email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					id={'email'}
-					name={'email'}
-				/>
-
-				<label htmlFor="timezone">Timezone</label>
-				<select
-					id={'timezone'}
-					name="timezone"
-					value={timezone}
-					onChange={(e) => setTimezone(e.target.value)}
-				>
-					{timezones &&
-						timezones.map((tz: string, i: number) => (
-							<option value={tz} key={i}>
-								{tz}
-							</option>
-						))}
-				</select>
-
-				<input type="submit" value={'Save'} />
-			</form>
+			<GeneralSettings />
 
 			<h2>Reset Password</h2>
 
