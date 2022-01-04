@@ -56,4 +56,23 @@ describe('general settings', () => {
 			expect(getByText('the_error_message')).toBeInTheDocument();
 		});
 	});
+
+	it('cancels loading state when error set', async () => {
+		loadMe({});
+		(useCheckoutSession as jest.Mock).mockResolvedValue({});
+
+		const { getByText, container } = renderWithQueryProvider(
+			<PaymentSettings />
+		);
+
+		userEvent.click(getByText('Replace payment method'));
+
+		await waitFor(() => {
+			expect(getByText('Checkout session error')).toBeInTheDocument();
+		});
+
+		expect(
+			container.querySelector('.MuiLoadingButton-loading')
+		).not.toBeInTheDocument();
+	});
 });

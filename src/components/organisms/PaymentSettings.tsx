@@ -19,6 +19,10 @@ export default function PaymentSettings(): JSX.Element {
 		[error, setError] = useState<string>();
 
 	useEffect(() => {
+		error && setIsLoading(false);
+	}, [error]);
+
+	useEffect(() => {
 		const { cards = [] } = me || {};
 		setCards(cards);
 	}, [me]);
