@@ -1,6 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import toaster from '../../lib/Toaster';
 import { useCheckoutSession, useMe } from '../../lib/api';
+import { LoadingButton } from '@mui/lab';
+import {
+	Card,
+	List,
+	ListItem,
+	ListItemIcon,
+	ListItemText,
+} from '@mui/material';
+import CreditCardIcon from '@mui/icons-material/CreditCard';
 
 export default function PaymentSettings(): JSX.Element {
 	const checkoutSession = useCheckoutSession(),
@@ -62,18 +71,25 @@ export default function PaymentSettings(): JSX.Element {
 			<p>Saved payment method:</p>
 
 			{cards ? (
-				<ul>
+				<List dense>
 					{cards.map((c, i) => (
-						<li key={i}>
-							{c.brand} ending with {c.last4}
-						</li>
+						<ListItem key={i} disableGutters>
+							<ListItemIcon>
+								<CreditCardIcon />
+							</ListItemIcon>
+							<ListItemText>
+								{c.brand} ending with {c.last4}
+							</ListItemText>
+						</ListItem>
 					))}
-				</ul>
+				</List>
 			) : (
 				<p>None</p>
 			)}
 
-			<button onClick={updatePaymentDetails}>Replace payment method</button>
+			<LoadingButton onClick={updatePaymentDetails}>
+				Replace payment method
+			</LoadingButton>
 		</>
 	);
 }
