@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import toaster from '../../lib/Toaster';
 import { useCheckoutSession, useMe } from '../../lib/api';
 import { LoadingButton } from '@mui/lab';
 import {
+	Alert,
 	Card,
 	List,
 	ListItem,
@@ -14,7 +14,9 @@ import CreditCardIcon from '@mui/icons-material/CreditCard';
 export default function PaymentSettings(): JSX.Element {
 	const checkoutSession = useCheckoutSession(),
 		{ me, updateMe } = useMe(),
-		[cards, setCards] = useState<Card[]>([]);
+		[cards, setCards] = useState<Card[]>([]),
+		[isLoading, setIsLoading] = useState<boolean>(false),
+		[error, setError] = useState<string>();
 
 	useEffect(() => {
 		const { cards = [] } = me || {};
@@ -22,10 +24,11 @@ export default function PaymentSettings(): JSX.Element {
 	}, [me]);
 
 	const updatePaymentDetails = async () => {
+		setIsLoading(true);
 		const sessionId = await getSessionId();
 
 		if (sessionId === null) {
-			toaster.send('Checkout session error');
+			setError('Checkout session error');
 			return;
 		}
 
@@ -51,10 +54,7 @@ export default function PaymentSettings(): JSX.Element {
 				// If `redirectToCheckout` fails due to a browser or network
 				// error, display the localized error message to your customer
 				// using `result.error.message`.
-				toaster.send(result.error.message);
-
-				console.log('Checkout redirect error');
-				console.log(result);
+				setError(result.error.message);
 			});
 	};
 
@@ -68,6 +68,8 @@ export default function PaymentSettings(): JSX.Element {
 
 	return (
 		<>
+			{error && <Alert severity="error">{error}</Alert>}
+
 			<p>Saved payment method:</p>
 
 			{cards ? (
@@ -87,7 +89,7 @@ export default function PaymentSettings(): JSX.Element {
 				<p>None</p>
 			)}
 
-			<LoadingButton onClick={updatePaymentDetails}>
+			<LoadingButton loading={isLoading} onClick={updatePaymentDetails}>
 				Replace payment method
 			</LoadingButton>
 		</>
