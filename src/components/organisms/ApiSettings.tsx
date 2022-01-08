@@ -1,5 +1,5 @@
 import React from 'react';
-import { useGetApiToken } from '../../lib/api/useGetApiToken';
+import { useGetApiToken } from '../../lib/api';
 
 export default function ApiSettings(): JSX.Element {
 	const { mutate, isLoading, data } = useGetApiToken();

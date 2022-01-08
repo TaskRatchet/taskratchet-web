@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api';
-import './TaskList.css';
 import createListItems from '../../lib/createListItems';
 import ReactList from 'react-list';
 import { ListSubheader } from '@mui/material';
@@ -57,30 +56,28 @@ const TaskList = ({
 	}, [newTaskIndex, listRef]);
 
 	return (
-		<div className={'organism-taskList'}>
-			<ReactList
-				initialIndex={index}
-				itemRenderer={(i: number) => {
-					const entry = entries[i];
-					return isTask(entry) ? (
-						<Task key={`${entry.id}_${entry.task}`} task={entry} />
-					) : (
-						<ListSubheader
-							key={`${entry}__heading`}
-							className={`organism-taskList__heading`}
-							component={'div'}
-							disableSticky={true}
-						>
-							{entry}
-						</ListSubheader>
-					);
-				}}
-				itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
-				length={entries.length}
-				type={'variable'}
-				ref={listRef}
-			/>
-		</div>
+		<ReactList
+			initialIndex={index}
+			itemRenderer={(i: number) => {
+				const entry = entries[i];
+				return isTask(entry) ? (
+					<Task key={`${entry.id}_${entry.task}`} task={entry} />
+				) : (
+					<ListSubheader
+						key={`${entry}__heading`}
+						className={`organism-taskList__heading`}
+						component={'div'}
+						disableSticky={true}
+					>
+						{entry}
+					</ListSubheader>
+				);
+			}}
+			itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
+			length={entries.length}
+			type={'variable'}
+			ref={listRef}
+		/>
 	);
 };
 
