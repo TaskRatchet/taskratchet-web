@@ -24,4 +24,12 @@ describe('API settings', () => {
 			).toBeInTheDocument();
 		});
 	});
+
+	it('displays user id', async () => {
+		loadMe({ json: { id: 'user_id' } });
+
+		const { getByText } = renderWithQueryProvider(<ApiSettings />);
+
+		await waitFor(() => expect(getByText('user_id')).toBeInTheDocument());
+	});
 });
