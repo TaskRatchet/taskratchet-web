@@ -1,22 +1,25 @@
 import React from 'react';
 import { useGetApiToken } from '../../lib/api';
 import { LoadingButton } from '@mui/lab';
+import { Alert, AlertTitle } from '@mui/material';
 
 export default function ApiSettings(): JSX.Element {
 	const { mutate, isLoading, data } = useGetApiToken();
 
 	return (
 		<>
-			<p>
-				Warning: The API is undocumented and likely to change without notice.
-			</p>
+			<Alert severity="warning">
+				<AlertTitle>Warning</AlertTitle>
+				<p>The API is undocumented and likely to change without notice.</p>
 
-			<p>
-				Requesting a new token will replace your existing token if you have one,
-				meaning you&apos;ll need to replace it wherever you&apos;re using it.
-			</p>
+				<p>
+					Requesting a new token will replace your existing token if you have
+					one, meaning you&apos;ll need to replace it wherever you&apos;re using
+					it.
+				</p>
 
-			<p>We don&apos;t store your token, so save it somewhere safe.</p>
+				<p>We don&apos;t store your token, so save it somewhere safe.</p>
+			</Alert>
 
 			<LoadingButton loading={isLoading} onClick={() => mutate()}>
 				Request API token
