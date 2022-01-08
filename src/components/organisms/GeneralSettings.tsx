@@ -1,10 +1,11 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { getMe, useMe, useTimezones } from '../../lib/api';
+import { getMe, useTimezones } from '../../lib/api';
 import { Stack, TextField, Autocomplete } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import useUpdateMe from '../../lib/api/useUpdateMe';
 
 export default function GeneralSettings(): JSX.Element {
-	const { updateMe, isUpdating } = useMe();
+	const updateMe = useUpdateMe();
 	const { data: timezones } = useTimezones();
 	const [name, setName] = useState<string>('');
 	const [email, setEmail] = useState<string>('');
@@ -27,7 +28,7 @@ export default function GeneralSettings(): JSX.Element {
 	const saveGeneral = async (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
-		updateMe({
+		updateMe.mutate({
 			name: prepareValue(name),
 			email: prepareValue(email),
 			timezone: prepareValue(timezone),
@@ -58,7 +59,7 @@ export default function GeneralSettings(): JSX.Element {
 					renderInput={(p) => <TextField {...p} label={'Timezone'} />}
 				/>
 
-				<LoadingButton type={'submit'} loading={isUpdating}>
+				<LoadingButton type={'submit'} loading={updateMe.isLoading}>
 					Save
 				</LoadingButton>
 			</Stack>

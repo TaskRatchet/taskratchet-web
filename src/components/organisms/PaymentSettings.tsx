@@ -3,29 +3,30 @@ import { useCheckoutSession, useMe } from '../../lib/api';
 import { LoadingButton } from '@mui/lab';
 import {
 	Alert,
-	Card,
 	List,
 	ListItem,
 	ListItemIcon,
 	ListItemText,
 } from '@mui/material';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
+import useUpdateMe from '../../lib/api/useUpdateMe';
 
 export default function PaymentSettings(): JSX.Element {
-	const checkoutSession = useCheckoutSession(),
-		{ me, updateMe } = useMe(),
-		[cards, setCards] = useState<Card[]>([]),
-		[isLoading, setIsLoading] = useState<boolean>(false),
-		[error, setError] = useState<string>();
+	const checkoutSession = useCheckoutSession();
+	const me = useMe();
+	const updateMe = useUpdateMe();
+	const [cards, setCards] = useState<Card[]>([]);
+	const [isLoading, setIsLoading] = useState<boolean>(false);
+	const [error, setError] = useState<string>();
 
 	useEffect(() => {
 		error && setIsLoading(false);
 	}, [error]);
 
 	useEffect(() => {
-		const { cards = [] } = me || {};
+		const { cards = [] } = me.data || {};
 		setCards(cards);
-	}, [me]);
+	}, [me.data]);
 
 	const updatePaymentDetails = async () => {
 		setIsLoading(true);
@@ -36,7 +37,7 @@ export default function PaymentSettings(): JSX.Element {
 			return;
 		}
 
-		await updateMe({
+		await updateMe.mutate({
 			checkout_session_id: sessionId,
 		});
 

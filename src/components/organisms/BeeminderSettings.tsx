@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { FormEvent, useEffect, useState } from 'react';
 import { isProduction } from '../../tr_constants';
-import Input from '../molecules/Input';
 import { useMe } from '../../lib/api';
 import _ from 'lodash';
 import browser from '../../lib/Browser';
+import { Stack, TextField, Alert } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
+import useUpdateMe from '../../lib/api/useUpdateMe';
 
 const beeminderClientId: string = isProduction
 		? '1w70sy12t1106s9ptod11ex21'
@@ -18,8 +20,9 @@ const beeminderClientId: string = isProduction
 		)}&response_type=token`;
 
 const BeeminderSettings = (): JSX.Element => {
-	const [error, setError] = useState<string>('');
-	const { me, updateMe, isLoading } = useMe({
+	const [validationError, setValidationError] = useState<string>('');
+	const me = useMe({
+		refetchOnWindowFocus: false,
 		onSuccess: (data: User) => {
 			// TODO: Make sure this doesn't result in field being populated after initial page load
 			if (bmGoal) return;
@@ -27,14 +30,17 @@ const BeeminderSettings = (): JSX.Element => {
 			setBmGoal(goal);
 		},
 	});
-	const bmUser: string = _.get(me, 'integrations.beeminder.user', '');
+	const { mutate, ...updateMe } = useUpdateMe();
+	const bmUser: string = me.data?.integrations?.beeminder?.user || '';
 	const [bmGoal, setBmGoal] = useState<string>('');
 
-	const isGoalNameValid = (goalName: string) => {
-		const pattern = new RegExp(/^[-\w]*$/);
-
-		return pattern.test(goalName);
-	};
+	useEffect(() => {
+		setValidationError(
+			/^[-\w]*$/.test(bmGoal)
+				? ''
+				: 'Goal names can only contain letters, numbers, underscores, and hyphens.'
+		);
+	}, [bmGoal]);
 
 	useEffect(() => {
 		const { username, access_token } = browser.getUrlParams();
@@ -43,52 +49,54 @@ const BeeminderSettings = (): JSX.Element => {
 			return;
 		}
 
-		updateMe({
+		mutate({
 			beeminder_user: username,
 			beeminder_token: access_token,
 		});
-	}, [updateMe]);
+	}, [mutate]);
 
-	// TODO: Consider removing loading overlay
+	const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+		e.preventDefault();
+
+		if (validationError) return;
+
+		mutate({
+			beeminder_goal_new_tasks: bmGoal,
+		});
+	};
+
 	return (
-		<div className={isLoading ? 'loading' : 'idle'}>
+		<>
+			{me.error instanceof Error && (
+				<Alert severity="error">{me.error.message}</Alert>
+			)}
+			{updateMe.error instanceof Error && (
+				<Alert severity="error">{updateMe.error.message}</Alert>
+			)}
 			{bmUser ? (
-				<form>
-					<p>Beeminder user: {bmUser}</p>
-					<Input
-						id={'new-task-goal'}
-						label={'Post new tasks to goal:'}
-						value={bmGoal}
-						error={error}
-						onChange={(e) => {
-							setBmGoal(e.target.value);
-						}}
-					/>
-					<input
-						type="submit"
-						value={'Save'}
-						onClick={(e) => {
-							e.preventDefault();
+				<form onSubmit={handleSubmit}>
+					<Stack spacing={2} alignItems={'start'}>
+						<p>Beeminder user: {bmUser}</p>
 
-							if (!isGoalNameValid(bmGoal)) {
-								setError(
-									'Goal names can only contain letters, numbers, underscores, and hyphens.'
-								);
-								return;
-							}
+						<TextField
+							label={'Post new tasks to goal:'}
+							value={bmGoal}
+							error={!!validationError}
+							helperText={validationError}
+							onChange={(e) => {
+								setBmGoal(e.target.value);
+							}}
+						/>
 
-							setError('');
-
-							updateMe({
-								beeminder_goal_new_tasks: bmGoal,
-							});
-						}}
-					/>
+						<LoadingButton loading={updateMe.isLoading} type="submit">
+							Save
+						</LoadingButton>
+					</Stack>
 				</form>
 			) : (
 				<a href={beeminderAuthUrl}>Enable Beeminder integration</a>
 			)}
-		</div>
+		</>
 	);
 };
 
