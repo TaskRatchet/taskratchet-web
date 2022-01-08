@@ -69,7 +69,7 @@ export function App(): JSX.Element {
 							maxWidth={'sm'}
 							disableGutters
 							sx={{
-								height: 1,
+								pb: 12,
 							}}
 						>
 							<Switch>

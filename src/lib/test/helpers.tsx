@@ -103,9 +103,9 @@ export function expectLoadingSpinner(
 	}
 }
 
-export async function renderWithQueryProvider(
+export function renderWithQueryProvider(
 	ui: ReactElement
-): Promise<RenderResult & { queryClient: QueryClient }> {
+): RenderResult & { queryClient: QueryClient } {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -114,7 +114,7 @@ export async function renderWithQueryProvider(
 		},
 	});
 
-	const result = await render(
+	const result = render(
 		<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
 	);
 

@@ -3,7 +3,7 @@ import TaskForm from './TaskForm';
 import { useAddTask } from '../../lib/api/useAddTask';
 import { useTimezone } from '../../lib/api/useTimezone';
 import AddIcon from '@mui/icons-material/Add';
-import { Box, Dialog, DialogContent, DialogTitle, Fab } from '@mui/material';
+import { Dialog, DialogContent, DialogTitle, Fab } from '@mui/material';
 
 const TaskEntry = ({
 	onSave,
@@ -43,7 +43,7 @@ const TaskEntry = ({
 	}
 
 	return (
-		<Box sx={{ pb: 11 }}>
+		<>
 			<Fab
 				color="primary"
 				aria-label="add"
@@ -81,7 +81,7 @@ const TaskEntry = ({
 			{/*    onChange={onChange}*/}
 			{/*    onSubmit={onSubmit}*/}
 			{/*/>*/}
-		</Box>
+		</>
 	);
 };
 

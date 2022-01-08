@@ -15,7 +15,6 @@ interface TasksProps {
 const Tasks = ({ lastToday, filters }: TasksProps): JSX.Element => {
 	const { isLoading } = useTasks();
 	const [newTask, setNewTask] = useState<TaskType>();
-	// const isLoading = true;
 
 	useCloseWarning();
 
