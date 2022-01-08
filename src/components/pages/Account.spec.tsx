@@ -132,25 +132,6 @@ describe('account page', () => {
 		});
 	});
 
-	it('indicates loading state', async () => {
-		await act(async () => {
-			jest.spyOn(api, 'useGetApiToken').mockReturnValue({
-				isLoading: true,
-				mutate: () => {
-					/* noop */
-				},
-			} as any);
-
-			const { getByText } = await renderWithQueryProvider(<Account />);
-
-			userEvent.click(getByText('Request API token'));
-
-			await waitFor(() => {
-				expect(getByText('Loading...')).toBeInTheDocument();
-			});
-		});
-	});
-
 	it('displays response data', async () => {
 		await act(async () => {
 			jest.spyOn(api, 'useGetApiToken').mockReturnValue({

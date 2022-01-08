@@ -1,5 +1,6 @@
 import React from 'react';
 import { useGetApiToken } from '../../lib/api';
+import { LoadingButton } from '@mui/lab';
 
 export default function ApiSettings(): JSX.Element {
 	const { mutate, isLoading, data } = useGetApiToken();
@@ -17,9 +18,9 @@ export default function ApiSettings(): JSX.Element {
 
 			<p>We don&apos;t store your token, so save it somewhere safe.</p>
 
-			<button onClick={() => mutate()}>Request API token</button>
-
-			{isLoading && <p>Loading...</p>}
+			<LoadingButton loading={isLoading} onClick={() => mutate()}>
+				Request API token
+			</LoadingButton>
 
 			{data && <p>{data}</p>}
 		</>
