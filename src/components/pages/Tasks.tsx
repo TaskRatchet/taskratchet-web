@@ -1,11 +1,8 @@
 import React, { useState } from 'react';
-import './Tasks.css';
 import 'react-datepicker/dist/react-datepicker.min.css';
-import { useTasks } from '../../lib/api';
 import TaskEntry from '../organisms/TaskEntry';
 import TaskList from '../organisms/TaskList';
 import { useCloseWarning } from '../../lib/useCloseWarning';
-import LoadingSpinner from '../molecules/LoadingSpinner';
 
 interface TasksProps {
 	lastToday: Date | undefined;
@@ -13,21 +10,14 @@ interface TasksProps {
 }
 
 const Tasks = ({ lastToday, filters }: TasksProps): JSX.Element => {
-	const { isLoading } = useTasks();
 	const [newTask, setNewTask] = useState<TaskType>();
 
 	useCloseWarning();
 
 	return (
 		<>
-			{isLoading ? (
-				<LoadingSpinner />
-			) : (
-				<>
-					<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
-					<TaskEntry onSave={setNewTask} />
-				</>
-			)}
+			<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
+			<TaskEntry onSave={setNewTask} />
 		</>
 	);
 };
