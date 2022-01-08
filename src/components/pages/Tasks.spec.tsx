@@ -6,7 +6,6 @@ import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import {
-	expectLoadingSpinner,
 	loadNow,
 	loadTasksApiData,
 	makeTask,
@@ -438,14 +437,6 @@ describe('tasks page', () => {
 	//
 	//     expect(getByText('$9')).toBeInTheDocument()
 	// })
-
-	it('uses loading overlay', async () => {
-		loadTasksApiData();
-
-		const { getByLabelText } = renderTasksPage();
-
-		expectLoadingSpinner(getByLabelText);
-	});
 
 	it('updates checkboxes optimistically', async () => {
 		loadTasksApiData({

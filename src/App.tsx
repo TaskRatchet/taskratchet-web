@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import RegisterForm from './components/pages/Register';
 import Tasks from './components/pages/Tasks';
@@ -8,6 +8,7 @@ import {
 	Switch,
 	Route,
 	useLocation,
+	useHistory,
 } from 'react-router-dom';
 import Account from './components/pages/Account';
 import Authenticated from './components/pages/Authenticated';
@@ -47,6 +48,8 @@ function usePageViews(): void {
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
 	const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
+	const ref = useRef<HTMLElement>();
+	const history = useHistory();
 
 	const handleTodayClick = () => {
 		setLastToday(browser.getNow());
@@ -56,6 +59,16 @@ export function App(): JSX.Element {
 		document.title = 'TaskRatchet';
 	}, []);
 
+	useEffect(() => {
+		const unlisten = history.listen(() => {
+			if (!ref.current || !('scrollTo' in ref.current)) return;
+			ref.current.scrollTo(0, 0);
+		});
+		return () => {
+			unlisten();
+		};
+	}, [history]);
+
 	usePageViews();
 
 	return (
@@ -64,12 +77,13 @@ export function App(): JSX.Element {
 				<CssBaseline />
 				<Stack sx={{ height: '100vh' }}>
 					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
-					<Box overflow={'scroll'} flexGrow={1}>
+					<Box ref={ref} overflow={'scroll'} flexGrow={1}>
 						<Container
 							maxWidth={'sm'}
 							disableGutters
 							sx={{
 								pb: 12,
+								minHeight: 1,
 							}}
 						>
 							<Switch>
