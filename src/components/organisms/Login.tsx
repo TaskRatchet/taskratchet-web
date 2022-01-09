@@ -1,9 +1,9 @@
 import React from 'react';
-import './Login.css';
 import { useMachine } from '@xstate/react';
-import Input from '../molecules/Input';
 import createLoginMachine from './Login.machine';
 import { useSession } from '../../lib/api/useSession';
+import { Stack, TextField } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 
 const machine = createLoginMachine();
 
@@ -16,63 +16,71 @@ const Login = (): JSX.Element => {
 	};
 
 	return (
-		<div className={`organism-login ${isLoading() ? 'loading' : ''}`}>
+		<div className={isLoading() ? 'loading' : ''}>
 			{session ? (
 				<p>You are logged in as {session.email}</p>
 			) : (
 				<form>
-					{state.context.message ? (
-						<div className={'organism-login__message alert info'}>
-							{state.context.message}
-						</div>
-					) : (
-						''
-					)}
+					<Stack spacing={2} alignItems={'start'}>
+						{state.context.message ? (
+							<div className={'organism-login__message alert info'}>
+								{state.context.message}
+							</div>
+						) : (
+							''
+						)}
 
-					<Input
-						id={'email'}
-						type={'email'}
-						value={state.context.email}
-						onChange={(e) =>
-							send({
-								type: 'EMAIL',
-								value: e.target.value,
-							})
-						}
-						label={'Email'}
-						error={state.context.emailError}
-					/>
+						<TextField
+							id={'email'}
+							type={'email'}
+							value={state.context.email}
+							onChange={(e) =>
+								send({
+									type: 'EMAIL',
+									value: e.target.value,
+								})
+							}
+							label={'Email'}
+							error={!!state.context.emailError}
+							helperText={state.context.emailError}
+						/>
 
-					<Input
-						id={'password'}
-						type={'password'}
-						value={state.context.password}
-						onChange={(e) =>
-							send({
-								type: 'PASSWORD',
-								value: e.target.value,
-							})
-						}
-						label={'Password'}
-						error={state.context.passwordError}
-					/>
+						<TextField
+							id={'password'}
+							type={'password'}
+							value={state.context.password}
+							onChange={(e) =>
+								send({
+									type: 'PASSWORD',
+									value: e.target.value,
+								})
+							}
+							label={'Password'}
+							error={!!state.context.passwordError}
+							helperText={state.context.passwordError}
+						/>
 
-					<input
-						type="submit"
-						value={'Submit'}
-						onClick={(e) => {
-							e.preventDefault();
-							send('LOGIN');
-						}}
-					/>
-					<input
-						type="submit"
-						value={'Reset Password'}
-						onClick={(e) => {
-							e.preventDefault();
-							send('RESET');
-						}}
-					/>
+						<Stack direction={'row'}>
+							<LoadingButton
+								type="submit"
+								onClick={(e) => {
+									e.preventDefault();
+									send('LOGIN');
+								}}
+							>
+								Submit
+							</LoadingButton>
+							<LoadingButton
+								type="submit"
+								onClick={(e) => {
+									e.preventDefault();
+									send('RESET');
+								}}
+							>
+								Reset Password
+							</LoadingButton>
+						</Stack>
+					</Stack>
 				</form>
 			)}
 		</div>

@@ -1,6 +1,10 @@
 import createLoginMachine, { LoginContext } from './Login.machine';
 import api, { LegacyApi } from '../../lib/LegacyApi';
 import { EventObject, interpret, Interpreter, StateSchema } from 'xstate';
+import { renderWithQueryProvider } from '../../lib/test/helpers';
+import Login from './Login';
+import React from 'react';
+import userEvent from '@testing-library/user-event';
 
 let service: Interpreter<
 		LoginContext,
@@ -22,6 +26,7 @@ const createMockApi = () => {
 	const mockApi = api;
 
 	mockApi.login = jest.fn();
+	mockApi.requestResetEmail = jest.fn();
 
 	return mockApi;
 };
@@ -49,5 +54,26 @@ describe('login machine', () => {
 		service.send('LOGIN');
 
 		expect(mockApi.login).toBeCalled();
+	});
+});
+
+describe('login form', () => {
+	it('sends login request', async () => {
+		const { getByLabelText, getByText } = renderWithQueryProvider(<Login />);
+
+		userEvent.type(getByLabelText('Email'), 'the_email');
+		userEvent.type(getByLabelText('Password'), 'the_password');
+		userEvent.click(getByText('Submit'));
+
+		expect(mockApi.login).toBeCalled();
+	});
+
+	it('sends reset request', async () => {
+		const { getByLabelText, getByText } = renderWithQueryProvider(<Login />);
+
+		userEvent.type(getByLabelText('Email'), 'the_email');
+		userEvent.click(getByText('Reset Password'));
+
+		expect(mockApi.requestResetEmail).toBeCalled();
 	});
 });
