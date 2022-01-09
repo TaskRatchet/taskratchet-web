@@ -11,6 +11,7 @@ interface InputProps {
 	pattern?: string;
 }
 
+// TODO: legacy
 const Input = ({
 	label,
 	type = 'text',

@@ -3,7 +3,7 @@ import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api';
 import createListItems from '../../lib/createListItems';
 import ReactList from 'react-list';
-import { ListSubheader } from '@mui/material';
+import { Alert, AlertTitle, ListSubheader } from '@mui/material';
 import Task from '../molecules/Task';
 
 interface TaskListProps {
@@ -13,7 +13,7 @@ interface TaskListProps {
 }
 
 function isTask(value: unknown): value is TaskType {
-	return Object.prototype.hasOwnProperty.call(value, 'task');
+	return Object.prototype.hasOwnProperty.call(value || {}, 'task');
 }
 
 const TaskList = ({
@@ -55,7 +55,7 @@ const TaskList = ({
 		setIndex(newTaskIndex);
 	}, [newTaskIndex, listRef]);
 
-	return (
+	return entries.length ? (
 		<ReactList
 			initialIndex={index}
 			itemRenderer={(i: number) => {
@@ -78,6 +78,11 @@ const TaskList = ({
 			type={'variable'}
 			ref={listRef}
 		/>
+	) : (
+		<Alert severity="info">
+			<AlertTitle>Nothing here!</AlertTitle>
+			Maybe add a task?
+		</Alert>
 	);
 };
 
