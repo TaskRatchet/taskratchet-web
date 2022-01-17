@@ -6,7 +6,7 @@ const cookies = new Cookies();
 
 const _get_base = () => {
 	if (isProduction) {
-		return 'https://api.taskratchet.com/';
+		return 'https://api.taskratchet.com/api1/';
 	}
 
 	// TODO: Create staging env using cloud run
@@ -14,7 +14,7 @@ const _get_base = () => {
 	// 	return 'https://us-central1-taskratchet-dev.cloudfunctions.net/api1/';
 	// }
 
-	return 'http://localhost:8080/';
+	return 'http://localhost:8080/api1/';
 };
 
 const _trim = (s: string, c: string) => {
