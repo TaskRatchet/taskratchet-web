@@ -1,17 +1,18 @@
 import Cookies from 'universal-cookie';
-import { isProduction, isStaging } from '../../tr_constants';
+import { isProduction } from '../../tr_constants';
 import { logout } from './useSession';
 
 const cookies = new Cookies();
 
 const _get_base = () => {
 	if (isProduction) {
-		return 'https://us-central1-taskratchet.cloudfunctions.net/api1/';
+		return 'https://api.taskratchet.com/';
 	}
 
-	if (isStaging) {
-		return 'https://us-central1-taskratchet-dev.cloudfunctions.net/api1/';
-	}
+	// TODO: Create staging env using cloud run
+	// if (isStaging) {
+	// 	return 'https://us-central1-taskratchet-dev.cloudfunctions.net/api1/';
+	// }
 
 	return 'http://localhost:8080/';
 };
