@@ -21,7 +21,7 @@ const TaskList = ({
 	newTask,
 	filters,
 }: TaskListProps): JSX.Element => {
-	const { data: tasks } = useTasks();
+	const { data: tasks, isFetched } = useTasks();
 	const listRef = useRef<ReactList>(null);
 	const [entries, setEntries] = useState<(TaskType | string)[]>([]);
 	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
@@ -54,6 +54,8 @@ const TaskList = ({
 		listRef.current.scrollTo(newTaskIndex);
 		setIndex(newTaskIndex);
 	}, [newTaskIndex, listRef]);
+
+	if (!isFetched) return <></>;
 
 	return entries.length ? (
 		<ReactList

@@ -790,6 +790,16 @@ describe('tasks page', () => {
 			expect(el).toBeInTheDocument();
 		});
 	});
+
+	it('does not show empty state while loading', async () => {
+		loadTasksApiData({
+			tasks: [makeTask({ complete: true })],
+		});
+
+		const { queryByText } = renderTasksPage();
+
+		expect(queryByText('Nothing here!')).not.toBeInTheDocument();
+	});
 });
 
 // has filter menu
