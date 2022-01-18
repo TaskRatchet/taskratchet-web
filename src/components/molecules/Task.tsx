@@ -7,7 +7,6 @@ import {
 	Box,
 	Checkbox,
 	ListItem,
-	ListItemButton,
 	ListItemIcon,
 	ListItemText,
 } from '@mui/material';
@@ -35,39 +34,35 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 			disablePadding
 			dense
 		>
-			<ListItemButton
-				disabled={disabled}
-				onClick={() => {
-					if (!task.id || disabled) return;
-					setComplete(task.id, !task.complete);
-				}}
-			>
-				<ListItemIcon>
-					{task.status === 'expired' ? (
-						<Box style={{ padding: 9 }}>
-							<EventBusyIcon />
-						</Box>
-					) : (
-						<Checkbox
-							checked={task.complete}
-							disabled={disabled}
-							disableRipple
-							inputProps={{
-								'aria-labelledby': `task-${task.id}`,
-							}}
-						/>
-					)}
-				</ListItemIcon>
-				<ListItemText
-					id={`task-${task.id}`}
-					primary={task.task || '[Description Missing]'}
-					secondary={
-						<>
-							${task.cents / 100} &#8226; due by {dateString} {timeString}
-						</>
-					}
-				/>
-			</ListItemButton>
+			<ListItemIcon>
+				{task.status === 'expired' ? (
+					<Box style={{ padding: 9 }}>
+						<EventBusyIcon />
+					</Box>
+				) : (
+					<Checkbox
+						checked={task.complete}
+						disabled={disabled}
+						onClick={() => {
+							if (!task.id || disabled) return;
+							setComplete(task.id, !task.complete);
+						}}
+						disableRipple
+						inputProps={{
+							'aria-labelledby': `task-${task.id}`,
+						}}
+					/>
+				)}
+			</ListItemIcon>
+			<ListItemText
+				id={`task-${task.id}`}
+				primary={task.task || '[Description Missing]'}
+				secondary={
+					<>
+						${task.cents / 100} &#8226; due by {dateString} {timeString}
+					</>
+				}
+			/>
 		</ListItem>
 	);
 };
