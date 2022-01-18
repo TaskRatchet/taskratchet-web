@@ -1,6 +1,6 @@
 import Task from './Task';
 import React from 'react';
-import { expectNever, renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
 import { updateTask } from '../../lib/api';
 import { waitFor } from '@testing-library/dom';
@@ -105,13 +105,9 @@ describe('Task componet', () => {
 		);
 
 		const desc = getByText('the_task') as HTMLElement;
-		const button = desc.closest('[role="button"]') as HTMLElement;
+		const item = desc.closest('.MuiListItem-root') as HTMLElement;
 
-		userEvent.click(button);
-
-		await expectNever(() => {
-			expect(updateTask).toBeCalled();
-		});
+		expect(item.querySelector('input')).not.toBeInTheDocument();
 	});
 
 	it('replaces checkbox with icon for expired tasks', async () => {
