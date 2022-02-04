@@ -13,8 +13,13 @@ const ReactList = forwardRef(function ReactList(
 	{ itemRenderer, length }: any,
 	ref
 ) {
-	if (ref && typeof ref === 'object') {
-		ref.current = mockReactListRef;
+	if (ref) {
+		if (typeof ref === 'object') {
+			ref.current = mockReactListRef;
+		}
+		if (ref instanceof Function) {
+			ref(mockReactListRef);
+		}
 	}
 	return <div>{Array.from({ length }, (v, i) => itemRenderer(i))}</div>;
 });

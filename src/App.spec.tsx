@@ -66,6 +66,8 @@ describe('App', () => {
 
 		const { getByLabelText } = renderPage();
 
+		await new Promise(process.nextTick);
+
 		userEvent.click(getByLabelText('today'));
 
 		await waitFor(() => {

@@ -1,5 +1,5 @@
 import * as new_api from '../../lib/api';
-import { addTask, getMe, updateTask } from '../../lib/api';
+import { addTask, getMe, getTasks, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import Tasks from './Tasks';
@@ -17,6 +17,7 @@ import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { mockReactListRef } from '../../__mocks__/react-list';
 
 jest.mock('../../lib/api/apiFetch');
 jest.mock('../../lib/api/getTasks');
@@ -92,6 +93,7 @@ const renderTasksPage = () => {
 	const { getByLabelText, getByText, debug } = getters;
 
 	return {
+		queryClient,
 		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
 		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
 		getDueInput: () => getByLabelText('due date') as HTMLInputElement,
@@ -800,6 +802,46 @@ describe('tasks page', () => {
 
 		expect(queryByText('Nothing here!')).not.toBeInTheDocument();
 	});
+
+	it('scrolls list', async () => {
+		loadNow(new Date('1/1/2020'));
+
+		loadTasksApiData({
+			tasks: [makeTask()],
+		});
+
+		renderTasksPage();
+
+		await waitFor(() => {
+			expect(mockReactListRef.scrollTo).toBeCalled();
+		});
+	});
+
+	it('does not scroll list on page refocus', async () => {
+		loadNow(new Date('1/1/2020'));
+
+		loadTasksApiData({
+			tasks: [makeTask()],
+		});
+
+		const { queryClient } = renderTasksPage();
+
+		await waitFor(() => {
+			expect(mockReactListRef.scrollTo).toBeCalled();
+		});
+
+		loadTasksApiData({
+			tasks: [makeTask()],
+		});
+
+		await queryClient.invalidateQueries('tasks');
+
+		await waitFor(() => {
+			expect(getTasks).toBeCalledTimes(2);
+		});
+
+		expect(mockReactListRef.scrollTo).toBeCalledTimes(1);
+	});
 });
 
 // has filter menu
@@ -810,7 +852,13 @@ describe('tasks page', () => {
 
 // TODO:
 // lazy load API data for tasks
-// add pending filter
 // Pull initial stakes & due date from most-recently added task
 // Uncomment and fix tasks related to free-entry form
 // Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574
+
+// INITIAL SCROLL ISSUE
+// https://github.com/caseywebdev/react-list#scrolltoindex
+// https://github.com/caseywebdev/react-list/issues/148
+// https://github.com/caseywebdev/react-list/issues/118
+// but it works when clicking today so I don't think it's the variable issue
+// logging inside itemRenderer seems to indicate the issue isn't prerendering, since today button isn't hindered by that

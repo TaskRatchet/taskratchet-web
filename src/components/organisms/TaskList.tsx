@@ -27,6 +27,7 @@ const TaskList = ({
 	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
 	const [newTaskIndex, setNewTaskIndex] = useState<number>();
 	const [index, setIndex] = useState<number>(0);
+	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
 	useEffect(() => {
 		const sorted = sortTasks(tasks || []);
@@ -38,53 +39,60 @@ const TaskList = ({
 			newTaskIndex: taskIndexUpdate,
 		} = createListItems(filtered, newTask);
 
-		setEntries(newEntries);
 		setNextHeadingIndex(headingIndexUpdate);
+		setEntries(newEntries);
 		setNewTaskIndex(taskIndexUpdate);
-	}, [tasks, newTask, filters]);
+	}, [tasks, newTask, filters, nextHeadingIndex]);
 
 	useEffect(() => {
-		if (listRef.current === null || nextHeadingIndex === undefined) return;
-		listRef.current.scrollTo(nextHeadingIndex);
+		if (nextHeadingIndex === undefined) return;
 		setIndex(nextHeadingIndex);
-	}, [nextHeadingIndex, listRef, lastToday]);
+		setShouldScroll(true);
+	}, [nextHeadingIndex, isFetched, lastToday]);
 
 	useEffect(() => {
-		if (listRef.current === null || newTaskIndex === undefined) return;
-		listRef.current.scrollTo(newTaskIndex);
+		if (newTaskIndex === undefined) return;
 		setIndex(newTaskIndex);
-	}, [newTaskIndex, listRef]);
+		setShouldScroll(true);
+	}, [newTaskIndex]);
 
-	if (!isFetched) return <></>;
+	useEffect(() => {
+		if (!listRef.current || !shouldScroll) return;
+		listRef.current.scrollTo(index);
+		setShouldScroll(false);
+	}, [index, shouldScroll]);
 
-	return entries.length ? (
-		<ReactList
-			initialIndex={index}
-			itemRenderer={(i: number) => {
-				const entry = entries[i];
-				return isTask(entry) ? (
-					<Task key={`${entry.id}_${entry.task}`} task={entry} />
-				) : (
-					<ListSubheader
-						key={`${entry}__heading`}
-						className={`organism-taskList__heading`}
-						component={'div'}
-						disableSticky={true}
-					>
-						{entry}
-					</ListSubheader>
-				);
-			}}
-			itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
-			length={entries.length}
-			type={'variable'}
-			ref={listRef}
-		/>
-	) : (
-		<Alert severity="info">
-			<AlertTitle>Nothing here!</AlertTitle>
-			Maybe add a task?
-		</Alert>
+	return (
+		<>
+			{isFetched && !(tasks || []).length && (
+				<Alert severity="info">
+					<AlertTitle>Nothing here!</AlertTitle>
+					Maybe add a task?
+				</Alert>
+			)}
+			<ReactList
+				initialIndex={index}
+				itemRenderer={(i: number) => {
+					const entry = entries[i];
+					return isTask(entry) ? (
+						<Task key={`${entry.id}_${entry.task}`} task={entry} />
+					) : (
+						<ListSubheader
+							key={`${entry}__heading`}
+							className={`organism-taskList__heading`}
+							component={'div'}
+							disableSticky={true}
+						>
+							{entry}
+						</ListSubheader>
+					);
+				}}
+				itemSizeEstimator={(i) => (isTask(entries[i]) ? 60 : 48)}
+				length={entries.length}
+				type={'variable'}
+				ref={listRef}
+			/>
+		</>
 	);
 };
 
