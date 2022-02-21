@@ -60,6 +60,7 @@ export default function NavDrawer({
 				{/*TODO: rel noopener etc*/}
 				<ListItem disablePadding>
 					<ListItemButton
+						component={'a'}
 						href={'https://docs.taskratchet.com'}
 						target={'_blank'}
 						color="inherit"
