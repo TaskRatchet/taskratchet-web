@@ -9,9 +9,12 @@ import {
 	ListItem,
 	ListItemIcon,
 	ListItemText,
+	Typography,
 } from '@mui/material';
+import { red } from '@mui/material/colors';
 
 import EventBusyIcon from '@mui/icons-material/EventBusy';
+import { differenceInHours, formatDistanceToNow } from 'date-fns';
 
 export interface TaskProps {
 	task: TaskType;
@@ -24,6 +27,8 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 	const dateString = browser.getDateString(dueDate);
 	const timeString = browser.getTimeString(dueDate);
 	const disabled = !task.id || task.status === 'expired';
+	const difference = differenceInHours(dueDate, new Date());
+	const isDue = difference >= 0 && difference < 24;
 
 	return (
 		<ListItem
@@ -32,6 +37,10 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 			}`}
 			secondaryAction={<TaskMenu task={task} />}
 			disablePadding
+			sx={{
+				borderLeft: isDue ? 3 : 0,
+				borderColor: red[600],
+			}}
 			dense
 		>
 			<ListItemIcon>
@@ -59,9 +68,20 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 				primary={task.task || '[Description Missing]'}
 				secondary={
 					<>
-						${task.cents / 100} &#8226; due by {dateString} {timeString}
+						${task.cents / 100} &#8226; due by {dateString} {timeString} &#8226;{' '}
+						<Typography
+							component={'span'}
+							color={isDue ? 'error' : 'inherit'}
+							sx={{ fontSize: 'inherit' }}
+						>
+							{formatDistanceToNow(dueDate, {
+								addSuffix: true,
+								includeSeconds: true,
+							})}
+						</Typography>
 					</>
 				}
+				sx={{ mr: 7 }}
 			/>
 		</ListItem>
 	);

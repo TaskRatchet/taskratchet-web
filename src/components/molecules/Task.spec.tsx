@@ -7,8 +7,9 @@ import { waitFor } from '@testing-library/dom';
 import browser from '../../lib/Browser';
 
 jest.mock('../../lib/api/updateTask');
+jest.mock('date-fns');
 
-describe('Task componet', () => {
+describe('Task component', () => {
 	beforeEach(() => {
 		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
