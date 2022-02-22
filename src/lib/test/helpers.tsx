@@ -66,11 +66,14 @@ export const loadUrlParams = (params: ParsedQuery): void => {
 	jest.spyOn(browser, 'getUrlParams').mockReturnValue(params);
 };
 
-export const loadNow = (date: Date): void => {
-	const clone = new Date(date.getTime());
+export const loadNowDate = (dateString: string | Date): void => {
 	jest
-		.spyOn(browser, 'getNow')
-		.mockImplementation(() => new Date(clone.getTime()));
+		.spyOn(browser, 'getNowDate')
+		.mockImplementation(() => new Date(dateString));
+};
+
+export const loadNowTime = (time: number): void => {
+	jest.spyOn(browser, 'getNowTime').mockReturnValue(time);
 };
 
 export function expectLoadingOverlay(
@@ -130,20 +133,24 @@ export function resolveWithDelay(
 export function makeTask({
 	complete = false,
 	due = '5/22/2020, 11:59 PM',
+	due_timestamp = undefined,
 	id = Math.random(),
 	cents = 0,
 	task = 'the_task',
-	status = 'pending',
+	status = complete ? 'complete' : 'pending',
 	isNew = undefined,
+	timezone = 'Etc/GMT',
 }: Partial<TaskType> = {}): TaskType {
 	return {
 		complete,
 		due,
+		due_timestamp,
 		id,
 		cents,
 		task,
 		status,
 		isNew,
+		timezone,
 	};
 }
 

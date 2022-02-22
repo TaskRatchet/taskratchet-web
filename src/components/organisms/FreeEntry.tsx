@@ -31,7 +31,7 @@ const FreeEntry = (props: FreeEntryProps): JSX.Element => {
 		};
 
 		const response = chrono
-			.parse(task, browser.getNow(), { forwardDate: true })
+			.parse(task, browser.getNowDate(), { forwardDate: true })
 			.pop();
 
 		let due = null;

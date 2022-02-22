@@ -1,4 +1,4 @@
-import { loadNow, loadTasksApiData, makeTask } from './lib/test/helpers';
+import { loadNowDate, loadTasksApiData, makeTask } from './lib/test/helpers';
 import browser from './lib/Browser';
 import { render } from '@testing-library/react';
 import React from 'react';
@@ -53,12 +53,12 @@ function renderPage() {
 describe('App', () => {
 	beforeEach(() => {
 		jest.resetAllMocks();
-		loadNow(new Date('10/29/2020'));
+		loadNowDate(new Date('10/29/2020'));
 		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
 	it('re-scrolls tasks list when today icon clicked', async () => {
-		loadNow(new Date('1/1/2020'));
+		loadNowDate(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
@@ -134,7 +134,7 @@ describe('App', () => {
 	});
 
 	it('filters tasks', async () => {
-		loadNow(new Date('1/1/2020'));
+		loadNowDate(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
@@ -153,7 +153,7 @@ describe('App', () => {
 	});
 
 	it('scrolls to new task', async () => {
-		loadNow(new Date('1/1/2020'));
+		loadNowDate(new Date('1/1/2020'));
 
 		const { getTaskInput, getAddButton } = renderPage();
 
@@ -166,7 +166,7 @@ describe('App', () => {
 	});
 
 	it('scrolls to today', async () => {
-		loadNow(new Date('1/7/2020'));
+		loadNowDate(new Date('1/7/2020'));
 
 		loadTasksApiData({
 			tasks: [

@@ -20,7 +20,7 @@ export default function createListItems(
 	nextHeadingIndex: number | undefined;
 	newTaskIndex: number | undefined;
 } {
-	const now = browser.getNow();
+	const now = browser.getNowDate();
 
 	let lastTitle: string;
 	let nextHeadingIndex: number | undefined = undefined;
