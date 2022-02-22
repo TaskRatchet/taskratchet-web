@@ -30,11 +30,13 @@ type User = {
 };
 
 type TaskType = {
+	id?: number | string;
+	isNew?: boolean;
+	due_timestamp?: number;
 	due: int;
 	cents: number;
 	task: string;
-	complete?: boolean;
-	id?: number | string;
+	complete: boolean;
 	status: Status;
-	isNew?: boolean;
+	timezone: string;
 };

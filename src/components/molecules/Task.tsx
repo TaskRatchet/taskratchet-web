@@ -14,7 +14,8 @@ import {
 import { red } from '@mui/material/colors';
 
 import EventBusyIcon from '@mui/icons-material/EventBusy';
-import { differenceInHours, formatDistanceToNow } from 'date-fns';
+import useIsDue from '../../lib/useIsDue';
+import useDifferenceToNow from '../../lib/useDifferenceToNow';
 
 export interface TaskProps {
 	task: TaskType;
@@ -23,12 +24,12 @@ export interface TaskProps {
 
 const Task = ({ task }: TaskProps): JSX.Element => {
 	const setComplete = useSetComplete();
+	const isDue = useIsDue(task);
+	const difference = useDifferenceToNow(task);
 	const dueDate = new Date(task.due);
 	const dateString = browser.getDateString(dueDate);
 	const timeString = browser.getTimeString(dueDate);
 	const disabled = !task.id || task.status === 'expired';
-	const difference = differenceInHours(dueDate, new Date());
-	const isDue = difference >= 0 && difference < 24;
 
 	return (
 		<ListItem
@@ -68,17 +69,19 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 				primary={task.task || '[Description Missing]'}
 				secondary={
 					<>
-						${task.cents / 100} &#8226; due by {dateString} {timeString} &#8226;{' '}
-						<Typography
-							component={'span'}
-							color={isDue ? 'error' : 'inherit'}
-							sx={{ fontSize: 'inherit' }}
-						>
-							{formatDistanceToNow(dueDate, {
-								addSuffix: true,
-								includeSeconds: true,
-							})}
-						</Typography>
+						${task.cents / 100} &#8226; due by {dateString} {timeString}{' '}
+						{difference && (
+							<>
+								&#8226;{' '}
+								<Typography
+									component={'span'}
+									color={isDue ? 'error' : 'inherit'}
+									sx={{ fontSize: 'inherit' }}
+								>
+									{difference}
+								</Typography>
+							</>
+						)}
 					</>
 				}
 				sx={{ mr: 7 }}

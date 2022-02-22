@@ -52,7 +52,7 @@ export function App(): JSX.Element {
 	const history = useHistory();
 
 	const handleTodayClick = () => {
-		setLastToday(browser.getNow());
+		setLastToday(browser.getNowDate());
 	};
 
 	useEffect(() => {

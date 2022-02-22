@@ -64,8 +64,12 @@ export class Browser {
 		});
 	}
 
-	getNow(): Date {
+	getNowDate(): Date {
 		return new Date();
+	}
+
+	getNowTime(): number {
+		return new Date().getTime();
 	}
 
 	getUrlParams(): ParsedQuery {

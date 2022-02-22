@@ -22,6 +22,8 @@ describe('Task component', () => {
 					cents: 100,
 					task: 'the_task',
 					status: 'pending',
+					timezone: 'Etc/GMT',
+					complete: false,
 				}}
 			/>
 		);
@@ -42,6 +44,8 @@ describe('Task component', () => {
 					task: 'the_task',
 					id: 'the_id',
 					status: 'pending',
+					timezone: 'Etc/GMT',
+					complete: false,
 				}}
 			/>
 		);
@@ -58,6 +62,8 @@ describe('Task component', () => {
 					task: 'the_task',
 					id: 'the_id',
 					status: 'pending',
+					timezone: 'Etc/GMT',
+					complete: false,
 				}}
 			/>
 		);
@@ -78,6 +84,8 @@ describe('Task component', () => {
 					task: 'the_task',
 					id: 'the_id',
 					status: 'pending',
+					timezone: 'Etc/GMT',
+					complete: false,
 				}}
 			/>
 		);
@@ -101,6 +109,8 @@ describe('Task component', () => {
 					task: 'the_task',
 					id: 'the_id',
 					status: 'expired',
+					timezone: 'Etc/GMT',
+					complete: false,
 				}}
 			/>
 		);
@@ -120,6 +130,8 @@ describe('Task component', () => {
 					task: 'the_task',
 					id: 'the_id',
 					status: 'expired',
+					timezone: 'Etc/GMT',
+					complete: false,
 				}}
 			/>
 		);
@@ -136,6 +148,8 @@ describe('Task component', () => {
 					task: 'the_task',
 					id: 'the_id',
 					status: 'expired',
+					timezone: 'Etc/GMT',
+					complete: false,
 				}}
 			/>
 		);

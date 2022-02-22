@@ -19,7 +19,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 
 	useEffect(() => {
 		const getDefaultDue = () => {
-			const due = browser.getNow();
+			const due = browser.getNowDate();
 
 			due.setDate(due.getDate() + 7);
 			due.setHours(23);
