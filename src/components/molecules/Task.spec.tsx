@@ -97,6 +97,10 @@ describe('Task component', () => {
 		userEvent.click(getByLabelText('Menu'));
 		userEvent.click(getByText('Charge immediately'));
 
+		await waitFor(() => {
+			userEvent.click(getByText('Charge'));
+		});
+
 		await waitFor(() =>
 			expect(updateTask).toBeCalledWith('the_id', {
 				uncle: true,
@@ -272,7 +276,64 @@ describe('Task component', () => {
 		expect(getByText('Edit')).toHaveAttribute('aria-disabled');
 	});
 
-	// TODO: test uncle button confirms action
+	it('asks for confirmation before uncling', async () => {
+		/*
+		When user clicks "Charge Immediately" link in task context menu, user 
+		should be shown confirmation step before the task is charged. 
+		 */
+
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: '2/1/2022, 11:59 PM',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+					complete: false,
+					timezone: 'Est/GMT',
+				}}
+			/>
+		);
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Charge immediately'));
+
+		// displays confirmation dialog
+		await waitFor(() => {
+			expect(getByText('Charge')).toBeInTheDocument();
+		});
+
+		expect(updateTask).not.toBeCalled();
+	});
+
+	it("tells you know how much you' be charged if you uncle", async () => {
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: '2/1/2022, 11:59 PM',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+					complete: false,
+					timezone: 'Est/GMT',
+				}}
+			/>
+		);
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Charge immediately'));
+
+		await waitFor(() => {
+			expect(
+				getByText('If you confirm, you will immediately be charged $1.', {
+					exact: false,
+				})
+			).toBeInTheDocument();
+		});
+	});
+
 	// TODO: only allows editing pending tasks; disables button otherwise
 	// TODO: triggers task list reload
 	// TODO: only allow editing task in first n minutes
