@@ -3,6 +3,7 @@ import { useSetUncle } from '../../lib/api/useSetUncle';
 import _ from 'lodash';
 import { IconButton, Menu, MenuItem } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
+import TaskEdit from '../organisms/TaskEdit';
 
 export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 	const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
@@ -46,6 +47,7 @@ export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 				>
 					{'Charge immediately'}
 				</MenuItem>
+				<TaskEdit task={task} onOpen={() => handleClose()} />
 			</Menu>
 		</div>
 	);

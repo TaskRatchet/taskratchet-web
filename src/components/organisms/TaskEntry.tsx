@@ -57,7 +57,7 @@ const TaskEntry = ({
 				<AddIcon />
 			</Fab>
 
-			<Dialog onClose={() => setIsOpen(false)} open={isOpen} keepMounted>
+			<Dialog onClose={() => setIsOpen(false)} open={isOpen}>
 				<DialogTitle sx={{ pb: 0 }}>Add Task</DialogTitle>
 				<DialogContent>
 					<TaskForm

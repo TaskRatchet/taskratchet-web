@@ -5,9 +5,13 @@ import userEvent from '@testing-library/user-event';
 import { updateTask } from '../../lib/api';
 import { waitFor } from '@testing-library/dom';
 import browser from '../../lib/Browser';
+import { editTask } from '../../lib/api/editTask';
 
 jest.mock('../../lib/api/updateTask');
 jest.mock('date-fns');
+jest.mock('../../lib/api/getMe');
+jest.mock('../../lib/api/addTask');
+jest.mock('../../lib/api/editTask');
 
 describe('Task component', () => {
 	beforeEach(() => {
@@ -161,5 +165,116 @@ describe('Task component', () => {
 		expect(getByText('Charge immediately')).toHaveAttribute('aria-disabled');
 	});
 
+	it('allows cents edit', async () => {
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					complete: false,
+					due: '2/1/2022, 11:59 PM',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+					timezone: 'Etc/GMT',
+				}}
+			/>
+		);
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Edit'));
+
+		await waitFor(() => {
+			getByLabelText('Stakes *');
+		});
+
+		userEvent.type(getByLabelText('Stakes *'), '5');
+		userEvent.click(getByText('Save'));
+
+		await waitFor(() => {
+			expect(editTask).toBeCalledWith('the_id', '2/1/2022, 11:59 PM', 1500);
+		});
+	});
+
+	it('closes task menu on edit click', async () => {
+		const { getByLabelText, getByText, queryByAltText } =
+			await renderWithQueryProvider(
+				<Task
+					task={{
+						due: '2/1/2022, 11:59 PM',
+						cents: 100,
+						task: 'the_task',
+						id: 'the_id',
+						status: 'pending',
+						complete: false,
+						timezone: 'Est/GMT',
+					}}
+				/>
+			);
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Edit'));
+
+		expect(queryByAltText('Edit')).not.toBeInTheDocument();
+	});
+
+	it('allows date edit', async () => {
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: '2/1/2022, 11:59 PM',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+					complete: false,
+					timezone: 'Est/GMT',
+				}}
+			/>
+		);
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Edit'));
+
+		await waitFor(() => {
+			expect(getByLabelText('Due Date *')).toHaveValue('02/01/2022');
+		});
+
+		userEvent.type(getByLabelText('Due Date *'), '{backspace}5{enter}');
+
+		await waitFor(() => {
+			expect(getByLabelText('Due Date *')).toHaveValue('02/01/2025');
+		});
+
+		userEvent.click(getByText('Save'));
+
+		await waitFor(() => {
+			expect(editTask).toBeCalledWith('the_id', '2/1/2025, 11:59 PM', 100);
+		});
+	});
+
+	it('disables edit if task is not pending', async () => {
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: '2/1/2022, 11:59 PM',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'complete',
+					complete: true,
+					timezone: 'Est/GMT',
+				}}
+			/>
+		);
+
+		userEvent.click(getByLabelText('Menu'));
+
+		expect(getByText('Edit')).toHaveAttribute('aria-disabled');
+	});
+
 	// TODO: test uncle button confirms action
+	// TODO: only allows editing pending tasks; disables button otherwise
+	// TODO: triggers task list reload
+	// TODO: only allow editing task in first n minutes
+	// TODO: allow reducing pledge, extending deadline in first n minutes
 });

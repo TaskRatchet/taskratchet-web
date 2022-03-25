@@ -1,5 +1,5 @@
 import * as new_api from '../../lib/api';
-import { addTask, getMe, getTasks, updateTask } from '../../lib/api';
+import { addTask, getTasks, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 import Tasks from './Tasks';
@@ -157,9 +157,12 @@ describe('tasks page', () => {
 		loadNowDate(new Date('10/29/2020'));
 		loadTasksApiData();
 
-		const { getTaskInput, getAddButton } = renderTasksPage();
+		const { getTaskInput, getAddButton, getByLabelText } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+		/* Open new task form */
+		userEvent.click(getByLabelText('add'));
 
 		await userEvent.type(getTaskInput(), 'the_task');
 		userEvent.click(getAddButton());
@@ -174,9 +177,11 @@ describe('tasks page', () => {
 	it('resets task input', async () => {
 		loadTasksApiData();
 
-		const { getTaskInput, getAddButton } = renderTasksPage();
+		const { getTaskInput, getAddButton, getByLabelText } = renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+		userEvent.click(getByLabelText('add'));
 
 		await userEvent.type(getTaskInput(), 'new_task by Friday or pay $5');
 		userEvent.click(getAddButton());
@@ -196,7 +201,7 @@ describe('tasks page', () => {
 
 			await openForm();
 
-			userEvent.click(getAddButton());
+			await waitFor(() => userEvent.click(getAddButton()));
 
 			expect(new_api.addTask).not.toHaveBeenCalled();
 		});
@@ -212,7 +217,7 @@ describe('tasks page', () => {
 
 			await openForm();
 
-			userEvent.click(getAddButton());
+			await waitFor(() => userEvent.click(getAddButton()));
 
 			expect(getByText('Task is required')).toBeDefined();
 		});
@@ -221,16 +226,16 @@ describe('tasks page', () => {
 	it('displays timezone', async () => {
 		loadTasksApiData({ me: { timezone: 'the_timezone' } });
 
-		const { getByText } = renderTasksPage();
+		const { getByText, openForm } = renderTasksPage();
 
-		await waitFor(() => expect(getMe).toHaveBeenCalled());
+		await openForm();
 
-		expect(getByText('the_timezone')).toBeDefined();
+		await waitFor(() => expect(getByText('the_timezone')).toBeDefined());
 	});
 
 	it('tells api task is complete', async () => {
 		loadTasksApiData({
-			tasks: [makeTask({ id: 3 })],
+			tasks: [makeTask({ id: '3' })],
 		});
 
 		const { clickCheckbox } = renderTasksPage();
@@ -240,13 +245,13 @@ describe('tasks page', () => {
 		clickCheckbox();
 
 		await waitFor(() =>
-			expect(updateTask).toBeCalledWith(3, { complete: true })
+			expect(updateTask).toBeCalledWith('3', { complete: true })
 		);
 	});
 
 	it('reloads tasks', async () => {
 		loadTasksApiData({
-			tasks: [makeTask({ id: 3 })],
+			tasks: [makeTask({ id: '3' })],
 		});
 
 		const { clickCheckbox } = renderTasksPage();
@@ -265,9 +270,11 @@ describe('tasks page', () => {
 				throw new Error('Failed to add task');
 			});
 
-			const { getTaskInput, getAddButton } = renderTasksPage();
+			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+			await openForm();
 
 			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
 			userEvent.click(getAddButton());
@@ -286,9 +293,11 @@ describe('tasks page', () => {
 				throw Error('Oops!');
 			});
 
-			const { getTaskInput, getAddButton } = renderTasksPage();
+			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+			await openForm();
 
 			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
 			userEvent.click(getAddButton());
@@ -300,7 +309,7 @@ describe('tasks page', () => {
 	it('toasts task toggle exception', async () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData({
-				tasks: [makeTask({ id: 3 })],
+				tasks: [makeTask({ id: '3' })],
 			});
 
 			jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
@@ -442,7 +451,7 @@ describe('tasks page', () => {
 
 	it('updates checkboxes optimistically', async () => {
 		loadTasksApiData({
-			tasks: [makeTask({ id: 3 })],
+			tasks: [makeTask({ id: '3' })],
 		});
 
 		const { clickCheckbox, getCheckbox } = renderTasksPage();
@@ -460,7 +469,7 @@ describe('tasks page', () => {
 	it('rolls back checkbox optimistic update', async () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData({
-				tasks: [makeTask({ id: 3, status: 'pending' })],
+				tasks: [makeTask({ id: '3', status: 'pending' })],
 			});
 
 			const { clickCheckbox, getCheckbox } = renderTasksPage();
@@ -485,7 +494,7 @@ describe('tasks page', () => {
 
 	it('gets unload warning', async () => {
 		loadTasksApiData({
-			tasks: [makeTask({ id: 3 })],
+			tasks: [makeTask({ id: '3' })],
 		});
 
 		const { clickCheckbox } = renderTasksPage();
@@ -505,8 +514,8 @@ describe('tasks page', () => {
 
 		loadTasksApiData({
 			tasks: [
-				makeTask({ task: 'first', id: 3 }),
-				makeTask({ task: 'second', id: 4 }),
+				makeTask({ task: 'first', id: '3' }),
+				makeTask({ task: 'second', id: '4' }),
 			],
 		});
 
@@ -517,8 +526,8 @@ describe('tasks page', () => {
 		// Load slow query response to clobber
 
 		resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
-			makeTask({ task: 'first', id: 3, status: 'complete', complete: true }),
-			makeTask({ task: 'second', id: 4, status: 'pending' }),
+			makeTask({ task: 'first', id: '3', status: 'complete', complete: true }),
+			makeTask({ task: 'second', id: '4', status: 'pending' }),
 		]);
 
 		// Check first task
@@ -531,12 +540,20 @@ describe('tasks page', () => {
 
 		// Load second, fast response
 
-		jest
-			.spyOn(new_api, 'getTasks')
-			.mockResolvedValue([
-				makeTask({ task: 'first', id: 3, status: 'complete', complete: true }),
-				makeTask({ task: 'second', id: 4, status: 'complete', complete: true }),
-			]);
+		jest.spyOn(new_api, 'getTasks').mockResolvedValue([
+			makeTask({
+				task: 'first',
+				id: '3',
+				status: 'complete',
+				complete: true,
+			}),
+			makeTask({
+				task: 'second',
+				id: '4',
+				status: 'complete',
+				complete: true,
+			}),
+		]);
 
 		// Check second task
 
@@ -562,9 +579,12 @@ describe('tasks page', () => {
 	});
 
 	it('adds task optimistically', async () => {
-		const { getTaskInput, getAddButton, getByText } = renderTasksPage();
+		const { getTaskInput, getAddButton, getByText, openForm } =
+			renderTasksPage();
 
 		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+		await openForm();
 
 		await userEvent.type(getTaskInput(), 'the_task');
 		userEvent.click(getAddButton());
@@ -578,10 +598,12 @@ describe('tasks page', () => {
 
 			jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!');
 
-			const { getTaskInput, getAddButton, getByText, queryByText } =
+			const { getTaskInput, getAddButton, getByText, queryByText, openForm } =
 				renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+
+			await openForm();
 
 			await userEvent.type(getTaskInput(), 'the_task');
 			userEvent.click(getAddButton());
@@ -610,15 +632,17 @@ describe('tasks page', () => {
 			// Load slow query response to clobber
 
 			resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
-				makeTask({ task: 'first', id: 3 }),
+				makeTask({ task: 'first', id: '3' }),
 			]);
 
 			// Add first task
 
 			await openForm();
 
-			await userEvent.type(getTaskInput(), 'first');
-			userEvent.click(getAddButton());
+			await waitFor(async () => {
+				await userEvent.type(getTaskInput(), 'first');
+				userEvent.click(getAddButton());
+			});
 
 			// Wait for slow response to be requested
 
@@ -629,14 +653,13 @@ describe('tasks page', () => {
 			jest
 				.spyOn(new_api, 'getTasks')
 				.mockResolvedValue([
-					makeTask({ task: 'first', id: 3 }),
-					makeTask({ task: 'second', id: 4 }),
+					makeTask({ task: 'first', id: '3' }),
+					makeTask({ task: 'second', id: '4' }),
 				]);
 
 			// Add second task
 
 			await userEvent.type(getTaskInput(), 'second');
-
 			userEvent.click(getAddButton());
 
 			// Sleep 200ms
@@ -754,12 +777,14 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { getTaskInput, getDueInput, getAddButton, getByText } =
+		const { getTaskInput, getDueInput, getAddButton, getByText, openForm } =
 			renderTasksPage();
 
 		await waitFor(() => {
 			expect(getByText('task 1')).toBeInTheDocument();
 		});
+
+		await openForm();
 
 		userEvent.type(getTaskInput(), 'new_task');
 		userEvent.type(getDueInput(), '{backspace}9');

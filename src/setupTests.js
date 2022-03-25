@@ -5,6 +5,10 @@ jest.mock('react', () => ({
 	useLayoutEffect: jest.requireActual('react').useEffect,
 }));
 
+jest.mock('@mui/lab/DatePicker', () => {
+	return jest.requireActual('@mui/lab/DesktopDatePicker');
+});
+
 global.scrollTo = jest.fn();
 
 function deleteAllCookies() {

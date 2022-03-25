@@ -12,10 +12,20 @@ interface TaskFormProps {
 	error: string;
 	onChange: (task: string, due: Date | null, cents: number | null) => void;
 	onSubmit: () => void;
+	actionLabel?: string;
 }
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
-	const { task, due, cents, timezone, error, onChange, onSubmit } = props;
+	const {
+		task,
+		due,
+		cents,
+		timezone,
+		error,
+		onChange,
+		onSubmit,
+		actionLabel = 'Add',
+	} = props;
 
 	useEffect(() => {
 		const getDefaultDue = () => {
@@ -144,7 +154,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						type="submit"
 						color="primary"
 					>
-						Add
+						{actionLabel}
 					</Button>
 				</Stack>
 			</Stack>

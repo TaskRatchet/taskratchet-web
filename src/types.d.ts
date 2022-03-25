@@ -30,7 +30,7 @@ type User = {
 };
 
 type TaskType = {
-	id?: number | string;
+	id?: string;
 	isNew?: boolean;
 	due_timestamp?: number;
 	due: int;
