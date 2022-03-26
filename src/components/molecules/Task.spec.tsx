@@ -13,6 +13,8 @@ jest.mock('../../lib/api/getMe');
 jest.mock('../../lib/api/addTask');
 jest.mock('../../lib/api/editTask');
 
+const mockEditTask = editTask as jest.Mock;
+
 describe('Task component', () => {
 	beforeEach(() => {
 		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
@@ -307,7 +309,7 @@ describe('Task component', () => {
 		expect(updateTask).not.toBeCalled();
 	});
 
-	it("tells you know how much you' be charged if you uncle", async () => {
+	it("tells you know how much you'll be charged if you uncle", async () => {
 		const { getByLabelText, getByText } = await renderWithQueryProvider(
 			<Task
 				task={{
@@ -334,8 +336,45 @@ describe('Task component', () => {
 		});
 	});
 
-	// TODO: only allows editing pending tasks; disables button otherwise
+	it('displays edit errors from API', async () => {
+		mockEditTask.mockRejectedValue({ message: 'the_error' });
+
+		const { getByLabelText, getByText } = await renderWithQueryProvider(
+			<Task
+				task={{
+					due: '2/1/2022, 11:59 PM',
+					cents: 100,
+					task: 'the_task',
+					id: 'the_id',
+					status: 'pending',
+					complete: false,
+					timezone: 'Est/GMT',
+				}}
+			/>
+		);
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Edit'));
+
+		await waitFor(() => {
+			expect(getByLabelText('Due Date *')).toHaveValue('02/01/2022');
+		});
+
+		userEvent.type(getByLabelText('Due Date *'), '{backspace}5{enter}');
+
+		await waitFor(() => {
+			expect(getByLabelText('Due Date *')).toHaveValue('02/01/2025');
+		});
+
+		userEvent.click(getByText('Save'));
+
+		await waitFor(() => {
+			expect(editTask).toBeCalledWith('the_id', '2/1/2025, 11:59 PM', 100);
+		});
+
+		expect(getByText('the_error')).toBeInTheDocument();
+	});
+
 	// TODO: triggers task list reload
-	// TODO: only allow editing task in first n minutes
 	// TODO: allow reducing pledge, extending deadline in first n minutes
 });

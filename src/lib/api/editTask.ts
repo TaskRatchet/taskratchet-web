@@ -12,7 +12,8 @@ export async function editTask(
 	});
 
 	if (!response.ok) {
-		throw new Error('Failed to edit task');
+		const error = await response.text();
+		throw new Error(error);
 	}
 
 	return response;

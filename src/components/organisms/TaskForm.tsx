@@ -3,6 +3,7 @@ import './TaskForm.css';
 import browser from '../../lib/Browser';
 import { Box, Button, InputAdornment, Stack, TextField } from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/lab';
+import { Alert } from '@mui/material';
 
 interface TaskFormProps {
 	task: string;
@@ -61,7 +62,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 			className={'organism-taskForm'}
 		>
 			<Stack spacing={2}>
-				{error ? <p>{error}</p> : null}
+				{error ? <Alert severity={'error'}>{error}</Alert> : null}
 
 				<TextField
 					id="page-tasks__task"

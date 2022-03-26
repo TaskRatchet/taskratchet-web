@@ -5,6 +5,8 @@ import { Dialog, DialogContent, DialogTitle, MenuItem } from '@mui/material';
 import { useMutation } from 'react-query';
 import { editTask } from '../../lib/api/editTask';
 
+type EditParams = { id: string; due: string; cents: number };
+
 const TaskEdit = ({
 	task,
 	onOpen,
@@ -19,12 +21,14 @@ const TaskEdit = ({
 	const [cents, setCents] = useState<number | null>(task.cents);
 	const [error, setError] = useState<string>('');
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const { mutate } = useMutation(
-		['edit', 'task_id'],
-		(data: { id: string; due: string; cents: number }) => {
-			return editTask(data.id, data.due, data.cents);
-		}
-	);
+	const { mutate, error: apiError } = useMutation<
+		unknown,
+		{ message: string },
+		EditParams,
+		unknown
+	>(['edit', 'task_id'], (data: EditParams) => {
+		return editTask(data.id, data.due, data.cents);
+	});
 
 	const onChange = (task: string, due: Date | null, cents: number | null) => {
 		setDue(due);
@@ -62,14 +66,14 @@ const TaskEdit = ({
 			</MenuItem>
 
 			<Dialog onClose={() => setIsOpen(false)} open={isOpen}>
-				<DialogTitle sx={{ pb: 0 }}>Edit Task</DialogTitle>
-				<DialogContent>
+				<DialogTitle>Edit Task</DialogTitle>
+				<DialogContent dividers>
 					<TaskForm
 						task={task.task}
 						due={due}
 						cents={cents}
 						timezone={timezone}
-						error={error}
+						error={apiError?.message || error || ''}
 						onChange={onChange}
 						onSubmit={onSubmit}
 						actionLabel={'Save'}
