@@ -1,6 +1,7 @@
 import Task from './Task';
 import React from 'react';
 import {
+	expectNever,
 	renderWithQueryProvider,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
@@ -232,8 +233,18 @@ describe('Task component', () => {
 		expect(screen.getByLabelText('Task *')).toBeDisabled();
 	});
 
+	it('enforces minimum stakes', async () => {
+		renderTask({ cents: 500 });
+
+		await openEditDialog();
+
+		userEvent.type(screen.getByLabelText('Stakes *'), '{backspace}1');
+		userEvent.click(screen.getByText('Save'));
+
+		await expectNever(() => expect(editTask).toBeCalled());
+	});
+
 	// TODO
-	// Add min to stakes field
 	// Add max to due field
 	// triggers task list reload
 	// allow reducing pledge, extending deadline in first n minutes

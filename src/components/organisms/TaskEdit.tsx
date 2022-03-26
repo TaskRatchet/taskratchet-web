@@ -78,6 +78,7 @@ const TaskEdit = ({
 						onSubmit={onSubmit}
 						actionLabel={'Save'}
 						disableTaskField={true}
+						minCents={task.cents}
 					/>
 				</DialogContent>
 			</Dialog>

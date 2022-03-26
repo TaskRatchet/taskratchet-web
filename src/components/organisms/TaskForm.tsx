@@ -1,9 +1,15 @@
 import React, { FormEvent, useEffect } from 'react';
 import './TaskForm.css';
 import browser from '../../lib/Browser';
-import { Box, Button, InputAdornment, Stack, TextField } from '@mui/material';
+import {
+	Alert,
+	Box,
+	Button,
+	InputAdornment,
+	Stack,
+	TextField,
+} from '@mui/material';
 import { DatePicker, TimePicker } from '@mui/lab';
-import { Alert } from '@mui/material';
 
 interface TaskFormProps {
 	task: string;
@@ -15,6 +21,7 @@ interface TaskFormProps {
 	onSubmit: () => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
+	minCents?: number;
 }
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
@@ -27,6 +34,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		onChange,
 		onSubmit,
 		actionLabel = 'Add',
+		minCents = 100,
 	} = props;
 
 	useEffect(() => {
@@ -49,9 +57,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		if (due === null) {
 			onChange(task, getDefaultDue(), cents);
 		}
-	}, [task, due, cents, onChange]);
-
-	const dollars = cents ? cents / 100 : 0;
+	}, [task, due, cents, minCents, onChange]);
 
 	return (
 		<Box
@@ -83,13 +89,15 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					label="Stakes"
 					required
 					type="number"
-					value={dollars > 0 ? dollars : ''}
+					value={cents && cents >= minCents ? cents / 100 : ''}
 					onChange={(e) => {
-						onChange(task, due, parseInt(e.target.value) * 100);
+						const cents = parseInt(e.target.value) * 100;
+						onChange(task, due, cents >= minCents ? cents : 0);
 					}}
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>,
 						endAdornment: <InputAdornment position="end">USD</InputAdornment>,
+						inputProps: { min: minCents / 100 },
 					}}
 					variant="standard"
 				/>
