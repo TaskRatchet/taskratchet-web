@@ -14,6 +14,7 @@ interface TaskFormProps {
 	onChange: (task: string, due: Date | null, cents: number | null) => void;
 	onSubmit: () => void;
 	actionLabel?: string;
+	disableTaskField?: boolean;
 }
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
@@ -75,6 +76,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					fullWidth
 					variant="standard"
 					multiline
+					disabled={props.disableTaskField}
 				/>
 				<TextField
 					id="page-tasks__dollars"

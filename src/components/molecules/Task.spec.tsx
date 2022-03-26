@@ -224,6 +224,17 @@ describe('Task component', () => {
 		});
 	});
 
-	// TODO: triggers task list reload
-	// TODO: allow reducing pledge, extending deadline in first n minutes
+	it('disables task field', async () => {
+		renderTask();
+
+		await openEditDialog();
+
+		expect(screen.getByLabelText('Task *')).toBeDisabled();
+	});
+
+	// TODO
+	// Add min to stakes field
+	// Add max to due field
+	// triggers task list reload
+	// allow reducing pledge, extending deadline in first n minutes
 });

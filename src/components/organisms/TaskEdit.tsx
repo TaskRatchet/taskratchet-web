@@ -77,6 +77,7 @@ const TaskEdit = ({
 						onChange={onChange}
 						onSubmit={onSubmit}
 						actionLabel={'Save'}
+						disableTaskField={true}
 					/>
 				</DialogContent>
 			</Dialog>
