@@ -276,8 +276,21 @@ describe('Task component', () => {
 		});
 	});
 
+	it('closes edit dialog on save', async () => {
+		renderTask();
+
+		await openEditDialog();
+
+		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}1{enter}');
+
+		userEvent.click(screen.getByText('Save'));
+
+		await waitFor(() => {
+			expect(screen.queryByLabelText('Due Date *')).not.toBeInTheDocument();
+		});
+	});
+
 	// TODO
-	// Closes edit dialog on successful save
 	// triggers task list reload
 	// allow reducing pledge, extending deadline in first n minutes
 });

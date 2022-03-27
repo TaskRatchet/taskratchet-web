@@ -60,7 +60,14 @@ const TaskEdit = ({
 			setError('Failed to edit task');
 			return;
 		}
-		mutate({ id: task.id, due: dueString, cents });
+		mutate(
+			{ id: task.id, due: dueString, cents },
+			{
+				onSuccess: () => {
+					setIsOpen(false);
+				},
+			}
+		);
 	}
 
 	return (
