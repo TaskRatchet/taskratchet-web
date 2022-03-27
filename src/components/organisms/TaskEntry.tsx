@@ -4,6 +4,17 @@ import { useAddTask } from '../../lib/api/useAddTask';
 import { useTimezone } from '../../lib/api/useTimezone';
 import AddIcon from '@mui/icons-material/Add';
 import { Dialog, DialogContent, DialogTitle, Fab } from '@mui/material';
+import browser from '../../lib/Browser';
+
+const getDefaultDue = () => {
+	const due = browser.getNowDate();
+
+	due.setDate(due.getDate() + 7);
+	due.setHours(23);
+	due.setMinutes(59);
+
+	return due;
+};
 
 const TaskEntry = ({
 	onSave,
@@ -13,12 +24,12 @@ const TaskEntry = ({
 	const timezone = useTimezone() || '';
 	const addTask = useAddTask(onSave);
 	const [task, setTask] = useState<string>('');
-	const [due, setDue] = useState<Date | null>(null);
-	const [cents, setCents] = useState<number | null>(null);
+	const [due, setDue] = useState<Date>(getDefaultDue);
+	const [cents, setCents] = useState<number>(500);
 	const [error, setError] = useState<string>('');
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 
-	const onChange = (task: string, due: Date | null, cents: number | null) => {
+	const onChange = (task: string, due: Date, cents: number) => {
 		setTask(task);
 		setDue(due);
 		setCents(cents);
@@ -36,10 +47,7 @@ const TaskEntry = ({
 			hour: 'numeric',
 			minute: 'numeric',
 		});
-		addTask(task, dueString, cents);
-		setTask('');
-		setDue(null);
-		setCents(null);
+		addTask.mutate({ task, due: dueString, cents });
 	}
 
 	return (
@@ -68,19 +76,10 @@ const TaskEntry = ({
 						error={error}
 						onChange={onChange}
 						onSubmit={onSubmit}
+						isLoading={addTask.isLoading}
 					/>
 				</DialogContent>
 			</Dialog>
-
-			{/*<FreeEntry*/}
-			{/*    task={task}*/}
-			{/*    due={due}*/}
-			{/*    cents={cents}*/}
-			{/*    timezone={timezone}*/}
-			{/*    error={error}*/}
-			{/*    onChange={onChange}*/}
-			{/*    onSubmit={onSubmit}*/}
-			{/*/>*/}
 		</>
 	);
 };

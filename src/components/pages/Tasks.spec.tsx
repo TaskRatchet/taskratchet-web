@@ -30,13 +30,6 @@ jest.mock('../../lib/LegacyApi');
 jest.mock('../../lib/getUnloadMessage');
 jest.mock('react-ga');
 
-jest.mock('@mui/lab', () => {
-	return {
-		DatePicker: jest.requireActual('@mui/lab/DesktopDatePicker').default,
-		TimePicker: jest.requireActual('@mui/lab/DesktopTimePicker').default,
-	};
-});
-
 global.document.createRange = () =>
 	({
 		setStart: () => {
@@ -172,23 +165,6 @@ describe('tasks page', () => {
 			due: new Date('11/05/2020 11:59 PM'),
 			cents: 500,
 		});
-	});
-
-	it('resets task input', async () => {
-		loadTasksApiData();
-
-		const { getTaskInput, getAddButton, getByLabelText } = renderTasksPage();
-
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-		userEvent.click(getByLabelText('add'));
-
-		await userEvent.type(getTaskInput(), 'new_task by Friday or pay $5');
-		userEvent.click(getAddButton());
-
-		await waitFor(() => expect(addTask).toHaveBeenCalled());
-
-		expect(getTaskInput()).toHaveValue('');
 	});
 
 	it("doesn't accept empty task", async () => {
@@ -598,8 +574,14 @@ describe('tasks page', () => {
 
 			jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!');
 
-			const { getTaskInput, getAddButton, getByText, queryByText, openForm } =
-				renderTasksPage();
+			const {
+				getTaskInput,
+				getAddButton,
+				getByText,
+				queryByText,
+				openForm,
+				baseElement,
+			} = renderTasksPage();
 
 			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
 
@@ -607,6 +589,12 @@ describe('tasks page', () => {
 
 			await userEvent.type(getTaskInput(), 'the_task');
 			userEvent.click(getAddButton());
+
+			const bg = baseElement.querySelector('.MuiBackdrop-root');
+
+			if (!bg) throw new Error('could not find bg');
+
+			userEvent.click(bg);
 
 			await waitFor(() => {
 				expect(getByText('the_task')).toBeInTheDocument();
@@ -659,7 +647,10 @@ describe('tasks page', () => {
 
 			// Add second task
 
-			await userEvent.type(getTaskInput(), 'second');
+			await userEvent.type(
+				getTaskInput(),
+				'{backspace}{backspace}{backspace}{backspace}{backspace}second'
+			);
 			userEvent.click(getAddButton());
 
 			// Sleep 200ms

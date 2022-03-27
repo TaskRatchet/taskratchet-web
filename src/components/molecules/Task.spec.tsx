@@ -3,6 +3,7 @@ import React from 'react';
 import {
 	expectNever,
 	renderWithQueryProvider,
+	resolveWithDelay,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
@@ -147,13 +148,13 @@ describe('Task component', () => {
 
 		await userEvent.type(
 			screen.getByLabelText('Due Date *'),
-			'{backspace}5{enter}'
+			'{backspace}1{enter}'
 		);
 
 		userEvent.click(screen.getByText('Save'));
 
 		await waitFor(() => {
-			expect(editTask).toBeCalledWith('the_id', '2/1/2025, 11:59 PM', 100);
+			expect(editTask).toBeCalledWith('the_id', '2/1/2021, 11:59 PM', 100);
 		});
 	});
 
@@ -212,13 +213,13 @@ describe('Task component', () => {
 
 			await userEvent.type(
 				screen.getByLabelText('Due Date *'),
-				'{backspace}5{enter}'
+				'{backspace}1{enter}'
 			);
 
 			userEvent.click(screen.getByText('Save'));
 
 			await waitFor(() => {
-				expect(editTask).toBeCalledWith('the_id', '2/1/2025, 11:59 PM', 100);
+				expect(editTask).toBeCalledWith('the_id', '2/1/2021, 11:59 PM', 100);
 			});
 
 			expect(screen.getByText('the_error')).toBeInTheDocument();
@@ -244,8 +245,39 @@ describe('Task component', () => {
 		await expectNever(() => expect(editTask).toBeCalled());
 	});
 
+	it('enforces maximum due', async () => {
+		renderTask({ due: '2/1/2022, 11:59 PM' });
+
+		await openEditDialog();
+
+		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}5{enter}');
+
+		userEvent.click(screen.getByText('Save'));
+
+		await expectNever(() => expect(editTask).toBeCalled());
+	});
+
+	it('shows loading indicator on edit save', async () => {
+		resolveWithDelay(mockEditTask);
+
+		renderTask();
+
+		await openEditDialog();
+
+		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}1{enter}');
+
+		userEvent.click(screen.getByText('Save'));
+
+		await waitFor(() => {
+			const match = document.querySelector(
+				'.MuiLoadingButton-loadingIndicator'
+			);
+			expect(match).toBeInTheDocument();
+		});
+	});
+
 	// TODO
-	// Add max to due field
+	// Closes edit dialog on successful save
 	// triggers task list reload
 	// allow reducing pledge, extending deadline in first n minutes
 });

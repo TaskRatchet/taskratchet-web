@@ -15,28 +15,38 @@ const TaskEdit = ({
 	onOpen?: () => void;
 }): JSX.Element => {
 	const timezone = useTimezone() || '';
-	const [due, setDue] = useState<Date | null>(() => {
+	const [due, setDue] = useState<Date>(() => {
 		return new Date(task.due);
 	});
-	const [cents, setCents] = useState<number | null>(task.cents);
+	const [cents, setCents] = useState<number>(task.cents);
 	const [error, setError] = useState<string>('');
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const { mutate, error: apiError } = useMutation<
-		unknown,
-		{ message: string },
-		EditParams,
-		unknown
-	>(['edit', 'task_id'], (data: EditParams) => {
-		return editTask(data.id, data.due, data.cents);
-	});
+	const {
+		mutate,
+		error: apiError,
+		isLoading,
+	} = useMutation<unknown, { message: string }, EditParams, unknown>(
+		['edit', 'task_id'],
+		(data: EditParams) => {
+			return editTask(data.id, data.due, data.cents);
+		}
+	);
 
-	const onChange = (task: string, due: Date | null, cents: number | null) => {
+	const onChange = (task: string, due: Date, cents: number) => {
 		setDue(due);
 		setCents(cents);
 	};
 
 	function onSubmit() {
 		if (!due || !cents) {
+			return;
+		}
+		if (cents < task.cents) {
+			setError('Stakes cannot be less than the original task');
+			return;
+		}
+		if (due > new Date(task.due)) {
+			setError('Cannot postpone due date');
 			return;
 		}
 		const dueString = due.toLocaleDateString('en-US', {
@@ -79,6 +89,8 @@ const TaskEdit = ({
 						actionLabel={'Save'}
 						disableTaskField={true}
 						minCents={task.cents}
+						maxDue={task.due}
+						isLoading={isLoading}
 					/>
 				</DialogContent>
 			</Dialog>

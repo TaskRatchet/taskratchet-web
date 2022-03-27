@@ -1,6 +1,4 @@
-import React, { FormEvent, useEffect } from 'react';
-import './TaskForm.css';
-import browser from '../../lib/Browser';
+import React, { FormEvent } from 'react';
 import {
 	Alert,
 	Box,
@@ -9,19 +7,21 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material';
-import { DatePicker, TimePicker } from '@mui/lab';
+import { DatePicker, LoadingButton, TimePicker } from '@mui/lab';
 
 interface TaskFormProps {
 	task: string;
-	due: Date | null;
-	cents: number | null;
+	due: Date;
+	cents: number;
 	timezone: string;
 	error: string;
-	onChange: (task: string, due: Date | null, cents: number | null) => void;
-	onSubmit: () => void;
+	onChange: (task: string, due: Date, cents: number) => void;
+	onSubmit: (task: string, due: Date, cents: number) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
 	minCents?: number;
+	maxDue?: Date;
+	isLoading: boolean;
 }
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
@@ -34,37 +34,17 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		onChange,
 		onSubmit,
 		actionLabel = 'Add',
+		maxDue,
 		minCents = 100,
+		isLoading,
 	} = props;
-
-	useEffect(() => {
-		const getDefaultDue = () => {
-			const due = browser.getNowDate();
-
-			due.setDate(due.getDate() + 7);
-			due.setHours(23);
-			due.setMinutes(59);
-
-			return due;
-		};
-
-		// TODO: Default to stakes of last-added task
-		if (cents === null) {
-			onChange(task, due, 500);
-		}
-
-		// TODO: Default to due offset of last-added task
-		if (due === null) {
-			onChange(task, getDefaultDue(), cents);
-		}
-	}, [task, due, cents, minCents, onChange]);
 
 	return (
 		<Box
 			component={'form'}
 			onSubmit={(e: FormEvent) => {
 				e.preventDefault();
-				onSubmit();
+				onSubmit(task, due, cents);
 			}}
 			className={'organism-taskForm'}
 		>
@@ -89,10 +69,10 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					label="Stakes"
 					required
 					type="number"
-					value={cents && cents >= minCents ? cents / 100 : ''}
+					value={cents / 100}
 					onChange={(e) => {
-						const cents = parseInt(e.target.value) * 100;
-						onChange(task, due, cents >= minCents ? cents : 0);
+						const number = parseInt(e.target.value);
+						onChange(task, due, isNaN(number) ? 0 : number * 100);
 					}}
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>,
@@ -125,6 +105,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 							{...params}
 						/>
 					)}
+					maxDate={maxDue && new Date(maxDue)}
 				/>
 				<TimePicker
 					label="Due Time"
@@ -159,14 +140,15 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						{timezone}
 					</Button>
 
-					<Button
+					<LoadingButton
+						loading={isLoading}
 						variant="contained"
 						size={'small'}
 						type="submit"
 						color="primary"
 					>
 						{actionLabel}
-					</Button>
+					</LoadingButton>
 				</Stack>
 			</Stack>
 		</Box>
