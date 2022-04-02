@@ -81,8 +81,6 @@ export class Browser {
 		const pos = el.getBoundingClientRect().top;
 		const scrollableParent = getScrollableParent(el);
 
-		console.log({ pos, offset });
-
 		scrollableParent.scrollTo({
 			top: pos - offset,
 		});

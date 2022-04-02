@@ -1,57 +1,55 @@
-import React, { FormEvent, useEffect } from 'react';
-import './TaskForm.css';
-import browser from '../../lib/Browser';
-import { Box, Button, InputAdornment, Stack, TextField } from '@mui/material';
-import { DatePicker, TimePicker } from '@mui/lab';
+import React, { FormEvent } from 'react';
+import {
+	Alert,
+	Box,
+	Button,
+	InputAdornment,
+	Stack,
+	TextField,
+} from '@mui/material';
+import { DatePicker, LoadingButton, TimePicker } from '@mui/lab';
 
 interface TaskFormProps {
 	task: string;
-	due: Date | null;
-	cents: number | null;
+	due: Date;
+	cents: number;
 	timezone: string;
 	error: string;
-	onChange: (task: string, due: Date | null, cents: number | null) => void;
-	onSubmit: () => void;
+	onChange: (task: string, due: Date, cents: number) => void;
+	onSubmit: (task: string, due: Date, cents: number) => void;
+	actionLabel?: string;
+	disableTaskField?: boolean;
+	minCents?: number;
+	maxDue?: Date;
+	isLoading: boolean;
 }
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
-	const { task, due, cents, timezone, error, onChange, onSubmit } = props;
-
-	useEffect(() => {
-		const getDefaultDue = () => {
-			const due = browser.getNowDate();
-
-			due.setDate(due.getDate() + 7);
-			due.setHours(23);
-			due.setMinutes(59);
-
-			return due;
-		};
-
-		// TODO: Default to stakes of last-added task
-		if (cents === null) {
-			onChange(task, due, 500);
-		}
-
-		// TODO: Default to due offset of last-added task
-		if (due === null) {
-			onChange(task, getDefaultDue(), cents);
-		}
-	}, [task, due, cents, onChange]);
-
-	const dollars = cents ? cents / 100 : 0;
+	const {
+		task,
+		due,
+		cents,
+		timezone,
+		error,
+		onChange,
+		onSubmit,
+		actionLabel = 'Add',
+		maxDue,
+		minCents = 100,
+		isLoading,
+	} = props;
 
 	return (
 		<Box
 			component={'form'}
 			onSubmit={(e: FormEvent) => {
 				e.preventDefault();
-				onSubmit();
+				onSubmit(task, due, cents);
 			}}
 			className={'organism-taskForm'}
 		>
 			<Stack spacing={2}>
-				{error ? <p>{error}</p> : null}
+				{error ? <Alert severity={'error'}>{error}</Alert> : null}
 
 				<TextField
 					id="page-tasks__task"
@@ -64,19 +62,22 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					fullWidth
 					variant="standard"
 					multiline
+					disabled={props.disableTaskField}
 				/>
 				<TextField
 					id="page-tasks__dollars"
 					label="Stakes"
 					required
 					type="number"
-					value={dollars > 0 ? dollars : ''}
+					value={cents / 100}
 					onChange={(e) => {
-						onChange(task, due, parseInt(e.target.value) * 100);
+						const number = parseInt(e.target.value);
+						onChange(task, due, isNaN(number) ? 0 : number * 100);
 					}}
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>,
 						endAdornment: <InputAdornment position="end">USD</InputAdornment>,
+						inputProps: { min: minCents / 100 },
 					}}
 					variant="standard"
 				/>
@@ -104,6 +105,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 							{...params}
 						/>
 					)}
+					maxDate={maxDue && new Date(maxDue)}
 				/>
 				<TimePicker
 					label="Due Time"
@@ -138,14 +140,15 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						{timezone}
 					</Button>
 
-					<Button
+					<LoadingButton
+						loading={isLoading}
 						variant="contained"
 						size={'small'}
 						type="submit"
 						color="primary"
 					>
-						Add
-					</Button>
+						{actionLabel}
+					</LoadingButton>
 				</Stack>
 			</Stack>
 		</Box>

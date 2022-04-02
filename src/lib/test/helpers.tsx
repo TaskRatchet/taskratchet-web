@@ -6,6 +6,8 @@ import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
 import { addTask, updateTask } from '../api';
 import { waitFor } from '@testing-library/dom';
+import AdapterDateFns from '@mui/lab/AdapterDateFns';
+import { LocalizationProvider } from '@mui/lab';
 
 jest.mock('../../lib/api/getTimezones');
 
@@ -102,7 +104,9 @@ export function renderWithQueryProvider(
 	});
 
 	const result = render(
-		<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+		<LocalizationProvider dateAdapter={AdapterDateFns}>
+			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+		</LocalizationProvider>
 	);
 
 	return {
@@ -134,8 +138,8 @@ export function makeTask({
 	complete = false,
 	due = '5/22/2020, 11:59 PM',
 	due_timestamp = undefined,
-	id = Math.random(),
-	cents = 0,
+	id = Math.random() + '',
+	cents = 100,
 	task = 'the_task',
 	status = complete ? 'complete' : 'pending',
 	isNew = undefined,

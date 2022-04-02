@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
 import { addTask } from './addTask';
 import toaster from '../Toaster';
 
@@ -10,10 +10,10 @@ interface Input {
 
 export function useAddTask(
 	onSave: (t: TaskType) => void
-): (task: string, due: string, cents: number) => void {
+): UseMutationResult<Response, Error, Input> {
 	const queryClient = useQueryClient();
 
-	const { mutate } = useMutation(
+	return useMutation(
 		({ task, due, cents }: Input) => {
 			// TODO: Refactor addTask to make closure unnecessary
 			return addTask(task, due, cents);
@@ -48,8 +48,4 @@ export function useAddTask(
 			},
 		}
 	);
-
-	return (task: string, due: string, cents: number): void => {
-		mutate({ task, due, cents });
-	};
 }

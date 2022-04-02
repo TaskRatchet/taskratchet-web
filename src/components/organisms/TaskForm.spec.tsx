@@ -1,16 +1,9 @@
 import TaskForm from './TaskForm';
 import React from 'react';
-import { fireEvent, render, RenderResult } from '@testing-library/react';
+import { render, RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-
-jest.mock('@mui/lab', () => {
-	return {
-		DatePicker: jest.requireActual('@mui/lab/DesktopDatePicker').default,
-		TimePicker: jest.requireActual('@mui/lab/DesktopTimePicker').default,
-	};
-});
 
 global.document.createRange = () =>
 	({
@@ -24,29 +17,40 @@ global.document.createRange = () =>
 
 interface RenderComponentProps {
 	task?: string;
-	due?: Date | null;
-	cents?: number | null;
+	due?: Date;
+	cents?: number;
 	timezone?: string;
 	error?: string;
-	onChange?: (task: string, due: Date | null, cents: number | null) => void;
+	onChange?: (task: string, due: Date, cents: number) => void;
 	onSubmit?: () => void;
+	isLoading?: boolean;
 }
 
 const renderComponent = (props: RenderComponentProps = {}) => {
 	const {
 		task = '',
-		due = null,
-		cents = null,
+		due = new Date(),
+		cents = 500,
 		timezone = '',
 		error = '',
 		onChange = () => undefined,
 		onSubmit = () => undefined,
+		isLoading = false,
 	} = props;
 
 	const result: RenderResult = render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<TaskForm
-				{...{ task, due, cents, timezone, error, onChange, onSubmit }}
+				{...{
+					task,
+					due,
+					cents,
+					timezone,
+					error,
+					onChange,
+					onSubmit,
+					isLoading,
+				}}
 			/>
 		</LocalizationProvider>
 	);
@@ -69,12 +73,13 @@ describe('TaskForm', () => {
 
 	it('calls onChange when task modified', async () => {
 		const onChange = jest.fn();
+		const due = new Date();
 
-		const { taskInput } = renderComponent({ onChange });
+		const { taskInput } = renderComponent({ onChange, due });
 
 		await userEvent.type(taskInput, 'a');
 
-		expect(onChange).toBeCalledWith('a', null, null);
+		expect(onChange).toBeCalledWith('a', due, 500);
 	});
 
 	it('calls onChange when due modified', async () => {
@@ -82,7 +87,7 @@ describe('TaskForm', () => {
 
 		const { dueTimeInput } = renderComponent({ onChange });
 
-		fireEvent.change(dueTimeInput);
+		await userEvent.type(dueTimeInput, '{backspace}{backspace}am');
 
 		expect(onChange).toBeCalled();
 	});
@@ -94,15 +99,7 @@ describe('TaskForm', () => {
 
 		await userEvent.type(centsInput, '1');
 
-		expect(onChange).toBeCalledWith('', null, 100);
-	});
-
-	it('allows deleting all stakes digits', async () => {
-		const { centsInput } = renderComponent();
-
-		await userEvent.type(centsInput, '{backspace}');
-
-		expect(centsInput).toHaveValue(null);
+		expect(onChange).toBeCalledWith(expect.anything(), expect.anything(), 5100);
 	});
 
 	it('preserves time when editing date', async () => {

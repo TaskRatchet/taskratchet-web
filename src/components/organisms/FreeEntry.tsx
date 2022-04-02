@@ -69,8 +69,6 @@ const FreeEntry = (props: FreeEntryProps): JSX.Element => {
 
 	const { taskHighlighted } = parseTask(task);
 
-	// console.log({task, taskHighlighted})
-
 	return (
 		<form
 			onSubmit={(e) => {
