@@ -1,7 +1,13 @@
 import * as new_api from '../../lib/api';
 import { addTask, getTasks, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import {
+	act,
+	fireEvent,
+	render,
+	waitFor,
+	screen,
+} from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -18,6 +24,7 @@ import browser from '../../lib/Browser';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { mockReactListRef } from '../../__mocks__/react-list';
+import { editTask } from '../../lib/api/editTask';
 
 jest.mock('../../lib/api/apiFetch');
 jest.mock('../../lib/api/getTasks');
@@ -28,7 +35,10 @@ jest.mock('../../lib/api/addTask');
 jest.mock('../../lib/Toaster');
 jest.mock('../../lib/LegacyApi');
 jest.mock('../../lib/getUnloadMessage');
+jest.mock('../../lib/api/editTask');
 jest.mock('react-ga');
+
+const mockEditTask = editTask as jest.Mock;
 
 global.document.createRange = () =>
 	({
@@ -858,13 +868,33 @@ describe('tasks page', () => {
 
 		expect(mockReactListRef.scrollTo).toBeCalledTimes(1);
 	});
-});
 
-// has filter menu
-// filters by complete
-// filters by pending
-// filters by expired
-// loads from cookie
+	it('reloads tasks on task edit save', async () => {
+		loadTasksApiData({
+			tasks: [makeTask()],
+		});
+		mockEditTask.mockResolvedValue('result');
+
+		renderTasksPage();
+
+		await waitFor(() =>
+			expect(screen.getByText('the_task')).toBeInTheDocument()
+		);
+
+		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(screen.getByText('Edit'));
+
+		await waitFor(() => {
+			expect(screen.getByLabelText('Due Date *')).toBeInTheDocument();
+		});
+
+		userEvent.click(screen.getByText('Save'));
+
+		await waitFor(() => {
+			expect(getTasks).toBeCalledTimes(2);
+		});
+	});
+});
 
 // TODO:
 // lazy load API data for tasks

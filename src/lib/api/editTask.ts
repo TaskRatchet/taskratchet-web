@@ -6,7 +6,6 @@ export async function editTask(
 	due: string,
 	cents: number
 ): Promise<Response> {
-	console.log('editing task');
 	const response = await apiFetch(`me/tasks/${id}`, true, 'PUT', {
 		due,
 		cents,

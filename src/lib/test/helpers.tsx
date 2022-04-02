@@ -139,7 +139,7 @@ export function makeTask({
 	due = '5/22/2020, 11:59 PM',
 	due_timestamp = undefined,
 	id = Math.random() + '',
-	cents = 0,
+	cents = 100,
 	task = 'the_task',
 	status = complete ? 'complete' : 'pending',
 	isNew = undefined,

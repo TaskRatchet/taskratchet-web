@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import TaskForm from './TaskForm';
 import { useTimezone } from '../../lib/api/useTimezone';
 import { Dialog, DialogContent, DialogTitle, MenuItem } from '@mui/material';
-import { useMutation } from 'react-query';
-import { editTask } from '../../lib/api/editTask';
-
-type EditParams = { id: string; due: string; cents: number };
+import useEditTask from '../../lib/api/useEditTask';
 
 const TaskEdit = ({
 	task,
@@ -21,16 +18,7 @@ const TaskEdit = ({
 	const [cents, setCents] = useState<number>(task.cents);
 	const [error, setError] = useState<string>('');
 	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const {
-		mutate,
-		error: apiError,
-		isLoading,
-	} = useMutation<unknown, { message: string }, EditParams, unknown>(
-		['edit', 'task_id'],
-		(data: EditParams) => {
-			return editTask(data.id, data.due, data.cents);
-		}
-	);
+	const editTask = useEditTask();
 
 	const onChange = (task: string, due: Date, cents: number) => {
 		setDue(due);
@@ -60,7 +48,7 @@ const TaskEdit = ({
 			setError('Failed to edit task');
 			return;
 		}
-		mutate(
+		editTask.mutate(
 			{ id: task.id, due: dueString, cents },
 			{
 				onSuccess: () => {
@@ -90,14 +78,14 @@ const TaskEdit = ({
 						due={due}
 						cents={cents}
 						timezone={timezone}
-						error={apiError?.message || error || ''}
+						error={editTask.error?.message || error || ''}
 						onChange={onChange}
 						onSubmit={onSubmit}
 						actionLabel={'Save'}
 						disableTaskField={true}
 						minCents={task.cents}
 						maxDue={task.due}
-						isLoading={isLoading}
+						isLoading={editTask.isLoading}
 					/>
 				</DialogContent>
 			</Dialog>
