@@ -28,6 +28,7 @@ const TaskEntry = ({
 	const [cents, setCents] = useState<number>(500);
 	const [error, setError] = useState<string>('');
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const minDue = browser.getNowDate();
 
 	const onChange = (task: string, due: Date, cents: number) => {
 		setTask(task);
@@ -36,8 +37,13 @@ const TaskEntry = ({
 	};
 
 	function onSubmit() {
+		// TODO: Don't submit if the task is missing...
 		setError(task ? '' : 'Task is required');
 		if (!due || !cents) {
+			return;
+		}
+		if (new Date(due) < minDue) {
+			setError('Due date must be in the future');
 			return;
 		}
 		const dueString = due.toLocaleDateString('en-US', {
@@ -77,6 +83,7 @@ const TaskEntry = ({
 						onChange={onChange}
 						onSubmit={onSubmit}
 						isLoading={addTask.isLoading}
+						minDue={minDue}
 					/>
 				</DialogContent>
 			</Dialog>

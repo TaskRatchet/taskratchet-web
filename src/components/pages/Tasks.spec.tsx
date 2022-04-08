@@ -898,13 +898,4 @@ describe('tasks page', () => {
 
 // TODO:
 // lazy load API data for tasks
-// Pull initial stakes & due date from most-recently added task
-// Uncomment and fix tasks related to free-entry form
 // Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574
-
-// INITIAL SCROLL ISSUE
-// https://github.com/caseywebdev/react-list#scrolltoindex
-// https://github.com/caseywebdev/react-list/issues/148
-// https://github.com/caseywebdev/react-list/issues/118
-// but it works when clicking today so I don't think it's the variable issue
-// logging inside itemRenderer seems to indicate the issue isn't prerendering, since today button isn't hindered by that

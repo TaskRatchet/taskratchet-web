@@ -5,6 +5,8 @@ import userEvent from '@testing-library/user-event';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 
+jest.mock('../../lib/Browser');
+
 global.document.createRange = () =>
 	({
 		setStart: () => undefined,
@@ -132,6 +134,4 @@ describe('TaskForm', () => {
 });
 
 // TODO:
-// remembers last stakes
-// remembers last due
 // prevent adding task where date and time is in the past

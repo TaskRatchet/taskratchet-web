@@ -291,6 +291,5 @@ describe('Task component', () => {
 	});
 
 	// TODO
-	// triggers task list reload
 	// allow reducing pledge, extending deadline in first n minutes
 });

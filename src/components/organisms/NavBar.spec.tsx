@@ -107,6 +107,3 @@ describe('NavBar', () => {
 		});
 	});
 });
-
-// TODO:
-// buttons can be pressed while loading indicator present

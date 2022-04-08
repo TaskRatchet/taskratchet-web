@@ -21,6 +21,7 @@ interface TaskFormProps {
 	disableTaskField?: boolean;
 	minCents?: number;
 	maxDue?: Date;
+	minDue?: Date;
 	isLoading: boolean;
 }
 
@@ -35,6 +36,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		onSubmit,
 		actionLabel = 'Add',
 		maxDue,
+		minDue,
 		minCents = 100,
 		isLoading,
 	} = props;
@@ -106,6 +108,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						/>
 					)}
 					maxDate={maxDue && new Date(maxDue)}
+					minDate={minDue && new Date(minDue)}
 				/>
 				<TimePicker
 					label="Due Time"
