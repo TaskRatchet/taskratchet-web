@@ -8,6 +8,7 @@ import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
 import { mockReactListRef } from './__mocks__/react-list';
 import { waitFor } from '@testing-library/dom';
+import { addTask } from './lib/api';
 
 jest.mock('./lib/api/getTasks');
 jest.mock('./lib/api/getMe');
@@ -184,6 +185,24 @@ describe('App', () => {
 		await waitFor(() => {
 			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(2);
 		});
+	});
+
+	it('prevents adding task with due date in the past', async () => {
+		loadNowDate('1/1/2023');
+
+		const { getByText, openForm, getDueInput } = renderPage();
+
+		await openForm();
+
+		await userEvent.type(getDueInput(), '{backspace}0');
+
+		userEvent.click(getByText('Add'));
+
+		await waitFor(() => {
+			expect(getByText('Due date must be in the future')).toBeInTheDocument();
+		});
+
+		expect(addTask).not.toBeCalled();
 	});
 });
 
