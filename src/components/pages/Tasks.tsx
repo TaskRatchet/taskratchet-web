@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.min.css';
-import TaskEntry from '../organisms/TaskEntry';
+import PlusFab from '../organisms/PlusFab';
 import TaskList from '../organisms/TaskList';
 import { useCloseWarning } from '../../lib/useCloseWarning';
 
@@ -17,7 +17,7 @@ const Tasks = ({ lastToday, filters }: TasksProps): JSX.Element => {
 	return (
 		<>
 			<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
-			<TaskEntry onSave={setNewTask} />
+			<PlusFab onSave={setNewTask} />
 		</>
 	);
 };

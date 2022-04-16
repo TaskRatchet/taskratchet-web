@@ -36,6 +36,7 @@ function renderPage() {
 		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
 		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
 		getDueInput: () => getByLabelText('Due Date *') as HTMLInputElement,
+		getStakesInput: () => getByLabelText('Stakes *') as HTMLInputElement,
 		getAddButton: () => getByText('Add') as HTMLButtonElement,
 		clickCheckbox: (task = 'the_task') => {
 			const desc = getByText(task);
@@ -203,6 +204,118 @@ describe('App', () => {
 		});
 
 		expect(addTask).not.toBeCalled();
+	});
+
+	it('allows user to create new task based on existing task', async () => {
+		// User should be able to select "Copy" from a task's context menu. This
+		// should open the "New Task" form, prefilling the form with the existing
+		// task's title, due date, and stakes.
+
+		loadTasksApiData({
+			tasks: [makeTask({ task: 'the_task' })],
+		});
+
+		const { getByLabelText, getByText, getTaskInput } = renderPage();
+
+		await waitFor(() => {
+			expect(getByText('the_task')).toBeInTheDocument();
+		});
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Copy'));
+
+		expect(getTaskInput()).toBeInTheDocument();
+	});
+
+	it('copies task name into form when copying task', async () => {
+		loadTasksApiData({
+			tasks: [makeTask({ task: 'the_task' })],
+		});
+
+		const { getByLabelText, getByText, getTaskInput } = renderPage();
+
+		await waitFor(() => {
+			expect(getByText('the_task')).toBeInTheDocument();
+		});
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Copy'));
+
+		expect(getTaskInput()).toHaveValue('the_task');
+	});
+
+	it('copies task due date into form when copying task', async () => {
+		loadNowDate('2/1/2000');
+
+		loadTasksApiData({
+			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
+		});
+
+		const { getByLabelText, getByText, getDueInput } = renderPage();
+
+		await waitFor(() => {
+			expect(getByText('the_task')).toBeInTheDocument();
+		});
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Copy'));
+
+		expect(getDueInput()).toHaveValue('01/01/2020');
+	});
+
+	it('copies task stakes into form when copying task', async () => {
+		loadTasksApiData({
+			tasks: [makeTask({ cents: 100 })],
+		});
+
+		const { getByLabelText, getByText, getStakesInput } = renderPage();
+
+		await waitFor(() => {
+			expect(getByText('the_task')).toBeInTheDocument();
+		});
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Copy'));
+
+		expect(getStakesInput()).toHaveValue(1);
+	});
+
+	it('sets date input to one week in future when copying task with due date in past', async () => {
+		loadNowDate('2/1/2020');
+
+		loadTasksApiData({
+			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
+		});
+
+		const { getByLabelText, getByText, getDueInput } = renderPage();
+
+		await waitFor(() => {
+			expect(getByText('the_task')).toBeInTheDocument();
+		});
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Copy'));
+
+		expect(getDueInput()).toHaveValue('02/08/2020');
+	});
+
+	it('closes menu when clicking copy', async () => {
+		loadTasksApiData({
+			tasks: [makeTask({ task: 'the_task' })],
+		});
+
+		const { getByLabelText, getByText } = renderPage();
+
+		await waitFor(() => {
+			expect(getByText('the_task')).toBeInTheDocument();
+		});
+
+		userEvent.click(getByLabelText('Menu'));
+		userEvent.click(getByText('Copy'));
+
+		await waitFor(() => {
+			expect(getByText('Copy')).not.toBeVisible();
+		});
 	});
 });
 
