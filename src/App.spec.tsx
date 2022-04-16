@@ -7,7 +7,7 @@ import userEvent from '@testing-library/user-event';
 import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
 import { mockReactListRef } from './__mocks__/react-list';
-import { waitFor } from '@testing-library/dom';
+import { waitFor, screen } from '@testing-library/dom';
 import { addTask } from './lib/api';
 
 jest.mock('./lib/api/getTasks');
@@ -20,36 +20,29 @@ jest.mock('react-ga');
 
 const mockUseSession = useSession as jest.Mock;
 
+const openForm = () =>
+	waitFor(() => userEvent.click(screen.getByLabelText('add')));
+
+const getTaskInput = () => screen.getByLabelText('Task *') as HTMLInputElement;
+
+const getDueInput = () =>
+	screen.getByLabelText('Due Date *') as HTMLInputElement;
+
+const getStakesInput = () =>
+	screen.getByLabelText('Stakes *') as HTMLInputElement;
+
+const getAddButton = () => screen.getByText('Add') as HTMLButtonElement;
+
 function renderPage() {
 	mockUseSession.mockReturnValue({
 		email: 'the_email',
 	});
 
-	const getters = render(
+	return render(
 		<MemoryRouter initialEntries={['/']}>
 			<App />
 		</MemoryRouter>
 	);
-	const { getByText, getByLabelText } = getters;
-
-	return {
-		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
-		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
-		getDueInput: () => getByLabelText('Due Date *') as HTMLInputElement,
-		getStakesInput: () => getByLabelText('Stakes *') as HTMLInputElement,
-		getAddButton: () => getByText('Add') as HTMLButtonElement,
-		clickCheckbox: (task = 'the_task') => {
-			const desc = getByText(task);
-			const checkbox = desc.previousElementSibling;
-
-			if (!checkbox) {
-				throw Error('Missing task checkbox');
-			}
-
-			userEvent.click(checkbox);
-		},
-		...getters,
-	};
 }
 
 describe('App', () => {
@@ -66,11 +59,11 @@ describe('App', () => {
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
 		});
 
-		const { getByLabelText } = renderPage();
+		renderPage();
 
 		await new Promise(process.nextTick);
 
-		userEvent.click(getByLabelText('today'));
+		userEvent.click(screen.getByLabelText('today'));
 
 		await waitFor(() => {
 			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(0);
@@ -78,30 +71,30 @@ describe('App', () => {
 	});
 
 	it('has filter entries', async () => {
-		const { getByLabelText } = renderPage();
+		renderPage();
 
-		userEvent.click(getByLabelText('filters'));
+		userEvent.click(screen.getByLabelText('filters'));
 
-		expect(getByLabelText('toggle filter pending')).toBeInTheDocument();
-		expect(getByLabelText('toggle filter complete')).toBeInTheDocument();
-		expect(getByLabelText('toggle filter expired')).toBeInTheDocument();
+		expect(screen.getByLabelText('toggle filter pending')).toBeInTheDocument();
+		expect(screen.getByLabelText('toggle filter complete')).toBeInTheDocument();
+		expect(screen.getByLabelText('toggle filter expired')).toBeInTheDocument();
 	});
 
 	it('checks items by default', async () => {
-		const { getByLabelText } = renderPage();
+		renderPage();
 
-		userEvent.click(getByLabelText('filters'));
+		userEvent.click(screen.getByLabelText('filters'));
 
-		expect(getByLabelText('pending')).toBeChecked();
+		expect(screen.getByLabelText('pending')).toBeChecked();
 	});
 
 	it('toggles checkmark when entry clicked', async () => {
-		const { getByLabelText, getByText } = renderPage();
+		renderPage();
 
-		userEvent.click(getByLabelText('filters'));
-		userEvent.click(getByText('pending'));
+		userEvent.click(screen.getByLabelText('filters'));
+		userEvent.click(screen.getByText('pending'));
 
-		expect(getByLabelText('pending')).not.toBeChecked();
+		expect(screen.getByLabelText('pending')).not.toBeChecked();
 	});
 
 	it('persists checked state when reopening menu', async () => {
@@ -142,22 +135,22 @@ describe('App', () => {
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
 		});
 
-		const { getByLabelText, getByText, queryByText } = renderPage();
+		renderPage();
 
 		await waitFor(() => {
-			expect(getByText('task 1')).toBeInTheDocument();
+			expect(screen.getByText('task 1')).toBeInTheDocument();
 		});
 
-		userEvent.click(getByLabelText('filters'));
-		userEvent.click(getByLabelText('toggle filter pending'));
+		userEvent.click(screen.getByLabelText('filters'));
+		userEvent.click(screen.getByLabelText('toggle filter pending'));
 
-		expect(queryByText('task 1')).not.toBeInTheDocument();
+		expect(screen.queryByText('task 1')).not.toBeInTheDocument();
 	});
 
 	it('scrolls to new task', async () => {
 		loadNowDate(new Date('1/1/2020'));
 
-		const { getTaskInput, getAddButton, openForm } = renderPage();
+		renderPage();
 
 		await openForm();
 
@@ -179,9 +172,9 @@ describe('App', () => {
 			],
 		});
 
-		const { getByLabelText } = renderPage();
+		renderPage();
 
-		userEvent.click(getByLabelText('today'));
+		userEvent.click(screen.getByLabelText('today'));
 
 		await waitFor(() => {
 			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(2);
@@ -191,16 +184,18 @@ describe('App', () => {
 	it('prevents adding task with due date in the past', async () => {
 		loadNowDate('1/1/2023');
 
-		const { getByText, openForm, getDueInput } = renderPage();
+		renderPage();
 
 		await openForm();
 
 		await userEvent.type(getDueInput(), '{backspace}0');
 
-		userEvent.click(getByText('Add'));
+		userEvent.click(screen.getByText('Add'));
 
 		await waitFor(() => {
-			expect(getByText('Due date must be in the future')).toBeInTheDocument();
+			expect(
+				screen.getByText('Due date must be in the future')
+			).toBeInTheDocument();
 		});
 
 		expect(addTask).not.toBeCalled();
@@ -215,14 +210,14 @@ describe('App', () => {
 			tasks: [makeTask({ task: 'the_task' })],
 		});
 
-		const { getByLabelText, getByText, getTaskInput } = renderPage();
+		renderPage();
 
 		await waitFor(() => {
-			expect(getByText('the_task')).toBeInTheDocument();
+			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(getByLabelText('Menu'));
-		userEvent.click(getByText('Copy'));
+		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(screen.getByText('Copy'));
 
 		expect(getTaskInput()).toBeInTheDocument();
 	});
@@ -232,14 +227,14 @@ describe('App', () => {
 			tasks: [makeTask({ task: 'the_task' })],
 		});
 
-		const { getByLabelText, getByText, getTaskInput } = renderPage();
+		renderPage();
 
 		await waitFor(() => {
-			expect(getByText('the_task')).toBeInTheDocument();
+			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(getByLabelText('Menu'));
-		userEvent.click(getByText('Copy'));
+		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(screen.getByText('Copy'));
 
 		expect(getTaskInput()).toHaveValue('the_task');
 	});
@@ -251,14 +246,14 @@ describe('App', () => {
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
 		});
 
-		const { getByLabelText, getByText, getDueInput } = renderPage();
+		renderPage();
 
 		await waitFor(() => {
-			expect(getByText('the_task')).toBeInTheDocument();
+			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(getByLabelText('Menu'));
-		userEvent.click(getByText('Copy'));
+		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(screen.getByText('Copy'));
 
 		expect(getDueInput()).toHaveValue('01/01/2020');
 	});
@@ -268,14 +263,14 @@ describe('App', () => {
 			tasks: [makeTask({ cents: 100 })],
 		});
 
-		const { getByLabelText, getByText, getStakesInput } = renderPage();
+		renderPage();
 
 		await waitFor(() => {
-			expect(getByText('the_task')).toBeInTheDocument();
+			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(getByLabelText('Menu'));
-		userEvent.click(getByText('Copy'));
+		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(screen.getByText('Copy'));
 
 		expect(getStakesInput()).toHaveValue(1);
 	});
@@ -287,14 +282,14 @@ describe('App', () => {
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
 		});
 
-		const { getByLabelText, getByText, getDueInput } = renderPage();
+		renderPage();
 
 		await waitFor(() => {
-			expect(getByText('the_task')).toBeInTheDocument();
+			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(getByLabelText('Menu'));
-		userEvent.click(getByText('Copy'));
+		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(screen.getByText('Copy'));
 
 		expect(getDueInput()).toHaveValue('02/08/2020');
 	});
@@ -304,17 +299,17 @@ describe('App', () => {
 			tasks: [makeTask({ task: 'the_task' })],
 		});
 
-		const { getByLabelText, getByText } = renderPage();
+		renderPage();
 
 		await waitFor(() => {
-			expect(getByText('the_task')).toBeInTheDocument();
+			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(getByLabelText('Menu'));
-		userEvent.click(getByText('Copy'));
+		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(screen.getByText('Copy'));
 
 		await waitFor(() => {
-			expect(getByText('Copy')).not.toBeVisible();
+			expect(screen.getByText('Copy')).not.toBeVisible();
 		});
 	});
 });
