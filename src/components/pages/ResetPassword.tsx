@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import api from '../../lib/LegacyApi';
 import { useLocation } from 'react-router-dom';
+import { Box } from '@mui/material';
 
 function ResetPassword(): JSX.Element {
 	const useToken = () => {
@@ -56,33 +57,35 @@ function ResetPassword(): JSX.Element {
 	};
 
 	return (
-		<form onSubmit={resetPassword}>
-			<h1>Reset Password</h1>
+		<Box sx={{ p: 2 }}>
+			<form onSubmit={resetPassword}>
+				<h1>Reset Password</h1>
 
-			{messages.map((msg, i) => (
-				<p key={i}>{msg}</p>
-			))}
+				{messages.map((msg, i) => (
+					<p key={i}>{msg}</p>
+				))}
 
-			<input
-				type="password"
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
-				name={'password'}
-				placeholder={'Password'}
-			/>
-			<br />
+				<input
+					type="password"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					name={'password'}
+					placeholder={'Password'}
+				/>
+				<br />
 
-			<input
-				type="password"
-				value={password2}
-				onChange={(e) => setPassword2(e.target.value)}
-				name={'password2'}
-				placeholder={'Retype Password'}
-			/>
-			<br />
+				<input
+					type="password"
+					value={password2}
+					onChange={(e) => setPassword2(e.target.value)}
+					name={'password2'}
+					placeholder={'Retype Password'}
+				/>
+				<br />
 
-			<input type="submit" value={'Save new password'} />
-		</form>
+				<input type="submit" value={'Save new password'} />
+			</form>
+		</Box>
 	);
 }
 

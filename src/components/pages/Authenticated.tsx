@@ -2,7 +2,7 @@ import React from 'react';
 import LoginForm from '../organisms/Login';
 import { Link } from 'react-router-dom';
 import { useSession } from '../../lib/api/useSession';
-import './Authenticated.css';
+import { Box } from '@mui/material';
 
 const Authenticated = ({
 	children,
@@ -12,13 +12,13 @@ const Authenticated = ({
 	if (session) return <>{children}</>;
 
 	return (
-		<div className={'page-authenticated'}>
+		<Box sx={{ p: 2 }}>
 			<p>
 				Please login or <Link to={'/register'}>register</Link> to view this
 				page.
 			</p>
 			<LoginForm />
-		</div>
+		</Box>
 	);
 };
 

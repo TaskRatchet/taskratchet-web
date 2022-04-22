@@ -22,7 +22,7 @@ import browser from './lib/Browser';
 import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { Box, Container, CssBaseline, Stack } from '@mui/material';
+import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 
 toast.configure();
 
@@ -71,6 +71,16 @@ export function App(): JSX.Element {
 
 	usePageViews();
 
+	const email = (
+		<a
+			href="mailto:nathan@taskratchet.com"
+			target={'_blank'}
+			rel="noopener noreferrer"
+		>
+			nathan@taskratchet.com
+		</a>
+	);
+
 	return (
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<QueryClientProvider client={queryClient}>
@@ -82,7 +92,6 @@ export function App(): JSX.Element {
 							maxWidth={'sm'}
 							disableGutters
 							sx={{
-								pb: 12,
 								minHeight: 1,
 							}}
 						>
@@ -92,19 +101,20 @@ export function App(): JSX.Element {
 								</Route>
 
 								<Route path={'/success'}>
-									Your payment method has been saved successfully.
+									<Box sx={{ p: 2 }}>
+										<Alert severity="success">
+											Your payment method has been saved successfully.
+										</Alert>
+									</Box>
 								</Route>
 
 								<Route path={'/cancel'}>
-									Your payment method could not be saved. Please contact
-									<a
-										href="mailto:nathan@taskratchet.com"
-										target={'_blank'}
-										rel="noopener noreferrer"
-									>
-										nathan@taskratchet.com
-									</a>
-									for assistance.
+									<Box sx={{ p: 2 }}>
+										<Alert severity="error">
+											Your payment method could not be saved. Please contact{' '}
+											{email} for assistance.
+										</Alert>
+									</Box>
 								</Route>
 
 								<Route path={'/account'}>
