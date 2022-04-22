@@ -4,6 +4,7 @@ import toaster from '../../lib/Toaster';
 import { useCheckoutSession, useTimezones } from '../../lib/api';
 import Input from '../molecules/Input';
 import Field from '../molecules/Field';
+import { Box } from '@mui/material';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>(''),
@@ -115,92 +116,94 @@ const Register = (): JSX.Element => {
 	};
 
 	return (
-		<form onSubmit={register}>
-			<h1>Register</h1>
+		<Box sx={{ p: 2 }}>
+			<form onSubmit={register}>
+				<h1>Register</h1>
 
-			<Input
-				type="text"
-				value={name}
-				onChange={(e) => setName(e.target.value)}
-				label={'Name'}
-				id={'name'}
-			/>
+				<Input
+					type="text"
+					value={name}
+					onChange={(e) => setName(e.target.value)}
+					label={'Name'}
+					id={'name'}
+				/>
 
-			<Input
-				type="email"
-				value={email}
-				onChange={(e) => setEmail(e.target.value)}
-				id={'email'}
-				label={'Email'}
-			/>
+				<Input
+					type="email"
+					value={email}
+					onChange={(e) => setEmail(e.target.value)}
+					id={'email'}
+					label={'Email'}
+				/>
 
-			<Input
-				type="password"
-				value={password}
-				onChange={(e) => setPassword(e.target.value)}
-				id={'password'}
-				label={'Password'}
-			/>
+				<Input
+					type="password"
+					value={password}
+					onChange={(e) => setPassword(e.target.value)}
+					id={'password'}
+					label={'Password'}
+				/>
 
-			<Input
-				type="password"
-				value={password2}
-				onChange={(e) => setPassword2(e.target.value)}
-				id={'password2'}
-				label={'Retype Password'}
-			/>
+				<Input
+					type="password"
+					value={password2}
+					onChange={(e) => setPassword2(e.target.value)}
+					id={'password2'}
+					label={'Retype Password'}
+				/>
 
-			<Field label={'Timezone'} id={'timezone'}>
-				<select
-					id="timezone"
-					name="timezone"
-					value={timezone}
-					onChange={(e) => setTimezone(e.target.value)}
-				>
-					{getTimezoneOptions()}
-				</select>
-			</Field>
-
-			<p>
-				<label>
-					<input
-						type="checkbox"
-						value={'yes'}
-						onChange={(e) => {
-							setAgreed(e.target.value === 'yes');
-						}}
-					/>
-					&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
-					<a
-						href="https://taskratchet.com/privacy/"
-						target={'_blank'}
-						rel={'noopener noreferrer'}
+				<Field label={'Timezone'} id={'timezone'}>
+					<select
+						id="timezone"
+						name="timezone"
+						value={timezone}
+						onChange={(e) => setTimezone(e.target.value)}
 					>
-						privacy policy
-					</a>{' '}
-					and{' '}
-					<a
-						href="https://taskratchet.com/terms/"
-						target={'_blank'}
-						rel={'noopener noreferrer'}
-					>
-						terms of service
-					</a>
-					.
-				</label>
-			</p>
+						{getTimezoneOptions()}
+					</select>
+				</Field>
 
-			<p>
-				Press the button below to be redirected to our payments provider to add
-				your payment method.
-			</p>
+				<p>
+					<label>
+						<input
+							type="checkbox"
+							value={'yes'}
+							onChange={(e) => {
+								setAgreed(e.target.value === 'yes');
+							}}
+						/>
+						&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
+						<a
+							href="https://taskratchet.com/privacy/"
+							target={'_blank'}
+							rel={'noopener noreferrer'}
+						>
+							privacy policy
+						</a>{' '}
+						and{' '}
+						<a
+							href="https://taskratchet.com/terms/"
+							target={'_blank'}
+							rel={'noopener noreferrer'}
+						>
+							terms of service
+						</a>
+						.
+					</label>
+				</p>
 
-			<input
-				type="submit"
-				value={'Add payment method'}
-				disabled={checkoutSession == null}
-			/>
-		</form>
+				<p>
+					Press the button below to be redirected to our payments provider to
+					add your payment method.
+				</p>
+
+				<input
+					type="submit"
+					value={'Add payment method'}
+					disabled={checkoutSession == null}
+				/>
+			</form>
+		</Box>
 	);
 };
 

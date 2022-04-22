@@ -1,14 +1,14 @@
 import React from 'react';
-import './Account.css';
 import BeeminderSettings from '../organisms/BeeminderSettings';
 import ApiSettings from '../organisms/ApiSettings';
 import GeneralSettings from '../organisms/GeneralSettings';
 import PasswordSettings from '../organisms/PasswordSettings';
 import PaymentSettings from '../organisms/PaymentSettings';
+import { Box } from '@mui/material';
 
 const Account = (): JSX.Element => {
 	return (
-		<div className={`page-account`}>
+		<Box sx={{ p: 2 }}>
 			<h1>Account</h1>
 
 			<GeneralSettings />
@@ -28,7 +28,7 @@ const Account = (): JSX.Element => {
 			<h2>API</h2>
 
 			<ApiSettings />
-		</div>
+		</Box>
 	);
 };
 
