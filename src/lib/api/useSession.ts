@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
-import Cookies from 'universal-cookie';
-
-const cookies = new Cookies();
 
 // TODO: Add proper type
 let sessionSubs: Array<CallableFunction> = [];
 
-function getSession(): Session {
-	return cookies.get('tr_session');
+function getSession(): Session | undefined {
+	const email = window.localStorage.getItem('email');
+	const token = window.localStorage.getItem('token');
+	if (email && token) {
+		return { email, token };
+	}
 }
 
 function subscribeToSession(callback: CallableFunction): void {
@@ -27,13 +28,14 @@ export function publishSession(): void {
 
 // TODO: Should this function be in separate file?
 export function logout(): void {
-	cookies.remove('tr_session');
+	window.localStorage.removeItem('email');
+	window.localStorage.removeItem('token');
 
 	publishSession();
 }
 
-export function useSession(): Session {
-	const [session, setSession] = useState<Session>(getSession());
+export function useSession(): Session | undefined {
+	const [session, setSession] = useState<Session | undefined>(getSession);
 
 	useEffect(() => {
 		function handleUpdate(session: Session) {

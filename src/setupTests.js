@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import fetchMock from 'jest-fetch-mock';
 
 jest.mock('react', () => ({
 	...jest.requireActual('react'),
@@ -26,6 +27,9 @@ function deleteAllCookies() {
 	}
 }
 
+fetchMock.enableMocks();
+
 beforeEach(() => {
+	fetch.resetMocks();
 	deleteAllCookies();
 });

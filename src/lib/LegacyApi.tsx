@@ -1,8 +1,5 @@
-import Cookies from 'universal-cookie';
 import { publishSession } from './api/useSession';
 import { apiFetch } from './api';
-
-const cookies = new Cookies();
 
 // TODO: Migrate away from everything in this class
 // TODO: Delete this file
@@ -24,16 +21,8 @@ export class LegacyApi {
 	}
 
 	_handleLoginResponse(email: string, token: string): void {
-		cookies.set(
-			'tr_session',
-			{
-				token: token,
-				email: email,
-			},
-			{
-				sameSite: 'lax',
-			}
-		);
+		window.localStorage.setItem('token', token);
+		window.localStorage.setItem('email', email);
 
 		publishSession();
 	}

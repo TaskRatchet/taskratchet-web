@@ -1,8 +1,5 @@
-import Cookies from 'universal-cookie';
 import { isProduction } from '../../tr_constants';
 import { logout } from './useSession';
-
-const cookies = new Cookies();
 
 const _get_base = () => {
 	if (isProduction) {
@@ -29,11 +26,11 @@ export async function apiFetch(
 	method = 'GET',
 	data: unknown = null
 ): Promise<Response> {
-	const session = cookies.get('tr_session'),
+	const token = window.localStorage.getItem('token'),
 		route_ = _trim(route, '/'),
 		base = _get_base();
 
-	if (protected_ && !session) {
+	if (protected_ && !token) {
 		throw new Error('User not logged in');
 	}
 
@@ -42,7 +39,7 @@ export async function apiFetch(
 		method: method,
 		body: data ? JSON.stringify(data) : undefined,
 		headers: {
-			'X-Taskratchet-Token': session ? session.token : undefined,
+			'X-Taskratchet-Token': token || '',
 		},
 	});
 
