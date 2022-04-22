@@ -17,6 +17,11 @@ describe('registration page', () => {
 	beforeEach(() => {
 		jest.resetAllMocks();
 		loadCheckoutSession();
+		window.Stripe = jest.fn(() => ({
+			redirectToCheckout: jest.fn(async () => ({
+				error: { message: 'error' },
+			})),
+		}));
 	});
 
 	it('uses timezone loading placeholder', async () => {
@@ -75,7 +80,9 @@ describe('registration page', () => {
 		await act(async () => {
 			loadTimezones(['the_timezone']);
 
-			jest.spyOn(api, 'register');
+			jest
+				.spyOn(api, 'register')
+				.mockImplementation(async () => new Response());
 
 			const { getByLabelText, getByText } = await renderWithQueryProvider(
 				<Register />
