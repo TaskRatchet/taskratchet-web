@@ -1,16 +1,16 @@
 {
-	"short_name": "React App",
-	"name": "Create React App Sample",
+	"short_name": "TaskRatchet",
+	"name": "TaskRatchet",
 	"icons": [
 		{
 			"src": "favicon.ico",
-			"sizes": "64x64 32x32 24x24 16x16",
+			"sizes": "16x16",
 			"type": "image/x-icon"
 		},
 		{
 			"src": "apple-icon.png",
 			"type": "image/png",
-			"sizes": "192x192"
+			"sizes": "512x512"
 		}
 	],
 	"start_url": ".",
