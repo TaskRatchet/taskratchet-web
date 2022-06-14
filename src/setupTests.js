@@ -30,6 +30,6 @@ function deleteAllCookies() {
 fetchMock.enableMocks();
 
 beforeEach(() => {
-	fetch.resetMocks();
+	fetchMock.resetMocks();
 	deleteAllCookies();
 });

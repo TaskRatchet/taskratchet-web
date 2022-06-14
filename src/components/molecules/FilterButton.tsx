@@ -3,6 +3,7 @@ import React, { useEffect } from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import {
+	Badge,
 	Checkbox,
 	FormControlLabel,
 	IconButton,
@@ -79,7 +80,12 @@ export default function FilterButton({
 					onClick={handleClick}
 					sx={{ m: 0.1 }}
 				>
-					<FilterAltIcon />
+					<Badge
+						badgeContent={Object.values(filters).filter((f) => !f).length}
+						color={'secondary'}
+					>
+						<FilterAltIcon />
+					</Badge>
 				</IconButton>
 			</Tooltip>
 			<Menu

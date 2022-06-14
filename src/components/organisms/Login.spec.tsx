@@ -1,17 +1,12 @@
-import createLoginMachine, { LoginContext } from './Login.machine';
+import createLoginMachine from './Login.machine';
 import api, { LegacyApi } from '../../lib/LegacyApi';
-import { EventObject, interpret, Interpreter, StateSchema } from 'xstate';
+import { interpret } from 'xstate';
 import { renderWithQueryProvider } from '../../lib/test/helpers';
 import Login from './Login';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 
-let service: Interpreter<
-		LoginContext,
-		StateSchema<LoginContext>,
-		EventObject & { value: string }
-	>,
-	mockApi: LegacyApi;
+let service: any, mockApi: LegacyApi;
 
 const createService = () => {
 	const machine = createLoginMachine({ api: mockApi });
