@@ -28,7 +28,7 @@ import { H } from 'highlight.run';
 toast.configure();
 
 H.init('qe9174g1', {
-	environment: process.env.NODE_ENV,
+	environment: isProduction ? 'production' : 'development',
 });
 
 window.stripe_key = isProduction
