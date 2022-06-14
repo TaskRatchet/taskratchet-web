@@ -312,6 +312,29 @@ describe('App', () => {
 			expect(screen.getByText('Copy')).not.toBeVisible();
 		});
 	});
+
+	it('indicates when filters are enabled', async () => {
+		renderPage();
+
+		userEvent.click(screen.getByLabelText('filters'));
+		userEvent.click(screen.getByLabelText('toggle filter pending'));
+
+		await waitFor(() => {
+			expect(screen.getByText('1')).toBeInTheDocument();
+		});
+	});
+
+	it('counts number of enabled filters', async () => {
+		renderPage();
+
+		userEvent.click(screen.getByLabelText('filters'));
+		userEvent.click(screen.getByLabelText('toggle filter pending'));
+		userEvent.click(screen.getByLabelText('toggle filter complete'));
+
+		await waitFor(() => {
+			expect(screen.getByText('2')).toBeInTheDocument();
+		});
+	});
 });
 
 // TODO: only highlights task on creation, not on re-load from server

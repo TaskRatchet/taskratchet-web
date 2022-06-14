@@ -23,8 +23,13 @@ import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
+import { H } from 'highlight.run';
 
 toast.configure();
+
+H.init('qe9174g1', {
+	environment: process.env.NODE_ENV,
+});
 
 window.stripe_key = isProduction
 	? 'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd'
