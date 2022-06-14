@@ -329,7 +329,7 @@ describe('App', () => {
 
 		userEvent.click(screen.getByLabelText('filters'));
 		userEvent.click(screen.getByLabelText('toggle filter pending'));
-		userEvent.click(screen.getByLabelText('toggle filter completed'));
+		userEvent.click(screen.getByLabelText('toggle filter complete'));
 
 		await waitFor(() => {
 			expect(screen.getByText('2')).toBeInTheDocument();
