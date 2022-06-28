@@ -67,7 +67,8 @@ export default function TaskAdd({
 			hour: 'numeric',
 			minute: 'numeric',
 		});
-		addTask.mutate({ task, due: dueString, cents });
+		const lines = task.split(/\r?\n/);
+		lines.forEach((l) => addTask.mutate({ task: l, due: dueString, cents }));
 	}
 
 	return (

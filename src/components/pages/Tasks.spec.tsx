@@ -312,129 +312,6 @@ describe('tasks page', () => {
 		});
 	});
 
-	// it("parses date", async () => {
-	//     await testParsesDueString(
-	//         "do x by Friday",
-	//         'Friday, 10/30/2020, 11:59 PM',
-	//         new Date('10/29/2020')
-	//     );
-	// })
-	//
-	// it("includes specific time", async () => {
-	//     await testParsesDueString(
-	//         "do x by Friday at 3pm",
-	//         'Friday, 10/30/2020, 03:00 PM',
-	//         new Date('10/29/2020')
-	//     );
-	// })
-	//
-	// it("uses last date in string", async () => {
-	//     await testParsesDueString(
-	//         "do january task by Friday at 3pm",
-	//         'Friday, 10/30/2020, 03:00 PM',
-	//         new Date('10/29/2020')
-	//     );
-	// })
-	//
-	// it("exposes no deadline", async () => {
-	//     await testParsesDueString(
-	//         "do the thing",
-	//         'No deadline found',
-	//         new Date('10/29/2020')
-	//     );
-	// })
-	//
-	// it("starts with no deadline", async () => {
-	//     await testParsesDueString(
-	//         "",
-	//         'No deadline found',
-	//         new Date('10/29/2020')
-	//     );
-	// })
-	//
-	// it("extracts stakes", async () => {
-	//     loadApiData()
-	//
-	//     const {taskInput, getByText} = await renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     await userEvent.type(taskInput, 'do this or pay $100')
-	//
-	//     expect(getByText("$100")).toBeInTheDocument()
-	// })
-	//
-	// it("starts without stakes", async () => {
-	//     loadApiData()
-	//
-	//     const {getByText} = await renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     expect(getByText("No stakes found")).toBeInTheDocument()
-	// })
-	//
-	// it("resets due date to null", async () => {
-	//     loadApiData()
-	//
-	//     const {taskInput, addButton, getByText} = renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     await userEvent.type(taskInput, "the_task by Friday or pay $5")
-	//     userEvent.click(addButton)
-	//
-	//     await waitFor(() => expect(getByText("No deadline found")).toBeInTheDocument())
-	// })
-
-	// it('highlights due date', async () => {
-	//     loadApiData()
-	//
-	//     const {taskInput, getByText} = renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     await userEvent.type(taskInput, "the_task today or pay $5")
-	//
-	//     expect(getByText("today")).toBeInTheDocument()
-	// })
-	//
-	// it('escapes tasks before echoing', async () => {
-	//     loadApiData()
-	//
-	//     const {taskInput, getByText} = renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     await userEvent.type(taskInput, "the_task <span>malicious</span>")
-	//
-	//     expect(() => getByText("malicious")).toThrow()
-	// })
-	//
-	// it('echos unhighlighted', async () => {
-	//     loadApiData()
-	//
-	//     const {taskInput, getByText} = renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     await userEvent.type(taskInput, "abc today def")
-	//
-	//     expect(getByText((m) => m.endsWith('def'))).toBeInTheDocument()
-	// })
-	//
-	// it('highlights pledge', async () => {
-	//     loadApiData()
-	//
-	//     const {taskInput, getByText} = renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     await userEvent.type(taskInput, "do for $9")
-	//
-	//     expect(getByText('$9')).toBeInTheDocument()
-	// })
-
 	it('updates checkboxes optimistically', async () => {
 		loadTasksApiData({
 			tasks: [makeTask({ id: '3' })],
@@ -892,6 +769,23 @@ describe('tasks page', () => {
 
 		await waitFor(() => {
 			expect(getTasks).toBeCalledTimes(2);
+		});
+	});
+
+	it('creates multiple tasks, one per line', async () => {
+		const view = renderTasksPage();
+
+		await view.openForm();
+
+		userEvent.type(view.getTaskInput(), 'task1{enter}task2');
+		userEvent.click(view.getAddButton());
+
+		await waitFor(() => {
+			expect(new_api.addTask).toBeCalledWith(
+				'task1',
+				expect.anything(),
+				expect.anything()
+			);
 		});
 	});
 });
