@@ -336,6 +336,3 @@ describe('App', () => {
 		});
 	});
 });
-
-// TODO: only highlights task on creation, not on re-load from server
-// do this by using a new: bool prop on newly-created tasks for highlight filtering
