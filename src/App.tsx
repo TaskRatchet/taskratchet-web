@@ -23,6 +23,8 @@ import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
+import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
+import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 
 toast.configure();
 
@@ -36,7 +38,19 @@ window.stripe_key = isProduction
 
 ReactGA.initialize('G-Y074NE79ML');
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			cacheTime: 1000 * 60 * 60 * 24,
+		},
+	},
+});
+
+const localStoragePersistor = createWebStoragePersistor({
+	storage: window.localStorage,
+});
+
+persistQueryClient({ queryClient, persistor: localStoragePersistor });
 
 function usePageViews(): void {
 	const location = useLocation();
