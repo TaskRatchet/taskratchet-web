@@ -18,13 +18,9 @@ import LoadingIndicator from '../molecules/LoadingIndicator';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
-	onFilterChange?: (filters: Filters) => void;
 }
 
-export default function NavBar({
-	onTodayClick,
-	onFilterChange,
-}: NavBarProps): JSX.Element {
+export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 	const location = useLocation();
 	const history = useHistory();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -54,7 +50,7 @@ export default function NavBar({
 					</Button>
 				</Typography>
 
-				<FilterButton onChange={onFilterChange} />
+				<FilterButton />
 
 				<Tooltip title={'Jump to Today'}>
 					<IconButton

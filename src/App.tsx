@@ -19,11 +19,12 @@ import { isProduction } from './tr_constants';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
-import { DEFAULT_FILTERS } from './components/molecules/FilterButton';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
+import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
+import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 
 toast.configure();
 
@@ -37,7 +38,19 @@ window.stripe_key = isProduction
 
 ReactGA.initialize('G-Y074NE79ML');
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			cacheTime: 1000 * 60 * 60 * 24,
+		},
+	},
+});
+
+const localStoragePersistor = createWebStoragePersistor({
+	storage: window.localStorage,
+});
+
+persistQueryClient({ queryClient, persistor: localStoragePersistor });
 
 function usePageViews(): void {
 	const location = useLocation();
@@ -52,7 +65,6 @@ function usePageViews(): void {
 
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
-	const [filters, setFilters] = useState<Filters>(DEFAULT_FILTERS);
 	const ref = useRef<HTMLElement>();
 	const history = useHistory();
 
@@ -91,7 +103,7 @@ export function App(): JSX.Element {
 			<QueryClientProvider client={queryClient}>
 				<CssBaseline />
 				<Stack sx={{ height: '100vh' }}>
-					<NavBar onTodayClick={handleTodayClick} onFilterChange={setFilters} />
+					<NavBar onTodayClick={handleTodayClick} />
 					<Box ref={ref} overflow={'scroll'} flexGrow={1}>
 						<Container
 							maxWidth={'sm'}
@@ -134,7 +146,7 @@ export function App(): JSX.Element {
 
 								<Route path={'/'}>
 									<Authenticated>
-										<Tasks lastToday={lastToday} filters={filters} />
+										<Tasks lastToday={lastToday} />
 									</Authenticated>
 								</Route>
 							</Switch>

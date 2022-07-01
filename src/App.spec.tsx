@@ -94,7 +94,9 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('filters'));
 		userEvent.click(screen.getByText('pending'));
 
-		expect(screen.getByLabelText('pending')).not.toBeChecked();
+		await waitFor(() => {
+			expect(screen.getByLabelText('pending')).not.toBeChecked();
+		});
 	});
 
 	it('persists checked state when reopening menu', async () => {
@@ -125,7 +127,9 @@ describe('App', () => {
 
 		userEvent.click(getByLabelTextTwo('filters'));
 
-		expect(getByLabelTextTwo('pending')).not.toBeChecked();
+		await waitFor(() => {
+			expect(getByLabelTextTwo('pending')).not.toBeChecked();
+		});
 	});
 
 	it('filters tasks', async () => {
@@ -144,7 +148,9 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('filters'));
 		userEvent.click(screen.getByLabelText('toggle filter pending'));
 
-		expect(screen.queryByText('task 1')).not.toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.queryByText('task 1')).not.toBeInTheDocument();
+		});
 	});
 
 	it('scrolls to new task', async () => {

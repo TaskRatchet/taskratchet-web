@@ -32,4 +32,5 @@ fetchMock.enableMocks();
 beforeEach(() => {
 	fetchMock.resetMocks();
 	deleteAllCookies();
+	window.localStorage.clear();
 });
