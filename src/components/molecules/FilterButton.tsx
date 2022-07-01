@@ -1,5 +1,5 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import {
@@ -10,44 +10,20 @@ import {
 	MenuList,
 	Tooltip,
 } from '@mui/material';
-import useCookie from '../../lib/useCookie';
+import useFilters from '../../lib/useFilters';
 
-export const DEFAULT_FILTERS = {
-	pending: true,
-	complete: true,
-	expired: true,
-};
-
-export default function FilterButton({
-	onChange,
-}: {
-	onChange?: (filters: Filters) => void;
-}): JSX.Element {
-	const [filters, setFilters] = useCookie<Filters>(
-		'tr-filters',
-		DEFAULT_FILTERS
-	);
+export default function FilterButton(): JSX.Element {
+	const { filters, toggleFilter } = useFilters();
 	const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
 	const isOpen = Boolean(anchorEl);
+
 	const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
 		setAnchorEl(event.currentTarget);
 	};
+
 	const handleClose = () => {
 		setAnchorEl(null);
 	};
-	const toggleFilter = (filter: Status) => {
-		setFilters(
-			{
-				...filters,
-				[filter]: !filters[filter],
-			},
-			60
-		);
-	};
-
-	useEffect(() => {
-		onChange && onChange(filters);
-	}, [filters, onChange]);
 
 	function Entry({ label }: { label: Status }): JSX.Element {
 		return (
@@ -56,7 +32,7 @@ export default function FilterButton({
 					control={
 						<Checkbox
 							checked={filters[label]}
-							onClick={() => toggleFilter(label)}
+							onChange={() => toggleFilter(label)}
 						/>
 					}
 					label={label}

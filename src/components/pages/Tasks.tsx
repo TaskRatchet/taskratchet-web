@@ -7,17 +7,16 @@ import { Box } from '@mui/material';
 
 interface TasksProps {
 	lastToday: Date | undefined;
-	filters?: Filters;
 }
 
-const Tasks = ({ lastToday, filters }: TasksProps): JSX.Element => {
+const Tasks = ({ lastToday }: TasksProps): JSX.Element => {
 	const [newTask, setNewTask] = useState<TaskType>();
 
 	useCloseWarning();
 
 	return (
 		<Box sx={{ pb: 12 }}>
-			<TaskList lastToday={lastToday} newTask={newTask} filters={filters} />
+			<TaskList lastToday={lastToday} newTask={newTask} />
 			<PlusFab onSave={setNewTask} />
 		</Box>
 	);

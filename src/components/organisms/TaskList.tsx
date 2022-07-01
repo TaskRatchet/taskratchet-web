@@ -5,23 +5,20 @@ import createListItems from '../../lib/createListItems';
 import ReactList from 'react-list';
 import { Alert, AlertTitle, ListSubheader } from '@mui/material';
 import Task from '../molecules/Task';
+import useFilters from '../../lib/useFilters';
 
 interface TaskListProps {
 	lastToday?: Date;
 	newTask?: TaskType;
-	filters?: Filters;
 }
 
 function isTask(value: unknown): value is TaskType {
 	return Object.prototype.hasOwnProperty.call(value || {}, 'task');
 }
 
-const TaskList = ({
-	lastToday,
-	newTask,
-	filters,
-}: TaskListProps): JSX.Element => {
+const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 	const { data: tasks, isFetched } = useTasks();
+	const { filters } = useFilters();
 	const listRef = useRef<ReactList>(null);
 	const [entries, setEntries] = useState<(TaskType | string)[]>([]);
 	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
