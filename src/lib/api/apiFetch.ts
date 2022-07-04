@@ -1,4 +1,4 @@
-import { isProduction } from '../../tr_constants';
+import { isProduction, isStaging } from '../../tr_constants';
 import { logout } from './useSession';
 
 const _get_base = () => {
@@ -6,10 +6,9 @@ const _get_base = () => {
 		return 'https://api.taskratchet.com/api1/';
 	}
 
-	// TODO: Create staging env using cloud run
-	// if (isStaging) {
-	// 	return 'https://us-central1-taskratchet-dev.cloudfunctions.net/api1/';
-	// }
+	if (isStaging) {
+		return 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api1/';
+	}
 
 	return 'http://localhost:8080/api1/';
 };
