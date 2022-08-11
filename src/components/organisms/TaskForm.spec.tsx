@@ -81,7 +81,13 @@ describe('TaskForm', () => {
 
 		await userEvent.type(taskInput, 'a');
 
-		expect(onChange).toBeCalledWith('a', due, 500);
+		expect(onChange).toBeCalledWith(
+			expect.objectContaining({
+				task: 'a',
+				due,
+				cents: 500,
+			})
+		);
 	});
 
 	it('calls onChange when due modified', async () => {
@@ -101,7 +107,11 @@ describe('TaskForm', () => {
 
 		await userEvent.type(centsInput, '1');
 
-		expect(onChange).toBeCalledWith(expect.anything(), expect.anything(), 5100);
+		expect(onChange).toBeCalledWith(
+			expect.objectContaining({
+				cents: 5100,
+			})
+		);
 	});
 
 	it('preserves time when editing date', async () => {
@@ -115,7 +125,13 @@ describe('TaskForm', () => {
 
 		await userEvent.type(dueDateInput, '{backspace}2{enter}');
 
-		expect(onChange).toBeCalledWith('', new Date('1/1/2022 11:59 PM'), 500);
+		expect(onChange).toBeCalledWith(
+			expect.objectContaining({
+				task: '',
+				due: new Date('1/1/2022 11:59 PM'),
+				cents: 500,
+			})
+		);
 	});
 
 	it('preserves date when editing time', async () => {
@@ -129,7 +145,13 @@ describe('TaskForm', () => {
 
 		await userEvent.type(dueTimeInput, '{backspace}M{enter}');
 
-		expect(onChange).toBeCalledWith('', new Date('1/1/2020 11:59 PM'), 500);
+		expect(onChange).toBeCalledWith(
+			expect.objectContaining({
+				task: '',
+				due: new Date('1/1/2020 11:59 PM'),
+				cents: 500,
+			})
+		);
 	});
 });
 

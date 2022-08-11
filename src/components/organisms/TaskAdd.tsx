@@ -41,13 +41,15 @@ export default function TaskAdd({
 		return new Date(baseTask.due);
 	});
 	const [cents, setCents] = useState<number>(baseTask?.cents || 500);
+	const [recurrence, setRecurrence] = useState<Record<string, number>>();
 	const [error, setError] = useState<string>('');
 	const minDue = browser.getNowDate();
 
-	const onChange = (task: string, due: Date, cents: number) => {
+	const onChange = ({ task, due, cents, recurrence }: TaskInput) => {
 		setTask(task);
 		setDue(due);
 		setCents(cents);
+		setRecurrence(recurrence);
 	};
 
 	function onSubmit() {
@@ -68,7 +70,14 @@ export default function TaskAdd({
 			minute: 'numeric',
 		});
 		const lines = task.split(/\r?\n/);
-		lines.forEach((l) => addTask.mutate({ task: l, due: dueString, cents }));
+		lines.forEach((l) =>
+			addTask.mutate({
+				task: l,
+				due: dueString,
+				cents,
+				recurrence,
+			})
+		);
 	}
 
 	return (
@@ -79,6 +88,7 @@ export default function TaskAdd({
 					task={task}
 					due={due}
 					cents={cents}
+					recurrence={recurrence}
 					timezone={timezone}
 					error={error}
 					onChange={onChange}

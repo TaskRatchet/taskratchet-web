@@ -40,3 +40,10 @@ type TaskType = {
 	status: Status;
 	timezone: string;
 };
+
+type TaskInput = {
+	task: string;
+	due: string;
+	cents: number;
+	recurrence?: Record<string, number>;
+};

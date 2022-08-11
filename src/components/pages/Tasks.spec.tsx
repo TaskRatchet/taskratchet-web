@@ -71,7 +71,9 @@ const expectTaskSave = async ({
 		minute: 'numeric',
 	});
 
-	await waitFor(() => expect(addTask).toBeCalledWith(task, dueString, cents));
+	await waitFor(() =>
+		expect(addTask).toBeCalledWith(task, dueString, cents, undefined)
+	);
 };
 
 const expectCheckboxState = (
@@ -784,7 +786,8 @@ describe('tasks page', () => {
 			expect(new_api.addTask).toBeCalledWith(
 				'task1',
 				expect.anything(),
-				expect.anything()
+				expect.anything(),
+				undefined
 			);
 		});
 	});

@@ -341,4 +341,105 @@ describe('App', () => {
 			expect(screen.getByText('2')).toBeInTheDocument();
 		});
 	});
+
+	it('includes recurring options', async () => {
+		renderPage();
+
+		await openForm();
+
+		userEvent.type(getTaskInput(), 'recurring_task');
+
+		userEvent.click(screen.getByLabelText('Enable recurrence'));
+		userEvent.type(screen.getByLabelText('Interval'), '7');
+
+		userEvent.click(screen.getByText('Add'));
+
+		await waitFor(() => {
+			expect(screen.getByText('recurring_task')).toBeInTheDocument();
+		});
+
+		expect(addTask).toBeCalledWith(
+			expect.any(String),
+			expect.any(String),
+			expect.any(Number),
+			expect.objectContaining({ days: 7 })
+		);
+	});
+
+	it('Does not include recurrence options if recurrence is not enabled', async () => {
+		renderPage();
+
+		await openForm();
+
+		userEvent.type(getTaskInput(), 'non_recurring_task');
+		userEvent.click(screen.getByText('Add'));
+
+		await waitFor(() => {
+			expect(screen.getByText('non_recurring_task')).toBeInTheDocument();
+		});
+
+		expect(addTask).toBeCalledWith(
+			expect.any(String),
+			expect.any(String),
+			expect.any(Number),
+			undefined
+		);
+	});
+
+	it('does not show interval field if recurrence not enabled', async () => {
+		renderPage();
+
+		await openForm();
+
+		expect(screen.queryByLabelText('Interval')).not.toBeInTheDocument();
+	});
+
+	it('does not post recurring options if recurrence not enabled', async () => {
+		renderPage();
+
+		await openForm();
+
+		userEvent.type(getTaskInput(), 'non_recurring_task');
+
+		userEvent.click(screen.getByLabelText('Enable recurrence'));
+		userEvent.type(screen.getByLabelText('Interval'), '7');
+		userEvent.click(screen.getByLabelText('Enable recurrence'));
+
+		userEvent.click(screen.getByText('Add'));
+		await waitFor(() => {
+			expect(screen.getByText('non_recurring_task')).toBeInTheDocument();
+		});
+
+		expect(addTask).toBeCalledWith(
+			expect.any(String),
+			expect.any(String),
+			expect.any(Number),
+			undefined
+		);
+	});
+
+	it('it remembers recurring options when toggling recurrence', async () => {
+		renderPage();
+
+		await openForm();
+
+		userEvent.type(getTaskInput(), 'recurring_task');
+
+		userEvent.click(screen.getByLabelText('Enable recurrence'));
+		userEvent.type(screen.getByLabelText('Interval'), '7');
+		userEvent.click(screen.getByLabelText('Enable recurrence'));
+		userEvent.click(screen.getByLabelText('Enable recurrence'));
+
+		userEvent.click(screen.getByText('Add'));
+		await waitFor(() => {
+			expect(screen.getByText('recurring_task')).toBeInTheDocument();
+		});
+
+		expect(addTask).toBeCalledWith(
+			expect.any(String),
+			expect.any(String),
+			expect.any(Number),
+			expect.objectContaining({ days: 7 })
+		);
+	});
 });

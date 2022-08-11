@@ -1,8 +1,10 @@
-import React, { FormEvent } from 'react';
+import React, { FormEvent, useState } from 'react';
 import {
 	Alert,
 	Box,
 	Button,
+	Checkbox,
+	FormControlLabel,
 	InputAdornment,
 	Stack,
 	TextField,
@@ -13,10 +15,11 @@ interface TaskFormProps {
 	task: string;
 	due: Date;
 	cents: number;
+	recurrence?: Record<string, number>;
 	timezone: string;
 	error: string;
-	onChange: (task: string, due: Date, cents: number) => void;
-	onSubmit: (task: string, due: Date, cents: number) => void;
+	onChange: (input: TaskInput) => void;
+	onSubmit: (input: TaskInput) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
 	minCents?: number;
@@ -30,6 +33,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		task,
 		due,
 		cents,
+		recurrence,
 		timezone,
 		error,
 		onChange,
@@ -40,13 +44,15 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		minCents = 100,
 		isLoading,
 	} = props;
+	const [recurrenceEnabled, setRecurrenceEnabled] = useState<boolean>(false);
+	const [interval, setInterval] = useState<number>(1);
 
 	return (
 		<Box
 			component={'form'}
 			onSubmit={(e: FormEvent) => {
 				e.preventDefault();
-				onSubmit(task, due, cents);
+				onSubmit({ task, due, cents, recurrence });
 			}}
 			className={'organism-taskForm'}
 		>
@@ -59,7 +65,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					required
 					value={task}
 					onChange={(e) => {
-						onChange(e.target.value, due, cents);
+						onChange({ task: e.target.value, due, cents, recurrence });
 					}}
 					fullWidth
 					variant="standard"
@@ -74,7 +80,12 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					value={cents / 100}
 					onChange={(e) => {
 						const number = parseInt(e.target.value);
-						onChange(task, due, isNaN(number) ? 0 : number * 100);
+						onChange({
+							task,
+							due,
+							cents: isNaN(number) ? 0 : number * 100,
+							recurrence,
+						});
 					}}
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>,
@@ -91,7 +102,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						if (!(value instanceof Date)) return;
 						if (isNaN(value.getTime())) return;
 						if (due) value.setHours(due?.getHours(), due?.getMinutes());
-						onChange(task, value, cents);
+						onChange({ task, due: value, cents, recurrence });
 					}}
 					OpenPickerButtonProps={{
 						'aria-label': 'change date',
@@ -123,7 +134,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 								due.getMonth(),
 								due.getDate()
 							);
-						onChange(task, value, cents);
+						onChange({ task, due: value, cents, recurrence });
 					}}
 					OpenPickerButtonProps={{
 						'aria-label': 'change time',
@@ -132,6 +143,34 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						<TextField required variant="standard" {...params} />
 					)}
 				/>
+				<FormControlLabel
+					control={
+						<Checkbox
+							onChange={() => {
+								setRecurrenceEnabled(!recurrenceEnabled);
+								onChange({
+									task,
+									due,
+									cents,
+									recurrence: recurrenceEnabled
+										? undefined
+										: { days: interval },
+								});
+							}}
+						/>
+					}
+					label="Enable recurrence"
+				/>
+				{recurrenceEnabled && (
+					<TextField
+						label="Interval"
+						onChange={(e) => {
+							const n = parseInt(e.target.value);
+							onChange({ task, due, cents, recurrence: { days: n } });
+							setInterval(n);
+						}}
+					/>
+				)}
 
 				<Stack direction={'row'} justifyContent={'space-between'}>
 					<Button

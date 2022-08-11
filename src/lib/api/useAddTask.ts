@@ -2,24 +2,18 @@ import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
 import { addTask } from './addTask';
 import toaster from '../Toaster';
 
-interface Input {
-	task: string;
-	due: string;
-	cents: number;
-}
-
 export function useAddTask(
 	onSave: (t: TaskType) => void
-): UseMutationResult<Response, Error, Input> {
+): UseMutationResult<Response, Error, TaskInput> {
 	const queryClient = useQueryClient();
 
 	return useMutation(
-		({ task, due, cents }: Input) => {
+		({ task, due, cents, recurrence }: TaskInput) => {
 			// TODO: Refactor addTask to make closure unnecessary
-			return addTask(task, due, cents);
+			return addTask(task, due, cents, recurrence);
 		},
 		{
-			onMutate: async (newTask: Input) => {
+			onMutate: async (newTask: TaskInput) => {
 				await queryClient.cancelQueries('tasks');
 
 				const snapshot: TaskType[] | undefined =
@@ -36,7 +30,7 @@ export function useAddTask(
 
 				return { snapshot };
 			},
-			onError: (error: Error, newTask: Input, context) => {
+			onError: (error: Error, newTask: TaskInput, context) => {
 				const { snapshot = null } = context || {};
 				if (snapshot !== null) {
 					queryClient.setQueryData('tasks', snapshot);

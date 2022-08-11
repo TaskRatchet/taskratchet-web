@@ -20,7 +20,7 @@ const TaskEdit = ({
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const editTask = useEditTask();
 
-	const onChange = (task: string, due: Date, cents: number) => {
+	const onChange = ({ due, cents }: TaskInput) => {
 		setDue(due);
 		setCents(cents);
 	};

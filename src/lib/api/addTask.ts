@@ -4,12 +4,14 @@ import { apiFetch } from './apiFetch';
 export async function addTask(
 	task: string,
 	due: string,
-	cents: number
+	cents: number,
+	recurrence?: Record<string, number>
 ): Promise<Response> {
 	const response = await apiFetch('me/tasks', true, 'POST', {
 		task,
 		due,
 		cents,
+		recurrence,
 	});
 
 	if (!response.ok) {
