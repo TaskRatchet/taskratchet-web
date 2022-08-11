@@ -1,4 +1,4 @@
-import React, { FormEvent, useState } from 'react';
+import React, { FormEvent, useMemo, useState } from 'react';
 import {
 	Alert,
 	Box,
@@ -10,10 +10,11 @@ import {
 	TextField,
 } from '@mui/material';
 import { DatePicker, LoadingButton, TimePicker } from '@mui/lab';
+import formatDue from '../../lib/formatDue';
 
-interface TaskFormProps {
+export type TaskFormProps = {
 	task: string;
-	due: Date;
+	due: string;
 	cents: number;
 	recurrence?: Record<string, number>;
 	timezone: string;
@@ -26,7 +27,7 @@ interface TaskFormProps {
 	maxDue?: Date;
 	minDue?: Date;
 	isLoading: boolean;
-}
+};
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
 	const {
@@ -46,6 +47,9 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 	} = props;
 	const [recurrenceEnabled, setRecurrenceEnabled] = useState<boolean>(false);
 	const [interval, setInterval] = useState<number>(1);
+	const dueDate = useMemo(() => {
+		return new Date(due);
+	}, [due]);
 
 	return (
 		<Box
@@ -101,8 +105,10 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					onChange={(value: unknown) => {
 						if (!(value instanceof Date)) return;
 						if (isNaN(value.getTime())) return;
-						if (due) value.setHours(due?.getHours(), due?.getMinutes());
-						onChange({ task, due: value, cents, recurrence });
+						if (due) {
+							value.setHours(dueDate?.getHours(), dueDate?.getMinutes());
+						}
+						onChange({ task, due: formatDue(value), cents, recurrence });
 					}}
 					OpenPickerButtonProps={{
 						'aria-label': 'change date',
@@ -130,11 +136,11 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						if (isNaN(value.getTime())) return;
 						if (due)
 							value.setFullYear(
-								due.getFullYear(),
-								due.getMonth(),
-								due.getDate()
+								dueDate.getFullYear(),
+								dueDate.getMonth(),
+								dueDate.getDate()
 							);
-						onChange({ task, due: value, cents, recurrence });
+						onChange({ task, due: formatDue(value), cents, recurrence });
 					}}
 					OpenPickerButtonProps={{
 						'aria-label': 'change time',
@@ -163,7 +169,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				/>
 				{recurrenceEnabled && (
 					<TextField
-						label="Interval"
+						label="Interval in days"
 						onChange={(e) => {
 							const n = parseInt(e.target.value);
 							onChange({ task, due, cents, recurrence: { days: n } });

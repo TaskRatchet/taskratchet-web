@@ -4,6 +4,7 @@ import { render, RenderResult } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import AdapterDateFns from '@mui/lab/AdapterDateFns';
 import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { TaskFormProps } from './TaskForm';
 
 jest.mock('../../lib/Browser');
 
@@ -17,43 +18,22 @@ global.document.createRange = () =>
 		},
 	} as unknown as Range);
 
-interface RenderComponentProps {
-	task?: string;
-	due?: Date;
-	cents?: number;
-	timezone?: string;
-	error?: string;
-	onChange?: (task: string, due: Date, cents: number) => void;
-	onSubmit?: () => void;
-	isLoading?: boolean;
-}
-
-const renderComponent = (props: RenderComponentProps = {}) => {
-	const {
-		task = '',
-		due = new Date(),
-		cents = 500,
-		timezone = '',
-		error = '',
-		onChange = () => undefined,
-		onSubmit = () => undefined,
-		isLoading = false,
-	} = props;
+const renderComponent = (props: Partial<TaskFormProps> = {}) => {
+	const p: TaskFormProps = {
+		task: '',
+		due: '1/1/2022, 11:59 PM',
+		cents: 500,
+		timezone: '',
+		error: '',
+		onChange: () => undefined,
+		onSubmit: () => undefined,
+		isLoading: false,
+		...props,
+	};
 
 	const result: RenderResult = render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<TaskForm
-				{...{
-					task,
-					due,
-					cents,
-					timezone,
-					error,
-					onChange,
-					onSubmit,
-					isLoading,
-				}}
-			/>
+			<TaskForm {...p} />
 		</LocalizationProvider>
 	);
 
@@ -75,7 +55,7 @@ describe('TaskForm', () => {
 
 	it('calls onChange when task modified', async () => {
 		const onChange = jest.fn();
-		const due = new Date();
+		const due = '1/1/2022, 11:59 PM';
 
 		const { taskInput } = renderComponent({ onChange, due });
 
@@ -118,7 +98,7 @@ describe('TaskForm', () => {
 		const onChange = jest.fn();
 
 		const { dueDateInput } = renderComponent({
-			due: new Date('1/1/2021 11:59 PM'),
+			due: '1/1/2021, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
@@ -128,7 +108,7 @@ describe('TaskForm', () => {
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
 				task: '',
-				due: new Date('1/1/2022 11:59 PM'),
+				due: '1/1/2022, 11:59 PM',
 				cents: 500,
 			})
 		);
@@ -138,7 +118,7 @@ describe('TaskForm', () => {
 		const onChange = jest.fn();
 
 		const { dueTimeInput } = renderComponent({
-			due: new Date('1/1/2020 11:59 PM'),
+			due: '1/1/2020, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
@@ -148,7 +128,7 @@ describe('TaskForm', () => {
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
 				task: '',
-				due: new Date('1/1/2020 11:59 PM'),
+				due: '1/1/2020, 11:59 PM',
 				cents: 500,
 			})
 		);

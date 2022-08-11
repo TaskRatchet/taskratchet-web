@@ -71,9 +71,9 @@ const expectTaskSave = async ({
 		minute: 'numeric',
 	});
 
-	await waitFor(() =>
-		expect(addTask).toBeCalledWith(task, dueString, cents, undefined)
-	);
+	await waitFor(() => expect(addTask).toBeCalled());
+
+	expect(addTask).toBeCalledWith(task, dueString, cents, undefined);
 };
 
 const expectCheckboxState = (

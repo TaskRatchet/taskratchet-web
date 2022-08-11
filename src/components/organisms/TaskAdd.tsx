@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useTimezone } from '../../lib/api/useTimezone';
 import { useAddTask } from '../../lib/api/useAddTask';
 import browser from '../../lib/Browser';
+import formatDue from '../../lib/formatDue';
 
 const getDefaultDue = () => {
 	const due = browser.getNowDate();
@@ -29,16 +30,16 @@ export default function TaskAdd({
 	const timezone = useTimezone() || '';
 	const addTask = useAddTask(onSave);
 	const [task, setTask] = useState<string>(baseTask?.task || '');
-	const [due, setDue] = useState<Date>(() => {
+	const [due, setDue] = useState<string>(() => {
 		if (!baseTask) {
-			return getDefaultDue();
+			return formatDue(getDefaultDue());
 		}
 
 		if (new Date(baseTask.due) < browser.getNowDate()) {
-			return getDefaultDue();
+			return formatDue(getDefaultDue());
 		}
 
-		return new Date(baseTask.due);
+		return baseTask.due;
 	});
 	const [cents, setCents] = useState<number>(baseTask?.cents || 500);
 	const [recurrence, setRecurrence] = useState<Record<string, number>>();
@@ -62,18 +63,11 @@ export default function TaskAdd({
 			setError('Due date must be in the future');
 			return;
 		}
-		const dueString = due.toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'numeric',
-			day: 'numeric',
-			hour: 'numeric',
-			minute: 'numeric',
-		});
 		const lines = task.split(/\r?\n/);
 		lines.forEach((l) =>
 			addTask.mutate({
 				task: l,
-				due: dueString,
+				due,
 				cents,
 				recurrence,
 			})

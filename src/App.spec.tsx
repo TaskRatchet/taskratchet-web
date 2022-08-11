@@ -350,7 +350,7 @@ describe('App', () => {
 		userEvent.type(getTaskInput(), 'recurring_task');
 
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
-		userEvent.type(screen.getByLabelText('Interval'), '7');
+		userEvent.type(screen.getByLabelText('Interval in days'), '7');
 
 		userEvent.click(screen.getByText('Add'));
 
@@ -391,7 +391,7 @@ describe('App', () => {
 
 		await openForm();
 
-		expect(screen.queryByLabelText('Interval')).not.toBeInTheDocument();
+		expect(screen.queryByLabelText('Interval in days')).not.toBeInTheDocument();
 	});
 
 	it('does not post recurring options if recurrence not enabled', async () => {
@@ -402,7 +402,7 @@ describe('App', () => {
 		userEvent.type(getTaskInput(), 'non_recurring_task');
 
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
-		userEvent.type(screen.getByLabelText('Interval'), '7');
+		userEvent.type(screen.getByLabelText('Interval in days'), '7');
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
 
 		userEvent.click(screen.getByText('Add'));
@@ -426,7 +426,7 @@ describe('App', () => {
 		userEvent.type(getTaskInput(), 'recurring_task');
 
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
-		userEvent.type(screen.getByLabelText('Interval'), '7');
+		userEvent.type(screen.getByLabelText('Interval in days'), '7');
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
 
