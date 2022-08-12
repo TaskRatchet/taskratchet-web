@@ -3,6 +3,7 @@
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
+		"preinstall": "npx only-allow pnpm",
 		"checkTs": "tsc --noEmit",
 		"format": "prettier --write .",
 		"lint": "eslint --max-warnings 0 .",
