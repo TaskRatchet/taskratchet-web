@@ -6,19 +6,21 @@ import { App } from './App';
 import userEvent from '@testing-library/user-event';
 import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
-import { mockReactListRef } from './__mocks__/react-list';
+import { __listRef } from 'react-list';
 import { waitFor, screen } from '@testing-library/dom';
 import { addTask } from './lib/api';
+import { vi, Mock } from 'vitest';
 
-jest.mock('./lib/api/getTasks');
-jest.mock('./lib/api/getMe');
-jest.mock('./lib/api/updateTask');
-jest.mock('./lib/api/addTask');
-jest.mock('./lib/api/useSession');
-jest.mock('./components/molecules/LoadingIndicator');
-jest.mock('react-ga');
+vi.mock('./lib/api/getTasks');
+vi.mock('./lib/api/getMe');
+vi.mock('./lib/api/updateTask');
+vi.mock('./lib/api/addTask');
+vi.mock('./lib/api/useSession');
+vi.mock('./components/molecules/LoadingIndicator');
+vi.mock('react-ga');
+vi.mock('react-list');
 
-const mockUseSession = useSession as jest.Mock;
+const mockUseSession = useSession as Mock;
 
 const openForm = () =>
 	waitFor(() => userEvent.click(screen.getByLabelText('add')));
@@ -47,9 +49,9 @@ function renderPage() {
 
 describe('App', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadNowDate(new Date('10/29/2020'));
-		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
 	it('re-scrolls tasks list when today icon clicked', async () => {
@@ -66,7 +68,7 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('today'));
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(0);
+			expect(__listRef.scrollTo).toHaveBeenCalledWith(0);
 		});
 	});
 
@@ -164,7 +166,7 @@ describe('App', () => {
 		userEvent.click(getAddButton());
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(1);
+			expect(__listRef.scrollTo).toHaveBeenCalledWith(1);
 		});
 	});
 
@@ -183,7 +185,7 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('today'));
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(2);
+			expect(__listRef.scrollTo).toHaveBeenCalledWith(2);
 		});
 	});
 
@@ -194,15 +196,13 @@ describe('App', () => {
 
 		await openForm();
 
-		await userEvent.type(getDueInput(), '{backspace}0');
+		userEvent.type(getTaskInput(), 'new_task');
+
+		userEvent.type(getDueInput(), '{backspace}0');
 
 		userEvent.click(screen.getByText('Add'));
 
-		await waitFor(() => {
-			expect(
-				screen.getByText('Due date must be in the future')
-			).toBeInTheDocument();
-		});
+		await screen.findByText('Due date must be in the future');
 
 		expect(addTask).not.toBeCalled();
 	});

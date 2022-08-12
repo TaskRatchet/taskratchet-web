@@ -5,6 +5,7 @@ import { renderWithQueryProvider } from '../../lib/test/helpers';
 import Login from './Login';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 
 let service: any, mockApi: LegacyApi;
 
@@ -20,8 +21,8 @@ const createService = () => {
 const createMockApi = () => {
 	const mockApi = api;
 
-	mockApi.login = jest.fn();
-	mockApi.requestResetEmail = jest.fn();
+	mockApi.login = vi.fn();
+	mockApi.requestResetEmail = vi.fn();
 
 	return mockApi;
 };

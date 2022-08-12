@@ -8,17 +8,19 @@ import Register from './Register';
 import { waitFor } from '@testing-library/dom';
 import userEvent from '@testing-library/user-event';
 import { getTimezones } from '../../lib/api';
-import api from '../../lib/LegacyApi';
 import { act } from '@testing-library/react';
+import { vi } from 'vitest';
+import register from '../../lib/api/register';
 
-jest.mock('../../lib/api/getCheckoutSession');
+vi.mock('../../lib/api/getCheckoutSession');
+vi.mock('../../lib/api/register');
 
 describe('registration page', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadCheckoutSession();
-		window.Stripe = jest.fn(() => ({
-			redirectToCheckout: jest.fn(async () => ({
+		window.Stripe = vi.fn(() => ({
+			redirectToCheckout: vi.fn(async () => ({
 				error: { message: 'error' },
 			})),
 		}));
@@ -80,9 +82,7 @@ describe('registration page', () => {
 		await act(async () => {
 			loadTimezones(['the_timezone']);
 
-			jest
-				.spyOn(api, 'register')
-				.mockImplementation(async () => new Response());
+			vi.mocked(register).mockImplementation(async () => new Response());
 
 			const { getByLabelText, getByText } = await renderWithQueryProvider(
 				<Register />
@@ -106,7 +106,11 @@ describe('registration page', () => {
 
 			userEvent.click(getByText('Add payment method'));
 
-			expect(api.register).toBeCalledWith(
+			await waitFor(() => {
+				expect(register).toBeCalled();
+			});
+
+			expect(register).toBeCalledWith(
 				'the_name',
 				'the_email',
 				'the_password',
@@ -115,7 +119,4 @@ describe('registration page', () => {
 			);
 		});
 	});
-
-	// TODO: test validates timezone field
-	// TODO: stop toasting validation errors; print, instead
 });

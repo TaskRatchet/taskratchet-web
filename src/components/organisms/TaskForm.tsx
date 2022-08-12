@@ -7,7 +7,8 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material';
-import { DatePicker, LoadingButton, TimePicker } from '@mui/lab';
+import { LoadingButton } from '@mui/lab';
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 
 interface TaskFormProps {
 	task: string;
@@ -85,7 +86,6 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				/>
 				<DatePicker
 					label="Due Date"
-					clearable={false}
 					value={due}
 					onChange={(value: unknown) => {
 						if (!(value instanceof Date)) return;
@@ -112,7 +112,6 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				/>
 				<TimePicker
 					label="Due Time"
-					clearable={false}
 					value={due}
 					onChange={(value: unknown) => {
 						if (!(value instanceof Date)) return;
@@ -128,9 +127,9 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					OpenPickerButtonProps={{
 						'aria-label': 'change time',
 					}}
-					renderInput={(params) => (
-						<TextField required variant="standard" {...params} />
-					)}
+					renderInput={(params) => {
+						return <TextField required variant="standard" {...params} />;
+					}}
 				/>
 
 				<Stack direction={'row'} justifyContent={'space-between'}>

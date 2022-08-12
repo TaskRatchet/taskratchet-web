@@ -1,4 +1,3 @@
-import * as new_api from '../../lib/api';
 import { addTask, getTasks, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
 import {
@@ -21,24 +20,26 @@ import {
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { mockReactListRef } from '../../__mocks__/react-list';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
+import { vi, Mock } from 'vitest';
 
-jest.mock('../../lib/api/apiFetch');
-jest.mock('../../lib/api/getTasks');
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateTask');
-jest.mock('../../lib/api/getTimezones');
-jest.mock('../../lib/api/addTask');
-jest.mock('../../lib/Toaster');
-jest.mock('../../lib/LegacyApi');
-jest.mock('../../lib/getUnloadMessage');
-jest.mock('../../lib/api/editTask');
-jest.mock('react-ga');
+vi.mock('../../lib/api/apiFetch');
+vi.mock('../../lib/api/getTasks');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateTask');
+vi.mock('../../lib/api/getTimezones');
+vi.mock('../../lib/api/addTask');
+vi.mock('../../lib/Toaster');
+vi.mock('../../lib/LegacyApi');
+vi.mock('../../lib/getUnloadMessage');
+vi.mock('../../lib/api/editTask');
+vi.mock('react-ga');
+vi.mock('react-list');
 
-const mockEditTask = editTask as jest.Mock;
+const mockEditTask = editTask as Mock;
 
 global.document.createRange = () =>
 	({
@@ -126,9 +127,9 @@ const renderTasksPage = () => {
 
 describe('tasks page', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadNowDate(new Date('10/29/2020'));
-		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
 	it('loads tasks', async () => {
@@ -145,7 +146,7 @@ describe('tasks page', () => {
 	//
 	//     const {taskInput, addButton} = renderTasksPage()
 	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
+	//     await waitFor(() => expect(getTasks).toHaveBeenCalled())
 	//
 	//     await userEvent.type(taskInput, "the_task by friday or pay $5")
 	//     userEvent.click(addButton)
@@ -162,7 +163,7 @@ describe('tasks page', () => {
 
 		const { getTaskInput, getAddButton, getByLabelText } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		/* Open new task form */
 		userEvent.click(getByLabelText('add'));
@@ -183,29 +184,13 @@ describe('tasks page', () => {
 
 			const { getAddButton, openForm } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			await openForm();
 
 			await waitFor(() => userEvent.click(getAddButton()));
 
-			expect(new_api.addTask).not.toHaveBeenCalled();
-		});
-	});
-
-	it('displays error on empty task submit', async () => {
-		await act(async () => {
-			loadTasksApiData();
-
-			const { getAddButton, getByText, openForm } = renderTasksPage();
-
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-			await openForm();
-
-			await waitFor(() => userEvent.click(getAddButton()));
-
-			expect(getByText('Task is required')).toBeDefined();
+			expect(addTask).not.toHaveBeenCalled();
 		});
 	});
 
@@ -226,7 +211,7 @@ describe('tasks page', () => {
 
 		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		clickCheckbox();
 
@@ -242,23 +227,23 @@ describe('tasks page', () => {
 
 		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		clickCheckbox();
 
-		await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
+		await waitFor(() => expect(getTasks).toBeCalledTimes(2));
 	});
 
 	it('toasts task creation failure', async () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData();
-			jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+			vi.mocked(addTask).mockImplementation(() => {
 				throw new Error('Failed to add task');
 			});
 
 			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			await openForm();
 
@@ -275,13 +260,13 @@ describe('tasks page', () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData();
 
-			jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+			vi.mocked(addTask).mockImplementation(() => {
 				throw Error('Oops!');
 			});
 
 			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			await openForm();
 
@@ -298,13 +283,13 @@ describe('tasks page', () => {
 				tasks: [makeTask({ id: '3' })],
 			});
 
-			jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
+			vi.mocked(updateTask).mockImplementation(() => {
 				throw Error('Oops!');
 			});
 
 			const { clickCheckbox } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			clickCheckbox();
 
@@ -319,7 +304,7 @@ describe('tasks page', () => {
 
 		const { clickCheckbox, getCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		clickCheckbox();
 
@@ -337,9 +322,9 @@ describe('tasks page', () => {
 
 			const { clickCheckbox, getCheckbox } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-			jest.spyOn(new_api, 'updateTask').mockRejectedValue('Oops!');
+			vi.mocked(updateTask).mockRejectedValue('Oops!');
 
 			clickCheckbox();
 
@@ -362,7 +347,7 @@ describe('tasks page', () => {
 
 		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		const event = new Event('beforeunload');
 
@@ -384,11 +369,11 @@ describe('tasks page', () => {
 
 		const { clickCheckbox, getCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		// Load slow query response to clobber
 
-		resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
+		resolveWithDelay(vi.mocked(getTasks), 100, [
 			makeTask({ task: 'first', id: '3', status: 'complete', complete: true }),
 			makeTask({ task: 'second', id: '4', status: 'pending' }),
 		]);
@@ -399,11 +384,11 @@ describe('tasks page', () => {
 
 		// Wait for slow response to be requested
 
-		await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
+		await waitFor(() => expect(getTasks).toBeCalledTimes(2));
 
 		// Load second, fast response
 
-		jest.spyOn(new_api, 'getTasks').mockResolvedValue([
+		vi.mocked(getTasks).mockResolvedValue([
 			makeTask({
 				task: 'first',
 				id: '3',
@@ -445,7 +430,7 @@ describe('tasks page', () => {
 		const { getTaskInput, getAddButton, getByText, openForm } =
 			renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		await openForm();
 
@@ -459,7 +444,7 @@ describe('tasks page', () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData();
 
-			jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!');
+			vi.mocked(addTask).mockRejectedValue('Oops!');
 
 			const {
 				getTaskInput,
@@ -470,7 +455,7 @@ describe('tasks page', () => {
 				baseElement,
 			} = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			await openForm();
 
@@ -502,11 +487,11 @@ describe('tasks page', () => {
 			const { getTaskInput, getAddButton, getByText, openForm } =
 				renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			// Load slow query response to clobber
 
-			resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
+			resolveWithDelay(vi.mocked(getTasks), 100, [
 				makeTask({ task: 'first', id: '3' }),
 			]);
 
@@ -521,16 +506,14 @@ describe('tasks page', () => {
 
 			// Wait for slow response to be requested
 
-			await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
+			await waitFor(() => expect(getTasks).toBeCalledTimes(2));
 
 			// Load second, fast response
 
-			jest
-				.spyOn(new_api, 'getTasks')
-				.mockResolvedValue([
-					makeTask({ task: 'first', id: '3' }),
-					makeTask({ task: 'second', id: '4' }),
-				]);
+			vi.mocked(getTasks).mockResolvedValue([
+				makeTask({ task: 'first', id: '3' }),
+				makeTask({ task: 'second', id: '4' }),
+			]);
 
 			// Add second task
 
@@ -557,7 +540,7 @@ describe('tasks page', () => {
 
 		const { getByText } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		expect(getByText('the_task')).toBeInTheDocument();
 	});
@@ -569,7 +552,7 @@ describe('tasks page', () => {
 
 		const { getByText } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		expect(getByText('May 22, 2020')).toBeInTheDocument();
 	});
@@ -716,7 +699,7 @@ describe('tasks page', () => {
 		renderTasksPage();
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toBeCalled();
+			expect(__listRef.scrollTo).toBeCalled();
 		});
 	});
 
@@ -730,7 +713,7 @@ describe('tasks page', () => {
 		const { queryClient } = renderTasksPage();
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toBeCalled();
+			expect(__listRef.scrollTo).toBeCalled();
 		});
 
 		loadTasksApiData({
@@ -743,7 +726,7 @@ describe('tasks page', () => {
 			expect(getTasks).toBeCalledTimes(2);
 		});
 
-		expect(mockReactListRef.scrollTo).toBeCalledTimes(1);
+		expect(__listRef.scrollTo).toBeCalledTimes(1);
 	});
 
 	it('reloads tasks on task edit save', async () => {
@@ -781,7 +764,7 @@ describe('tasks page', () => {
 		userEvent.click(view.getAddButton());
 
 		await waitFor(() => {
-			expect(new_api.addTask).toBeCalledWith(
+			expect(addTask).toBeCalledWith(
 				'task1',
 				expect.anything(),
 				expect.anything()
@@ -789,7 +772,3 @@ describe('tasks page', () => {
 		});
 	});
 });
-
-// TODO:
-// lazy load API data for tasks
-// Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574

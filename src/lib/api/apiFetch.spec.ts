@@ -1,5 +1,4 @@
 import { apiFetch } from './apiFetch';
-import fetchMock from 'jest-fetch-mock';
 
 describe('apiFetch', () => {
 	it('uses localStorage token', () => {

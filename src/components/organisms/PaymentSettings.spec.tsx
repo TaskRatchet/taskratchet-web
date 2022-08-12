@@ -4,10 +4,11 @@ import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
 import PaymentSettings from './PaymentSettings';
 import { useCheckoutSession } from '../../lib/api';
+import { vi, Mock } from 'vitest';
 
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateMe');
-jest.mock('../../lib/api/useCheckoutSession');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateMe');
+vi.mock('../../lib/api/useCheckoutSession');
 
 describe('general settings', () => {
 	it('displays loading indicator on replace click', async () => {
@@ -28,7 +29,7 @@ describe('general settings', () => {
 
 	it('displays checkout session error', async () => {
 		loadMe({});
-		(useCheckoutSession as jest.Mock).mockResolvedValue({});
+		(useCheckoutSession as Mock).mockResolvedValue({});
 
 		const { getByText } = renderWithQueryProvider(<PaymentSettings />);
 
@@ -40,9 +41,9 @@ describe('general settings', () => {
 	});
 
 	it('displays stripe errors', async () => {
-		(useCheckoutSession as jest.Mock).mockResolvedValue({ id: 'the_id' });
+		(useCheckoutSession as Mock).mockResolvedValue({ id: 'the_id' });
 
-		window.Stripe = jest.fn(() => ({
+		window.Stripe = vi.fn(() => ({
 			redirectToCheckout: async () => ({
 				error: { message: 'the_error_message' },
 			}),
@@ -59,7 +60,7 @@ describe('general settings', () => {
 
 	it('cancels loading state when error set', async () => {
 		loadMe({});
-		(useCheckoutSession as jest.Mock).mockResolvedValue({});
+		(useCheckoutSession as Mock).mockResolvedValue({});
 
 		const { getByText, container } = renderWithQueryProvider(
 			<PaymentSettings />

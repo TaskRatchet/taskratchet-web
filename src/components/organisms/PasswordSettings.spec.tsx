@@ -3,8 +3,9 @@ import { renderWithQueryProvider } from '../../lib/test/helpers';
 import PasswordSettings from './PasswordSettings';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
+import { vi } from 'vitest';
 
-jest.mock('../../lib/api/updatePassword');
+vi.mock('../../lib/api/updatePassword');
 
 describe('password settings', () => {
 	it('requires passwords to match', async () => {

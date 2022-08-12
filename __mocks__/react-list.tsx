@@ -1,24 +1,28 @@
 import React, { forwardRef } from 'react';
+import { vi } from 'vitest';
 
-export const mockReactListRef = {
-	scrollTo: jest.fn(),
+declare module 'react-list' {
+	const __listRef: any;
+}
+
+export const __listRef = {
+	scrollTo: vi.fn(),
 };
 
 beforeEach(() => {
-	mockReactListRef.scrollTo.mockReset();
+	__listRef.scrollTo.mockReset();
 });
 
 const ReactList = forwardRef(function ReactList(
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	{ itemRenderer, length }: any,
 	ref
 ) {
 	if (ref) {
 		if (typeof ref === 'object') {
-			ref.current = mockReactListRef;
+			ref.current = __listRef;
 		}
 		if (ref instanceof Function) {
-			ref(mockReactListRef);
+			ref(__listRef);
 		}
 	}
 	return <div>{Array.from({ length }, (v, i) => itemRenderer(i))}</div>;

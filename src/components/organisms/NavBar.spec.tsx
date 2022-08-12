@@ -6,8 +6,9 @@ import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { vi, Mock } from 'vitest';
 
-jest.mock('../../lib/api/useSession');
+vi.mock('../../lib/api/useSession');
 
 async function renderComponent() {
 	const queryClient = new QueryClient();
@@ -21,7 +22,7 @@ async function renderComponent() {
 }
 
 describe('NavBar', () => {
-	const mockUseSession = useSession as jest.Mock;
+	const mockUseSession = useSession as Mock;
 
 	it('displays email', async () => {
 		mockUseSession.mockReturnValue({

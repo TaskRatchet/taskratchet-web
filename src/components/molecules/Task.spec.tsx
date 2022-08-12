@@ -12,14 +12,15 @@ import { waitFor } from '@testing-library/dom';
 import browser from '../../lib/Browser';
 import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';
+import { vi, Mock } from 'vitest';
 
-jest.mock('../../lib/api/updateTask');
-jest.mock('date-fns');
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/addTask');
-jest.mock('../../lib/api/editTask');
+vi.mock('../../lib/api/updateTask');
+vi.mock('date-fns');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/addTask');
+vi.mock('../../lib/api/editTask');
 
-const mockEditTask = editTask as jest.Mock;
+const mockEditTask = editTask as Mock;
 
 function renderTask(task: Partial<TaskType> = {}) {
 	const t: TaskType = {
@@ -46,7 +47,7 @@ async function openEditDialog() {
 
 describe('Task component', () => {
 	beforeEach(() => {
-		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
 	it('disables checkbox for tasks without id', async () => {

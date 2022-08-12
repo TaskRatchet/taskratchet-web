@@ -1,10 +1,11 @@
 import { getUnloadMessage } from './getUnloadMessage';
 import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
-import * as api from './api';
 import { renderWithQueryProvider, resolveWithDelay } from './test/helpers';
+import { vi } from 'vitest';
+import { updateTask } from './api';
 
-jest.mock('./api/updateTask');
+vi.mock('./api/updateTask');
 
 describe('getUnloadMessage', () => {
 	it('does not return message if no pending mutations', async () => {
@@ -16,7 +17,7 @@ describe('getUnloadMessage', () => {
 	});
 
 	it('returns message if pending task toggle', async () => {
-		resolveWithDelay(jest.spyOn(api, 'updateTask'), 200);
+		resolveWithDelay(vi.mocked(updateTask), 200);
 
 		const Component = () => {
 			const updateTask = useUpdateTask();

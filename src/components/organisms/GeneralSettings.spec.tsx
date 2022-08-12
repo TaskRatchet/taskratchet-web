@@ -3,9 +3,10 @@ import React from 'react';
 import GeneralSettings from './GeneralSettings';
 import userEvent from '@testing-library/user-event';
 import { waitFor } from '@testing-library/dom';
+import { vi } from 'vitest';
 
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateMe');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateMe');
 
 describe('general settings', () => {
 	it('displays loading indicator on save', async () => {

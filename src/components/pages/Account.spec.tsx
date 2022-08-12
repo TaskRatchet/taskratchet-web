@@ -8,22 +8,24 @@ import {
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import * as api from '../../lib/api';
+import { vi } from 'vitest';
+import { useGetApiToken } from '../../lib/api';
+import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 
-jest.mock('../../lib/api/getTimezones');
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateMe');
-jest.mock('../../lib/api/getCheckoutSession');
-jest.mock('../../lib/api/apiFetch');
-jest.mock('../../lib/api/updatePassword');
-jest.mock('../../lib/api/useGetApiToken');
+vi.mock('../../lib/api/getTimezones');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateMe');
+vi.mock('../../lib/api/getCheckoutSession');
+vi.mock('../../lib/api/apiFetch');
+vi.mock('../../lib/api/updatePassword');
+vi.mock('../../lib/api/useGetApiToken');
 
 describe('account page', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadMe({});
 		loadCheckoutSession();
-		jest.spyOn(api, 'useGetApiToken').mockReturnValue({
+		vi.mocked(useGetApiToken).mockReturnValue({
 			isLoading: false,
 			mutate: () => {
 				/* noop */
@@ -120,7 +122,7 @@ describe('account page', () => {
 
 			await queryClient.invalidateQueries('checkoutSession');
 
-			await waitFor(() => expect(api.getCheckoutSession).toBeCalledTimes(1));
+			await waitFor(() => expect(getCheckoutSession).toBeCalledTimes(1));
 		});
 	});
 
@@ -134,7 +136,7 @@ describe('account page', () => {
 
 	it('displays response data', async () => {
 		await act(async () => {
-			jest.spyOn(api, 'useGetApiToken').mockReturnValue({
+			vi.mocked(useGetApiToken).mockReturnValue({
 				isLoading: false,
 				mutate: () => {
 					/* noop */

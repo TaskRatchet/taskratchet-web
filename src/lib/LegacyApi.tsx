@@ -37,22 +37,6 @@ export class LegacyApi {
 			password: password,
 		});
 	}
-
-	register(
-		name: string,
-		email: string,
-		password: string,
-		timezone: string,
-		checkoutSessionId: string | null
-	): Promise<Response> {
-		return apiFetch('account/register', false, 'POST', {
-			name: name,
-			email: email,
-			password: password,
-			timezone: timezone,
-			checkout_session_id: checkoutSessionId,
-		});
-	}
 }
 
 const api = new LegacyApi();
