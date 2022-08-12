@@ -2,70 +2,66 @@ lockfileVersion: 5.4
 
 specifiers:
   '@date-io/date-fns': ^1.3.13
-  '@emotion/react': ^11.7.1
-  '@emotion/styled': ^11.6.0
+  '@emotion/react': ^11.10.0
+  '@emotion/styled': ^11.10.0
   '@highlight-run/react': ^1.1.11
-  '@mui/icons-material': ^5.2.5
-  '@mui/lab': ^5.0.0-alpha.62
-  '@mui/material': ^5.2.6
+  '@mui/icons-material': ^5.8.4
+  '@mui/lab': ^5.0.0-alpha.94
+  '@mui/material': ^5.10.0
   '@mui/x-date-pickers': ^5.0.0-beta.5
-  '@testing-library/dom': ^7.23.0
-  '@testing-library/jest-dom': ^5.11.5
+  '@testing-library/dom': ^7.31.2
+  '@testing-library/jest-dom': ^5.16.5
   '@testing-library/react': ^10.4.9
   '@testing-library/react-hooks': ^3.7.0
-  '@testing-library/user-event': ^12.1.3
+  '@testing-library/user-event': ^12.8.3
   '@types/humanize-duration': ^3.27.1
-  '@types/lodash': ^4.14.161
-  '@types/node': ^12.12.54
-  '@types/react': ^17.0.0
-  '@types/react-beforeunload': ^2.1.0
-  '@types/react-datepicker': ^2.11.0
-  '@types/react-dom': ^17.0.0
+  '@types/lodash': ^4.14.182
+  '@types/node': ^12.20.55
+  '@types/react': ^17.0.48
+  '@types/react-beforeunload': ^2.1.1
+  '@types/react-dom': ^17.0.17
   '@types/react-list': ^0.8.7
-  '@types/react-query': 1.2.9
-  '@types/react-router-dom': ^5.1.2
+  '@types/react-router-dom': ^5.3.3
   '@types/react-window': ^1.8.5
   '@types/shortid': 0.0.29
   '@typescript-eslint/eslint-plugin': ^5.33.0
   '@typescript-eslint/parser': ^5.33.0
   '@vitejs/plugin-react': 1.1.1
   '@xstate/react': ^2.0.1
-  chrono-node: ^2.1.9
-  date-fns: ^2.21.3
-  date-fns-tz: ^1.2.2
+  chrono-node: ^2.3.9
+  date-fns: ^2.29.1
+  date-fns-tz: ^1.3.6
   eslint: ^8.21.0
-  eslint-plugin-prettier: ^4.0.0
-  eslint-plugin-react: ^7.26.1
-  eslint-plugin-react-hooks: ^4.2.0
+  eslint-plugin-prettier: ^4.2.1
+  eslint-plugin-react: ^7.30.1
+  eslint-plugin-react-hooks: ^4.6.0
   eslint-plugin-testing-library: ^5.6.0
-  highlight.run: ^4.2.7
-  humanize-duration: ^3.27.1
+  highlight.run: ^4.3.3
+  humanize-duration: ^3.27.2
   jsdom: ^20.0.0
   lodash: ^4.17.21
   prettier: 2.4.1
-  query-string: ^6.12.1
-  react: ^17.0.0
-  react-beforeunload: ^2.4.0
-  react-datepicker: ^4.8.0
-  react-dom: ^17.0.0
+  query-string: ^6.14.1
+  react: ^17.0.2
+  react-beforeunload: ^2.5.3
+  react-dom: ^17.0.2
   react-ga: ^3.3.1
-  react-google-login: ^5.0.5
-  react-list: ^0.8.16
+  react-google-login: ^5.2.2
+  react-list: ^0.8.17
   react-query: 3.28.0
-  react-router-dom: ^5.1.2
-  react-test-renderer: ^17.0.1
+  react-router-dom: ^5.3.3
+  react-test-renderer: ^17.0.2
   react-toastify: ^5.5.0
   react-virtualized-auto-sizer: ^1.0.6
-  react-window: ^1.8.6
+  react-window: ^1.8.7
   resize-observer-polyfill: ^1.5.1
   shortid: ^2.2.16
-  tslint: ^6.1.3
   tslint-config-prettier: ^1.18.0
   typescript: ^3.9.10
   vite: 2.7.0
   vitest: ^0.21.1
   vitest-fetch-mock: ^0.2.1
-  xstate: ^4.13.0
+  xstate: ^4.33.1
 
 dependencies:
   '@date-io/date-fns': 1.3.13_date-fns@2.29.1
@@ -80,10 +76,8 @@ dependencies:
   '@types/node': 12.20.55
   '@types/react': 17.0.48
   '@types/react-beforeunload': 2.1.1
-  '@types/react-datepicker': 2.11.1
   '@types/react-dom': 17.0.17
   '@types/react-list': 0.8.7
-  '@types/react-query': 1.2.9_sfoxds7t5ydpegc3knd667wn6m
   '@types/react-router-dom': 5.3.3
   '@xstate/react': 2.0.1_t6fb3ppn7bfjbae2wlmr7whdzq
   chrono-node: 2.3.9
@@ -95,7 +89,6 @@ dependencies:
   query-string: 6.14.1
   react: 17.0.2
   react-beforeunload: 2.5.3_react@17.0.2
-  react-datepicker: 4.8.0_sfoxds7t5ydpegc3knd667wn6m
   react-dom: 17.0.2_react@17.0.2
   react-ga: 3.3.1_at7mkepldmzoo6silmqc5bca74
   react-google-login: 5.2.2_sfoxds7t5ydpegc3knd667wn6m
@@ -129,7 +122,6 @@ devDependencies:
   jsdom: 20.0.0
   prettier: 2.4.1
   react-test-renderer: 17.0.2_react@17.0.2
-  tslint: 6.1.3_typescript@3.9.10
   tslint-config-prettier: 1.18.0
   typescript: 3.9.10
   vite: 2.7.0
@@ -1161,14 +1153,6 @@ packages:
       '@types/react': 17.0.48
     dev: false
 
-  /@types/react-datepicker/2.11.1:
-    resolution: {integrity: sha512-MVz1vcv3ButoDfKPUA40lSxPBGsT1f05zqvUsP4t5997TX9C4btlYyREJ+h9sRw9R10EpokkS08GFK4XI+Q0Qg==}
-    dependencies:
-      '@types/react': 17.0.48
-      date-fns: 2.29.1
-      popper.js: 1.16.1
-    dev: false
-
   /@types/react-dom/17.0.17:
     resolution: {integrity: sha512-VjnqEmqGnasQKV0CWLevqMTXBYG9GbwuE6x3VetERLh0cq2LTptFE73MrQi2S7GkKXCf2GgwItB/melLnxfnsg==}
     dependencies:
@@ -1185,17 +1169,6 @@ packages:
     resolution: {integrity: sha512-TaPwZNx+sNY2djMWPqf81SfimnWIob/jjZbQJkJRZMf/G6Zu+gFpUoou/70MkZhbKhREk1eTNZFmbokBwAmbBg==}
     dependencies:
       '@types/react': 17.0.48
-    dev: false
-
-  /@types/react-query/1.2.9_sfoxds7t5ydpegc3knd667wn6m:
-    resolution: {integrity: sha512-xfVcv5zjC6fGf6axPyKxdXNm9RKK9OFzSIyZeCR3r9h4zDuqSpHc8ilTBtfQ1zU/uCx+tAsB+W6vzdCBMu1jtg==}
-    deprecated: This is a stub types definition. react-query provides its own type definitions, so you do not need this installed.
-    dependencies:
-      react-query: 3.28.0_sfoxds7t5ydpegc3knd667wn6m
-    transitivePeerDependencies:
-      - react
-      - react-dom
-      - react-native
     dev: false
 
   /@types/react-router-dom/5.3.3:
@@ -1506,12 +1479,6 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  /argparse/1.0.10:
-    resolution: {integrity: sha512-o5Roy6tNG4SL/FOkCAN6RzjiakZS25RLYFrcMttJqbdd8BWrnA+fGz57iN5Pb06pvBGvl5gQ0B48dJlslXvoTg==}
-    dependencies:
-      sprintf-js: 1.0.3
-    dev: true
-
   /argparse/2.0.1:
     resolution: {integrity: sha512-8+9WqebbFzpX9OR+Wa6O29asIogeRMzcGtAINdpMHHyAg10f05aSFVBbcEqGf/PXw1EjAZ+q2/bEBg3DvurK3Q==}
     dev: true
@@ -1634,11 +1601,6 @@ packages:
       node-releases: 2.0.6
       update-browserslist-db: 1.0.5_browserslist@4.21.3
 
-  /builtin-modules/1.1.1:
-    resolution: {integrity: sha512-wxXCdllwGhI2kCC0MnvTGYTMvnVZTvqgypkiTI8Pa5tcz2i6VqsqwYGgqwXji+4RgCzms6EajE4IxiUH6HH8nQ==}
-    engines: {node: '>=0.10.0'}
-    dev: true
-
   /call-bind/1.0.2:
     resolution: {integrity: sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==}
     dependencies:
@@ -1733,10 +1695,6 @@ packages:
     engines: {node: '>= 0.8'}
     dependencies:
       delayed-stream: 1.0.0
-    dev: true
-
-  /commander/2.20.3:
-    resolution: {integrity: sha512-GpVkmM8vF2vQUkj2LvZmD35JxeJOLCwJ9cUkugyk2nuhbv3+mJvpLYYt+0+USMxE+oj+ey/lJEnhZw75x/OMcQ==}
     dev: true
 
   /commondir/1.0.1:
@@ -1927,11 +1885,6 @@ packages:
   /diff-sequences/28.1.1:
     resolution: {integrity: sha512-FU0iFaH/E23a+a718l8Qa/19bF9p06kgE0KipMOMadwa3SjnaElKzPaUC0vnibs6/B/9ni97s61mcejk8W1fQw==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
-    dev: true
-
-  /diff/4.0.2:
-    resolution: {integrity: sha512-58lmxKSA4BNyLz+HHMUzlOEpg09FV+ev6ZMe3vJihgdxzgcwZ8VoEEPmALCZG9LmqfVoNMMKpttIYTVG6uDY7A==}
-    engines: {node: '>=0.3.1'}
     dev: true
 
   /dir-glob/3.0.1:
@@ -3131,14 +3084,6 @@ packages:
   /js-tokens/4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
 
-  /js-yaml/3.14.1:
-    resolution: {integrity: sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g==}
-    hasBin: true
-    dependencies:
-      argparse: 1.0.10
-      esprima: 4.0.1
-    dev: true
-
   /js-yaml/4.1.0:
     resolution: {integrity: sha512-wpxZs9NoxZaJESJGIZTyDEaYpl0FKSA+FB9aJiyemKhMwkxQg63h4T1KJgUGHpTqPDNRcmmYLugrRjJlBtWvRA==}
     hasBin: true
@@ -3365,12 +3310,14 @@ packages:
 
   /minimist/1.2.6:
     resolution: {integrity: sha512-Jsjnk4bw3YJqYzbdyBiNsPWHPfO++UGG749Cxs6peCu5Xg4nrena6OVxOYxrQTqww0Jmwt+Ref8rggumkTLz9Q==}
+    dev: false
 
   /mkdirp/0.5.6:
     resolution: {integrity: sha512-FP+p8RB8OWpF3YZBCrP5gtADmtXApB5AMLn+vdyA+PyxCjrCs00mjyUozssO33cwDeT3wNGdLxJ5M//YqtHAJw==}
     hasBin: true
     dependencies:
       minimist: 1.2.6
+    dev: false
 
   /ms/2.0.0:
     resolution: {integrity: sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==}
@@ -3582,11 +3529,6 @@ packages:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
 
-  /popper.js/1.16.1:
-    resolution: {integrity: sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==}
-    deprecated: You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1
-    dev: false
-
   /postcss-modules-extract-imports/1.2.1:
     resolution: {integrity: sha512-6jt9XZwUhwmRUhb/CkyJY020PYaPJsCyt3UjbaWo6XEbH/94Hmv6MP7fG2C5NDU/BcHzyGYxNtHvM+LTf9HrYw==}
     dependencies:
@@ -3727,22 +3669,6 @@ packages:
       tiny-invariant: 1.2.0
     dev: false
 
-  /react-datepicker/4.8.0_sfoxds7t5ydpegc3knd667wn6m:
-    resolution: {integrity: sha512-u69zXGHMpxAa4LeYR83vucQoUCJQ6m/WBsSxmUMu/M8ahTSVMMyiyQzauHgZA2NUr9y0FUgOAix71hGYUb6tvg==}
-    peerDependencies:
-      react: ^16.9.0 || ^17 || ^18
-      react-dom: ^16.9.0 || ^17 || ^18
-    dependencies:
-      '@popperjs/core': 2.11.6
-      classnames: 2.3.1
-      date-fns: 2.29.1
-      prop-types: 15.8.1
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-onclickoutside: 6.12.2_sfoxds7t5ydpegc3knd667wn6m
-      react-popper: 2.3.0_vov5yimr6vvxyufd6uigwwkst4
-    dev: false
-
   /react-dom/17.0.2_react@17.0.2:
     resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
     peerDependencies:
@@ -3752,10 +3678,6 @@ packages:
       object-assign: 4.1.1
       react: 17.0.2
       scheduler: 0.20.2
-
-  /react-fast-compare/3.2.0:
-    resolution: {integrity: sha512-rtGImPZ0YyLrscKI9xTpV8psd6I8VAtjKCzQDlzyDvqJA8XOW78TXYQwNRNd8g8JZnDu8q9Fu/1v4HPAVwVdHA==}
-    dev: false
 
   /react-ga/3.3.1_at7mkepldmzoo6silmqc5bca74:
     resolution: {integrity: sha512-4Vc0W5EvXAXUN/wWyxvsAKDLLgtJ3oLmhYYssx+YzphJpejtOst6cbIHCIyF50Fdxuf5DDKqRYny24yJ2y7GFQ==}
@@ -3796,30 +3718,6 @@ packages:
     dependencies:
       prop-types: 15.8.1
       react: 17.0.2
-    dev: false
-
-  /react-onclickoutside/6.12.2_sfoxds7t5ydpegc3knd667wn6m:
-    resolution: {integrity: sha512-NMXGa223OnsrGVp5dJHkuKxQ4czdLmXSp5jSV9OqiCky9LOpPATn3vLldc+q5fK3gKbEHvr7J1u0yhBh/xYkpA==}
-    peerDependencies:
-      react: ^15.5.x || ^16.x || ^17.x || ^18.x
-      react-dom: ^15.5.x || ^16.x || ^17.x || ^18.x
-    dependencies:
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-    dev: false
-
-  /react-popper/2.3.0_vov5yimr6vvxyufd6uigwwkst4:
-    resolution: {integrity: sha512-e1hj8lL3uM+sgSR4Lxzn5h1GxBlpa4CQz0XLF8kx4MDrDRWY0Ena4c97PUeSX9i5W3UAfDP0z0FXCTQkoXUl3Q==}
-    peerDependencies:
-      '@popperjs/core': ^2.0.0
-      react: ^16.8.0 || ^17 || ^18
-      react-dom: ^16.8.0 || ^17 || ^18
-    dependencies:
-      '@popperjs/core': 2.11.6
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-fast-compare: 3.2.0
-      warning: 4.0.3
     dev: false
 
   /react-query/3.28.0_sfoxds7t5ydpegc3knd667wn6m:
@@ -4075,11 +3973,6 @@ packages:
     engines: {node: '>=0.12'}
     dev: false
 
-  /semver/5.7.1:
-    resolution: {integrity: sha512-sauaDf/PZdVgrLTNYHRtpXa1iRiKcaebiKQ1BJdpQlWH2lCvexQdX55snPFyK7QzpudqbCI0qXFfOasHdyNDGQ==}
-    hasBin: true
-    dev: true
-
   /semver/6.3.0:
     resolution: {integrity: sha512-b39TBaTSfV6yBrapU89p5fKekE2m/NwnDocOVruQFS1/veMgdzuPcnOM34M6CwxW8jH/lxEa5rBoDeUwu5HHTw==}
     hasBin: true
@@ -4145,10 +4038,6 @@ packages:
     resolution: {integrity: sha512-43ZssAJaMusuKWL8sKUBQXHWOpq8d6CfN/u1p4gUzfJkM05C8rxTmYrkIPTXapZpORA6LkkzcUulJ8FqA7Uudw==}
     engines: {node: '>=6'}
     dev: false
-
-  /sprintf-js/1.0.3:
-    resolution: {integrity: sha512-D9cPgkvLlV3t3IzL0D0YLvGA9Ahk4PcvVwUbN0dSGr1aP0Nrt4AEnTUbuGvquEC0mA64Gqt1fzirlRs5ibXx8g==}
-    dev: true
 
   /strict-uri-encode/2.0.0:
     resolution: {integrity: sha512-QwiXZgpRcKkhTj2Scnn++4PKtWsH0kpzZ62L2R6c/LUVYv7hVnZqcg2+sMuT6R7Jusu1vviK/MFsu6kNJfWlEQ==}
@@ -4289,39 +4178,6 @@ packages:
     resolution: {integrity: sha512-xPw9PgNPLG3iKRxmK7DWr+Ea/SzrvfHtjFt5LBl61gk2UBG/DB9kCXRjv+xyIU1rUtnayLeMUVJBcMX8Z17nDg==}
     engines: {node: '>=4.0.0'}
     hasBin: true
-    dev: true
-
-  /tslint/6.1.3_typescript@3.9.10:
-    resolution: {integrity: sha512-IbR4nkT96EQOvKE2PW/djGz8iGNeJ4rF2mBfiYaR/nvUWYKJhLwimoJKgjIFEIDibBtOevj7BqCRL4oHeWWUCg==}
-    engines: {node: '>=4.8.0'}
-    deprecated: TSLint has been deprecated in favor of ESLint. Please see https://github.com/palantir/tslint/issues/4534 for more information.
-    hasBin: true
-    peerDependencies:
-      typescript: '>=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >=3.0.0-dev || >= 3.1.0-dev || >= 3.2.0-dev || >= 4.0.0-dev'
-    dependencies:
-      '@babel/code-frame': 7.18.6
-      builtin-modules: 1.1.1
-      chalk: 2.4.2
-      commander: 2.20.3
-      diff: 4.0.2
-      glob: 7.2.3
-      js-yaml: 3.14.1
-      minimatch: 3.1.2
-      mkdirp: 0.5.6
-      resolve: 1.22.1
-      semver: 5.7.1
-      tslib: 1.14.1
-      tsutils: 2.29.0_typescript@3.9.10
-      typescript: 3.9.10
-    dev: true
-
-  /tsutils/2.29.0_typescript@3.9.10:
-    resolution: {integrity: sha512-g5JVHCIJwzfISaXpXE1qvNalca5Jwob6FjI4AoPlqMusJ6ftFE7IkkFoMhVLRgK+4Kx3gkzb8UZK5t5yTTvEmA==}
-    peerDependencies:
-      typescript: '>=2.1.0 || >=2.1.0-dev || >=2.2.0-dev || >=2.3.0-dev || >=2.4.0-dev || >=2.5.0-dev || >=2.6.0-dev || >=2.7.0-dev || >=2.8.0-dev || >=2.9.0-dev || >= 3.0.0-dev || >= 3.1.0-dev'
-    dependencies:
-      tslib: 1.14.1
-      typescript: 3.9.10
     dev: true
 
   /tsutils/3.21.0_typescript@3.9.10:
@@ -4563,12 +4419,6 @@ packages:
     dependencies:
       xml-name-validator: 4.0.0
     dev: true
-
-  /warning/4.0.3:
-    resolution: {integrity: sha512-rpJyN222KWIvHJ/F53XSZv0Zl/accqHR8et1kpaMTD/fLCRxtV8iX8czMzY7sVZupTI3zcUTg8eycS2kNF9l6w==}
-    dependencies:
-      loose-envify: 1.4.0
-    dev: false
 
   /webidl-conversions/3.0.1:
     resolution: {integrity: sha512-2JAn3z8AR6rjK8Sm8orRC0h/bcl/DqL7tRPdGZ4I1CjdF+EaMLmYxBHyXuKL849eucPFhvBoxMsflfOb8kxaeQ==}
