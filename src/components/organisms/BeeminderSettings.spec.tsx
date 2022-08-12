@@ -1,4 +1,4 @@
-import { RenderResult, waitFor } from '@testing-library/react';
+import { RenderResult, waitFor, act } from '@testing-library/react';
 import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
 import {
@@ -9,7 +9,6 @@ import {
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { act } from 'react-test-renderer';
 import { vi } from 'vitest';
 import { updateMe } from '../../lib/api';
 import { getMe } from '../../lib/api';

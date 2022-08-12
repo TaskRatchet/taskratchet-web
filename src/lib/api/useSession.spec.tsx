@@ -1,6 +1,6 @@
 import { renderHook } from '@testing-library/react-hooks';
 import { logout, useSession } from './useSession';
-import { act } from 'react-test-renderer';
+import { act } from '@testing-library/react'
 
 describe('useSession', () => {
 	it('should return the session', () => {
