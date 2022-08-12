@@ -9,17 +9,17 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material';
-import { DatePicker, LoadingButton, TimePicker } from '@mui/lab';
-import formatDue from '../../lib/formatDue';
+import { LoadingButton, TimePicker } from '@mui/lab';
+import DueForm from './DueForm';
 
 export type TaskFormProps = {
 	task: string;
-	due: string;
+	due?: string;
 	cents: number;
 	recurrence?: Record<string, number>;
 	timezone: string;
 	error: string;
-	onChange: (input: TaskInput) => void;
+	onChange: (input: Partial<TaskInput>) => void;
 	onSubmit: (input: TaskInput) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
@@ -47,9 +47,6 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 	} = props;
 	const [recurrenceEnabled, setRecurrenceEnabled] = useState<boolean>(false);
 	const [interval, setInterval] = useState<number>(1);
-	const dueDate = useMemo(() => {
-		return new Date(due);
-	}, [due]);
 
 	return (
 		<Box
@@ -98,57 +95,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					}}
 					variant="standard"
 				/>
-				<DatePicker
-					label="Due Date"
-					clearable={false}
-					value={due}
-					onChange={(value: unknown) => {
-						if (!(value instanceof Date)) return;
-						if (isNaN(value.getTime())) return;
-						if (due) {
-							value.setHours(dueDate?.getHours(), dueDate?.getMinutes());
-						}
-						onChange({ task, due: formatDue(value), cents, recurrence });
-					}}
-					OpenPickerButtonProps={{
-						'aria-label': 'change date',
-					}}
-					disablePast
-					renderInput={(params) => (
-						<TextField
-							required
-							InputLabelProps={{
-								'aria-label': 'due date',
-							}}
-							variant="standard"
-							{...params}
-						/>
-					)}
-					maxDate={maxDue && new Date(maxDue)}
-					minDate={minDue && new Date(minDue)}
-				/>
-				<TimePicker
-					label="Due Time"
-					clearable={false}
-					value={due}
-					onChange={(value: unknown) => {
-						if (!(value instanceof Date)) return;
-						if (isNaN(value.getTime())) return;
-						if (due)
-							value.setFullYear(
-								dueDate.getFullYear(),
-								dueDate.getMonth(),
-								dueDate.getDate()
-							);
-						onChange({ task, due: formatDue(value), cents, recurrence });
-					}}
-					OpenPickerButtonProps={{
-						'aria-label': 'change time',
-					}}
-					renderInput={(params) => (
-						<TextField required variant="standard" {...params} />
-					)}
-				/>
+				{due && <DueForm due={due} onChange={onChange} />}
 				<FormControlLabel
 					control={
 						<Checkbox

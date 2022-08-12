@@ -34,7 +34,7 @@ export const loadMe = ({
 }: {
 	json?: Partial<User>;
 	ok?: boolean;
-}): void => {
+} = {}): void => {
 	const response = makeResponse({ json, ok });
 
 	jest.spyOn(new_api, 'getMe').mockResolvedValue(json as User);

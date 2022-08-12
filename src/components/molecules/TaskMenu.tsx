@@ -1,11 +1,12 @@
 import React, { MouseEvent } from 'react';
 import { IconButton, Menu } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
-import TaskEdit from '../organisms/TaskEdit';
-import UncleButton from '../organisms/UncleButton';
-import TaskCopy from '../organisms/TaskCopy';
 
-export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
+export default function TaskMenu({
+	renderItems,
+}: {
+	renderItems: (handleClose: () => void) => JSX.Element[];
+}): JSX.Element {
 	const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);
 	const open = Boolean(anchorEl);
 
@@ -34,9 +35,7 @@ export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 				open={open}
 				onClose={handleClose}
 			>
-				<UncleButton task={task} onClick={() => handleClose()} />
-				<TaskEdit task={task} onOpen={() => handleClose()} />
-				<TaskCopy task={task} onOpen={() => handleClose()} />
+				{renderItems(handleClose)}
 			</Menu>
 		</div>
 	);

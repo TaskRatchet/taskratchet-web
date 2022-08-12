@@ -17,6 +17,10 @@ import EventBusyIcon from '@mui/icons-material/EventBusy';
 import useIsDue from '../../lib/useIsDue';
 import useDifferenceToNow from '../../lib/useDifferenceToNow';
 
+import TaskEdit from '../organisms/TaskEdit';
+import UncleButton from '../organisms/UncleButton';
+import TaskCopy from '../organisms/TaskCopy';
+
 export interface TaskProps {
 	task: TaskType;
 	ref_?: Ref<HTMLDivElement>;
@@ -36,7 +40,21 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 			className={`molecule-task molecule-task__${task.status} ${
 				task.isNew ? 'molecule-task__highlight' : ''
 			}`}
-			secondaryAction={<TaskMenu task={task} />}
+			secondaryAction={
+				<TaskMenu
+					renderItems={(handleClose) => {
+						return [
+							<UncleButton
+								key="uncle"
+								task={task}
+								onClick={() => handleClose()}
+							/>,
+							<TaskEdit key="edit" task={task} onOpen={() => handleClose()} />,
+							<TaskCopy key="copy" task={task} onOpen={() => handleClose()} />,
+						];
+					}}
+				/>
+			}
 			disablePadding
 			sx={{
 				borderLeft: isDue ? 3 : 0,
