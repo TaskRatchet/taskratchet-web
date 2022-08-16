@@ -5,10 +5,9 @@ import Tasks from './components/pages/Tasks';
 import ReactGA from 'react-ga';
 import {
 	BrowserRouter as Router,
-	Switch,
+	Routes,
 	Route,
 	useLocation,
-	useHistory,
 } from 'react-router-dom';
 import Account from './components/pages/Account';
 import Authenticated from './components/pages/Authenticated';
@@ -50,7 +49,7 @@ const localStoragePersistor = createWebStoragePersistor({
 	storage: window.localStorage,
 });
 
-persistQueryClient({ queryClient, persistor: localStoragePersistor });
+void persistQueryClient({ queryClient, persistor: localStoragePersistor });
 
 function usePageViews(): void {
 	const location = useLocation();
@@ -66,7 +65,7 @@ function usePageViews(): void {
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
 	const ref = useRef<HTMLElement>();
-	const history = useHistory();
+	const location = useLocation();
 
 	const handleTodayClick = () => {
 		setLastToday(browser.getNowDate());
@@ -77,14 +76,9 @@ export function App(): JSX.Element {
 	}, []);
 
 	useEffect(() => {
-		const unlisten = history.listen(() => {
-			if (!ref.current || !('scrollTo' in ref.current)) return;
-			ref.current.scrollTo(0, 0);
-		});
-		return () => {
-			unlisten();
-		};
-	}, [history]);
+		if (!ref.current || !('scrollTo' in ref.current)) return;
+		ref.current.scrollTo(0, 0);
+	}, [location]);
 
 	usePageViews();
 
@@ -112,44 +106,52 @@ export function App(): JSX.Element {
 								minHeight: 1,
 							}}
 						>
-							<Switch>
-								<Route path={'/register'}>
-									<RegisterForm />
-								</Route>
+							<Routes>
+								<Route path={'/register'} element={<RegisterForm />} />
 
-								<Route path={'/success'}>
-									<Box sx={{ p: 2 }}>
-										<Alert severity="success">
-											Your payment method has been saved successfully.
-										</Alert>
-									</Box>
-								</Route>
+								<Route
+									path={'/success'}
+									element={
+										<Box sx={{ p: 2 }}>
+											<Alert severity="success">
+												Your payment method has been saved successfully.
+											</Alert>
+										</Box>
+									}
+								/>
 
-								<Route path={'/cancel'}>
-									<Box sx={{ p: 2 }}>
-										<Alert severity="error">
-											Your payment method could not be saved. Please contact{' '}
-											{email} for assistance.
-										</Alert>
-									</Box>
-								</Route>
+								<Route
+									path={'/cancel'}
+									element={
+										<Box sx={{ p: 2 }}>
+											<Alert severity="error">
+												Your payment method could not be saved. Please contact{' '}
+												{email} for assistance.
+											</Alert>
+										</Box>
+									}
+								/>
 
-								<Route path={'/account'}>
-									<Authenticated>
-										<Account />
-									</Authenticated>
-								</Route>
+								<Route
+									path={'/account'}
+									element={
+										<Authenticated>
+											<Account />
+										</Authenticated>
+									}
+								/>
 
-								<Route path={'/reset'}>
-									<ResetPassword />
-								</Route>
+								<Route path={'/reset'} element={<ResetPassword />} />
 
-								<Route path={'/'}>
-									<Authenticated>
-										<Tasks lastToday={lastToday} />
-									</Authenticated>
-								</Route>
-							</Switch>
+								<Route
+									path={'/'}
+									element={
+										<Authenticated>
+											<Tasks lastToday={lastToday} />
+										</Authenticated>
+									}
+								/>
+							</Routes>
 						</Container>
 					</Box>
 				</Stack>

@@ -22,8 +22,8 @@ vi.mock('react-list');
 
 const mockUseSession = useSession as Mock;
 
-const openForm = () =>
-	waitFor(() => userEvent.click(screen.getByLabelText('add')));
+const openForm =  () =>
+	userEvent.click(screen.getByLabelText('add'));
 
 const getTaskInput = () => screen.getByLabelText('Task *') as HTMLInputElement;
 
@@ -72,7 +72,7 @@ describe('App', () => {
 		});
 	});
 
-	it('has filter entries', async () => {
+	it('has filter entries',  () => {
 		renderPage();
 
 		userEvent.click(screen.getByLabelText('filters'));
@@ -101,20 +101,22 @@ describe('App', () => {
 		});
 	});
 
-	it('persists checked state when reopening menu', async () => {
-		const { getByLabelText, getByText, baseElement } = renderPage();
+	it('persists checked state when reopening menu', () => {
+		const { baseElement } = renderPage();
 
-		userEvent.click(getByLabelText('filters'));
-		userEvent.click(getByText('pending'));
+		userEvent.click(screen.getByLabelText('filters'));
+		userEvent.click(screen.getByText('pending'));
 
 		const backdrop = baseElement.querySelector('.MuiBackdrop-root');
 
 		if (backdrop === null) throw new Error('No backdrop');
 
 		userEvent.click(backdrop);
-		userEvent.click(getByLabelText('filters'));
+		userEvent.click(screen.getByLabelText('filters'));
 
-		expect(getByLabelText('pending')).not.toBeChecked();
+		const checkbox = screen.getByLabelText('pending') as HTMLInputElement;
+
+		expect(checkbox).not.toBeChecked();
 	});
 
 	it('persists checked state on reload', async () => {

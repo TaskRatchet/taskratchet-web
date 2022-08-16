@@ -7,14 +7,14 @@ interface Context {
 }
 
 export function useUpdateTask(): (
-	id: string | number,
+	id: string,
 	data: TaskInput
 ) => void {
 	const queryClient = useQueryClient();
 
 	// TODO: replace any type
 	const { mutate } = useMutation(
-		(variables: { id: string | number; data: TaskInput }): Promise<unknown> => {
+		(variables: { id: string; data: TaskInput }): Promise<unknown> => {
 			const { id, data } = variables;
 
 			return updateTask(id, data);
@@ -46,6 +46,7 @@ export function useUpdateTask(): (
 				return { previousTasks };
 			},
 			onError: (error: Error, variables, context) => {
+				console.log('rolling back')
 				queryClient.setQueryData('tasks', (context as Context).previousTasks);
 				toaster.send(error.toString());
 			},
@@ -55,7 +56,7 @@ export function useUpdateTask(): (
 		}
 	);
 
-	return (id: string | number, data: TaskInput): void => {
+	return (id: string, data: TaskInput): void => {
 		mutate({ id, data });
 	};
 }

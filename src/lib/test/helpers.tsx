@@ -95,6 +95,7 @@ export function expectLoadingOverlay(
 	const { shouldExist = true, extraClasses = '' } = options;
 
 	expect(
+		// eslint-disable-next-line testing-library/no-node-access
 		container.getElementsByClassName(`loading ${extraClasses}`).length
 	).toBe(+shouldExist);
 }
@@ -110,14 +111,14 @@ export function renderWithQueryProvider(
 		},
 	});
 
-	const result = render(
+	const view = render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
 		</LocalizationProvider>
 	);
 
 	return {
-		...result,
+		...view,
 		queryClient,
 	};
 }
@@ -145,7 +146,7 @@ export function makeTask({
 	complete = false,
 	due = '5/22/2020, 11:59 PM',
 	due_timestamp = undefined,
-	id = Math.random() + '',
+	id = Math.random().toString(),
 	cents = 100,
 	task = 'the_task',
 	status = complete ? 'complete' : 'pending',
@@ -166,7 +167,7 @@ export function makeTask({
 }
 
 export async function withMutedReactQueryLogger(
-	callback: () => void
+	callback: () => Promise<void>
 ): Promise<void> {
 	setLogger({
 		log: () => {

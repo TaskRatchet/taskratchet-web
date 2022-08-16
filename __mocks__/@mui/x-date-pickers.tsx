@@ -17,7 +17,7 @@ function makePicker({
 				p.onChange(parseValue(e.target.value));
 			},
 			...p.InputProps,
-		} as any);
+		});
 	};
 }
 

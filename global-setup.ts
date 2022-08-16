@@ -1,46 +1,37 @@
 import createFetchMock from 'vitest-fetch-mock';
 import { vi, beforeEach, expect, afterEach } from 'vitest';
-import matchers from '@testing-library/jest-dom/matchers';
+import matchers, {TestingLibraryMatchers} from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
 
 afterEach(() => {
 	cleanup();
 });
 
-expect.extend(matchers);
+const m: TestingLibraryMatchers<string, void> = matchers;
 
+expect.extend(m);
+
+// eslint-disable-next-line @typescript-eslint/require-await
 module.exports = async () => {
 	process.env.TZ = 'America/Chicago';
 };
 
-vi.mock('react', async () => ({
-	...(await vi.importActual('react')),
-	useLayoutEffect: (await vi.importActual('react')).useEffect,
-}));
-
-// vi.mock('@mui/x-date-pickers', async () => {
-// 	const dp = await vi.importActual('@mui/x-date-pickers/DesktopDatePicker');
-// 	const tp = await vi.importActual('@mui/x-date-pickers/DesktopTimePicker');
-// 	const og = await vi.importActual('@mui/x-date-pickers');
-
-// 	return {
-// 		...og,
-// 		DatePicker: dp.DesktopDatePicker,
-// 		TimePicker: tp.DesktopTimePicker,
-// 	};
-// });
+// vi.mock('react', async () => ({
+// 	...(await vi.importActual('react')),
+// 	useLayoutEffect: (await vi.importActual('react')).useEffect,
+// }));
 
 vi.mock('@mui/x-date-pickers');
 
-global.scrollTo = vi.fn();
+global.scrollTo = vi.fn() as any;
 
 function deleteAllCookies() {
-	var cookies = document.cookie.split(';');
+	const cookies = document.cookie.split(';');
 
-	for (var i = 0; i < cookies.length; i++) {
-		var cookie = cookies[i];
-		var eqPos = cookie.indexOf('=');
-		var name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
+	for (let i = 0; i < cookies.length; i++) {
+		const cookie = cookies[i];
+		const eqPos = cookie.indexOf('=');
+		const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
 		document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';
 	}
 }

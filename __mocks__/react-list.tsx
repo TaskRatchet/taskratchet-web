@@ -2,7 +2,9 @@ import React, { forwardRef } from 'react';
 import { vi } from 'vitest';
 
 declare module 'react-list' {
-	const __listRef: any;
+	const __listRef: {
+		scrollTo: (index: number) => void;
+	};
 }
 
 export const __listRef = {
@@ -14,7 +16,10 @@ beforeEach(() => {
 });
 
 const ReactList = forwardRef(function ReactList(
-	{ itemRenderer, length }: any,
+	{
+		itemRenderer,
+		length,
+	}: { itemRenderer: (i: number) => JSX.Element; length: number },
 	ref
 ) {
 	if (ref) {

@@ -1,6 +1,5 @@
-import { renderHook } from '@testing-library/react-hooks';
 import { logout, useSession } from './useSession';
-import { act } from '@testing-library/react'
+import { act, renderHook } from '@testing-library/react'
 
 describe('useSession', () => {
 	it('should return the session', () => {
@@ -10,7 +9,7 @@ describe('useSession', () => {
 		};
 		window.localStorage.setItem('email', session.email);
 		window.localStorage.setItem('token', session.token);
-		const { result } = renderHook(() => useSession());
+		const { result } = renderHook(useSession);
 		expect(result.current).toEqual(session);
 	});
 

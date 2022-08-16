@@ -12,7 +12,7 @@ export default function GeneralSettings(): JSX.Element {
 	const [timezone, setTimezone] = useState<string>('');
 
 	useEffect(() => {
-		getMe().then((me) => {
+		void getMe().then((me) => {
 			const { name = '', email = '', timezone = '' } = me || {};
 
 			setName(name);
@@ -25,7 +25,7 @@ export default function GeneralSettings(): JSX.Element {
 		return value === '' ? undefined : value;
 	};
 
-	const saveGeneral = async (event: FormEvent<HTMLFormElement>) => {
+	const saveGeneral =  (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		updateMe.mutate({

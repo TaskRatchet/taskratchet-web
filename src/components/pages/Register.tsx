@@ -44,7 +44,7 @@ const Register = (): JSX.Element => {
 
 		const stripe = window.Stripe(window.stripe_key);
 
-		stripe
+		void stripe
 			.redirectToCheckout({
 				sessionId: getSessionId(),
 			})
@@ -117,7 +117,7 @@ const Register = (): JSX.Element => {
 
 	return (
 		<Box sx={{ p: 2 }}>
-			<form>
+			<form onSubmit={(e) => void submit(e)}>
 				<h1>Register</h1>
 
 				<Input
@@ -200,7 +200,6 @@ const Register = (): JSX.Element => {
 				<Button
 					type="submit"
 					disabled={checkoutSession == null}
-					onClick={submit}
 				>
 					Add payment method
 				</Button>

@@ -12,7 +12,7 @@ export class LegacyApi {
 		}).then((res: Response) => {
 			if (!res.ok) return false;
 
-			res
+			void res
 				.text()
 				.then((token: string) => this._handleLoginResponse(email, token));
 

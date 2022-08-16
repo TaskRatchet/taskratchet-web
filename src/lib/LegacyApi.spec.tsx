@@ -1,5 +1,5 @@
 import { LegacyApi } from './LegacyApi';
-import { waitFor } from '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
 
 describe('LegacyApi', () => {
 	it('should be defined', () => {

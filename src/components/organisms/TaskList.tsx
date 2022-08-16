@@ -72,7 +72,7 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 				itemRenderer={(i: number) => {
 					const entry = entries[i];
 					return isTask(entry) ? (
-						<Task key={`${entry.id}_${entry.task}`} task={entry} />
+						<Task key={`${entry.id ?? ''}_${entry.task}`} task={entry} />
 					) : (
 						<ListSubheader
 							key={`${entry}__heading`}

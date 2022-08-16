@@ -8,15 +8,15 @@ import { updateTask } from './api';
 vi.mock('./api/updateTask');
 
 describe('getUnloadMessage', () => {
-	it('does not return message if no pending mutations', async () => {
-		const { queryClient } = await renderWithQueryProvider(
+	it('does not return message if no pending mutations',  () => {
+		const { queryClient } =  renderWithQueryProvider(
 			<div>Hello World</div>
 		);
 
 		expect(getUnloadMessage(queryClient)).toBeFalsy();
 	});
 
-	it('returns message if pending task toggle', async () => {
+	it('returns message if pending task toggle',  () => {
 		resolveWithDelay(vi.mocked(updateTask), 200);
 
 		const Component = () => {
@@ -27,7 +27,7 @@ describe('getUnloadMessage', () => {
 			return <div>Component</div>;
 		};
 
-		const { queryClient } = await renderWithQueryProvider(<Component />);
+		const { queryClient } =  renderWithQueryProvider(<Component />);
 
 		const expected =
 			'There are changes that may be lost if you continue exiting.';
