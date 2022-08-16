@@ -6,10 +6,7 @@ interface Context {
 	previousTasks: TaskType[] | undefined;
 }
 
-export function useUpdateTask(): (
-	id: string,
-	data: TaskInput
-) => void {
+export function useUpdateTask(): (id: string, data: TaskInput) => void {
 	const queryClient = useQueryClient();
 
 	// TODO: replace any type
@@ -46,7 +43,6 @@ export function useUpdateTask(): (
 				return { previousTasks };
 			},
 			onError: (error: Error, variables, context) => {
-				console.log('rolling back')
 				queryClient.setQueryData('tasks', (context as Context).previousTasks);
 				toaster.send(error.toString());
 			},

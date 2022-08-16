@@ -1,7 +1,6 @@
 import { addTask, getTasks, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
 import {
-	act,
 	fireEvent,
 	render,
 	waitFor,
@@ -25,6 +24,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
 import { vi, Mock } from 'vitest';
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 
 vi.mock('../../lib/api/apiFetch');
 vi.mock('../../lib/api/getTasks');
@@ -38,7 +38,6 @@ vi.mock('../../lib/getUnloadMessage');
 vi.mock('../../lib/api/editTask');
 vi.mock('react-ga');
 vi.mock('react-list');
-vi.mock('../../lib/useCloseWarning');
 
 const mockEditTask = editTask as Mock;
 
@@ -76,16 +75,6 @@ const expectTaskSave = async ({
 	await waitFor(() => expect(addTask).toBeCalledWith(task, dueString, cents));
 };
 
-const expectCheckboxState = (
-	task: string,
-	expected: boolean,
-	getCheckbox: any
-) => {
-	const checkbox = getCheckbox(task);
-
-	expect(checkbox.checked).toEqual(expected);
-};
-
 const renderTasksPage = () => {
 	const queryClient = new QueryClient();
 	const view = render(
@@ -95,16 +84,18 @@ const renderTasksPage = () => {
 			</QueryClientProvider>
 		</LocalizationProvider>
 	);
-	const { getByLabelText, getByText } = view;
 
 	return {
 		queryClient,
-		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
-		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
-		getDueInput: () => getByLabelText('due date') as HTMLInputElement,
-		getAddButton: () => getByText('Add') as HTMLButtonElement,
+		openForm: async () => {
+			await screen.findByLabelText('add');
+			userEvent.click(screen.getByLabelText('add'));
+		},
+		getTaskInput: () => screen.getByLabelText('Task *'),
+		getDueInput: () => screen.getByLabelText('due date'),
+		getAddButton: () => screen.getByText('Add'),
 		getCheckbox: (task = 'the_task'): HTMLInputElement | null | undefined => {
-			const desc = getByText(task);
+			const desc = screen.getByText(task);
 			return desc
 				?.closest('.molecule-task')
 				?.querySelector('[type="checkbox"]');
@@ -162,29 +153,30 @@ describe('tasks page', () => {
 	});
 
 	it("doesn't accept empty task", async () => {
-		await act(async () => {
-			loadTasksApiData();
+		loadTasksApiData();
 
-			const { getAddButton, openForm } = renderTasksPage();
+		const { getAddButton, openForm } = renderTasksPage();
 
-			await waitFor(() => expect(getTasks).toHaveBeenCalled());
-
-			await openForm();
-
-			await waitFor(() => userEvent.click(getAddButton()));
-
-			expect(addTask).not.toHaveBeenCalled();
+		await waitFor(() => {
+			expect(getTasks).toHaveBeenCalled();
 		});
+
+		await openForm();
+		await screen.findByText('Add');
+
+		userEvent.click(getAddButton());
+
+		expect(addTask).not.toHaveBeenCalled();
 	});
 
 	it('displays timezone', async () => {
 		loadTasksApiData({ me: { timezone: 'the_timezone' } });
 
-		const { getByText, openForm } = renderTasksPage();
+		const { openForm } = renderTasksPage();
 
 		await openForm();
 
-		await waitFor(() => expect(getByText('the_timezone')).toBeDefined());
+		await screen.findByText('the_timezone');
 	});
 
 	it('tells api task is complete', async () => {
@@ -196,7 +188,7 @@ describe('tasks page', () => {
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		clickCheckbox();
+		await clickCheckbox();
 
 		await waitFor(() =>
 			expect(updateTask).toBeCalledWith('3', { complete: true })
@@ -212,7 +204,7 @@ describe('tasks page', () => {
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		clickCheckbox();
+		await clickCheckbox();
 
 		await waitFor(() => expect(getTasks).toBeCalledTimes(2));
 	});
@@ -230,7 +222,7 @@ describe('tasks page', () => {
 
 			await openForm();
 
-			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
 			userEvent.click(getAddButton());
 
 			await waitFor(() =>
@@ -253,7 +245,7 @@ describe('tasks page', () => {
 
 			await openForm();
 
-			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
 			userEvent.click(getAddButton());
 
 			await waitFor(() => expect(toaster.send).toBeCalledWith('Error: Oops!'));
@@ -274,7 +266,7 @@ describe('tasks page', () => {
 
 			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-			clickCheckbox();
+			await clickCheckbox();
 
 			await waitFor(() => expect(toaster.send).toBeCalledWith('Error: Oops!'));
 		});
@@ -289,15 +281,19 @@ describe('tasks page', () => {
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		clickCheckbox();
+		const { reject } = loadControlledPromise(getTasks);
+
+		await clickCheckbox();
 
 		await waitFor(() => {
 			const taskCheckbox = getCheckbox();
 			expect(taskCheckbox?.checked).toBeTruthy();
 		});
+
+		reject();
 	});
 
-	it.only('rolls back checkbox optimistic update', async () => {
+	it('rolls back checkbox optimistic update', async () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData({
 				tasks: [makeTask({ id: '3', status: 'pending' })],
@@ -306,20 +302,16 @@ describe('tasks page', () => {
 			const { clickCheckbox, getCheckbox } = renderTasksPage();
 
 			await waitFor(() => expect(getTasks).toHaveBeenCalled());
-
-			vi.mocked(updateTask).mockRejectedValue('Oops!');
-
-			console.log('clicking')
+			const { reject } = loadControlledPromise(updateTask);
 			await clickCheckbox();
 
-			console.log('waiting to be checked')
 			await waitFor(() => {
-				// const checkbox = getCheckbox();
-				// expect(checkbox?.checked).toBeTruthy();
-				expect(screen.getByLabelText('the_task')).attribute('checked', true);
+				const checkbox = getCheckbox();
+				expect(checkbox?.checked).toBeTruthy();
 			});
 
-			console.log('waiting to be unchecked')
+			reject();
+
 			await waitFor(() => {
 				const checkbox = getCheckbox();
 				expect(checkbox?.checked).toBeFalsy();
@@ -360,10 +352,7 @@ describe('tasks page', () => {
 
 		// Load slow query response to clobber
 
-		resolveWithDelay(vi.mocked(getTasks), 100, [
-			makeTask({ task: 'first', id: '3', status: 'complete', complete: true }),
-			makeTask({ task: 'second', id: '4', status: 'pending' }),
-		]);
+		const { resolve } = loadControlledPromise(getTasks);
 
 		// Check first task
 
@@ -393,38 +382,50 @@ describe('tasks page', () => {
 		// Check second task
 
 		await clickCheckbox('second');
+		await waitFor(() => {
+			const checkbox = getCheckbox('second');
+			if (!checkbox) {
+				throw new Error('missing checkbox');
+			}
+			expect(checkbox).toBeChecked();
+		});
+		// Resolve getTasks promise
 
-		// Sleep 200ms
-
-		await new Promise((resolve) => setTimeout(resolve, 200));
+		resolve([
+			makeTask({ task: 'first', id: '3', status: 'complete', complete: true }),
+			makeTask({ task: 'second', id: '4', status: 'pending' }),
+		]);
 
 		// Check that first, slow response didn't clobber second, fast response
 
-		expectCheckboxState('second', true, getCheckbox);
+		const checkboxLater = getCheckbox('second');
+		if (!checkboxLater) {
+			throw new Error('missing checkbox');
+		}
+		expect(checkboxLater).toBeChecked();
 	});
 
 	it('has stakes form', async () => {
 		loadTasksApiData();
 
-		const { getByText, openForm } = renderTasksPage();
+		const { openForm } = renderTasksPage();
 
 		await openForm();
 
-		expect(getByText('Stakes')).toBeInTheDocument();
+		expect(screen.getByText('Stakes')).toBeInTheDocument();
 	});
 
 	it('adds task optimistically', async () => {
-		const { getTaskInput, getAddButton, getByText, openForm } =
-			renderTasksPage();
+		const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		await openForm();
 
-		await userEvent.type(getTaskInput(), 'the_task');
+		userEvent.type(getTaskInput(), 'the_task');
 		userEvent.click(getAddButton());
 
-		await waitFor(() => expect(getByText('the_task')).toBeInTheDocument());
+		expect(await screen.findByText('the_task')).toBeInTheDocument();
 	});
 
 	it('rolls back task add if mutation fails', async () => {
@@ -433,20 +434,14 @@ describe('tasks page', () => {
 
 			vi.mocked(addTask).mockRejectedValue('Oops!');
 
-			const {
-				getTaskInput,
-				getAddButton,
-				getByText,
-				queryByText,
-				openForm,
-				baseElement,
-			} = renderTasksPage();
+			const { getTaskInput, getAddButton, openForm, baseElement } =
+				renderTasksPage();
 
 			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			await openForm();
 
-			await userEvent.type(getTaskInput(), 'the_task');
+			userEvent.type(getTaskInput(), 'the_task');
 			userEvent.click(getAddButton());
 
 			const bg = baseElement.querySelector('.MuiBackdrop-root');
@@ -456,11 +451,11 @@ describe('tasks page', () => {
 			userEvent.click(bg);
 
 			await waitFor(() => {
-				expect(getByText('the_task')).toBeInTheDocument();
+				expect(screen.getByText('the_task')).toBeInTheDocument();
 			});
 
 			await waitFor(() => {
-				expect(queryByText('the_task')).toBeNull();
+				expect(screen.queryByText('the_task')).toBeNull();
 			});
 		});
 	});
@@ -470,8 +465,7 @@ describe('tasks page', () => {
 
 		loadTasksApiData();
 
-		const { getTaskInput, getAddButton, getByText, openForm } =
-			renderTasksPage();
+		const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
@@ -485,10 +479,8 @@ describe('tasks page', () => {
 
 		await openForm();
 
-		await waitFor(async () => {
-			await userEvent.type(getTaskInput(), 'first');
-			userEvent.click(getAddButton());
-		});
+		userEvent.type(getTaskInput(), 'first');
+		userEvent.click(getAddButton());
 
 		// Wait for slow response to be requested
 
@@ -515,7 +507,7 @@ describe('tasks page', () => {
 
 		// Check that first, slow response didn't clobber second, fast response
 
-		expect(getByText('second')).toBeInTheDocument();
+		expect(screen.getByText('second')).toBeInTheDocument();
 	});
 
 	it('shows all tasks', async () => {
@@ -583,8 +575,7 @@ describe('tasks page', () => {
 	it('scrolls new task into view', async () => {
 		loadTasksApiData();
 
-		const { getTaskInput, getAddButton, getByText, openForm } =
-			renderTasksPage();
+		const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'new_task' })],
@@ -596,7 +587,7 @@ describe('tasks page', () => {
 		userEvent.click(getAddButton());
 
 		await waitFor(() => {
-			expect(getByText('new_task')).toBeInTheDocument();
+			expect(screen.getByText('new_task')).toBeInTheDocument();
 		});
 	});
 
@@ -623,11 +614,11 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { getTaskInput, getDueInput, getAddButton, getByText, openForm } =
+		const { getTaskInput, getDueInput, getAddButton, openForm } =
 			renderTasksPage();
 
 		await waitFor(() => {
-			expect(getByText('task 1')).toBeInTheDocument();
+			expect(screen.getByText('task 1')).toBeInTheDocument();
 		});
 
 		await openForm();
@@ -659,8 +650,8 @@ describe('tasks page', () => {
 		userEvent.click(getAddButton());
 
 		await waitFor(() => {
-			const el = getByText('January 8, 2029');
-			expect(el).to.exist;
+			const el = screen.getByText('January 8, 2029');
+			expect(el).toBeInTheDocument();
 		});
 	});
 
@@ -669,9 +660,9 @@ describe('tasks page', () => {
 			tasks: [makeTask({ complete: true })],
 		});
 
-		const { queryByText } = renderTasksPage();
+		renderTasksPage();
 
-		expect(queryByText('Nothing here!')).not.to.exist;
+		expect(screen.queryByText('Nothing here!')).not.toBeInTheDocument();
 	});
 
 	it('scrolls list', async () => {
@@ -722,9 +713,7 @@ describe('tasks page', () => {
 
 		renderTasksPage();
 
-		await waitFor(() =>
-			expect(screen.getByText('the_task')).toBeInTheDocument()
-		);
+		await screen.findByText('the_task');
 
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Edit'));

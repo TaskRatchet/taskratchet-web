@@ -15,15 +15,14 @@ import ResetPassword from './components/pages/ResetPassword';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { isProduction } from './tr_constants';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
-import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
-import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
+import getQueryClient from './lib/getQueryClient';
 
 toast.configure();
 
@@ -37,20 +36,6 @@ window.stripe_key = isProduction
 
 ReactGA.initialize('G-Y074NE79ML');
 
-const queryClient = new QueryClient({
-	defaultOptions: {
-		queries: {
-			cacheTime: 1000 * 60 * 60 * 24,
-		},
-	},
-});
-
-const localStoragePersistor = createWebStoragePersistor({
-	storage: window.localStorage,
-});
-
-void persistQueryClient({ queryClient, persistor: localStoragePersistor });
-
 function usePageViews(): void {
 	const location = useLocation();
 
@@ -60,12 +45,11 @@ function usePageViews(): void {
 	}, [location]);
 }
 
-// TODO: Turn on typescript strict mode
-
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
 	const ref = useRef<HTMLElement>();
 	const location = useLocation();
+	const queryClient = getQueryClient();
 
 	const handleTodayClick = () => {
 		setLastToday(browser.getNowDate());
