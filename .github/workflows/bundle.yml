@@ -22,10 +22,12 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Build
+        run: pnpm build
       - name: Save bundle size
         id: size
         run: |
-          echo "::set-output name=size::$(pnpm run size)"
+          echo "::set-output name=size::$(du -s dist/ | awk '{print $1}')"
 
   bundle_head:
     runs-on: ubuntu-latest
@@ -46,10 +48,12 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Build
+        run: pnpm build
       - name: Save bundle size
         id: size
         run: |
-          echo "::set-output name=size::$(pnpm run size)"
+          echo "::set-output name=size::$(du -s dist/ | awk '{print $1}')"
 
   compare:
     runs-on: ubuntu-latest
