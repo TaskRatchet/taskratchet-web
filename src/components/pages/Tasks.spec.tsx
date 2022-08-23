@@ -1,6 +1,6 @@
 import { addTask, getTasks, updateTask } from '../../lib/api';
-import toaster from '../../lib/Toaster';
-import { fireEvent, render, waitFor, screen } from '@testing-library/react';
+import { toast } from 'react-toastify';
+import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -8,18 +8,17 @@ import {
 	loadNowDate,
 	loadTasksApiData,
 	makeTask,
+	renderWithQueryProvider,
 	resolveWithDelay,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
 import { vi, Mock } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { findTaskCheckbox } from '../../lib/test/queries';
 
 vi.mock('../../lib/api/apiFetch');
 vi.mock('../../lib/api/getTasks');
@@ -27,12 +26,12 @@ vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateTask');
 vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/addTask');
-vi.mock('../../lib/Toaster');
 vi.mock('../../lib/LegacyApi');
 vi.mock('../../lib/getUnloadMessage');
 vi.mock('../../lib/api/editTask');
 vi.mock('react-ga');
 vi.mock('react-list');
+vi.mock('react-toastify');
 
 const mockEditTask = editTask as Mock;
 
@@ -71,17 +70,9 @@ const expectTaskSave = async ({
 };
 
 const renderTasksPage = () => {
-	const queryClient = new QueryClient();
-	const view = render(
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<QueryClientProvider client={queryClient}>
-				<Tasks lastToday={undefined} />
-			</QueryClientProvider>
-		</LocalizationProvider>
-	);
+	const view = renderWithQueryProvider(<Tasks lastToday={undefined} />);
 
 	return {
-		queryClient,
 		openForm: async () => {
 			await screen.findByLabelText('add');
 			userEvent.click(screen.getByLabelText('add'));
@@ -89,21 +80,8 @@ const renderTasksPage = () => {
 		getTaskInput: () => screen.getByLabelText('Task *'),
 		getDueInput: () => screen.getByLabelText('due date'),
 		getAddButton: () => screen.getByText('Add'),
-		getCheckbox: (task = 'the_task'): HTMLInputElement | null | undefined => {
-			const desc = screen.getByText(task);
-			return desc
-				?.closest('.molecule-task')
-				?.querySelector('[type="checkbox"]');
-		},
 		clickCheckbox: async (task = 'the_task') => {
-			const desc = await screen.findByText(task);
-			const checkbox = desc
-				?.closest('.molecule-task')
-				?.querySelector('[type="checkbox"]');
-
-			if (!checkbox) {
-				throw Error('Missing task checkbox');
-			}
+			const checkbox = await findTaskCheckbox(task);
 
 			userEvent.click(checkbox);
 		},
@@ -221,7 +199,7 @@ describe('tasks page', () => {
 			userEvent.click(getAddButton());
 
 			await waitFor(() =>
-				expect(toaster.send).toBeCalledWith('Error: Failed to add task')
+				expect(toast).toBeCalledWith('Error: Failed to add task')
 			);
 		});
 	});
@@ -243,7 +221,7 @@ describe('tasks page', () => {
 			userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
 			userEvent.click(getAddButton());
 
-			await waitFor(() => expect(toaster.send).toBeCalledWith('Error: Oops!'));
+			await waitFor(() => expect(toast).toBeCalledWith('Error: Oops!'));
 		});
 	});
 
@@ -263,7 +241,7 @@ describe('tasks page', () => {
 
 			await clickCheckbox();
 
-			await waitFor(() => expect(toaster.send).toBeCalledWith('Error: Oops!'));
+			await waitFor(() => expect(toast).toBeCalledWith('Error: Oops!'));
 		});
 	});
 
@@ -272,7 +250,7 @@ describe('tasks page', () => {
 			tasks: [makeTask({ id: '3' })],
 		});
 
-		const { clickCheckbox, getCheckbox } = renderTasksPage();
+		const { clickCheckbox } = renderTasksPage();
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
@@ -280,8 +258,8 @@ describe('tasks page', () => {
 
 		await clickCheckbox();
 
-		await waitFor(() => {
-			const taskCheckbox = getCheckbox();
+		await waitFor(async () => {
+			const taskCheckbox = await findTaskCheckbox();
 			expect(taskCheckbox?.checked).toBeTruthy();
 		});
 
@@ -294,21 +272,21 @@ describe('tasks page', () => {
 				tasks: [makeTask({ id: '3', status: 'pending' })],
 			});
 
-			const { clickCheckbox, getCheckbox } = renderTasksPage();
+			const { clickCheckbox } = renderTasksPage();
 
 			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 			const { reject } = loadControlledPromise(updateTask);
 			await clickCheckbox();
 
-			await waitFor(() => {
-				const checkbox = getCheckbox();
+			await waitFor(async () => {
+				const checkbox = await findTaskCheckbox();
 				expect(checkbox?.checked).toBeTruthy();
 			});
 
 			reject();
 
-			await waitFor(() => {
-				const checkbox = getCheckbox();
+			await waitFor(async () => {
+				const checkbox = await findTaskCheckbox();
 				expect(checkbox?.checked).toBeFalsy();
 			});
 		});
@@ -341,7 +319,7 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { clickCheckbox, getCheckbox } = renderTasksPage();
+		const { clickCheckbox } = renderTasksPage();
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
@@ -377,8 +355,8 @@ describe('tasks page', () => {
 		// Check second task
 
 		await clickCheckbox('second');
-		await waitFor(() => {
-			const checkbox = getCheckbox('second');
+		await waitFor(async () => {
+			const checkbox = await findTaskCheckbox('second');
 			if (!checkbox) {
 				throw new Error('missing checkbox');
 			}
@@ -393,7 +371,7 @@ describe('tasks page', () => {
 
 		// Check that first, slow response didn't clobber second, fast response
 
-		const checkboxLater = getCheckbox('second');
+		const checkboxLater = await findTaskCheckbox('second');
 		if (!checkboxLater) {
 			throw new Error('missing checkbox');
 		}
@@ -423,14 +401,13 @@ describe('tasks page', () => {
 		expect(await screen.findByText('the_task')).toBeInTheDocument();
 	});
 
-	it('rolls back task add if mutation fails', async () => {
+	it.only('rolls back task add if mutation fails', async () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData();
 
-			vi.mocked(addTask).mockRejectedValue('Oops!');
+			const { reject } = loadControlledPromise(addTask);
 
-			const { getTaskInput, getAddButton, openForm, baseElement } =
-				renderTasksPage();
+			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
 			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
@@ -439,9 +416,7 @@ describe('tasks page', () => {
 			userEvent.type(getTaskInput(), 'the_task');
 			userEvent.click(getAddButton());
 
-			const bg = baseElement.querySelector('.MuiBackdrop-root');
-
-			if (!bg) throw new Error('could not find bg');
+			const bg = await screen.findByTestId('mui-backdrop');
 
 			userEvent.click(bg);
 
@@ -449,8 +424,10 @@ describe('tasks page', () => {
 				expect(screen.getByText('the_task')).toBeInTheDocument();
 			});
 
+			reject();
+
 			await waitFor(() => {
-				expect(screen.queryByText('the_task')).toBeNull();
+				expect(screen.queryByText('the_task')).not.toBeInTheDocument();
 			});
 		});
 	});

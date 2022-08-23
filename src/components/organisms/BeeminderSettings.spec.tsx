@@ -16,7 +16,7 @@ import { getMe } from '../../lib/api';
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');
 vi.mock('../../lib/LegacyApi');
-vi.mock('../../lib/Toaster');
+vi.mock('react-toastify');
 
 const renderBeeminderSettings = (): RenderResult => {
 	return renderWithQueryProvider(<BeeminderSettings />);

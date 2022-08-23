@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
-import toaster from '../Toaster';
 import { TaskInput, updateTask } from './updateTask';
+import { toast } from 'react-toastify';
 
 interface Context {
 	previousTasks: TaskType[] | undefined;
@@ -44,7 +44,7 @@ export function useUpdateTask(): (id: string, data: TaskInput) => void {
 			},
 			onError: (error: Error, variables, context) => {
 				queryClient.setQueryData('tasks', (context as Context).previousTasks);
-				toaster.send(error.toString());
+				toast(error.toString());
 			},
 			onSettled: async () => {
 				await queryClient.invalidateQueries('tasks');

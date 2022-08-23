@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import toaster from '../../lib/Toaster';
+import { toast } from 'react-toastify';
 import { useCheckoutSession, useTimezones } from '../../lib/api';
 import Input from '../molecules/Input';
 import Field from '../molecules/Field';
@@ -32,10 +32,10 @@ const Register = (): JSX.Element => {
 		);
 
 		if (response.ok) {
-			toaster.send('Redirecting...');
+			toast('Redirecting...');
 			redirect();
 		} else {
-			toaster.send('Registration failed');
+			toast('Registration failed');
 		}
 	};
 
@@ -52,7 +52,7 @@ const Register = (): JSX.Element => {
 				// If `redirectToCheckout` fails due to a browser or network
 				// error, display the localized error message to your customer
 				// using `result.error.message`.
-				toaster.send(result.error.message);
+				toast(result.error.message);
 
 				console.log('Checkout redirect error');
 				console.log(result);
@@ -69,22 +69,22 @@ const Register = (): JSX.Element => {
 		let passes = true;
 
 		if (!email) {
-			toaster.send('Email missing');
+			toast('Email missing');
 			passes = false;
 		}
 
 		if (!password || !password2) {
-			toaster.send('Please enter password twice');
+			toast('Please enter password twice');
 			passes = false;
 		}
 
 		if (password !== password2) {
-			toaster.send("Passwords don't match");
+			toast("Passwords don't match");
 			passes = false;
 		}
 
 		if (!agreed) {
-			toaster.send('Please agree before submitting');
+			toast('Please agree before submitting');
 			passes = false;
 		}
 

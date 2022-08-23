@@ -15,6 +15,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { vi, Mock, SpyInstance } from 'vitest';
 import { getMe, updateMe } from '../api';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 vi.mock('../../lib/api/getTimezones');
 
@@ -111,9 +112,23 @@ export function renderWithQueryProvider(
 		},
 	});
 
+	const theme = createTheme({
+		components: {
+			MuiBackdrop: {
+				defaultProps: {
+					component: React.forwardRef(function C(props, ref: any) {
+						return <div {...props} ref={ref} data-testid="mui-backdrop" />;
+					}),
+				} as any,
+			},
+		},
+	});
+
 	const view = render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+			<ThemeProvider theme={theme}>
+				<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+			</ThemeProvider>
 		</LocalizationProvider>
 	);
 

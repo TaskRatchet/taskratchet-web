@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
 import { addTask } from './addTask';
-import toaster from '../Toaster';
+import { toast } from 'react-toastify';
 
 interface Input {
 	task: string;
@@ -41,7 +41,7 @@ export function useAddTask(
 				if (snapshot !== null) {
 					queryClient.setQueryData('tasks', snapshot);
 				}
-				toaster.send(error.toString());
+				toast(error.toString());
 			},
 			onSettled: async () => {
 				await queryClient.invalidateQueries('tasks');

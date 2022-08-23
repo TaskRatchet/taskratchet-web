@@ -34,6 +34,7 @@ module.exports = {
 				'**/__mocks__/**/*',
 				'**/__tests__/**/*',
 				'global-setup.ts',
+				'src/lib/test/**/*',
 			],
 			rules: {
 				'@typescript-eslint/no-explicit-any': 'off',
