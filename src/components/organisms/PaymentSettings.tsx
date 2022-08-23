@@ -28,32 +28,30 @@ export default function PaymentSettings(): JSX.Element {
 		setCards(cards);
 	}, [me.data]);
 
-	const updatePaymentDetails = async () => {
+	const updatePaymentDetails = () => {
 		setIsLoading(true);
-		const sessionId = await getSessionId();
+		const sessionId = getSessionId();
 
 		if (sessionId === null) {
 			setError('Checkout session error');
 			return;
 		}
 
-		await updateMe.mutate({
+		updateMe.mutate({
 			checkout_session_id: sessionId,
 		});
 
-		await redirect();
+		redirect();
 	};
 
-	const redirect = async () => {
-		await checkoutSession;
-
+	const redirect = () => {
 		if (checkoutSession == null) return;
 
 		const stripe = window.Stripe(window.stripe_key);
 
-		stripe
+		void stripe
 			.redirectToCheckout({
-				sessionId: await getSessionId(),
+				sessionId: getSessionId(),
 			})
 			.then((result: { error: { message: string } }) => {
 				// If `redirectToCheckout` fails due to a browser or network
@@ -63,10 +61,10 @@ export default function PaymentSettings(): JSX.Element {
 			});
 	};
 
-	const getSessionId = async () => {
+	const getSessionId = () => {
 		if (checkoutSession == null) return;
 
-		const { id = null } = await checkoutSession;
+		const { id = null } = checkoutSession;
 
 		return id;
 	};

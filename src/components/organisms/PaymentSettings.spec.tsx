@@ -14,15 +14,11 @@ describe('general settings', () => {
 	it('displays loading indicator on replace click', async () => {
 		loadMe({});
 
-		const { container } = renderWithQueryProvider(<PaymentSettings />);
+		renderWithQueryProvider(<PaymentSettings />);
 
 		userEvent.click(await screen.findByText('Replace payment method'));
 
-		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 
 	it('displays checkout session error', async () => {
@@ -37,7 +33,7 @@ describe('general settings', () => {
 	});
 
 	it('displays stripe errors', async () => {
-		(useCheckoutSession as Mock).mockResolvedValue({ id: 'the_id' });
+		(useCheckoutSession as Mock).mockReturnValue({ id: 'the_id' });
 
 		window.Stripe = vi.fn(() => ({
 			redirectToCheckout: async () =>
@@ -57,16 +53,14 @@ describe('general settings', () => {
 		loadMe({});
 		vi.mocked(useCheckoutSession).mockResolvedValue({} as any);
 
-		const { container } = renderWithQueryProvider(<PaymentSettings />);
+		renderWithQueryProvider(<PaymentSettings />);
 
 		userEvent.click(await screen.findByText('Replace payment method'));
 
 		await screen.findByText('Checkout session error');
 
 		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).not.toBeInTheDocument();
+			expect(screen.queryByRole('progressbar')).not.toBeInTheDocument();
 		});
 	});
 });
