@@ -1,11 +1,13 @@
 import TaskForm from './TaskForm';
 import React from 'react';
-import { render, RenderResult } from '@testing-library/react';
+import { render, RenderResult, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { vi } from 'vitest';
 
-jest.mock('../../lib/Browser');
+vi.mock('../../lib/Browser');
+vi.mock('@mui/x-date-pickers');
 
 global.document.createRange = () =>
 	({
@@ -40,7 +42,7 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 		isLoading = false,
 	} = props;
 
-	const result: RenderResult = render(
+	const view: RenderResult = render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<TaskForm
 				{...{
@@ -58,54 +60,54 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 	);
 
 	return {
-		...result,
-		taskInput: result.getByLabelText('Task *') as HTMLInputElement,
-		dueDateInput: result.getByLabelText('Due Date *') as HTMLInputElement,
-		dueTimeInput: result.getByLabelText('Due Time *') as HTMLInputElement,
-		centsInput: result.getByLabelText('Stakes *') as HTMLInputElement,
+		...view,
+		taskInput: screen.getByLabelText('Task *'),
+		dueDateInput: screen.getByLabelText('Due Date *'),
+		dueTimeInput: screen.getByLabelText('Due Time *'),
+		centsInput: screen.getByLabelText('Stakes *'),
 	};
 };
 
 describe('TaskForm', () => {
-	it('has task input', async () => {
-		const { getByLabelText } = renderComponent();
+	it('has task input', () => {
+		renderComponent();
 
-		expect(getByLabelText('Task *')).toBeInTheDocument();
+		expect(screen.getByLabelText('Task *')).toBeInTheDocument();
 	});
 
-	it('calls onChange when task modified', async () => {
-		const onChange = jest.fn();
+	it('calls onChange when task modified', () => {
+		const onChange = vi.fn();
 		const due = new Date();
 
 		const { taskInput } = renderComponent({ onChange, due });
 
-		await userEvent.type(taskInput, 'a');
+		userEvent.type(taskInput, 'a');
 
 		expect(onChange).toBeCalledWith('a', due, 500);
 	});
 
-	it('calls onChange when due modified', async () => {
-		const onChange = jest.fn();
+	it('calls onChange when due modified', () => {
+		const onChange = vi.fn();
 
 		const { dueTimeInput } = renderComponent({ onChange });
 
-		await userEvent.type(dueTimeInput, '{backspace}{backspace}am');
+		userEvent.type(dueTimeInput, '{backspace}{backspace}am');
 
 		expect(onChange).toBeCalled();
 	});
 
-	it('calls onChange when cents modified', async () => {
-		const onChange = jest.fn();
+	it('calls onChange when cents modified', () => {
+		const onChange = vi.fn();
 
 		const { centsInput } = renderComponent({ onChange });
 
-		await userEvent.type(centsInput, '1');
+		userEvent.type(centsInput, '1');
 
 		expect(onChange).toBeCalledWith(expect.anything(), expect.anything(), 5100);
 	});
 
-	it('preserves time when editing date', async () => {
-		const onChange = jest.fn();
+	it('preserves time when editing date', () => {
+		const onChange = vi.fn();
 
 		const { dueDateInput } = renderComponent({
 			due: new Date('1/1/2021 11:59 PM'),
@@ -113,25 +115,27 @@ describe('TaskForm', () => {
 			onChange,
 		});
 
-		await userEvent.type(dueDateInput, '{backspace}2{enter}');
+		userEvent.type(dueDateInput, '{backspace}2{enter}');
 
 		expect(onChange).toBeCalledWith('', new Date('1/1/2022 11:59 PM'), 500);
 	});
 
-	it('preserves date when editing time', async () => {
-		const onChange = jest.fn();
+	it('preserves date when editing time', () => {
+		const onChange = vi.fn();
 
 		const { dueTimeInput } = renderComponent({
+			task: 'the_task',
 			due: new Date('1/1/2020 11:59 PM'),
 			cents: 500,
 			onChange,
 		});
 
-		await userEvent.type(dueTimeInput, '{backspace}M{enter}');
+		userEvent.type(dueTimeInput, '{backspace}M{enter}');
 
-		expect(onChange).toBeCalledWith('', new Date('1/1/2020 11:59 PM'), 500);
+		expect(onChange).toBeCalledWith(
+			'the_task',
+			new Date('1/1/2020 11:59 PM'),
+			500
+		);
 	});
 });
-
-// TODO:
-// prevent adding task where date and time is in the past

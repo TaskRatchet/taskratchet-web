@@ -33,7 +33,7 @@ type TaskType = {
 	id?: string;
 	isNew?: boolean;
 	due_timestamp?: number;
-	due: int;
+	due: string;
 	cents: number;
 	task: string;
 	complete: boolean;

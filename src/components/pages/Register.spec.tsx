@@ -5,117 +5,112 @@ import {
 } from '../../lib/test/helpers';
 import React from 'react';
 import Register from './Register';
-import { waitFor } from '@testing-library/dom';
+import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getTimezones } from '../../lib/api';
-import api from '../../lib/LegacyApi';
-import { act } from '@testing-library/react';
+import { vi } from 'vitest';
+import register from '../../lib/api/register';
 
-jest.mock('../../lib/api/getCheckoutSession');
+vi.mock('../../lib/api/getCheckoutSession');
+vi.mock('../../lib/api/register');
 
 describe('registration page', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadCheckoutSession();
-		window.Stripe = jest.fn(() => ({
-			redirectToCheckout: jest.fn(async () => ({
-				error: { message: 'error' },
-			})),
+		window.Stripe = vi.fn(() => ({
+			redirectToCheckout: vi.fn(async () =>
+				Promise.resolve({
+					error: { message: 'error' },
+				})
+			),
 		}));
 	});
 
 	it('uses timezone loading placeholder', async () => {
-		await act(async () => {
-			const { getByText } = await renderWithQueryProvider(<Register />);
+		renderWithQueryProvider(<Register />);
 
-			expect(getByText('Loading...')).toBeInTheDocument();
-		});
+		await screen.findByText('Loading...');
 	});
 
 	it('defaults to "Choose your timezone..." option', async () => {
-		await act(async () => {
-			loadTimezones();
+		loadTimezones();
 
-			const { getByText } = await renderWithQueryProvider(<Register />);
+		renderWithQueryProvider(<Register />);
 
-			await waitFor(() =>
-				expect(getByText('Choose your timezone...')).toBeInTheDocument()
-			);
-		});
+		await screen.findByText('Choose your timezone...');
 	});
 
 	it('uses Input for name field', async () => {
-		await act(async () => {
-			const { getByLabelText } = await renderWithQueryProvider(<Register />);
+		renderWithQueryProvider(<Register />);
 
-			expect(getByLabelText('Name')).toBeInTheDocument();
-		});
+		await screen.findByLabelText('Name');
 	});
 
 	it('uses Input for email field', async () => {
-		await act(async () => {
-			const { getByLabelText } = await renderWithQueryProvider(<Register />);
+		renderWithQueryProvider(<Register />);
 
-			expect(getByLabelText('Email')).toBeInTheDocument();
-		});
+		await screen.findByLabelText('Email');
 	});
 
 	it('uses Input for password field', async () => {
-		await act(async () => {
-			const { getByLabelText } = await renderWithQueryProvider(<Register />);
+		renderWithQueryProvider(<Register />);
 
-			expect(getByLabelText('Password')).toBeInTheDocument();
-		});
+		await screen.findByLabelText('Password');
 	});
 
 	it('uses Input for password2 field', async () => {
-		await act(async () => {
-			const { getByLabelText } = await renderWithQueryProvider(<Register />);
+		renderWithQueryProvider(<Register />);
 
-			expect(getByLabelText('Retype Password')).toBeInTheDocument();
-		});
+		await screen.findByLabelText('Retype Password');
 	});
 
 	it('submits registration', async () => {
-		await act(async () => {
-			loadTimezones(['the_timezone']);
+		loadTimezones(['the_timezone']);
 
-			jest
-				.spyOn(api, 'register')
-				.mockImplementation(async () => new Response());
-
-			const { getByLabelText, getByText } = await renderWithQueryProvider(
-				<Register />
-			);
-
-			userEvent.type(getByLabelText('Name'), 'the_name');
-			userEvent.type(getByLabelText('Email'), 'the_email');
-			userEvent.type(getByLabelText('Password'), 'the_password');
-			userEvent.type(getByLabelText('Retype Password'), 'the_password');
-
-			await waitFor(() => {
-				expect(getTimezones).toBeCalled();
-				userEvent.selectOptions(getByLabelText('Timezone'), 'the_timezone');
-			});
-
-			userEvent.click(
-				getByLabelText(
-					"I have read and agree to TaskRatchet's privacy policy and terms of service."
-				)
-			);
-
-			userEvent.click(getByText('Add payment method'));
-
-			expect(api.register).toBeCalledWith(
-				'the_name',
-				'the_email',
-				'the_password',
-				'the_timezone',
-				'session'
-			);
+		vi.mocked(register).mockImplementation(async () => {
+			return Promise.resolve(new Response());
 		});
-	});
 
-	// TODO: test validates timezone field
-	// TODO: stop toasting validation errors; print, instead
+		renderWithQueryProvider(<Register />);
+
+		userEvent.type(await screen.findByLabelText('Name'), 'the_name');
+		userEvent.type(await screen.findByLabelText('Email'), 'the_email');
+		userEvent.type(await screen.findByLabelText('Password'), 'the_password');
+		userEvent.type(
+			await screen.findByLabelText('Retype Password'),
+			'the_password'
+		);
+
+		await waitFor(() => {
+			expect(getTimezones).toBeCalled();
+		});
+		userEvent.selectOptions(
+			await screen.findByLabelText('Timezone'),
+			'the_timezone'
+		);
+
+		userEvent.click(
+			await screen.findByLabelText(
+				"I have read and agree to TaskRatchet's privacy policy and terms of service."
+			)
+		);
+
+		await waitFor(() => {
+			expect(screen.getByText('Add payment method')).not.toBeDisabled();
+		});
+		userEvent.click(await screen.findByText('Add payment method'));
+
+		await waitFor(() => {
+			expect(register).toBeCalled();
+		});
+
+		expect(register).toBeCalledWith(
+			'the_name',
+			'the_email',
+			'the_password',
+			'the_timezone',
+			'session'
+		);
+	});
 });

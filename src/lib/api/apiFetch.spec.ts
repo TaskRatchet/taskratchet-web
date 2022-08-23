@@ -1,8 +1,7 @@
 import { apiFetch } from './apiFetch';
-import fetchMock from 'jest-fetch-mock';
 
 describe('apiFetch', () => {
-	it('uses localStorage token', () => {
+	it('uses localStorage token', async () => {
 		fetchMock.mockResponse(JSON.stringify({}));
 
 		const token = 'token';
@@ -10,7 +9,7 @@ describe('apiFetch', () => {
 		global.localStorage.setItem('token', token);
 
 		const url = 'https://example.com';
-		apiFetch(url);
+		await apiFetch(url);
 
 		expect(fetch).toHaveBeenCalledWith(
 			expect.anything(),

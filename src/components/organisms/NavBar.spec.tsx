@@ -1,48 +1,45 @@
-import { render } from '@testing-library/react';
 import React from 'react';
 import NavBar from './NavBar';
 import { useSession } from '../../lib/api/useSession';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/dom';
+import { screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { vi, Mock } from 'vitest';
+import { renderWithQueryProvider } from '../../lib/test/helpers';
 
-jest.mock('../../lib/api/useSession');
+vi.mock('../../lib/api/useSession');
 
-async function renderComponent() {
-	const queryClient = new QueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<BrowserRouter>
-				<NavBar />
-			</BrowserRouter>
-		</QueryClientProvider>
+function renderComponent() {
+	return renderWithQueryProvider(
+		<BrowserRouter>
+			<NavBar />
+		</BrowserRouter>
 	);
 }
 
 describe('NavBar', () => {
-	const mockUseSession = useSession as jest.Mock;
+	const mockUseSession = useSession as Mock;
 
 	it('displays email', async () => {
 		mockUseSession.mockReturnValue({
 			email: 'the_email',
 		});
 
-		const { getByText, getByLabelText } = await renderComponent();
+		renderComponent();
 
-		userEvent.click(getByLabelText('menu'));
+		userEvent.click(await screen.findByLabelText('menu'));
 
-		expect(getByText('the_email')).toBeInTheDocument();
+		await screen.findByText('the_email');
 	});
 
-	it('initially hides Logout button', async () => {
+	it('initially hides Logout button', () => {
 		mockUseSession.mockReturnValue({
 			email: 'the_email',
 		});
 
-		const { queryByText } = await renderComponent();
+		renderComponent();
 
-		expect(queryByText('Logout')).not.toBeInTheDocument();
+		expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 	});
 
 	it('displays Logout button when menu activated', async () => {
@@ -50,11 +47,11 @@ describe('NavBar', () => {
 			email: 'the_email',
 		});
 
-		const { getByText, getByLabelText } = await renderComponent();
+		renderComponent();
 
-		userEvent.click(getByLabelText('menu'));
+		userEvent.click(await screen.findByLabelText('menu'));
 
-		expect(getByText('Logout')).toBeInTheDocument();
+		await screen.findByText('Logout');
 	});
 
 	it('deactivates menu when backdrop clicked', async () => {
@@ -62,34 +59,31 @@ describe('NavBar', () => {
 			email: 'the_email',
 		});
 
-		const { baseElement, getByLabelText, queryByText } =
-			await renderComponent();
+		renderComponent();
 
-		userEvent.click(getByLabelText('menu'));
+		userEvent.click(await screen.findByLabelText('menu'));
 
-		const bg = baseElement.querySelector('.MuiBackdrop-root');
-
-		if (!bg) throw new Error('could not find drawer bg');
+		const bg = await screen.findByTestId('mui-backdrop');
 
 		userEvent.click(bg);
 
 		await waitFor(() => {
-			expect(queryByText('Logout')).not.toBeInTheDocument();
+			expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 		});
 	});
 
 	it('does not display logout link if no session', async () => {
-		const { queryByText, getByLabelText } = await renderComponent();
+		renderComponent();
 
-		userEvent.click(getByLabelText('menu'));
+		userEvent.click(await screen.findByLabelText('menu'));
 
-		expect(queryByText('Logout')).not.toBeInTheDocument();
+		expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 	});
 
 	it('has today button', async () => {
-		const { getByLabelText } = await renderComponent();
+		renderComponent();
 
-		expect(getByLabelText('today')).toBeInTheDocument();
+		await screen.findByLabelText('today');
 	});
 
 	it('closes drawer on navigate', async () => {
@@ -97,13 +91,13 @@ describe('NavBar', () => {
 			email: 'the_email',
 		});
 
-		const { getByText, getByLabelText, queryByText } = await renderComponent();
+		renderComponent();
 
-		userEvent.click(getByLabelText('menu'));
-		userEvent.click(getByText('Account'));
+		userEvent.click(await screen.findByLabelText('menu'));
+		userEvent.click(await screen.findByText('Account'));
 
 		await waitFor(() => {
-			expect(queryByText('Logout')).not.toBeInTheDocument();
+			expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 		});
 	});
 });

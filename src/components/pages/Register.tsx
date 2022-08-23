@@ -1,10 +1,10 @@
 import React, { FormEvent, useState } from 'react';
-import api from '../../lib/LegacyApi';
-import toaster from '../../lib/Toaster';
+import { toast } from 'react-toastify';
 import { useCheckoutSession, useTimezones } from '../../lib/api';
 import Input from '../molecules/Input';
 import Field from '../molecules/Field';
-import { Box } from '@mui/material';
+import { Box, Button } from '@mui/material';
+import register from '../../lib/api/register';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>(''),
@@ -16,14 +16,14 @@ const Register = (): JSX.Element => {
 		[timezone, setTimezone] = useState<string>(''),
 		[agreed, setAgreed] = useState<boolean>(false);
 
-	const register = async (event: FormEvent) => {
+	const submit = async (event: FormEvent) => {
 		event.preventDefault();
 
 		const passes = validateRegistrationForm();
 
 		if (!passes) return;
 
-		const response = await api.register(
+		const response = await register(
 			name,
 			email,
 			password,
@@ -32,10 +32,10 @@ const Register = (): JSX.Element => {
 		);
 
 		if (response.ok) {
-			toaster.send('Redirecting...');
+			toast('Redirecting...');
 			redirect();
 		} else {
-			toaster.send('Registration failed');
+			toast('Registration failed');
 		}
 	};
 
@@ -44,7 +44,7 @@ const Register = (): JSX.Element => {
 
 		const stripe = window.Stripe(window.stripe_key);
 
-		stripe
+		void stripe
 			.redirectToCheckout({
 				sessionId: getSessionId(),
 			})
@@ -52,7 +52,7 @@ const Register = (): JSX.Element => {
 				// If `redirectToCheckout` fails due to a browser or network
 				// error, display the localized error message to your customer
 				// using `result.error.message`.
-				toaster.send(result.error.message);
+				toast(result.error.message);
 
 				console.log('Checkout redirect error');
 				console.log(result);
@@ -69,22 +69,22 @@ const Register = (): JSX.Element => {
 		let passes = true;
 
 		if (!email) {
-			toaster.send('Email missing');
+			toast('Email missing');
 			passes = false;
 		}
 
 		if (!password || !password2) {
-			toaster.send('Please enter password twice');
+			toast('Please enter password twice');
 			passes = false;
 		}
 
 		if (password !== password2) {
-			toaster.send("Passwords don't match");
+			toast("Passwords don't match");
 			passes = false;
 		}
 
 		if (!agreed) {
-			toaster.send('Please agree before submitting');
+			toast('Please agree before submitting');
 			passes = false;
 		}
 
@@ -117,7 +117,7 @@ const Register = (): JSX.Element => {
 
 	return (
 		<Box sx={{ p: 2 }}>
-			<form onSubmit={register}>
+			<form>
 				<h1>Register</h1>
 
 				<Input
@@ -197,11 +197,12 @@ const Register = (): JSX.Element => {
 					add your payment method.
 				</p>
 
-				<input
-					type="submit"
-					value={'Add payment method'}
+				<Button
 					disabled={checkoutSession == null}
-				/>
+					onClick={(e) => void submit(e)}
+				>
+					Add payment method
+				</Button>
 			</form>
 		</Box>
 	);

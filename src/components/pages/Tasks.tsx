@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import 'react-datepicker/dist/react-datepicker.min.css';
 import PlusFab from '../organisms/PlusFab';
 import TaskList from '../organisms/TaskList';
 import { useCloseWarning } from '../../lib/useCloseWarning';

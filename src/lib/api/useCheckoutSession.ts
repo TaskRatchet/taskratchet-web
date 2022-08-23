@@ -6,7 +6,7 @@ export function useCheckoutSession(): CheckoutSession | null {
 		useState<CheckoutSession | null>(null);
 
 	useEffect(() => {
-		getCheckoutSession().then((session: CheckoutSession) => {
+		void getCheckoutSession().then((session: CheckoutSession) => {
 			setCheckoutSession(session);
 		});
 	}, []);

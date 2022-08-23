@@ -1,15 +1,23 @@
-import * as new_api from '../api';
 import { ParsedQuery } from 'query-string';
 import browser from '../Browser';
 import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
-import { addTask, updateTask } from '../api';
+import {
+	addTask,
+	getCheckoutSession,
+	getTasks,
+	getTimezones,
+	updateTask,
+} from '../api';
 import { waitFor } from '@testing-library/dom';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import { LocalizationProvider } from '@mui/lab';
+import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { vi, Mock, SpyInstance } from 'vitest';
+import { getMe, updateMe } from '../api';
+import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-jest.mock('../../lib/api/getTimezones');
+vi.mock('../../lib/api/getTimezones');
 
 export const makeResponse = (
 	args: {
@@ -34,11 +42,11 @@ export const loadMe = ({
 }: {
 	json?: Partial<User>;
 	ok?: boolean;
-}): void => {
+} = {}): void => {
 	const response = makeResponse({ json, ok });
 
-	jest.spyOn(new_api, 'getMe').mockResolvedValue(json as User);
-	jest.spyOn(new_api, 'updateMe').mockResolvedValue(response as Response);
+	vi.mocked(getMe).mockResolvedValue(json as User);
+	vi.mocked(updateMe).mockResolvedValue(response as Response);
 };
 
 export const loadMeWithBeeminder = (
@@ -55,27 +63,27 @@ export const loadMeWithBeeminder = (
 };
 
 export function loadTimezones(timezones: string[] = []): void {
-	jest.spyOn(new_api, 'getTimezones').mockResolvedValue(timezones);
+	vi.mocked(getTimezones).mockResolvedValue(timezones);
 }
 
 export function loadCheckoutSession(): void {
-	jest.spyOn(new_api, 'getCheckoutSession').mockResolvedValue({
+	vi.mocked(getCheckoutSession).mockResolvedValue({
 		id: 'session',
 	});
 }
 
 export const loadUrlParams = (params: ParsedQuery): void => {
-	jest.spyOn(browser, 'getUrlParams').mockReturnValue(params);
+	vi.spyOn(browser, 'getUrlParams').mockReturnValue(params);
 };
 
 export const loadNowDate = (dateString: string | Date): void => {
-	jest
-		.spyOn(browser, 'getNowDate')
-		.mockImplementation(() => new Date(dateString));
+	vi.spyOn(browser, 'getNowDate').mockImplementation(
+		() => new Date(dateString)
+	);
 };
 
 export const loadNowTime = (time: number): void => {
-	jest.spyOn(browser, 'getNowTime').mockReturnValue(time);
+	vi.spyOn(browser, 'getNowTime').mockReturnValue(time);
 };
 
 export function expectLoadingOverlay(
@@ -88,6 +96,7 @@ export function expectLoadingOverlay(
 	const { shouldExist = true, extraClasses = '' } = options;
 
 	expect(
+		// eslint-disable-next-line testing-library/no-node-access
 		container.getElementsByClassName(`loading ${extraClasses}`).length
 	).toBe(+shouldExist);
 }
@@ -103,14 +112,28 @@ export function renderWithQueryProvider(
 		},
 	});
 
-	const result = render(
+	const theme = createTheme({
+		components: {
+			MuiBackdrop: {
+				defaultProps: {
+					component: React.forwardRef(function C(props, ref: any) {
+						return <div {...props} ref={ref} data-testid="mui-backdrop" />;
+					}),
+				} as any,
+			},
+		},
+	});
+
+	const view = render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+			<ThemeProvider theme={theme}>
+				<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+			</ThemeProvider>
 		</LocalizationProvider>
 	);
 
 	return {
-		...result,
+		...view,
 		queryClient,
 	};
 }
@@ -118,7 +141,7 @@ export function renderWithQueryProvider(
 export function sleep<Type>({
 	ms = 50,
 	value = undefined,
-}: { ms?: number; value?: Type } = {}): Promise<Type> {
+}: { ms?: number; value?: Type } = {}): Promise<Type | undefined> {
 	return new Promise((resolve) =>
 		setTimeout(() => {
 			resolve(value);
@@ -127,7 +150,7 @@ export function sleep<Type>({
 }
 
 export function resolveWithDelay(
-	mock: jest.SpyInstance,
+	mock: SpyInstance,
 	ms = 50,
 	value: unknown = undefined
 ): void {
@@ -138,7 +161,7 @@ export function makeTask({
 	complete = false,
 	due = '5/22/2020, 11:59 PM',
 	due_timestamp = undefined,
-	id = Math.random() + '',
+	id = Math.random().toString(),
 	cents = 100,
 	task = 'the_task',
 	status = complete ? 'complete' : 'pending',
@@ -159,7 +182,7 @@ export function makeTask({
 }
 
 export async function withMutedReactQueryLogger(
-	callback: () => void
+	callback: () => Promise<void>
 ): Promise<void> {
 	setLogger({
 		log: () => {
@@ -179,7 +202,7 @@ export async function withMutedReactQueryLogger(
 }
 
 const loadApiResponse = (
-	mock: jest.Mock,
+	mock: Mock,
 	response: { json?: Record<string, unknown>; ok?: boolean } = {
 		json: undefined,
 		ok: true,
@@ -192,11 +215,11 @@ export const loadTasksApiData = ({
 	tasks = [],
 	me = {},
 }: { tasks?: TaskType[]; me?: Partial<User> } = {}): void => {
-	jest.spyOn(new_api, 'getTasks').mockResolvedValue(tasks);
-	jest.spyOn(new_api, 'getMe').mockResolvedValue(me as User);
+	vi.mocked(getTasks).mockResolvedValue(tasks);
+	vi.mocked(getMe).mockResolvedValue(me as User);
 
-	loadApiResponse(updateTask as jest.Mock);
-	loadApiResponse(addTask as jest.Mock);
+	loadApiResponse(updateTask as Mock);
+	loadApiResponse(addTask as Mock);
 };
 
 export async function expectNever(callable: () => unknown): Promise<void> {

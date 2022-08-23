@@ -1,7 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { isProduction } from '../../tr_constants';
 import { useMe } from '../../lib/api';
-import _ from 'lodash';
 import browser from '../../lib/Browser';
 import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -26,7 +25,7 @@ const BeeminderSettings = (): JSX.Element => {
 		onSuccess: (data: User) => {
 			// TODO: Make sure this doesn't result in field being populated after initial page load
 			if (bmGoal) return;
-			const goal = _.get(data, 'integrations.beeminder.goal_new_tasks', '');
+			const goal = data?.integrations?.beeminder?.goal_new_tasks ?? '';
 			setBmGoal(goal);
 		},
 	});

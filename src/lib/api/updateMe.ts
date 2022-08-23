@@ -17,7 +17,7 @@ const pipe = (
 	output: Record<string, unknown>,
 	outputPath: string
 ) => {
-	const value = _.get(input, inputPath);
+	const value: unknown = _.get(input, inputPath);
 
 	if (value) {
 		_.set(output, outputPath, value);

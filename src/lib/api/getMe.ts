@@ -7,5 +7,5 @@ export async function getMe(): Promise<User> {
 		throw new Error('Failed to get me');
 	}
 
-	return response.json();
+	return response.json() as Promise<User>;
 }

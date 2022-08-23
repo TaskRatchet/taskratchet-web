@@ -2,7 +2,7 @@ import useDifferenceToNow from './useDifferenceToNow';
 import { loadNowTime, makeTask } from './test/helpers';
 
 describe('useDifferenceToNow', () => {
-	it('handles future due', async () => {
+	it('handles future due', () => {
 		loadNowTime(1623869940 * 1000);
 
 		const result = useDifferenceToNow(
@@ -14,7 +14,7 @@ describe('useDifferenceToNow', () => {
 		expect(result).toEqual('in 1h');
 	});
 
-	it('handles past due', async () => {
+	it('handles past due', () => {
 		loadNowTime(1623873540 * 1000);
 
 		const result = useDifferenceToNow(
@@ -26,7 +26,7 @@ describe('useDifferenceToNow', () => {
 		expect(result).toEqual('1h ago');
 	});
 
-	it('only shows two units max', async () => {
+	it('only shows two units max', () => {
 		loadNowTime(1623869940 * 1000);
 
 		const result = useDifferenceToNow(
@@ -38,7 +38,7 @@ describe('useDifferenceToNow', () => {
 		expect(result).toEqual('in 51y 5mo');
 	});
 
-	it('rounds seconds', async () => {
+	it('rounds seconds', () => {
 		loadNowTime(1623869940 * 1000 + 10);
 
 		const result = useDifferenceToNow(

@@ -1,12 +1,9 @@
 import { useUpdateTask } from './useUpdateTask';
 
-export function useSetComplete(): (
-	id: number | string,
-	complete: boolean
-) => void {
+export function useSetComplete(): (id: string, complete: boolean) => void {
 	const updateTask = useUpdateTask();
 
-	return (id: number | string, complete: boolean) =>
+	return (id: string, complete: boolean) =>
 		updateTask(id, {
 			complete: complete,
 		});

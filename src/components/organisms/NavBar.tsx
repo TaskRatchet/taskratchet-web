@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './NavBar.css';
-import { useLocation, useHistory } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
 import FilterButton from '../molecules/FilterButton';
 import {
@@ -22,12 +22,12 @@ interface NavBarProps {
 
 export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 	const location = useLocation();
-	const history = useHistory();
+	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const toggleMenu = () => setIsOpen(!isOpen);
 	const handleTodayClick = () => {
 		onTodayClick && onTodayClick();
-		history.push('/');
+		navigate('/');
 	};
 
 	useEffect(() => setIsOpen(false), [location]);

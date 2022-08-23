@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import api from '../../lib/LegacyApi';
+import * as api from '../../lib/LegacyApi';
 import { useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
 
@@ -22,12 +22,12 @@ function ResetPassword(): JSX.Element {
 
 		if (!validateForm()) return;
 
-		api.resetPassword(token, password).then((res: Response) => {
+		void api.resetPassword(token, password).then((res: Response) => {
 			if (res.ok) {
 				pushMessage('Password reset successfully');
 			} else {
 				pushMessage('Password reset failed');
-				res.text().then((t: string) => console.log(t));
+				void res.text().then((t: string) => console.log(t));
 			}
 		});
 	};
