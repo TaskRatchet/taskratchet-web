@@ -2,7 +2,7 @@ import React from 'react';
 import { renderWithQueryProvider } from '../../lib/test/helpers';
 import PasswordSettings from './PasswordSettings';
 import userEvent from '@testing-library/user-event';
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import { vi } from 'vitest';
 
 vi.mock('../../lib/api/updatePassword');
@@ -21,7 +21,7 @@ describe('password settings', () => {
 	});
 
 	it('indicates loading state', async () => {
-		const { container } = renderWithQueryProvider(<PasswordSettings />);
+		renderWithQueryProvider(<PasswordSettings />);
 
 		userEvent.type(await screen.findByLabelText('Old Password *'), 'one');
 		userEvent.type(await screen.findByLabelText('New Password *'), 'two');
@@ -29,10 +29,6 @@ describe('password settings', () => {
 
 		userEvent.click(await screen.findByText('Save'));
 
-		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 });

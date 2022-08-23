@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from 'react';
-import api from '../../lib/LegacyApi';
+import * as api from '../../lib/LegacyApi';
 import { useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
 

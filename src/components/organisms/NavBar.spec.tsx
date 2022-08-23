@@ -2,21 +2,18 @@ import React from 'react';
 import NavBar from './NavBar';
 import { useSession } from '../../lib/api/useSession';
 import userEvent from '@testing-library/user-event';
-import { render, screen, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { vi, Mock } from 'vitest';
+import { renderWithQueryProvider } from '../../lib/test/helpers';
 
 vi.mock('../../lib/api/useSession');
 
 function renderComponent() {
-	const queryClient = new QueryClient();
-	return render(
-		<QueryClientProvider client={queryClient}>
-			<BrowserRouter>
-				<NavBar />
-			</BrowserRouter>
-		</QueryClientProvider>
+	return renderWithQueryProvider(
+		<BrowserRouter>
+			<NavBar />
+		</BrowserRouter>
 	);
 }
 
@@ -62,17 +59,11 @@ describe('NavBar', () => {
 			email: 'the_email',
 		});
 
-		const { baseElement } = renderComponent();
+		renderComponent();
 
 		userEvent.click(await screen.findByLabelText('menu'));
 
-		let bg;
-
-		await waitFor(() => {
-			bg = baseElement.querySelector('.MuiBackdrop-root');
-
-			if (!bg) throw new Error('could not find drawer bg');
-		});
+		const bg = await screen.findByTestId('mui-backdrop');
 
 		userEvent.click(bg);
 
