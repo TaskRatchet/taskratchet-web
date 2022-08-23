@@ -186,17 +186,13 @@ describe('BeeminderSettings component', () => {
 	it('displays loading indicator on save', async () => {
 		loadMeWithBeeminder();
 
-		const { container } = renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
 		userEvent.click(await screen.findByText('Save'));
 
-		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 
 	// TODO: Add ability to disconnect from Beeminder
