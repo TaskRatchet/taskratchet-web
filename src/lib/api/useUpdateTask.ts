@@ -1,20 +1,17 @@
 import { useMutation, useQueryClient } from 'react-query';
-import toaster from '../Toaster';
 import { TaskInput, updateTask } from './updateTask';
+import { toast } from 'react-toastify';
 
 interface Context {
 	previousTasks: TaskType[] | undefined;
 }
 
-export function useUpdateTask(): (
-	id: string | number,
-	data: TaskInput
-) => void {
+export function useUpdateTask(): (id: string, data: TaskInput) => void {
 	const queryClient = useQueryClient();
 
 	// TODO: replace any type
 	const { mutate } = useMutation(
-		(variables: { id: string | number; data: TaskInput }): Promise<unknown> => {
+		(variables: { id: string; data: TaskInput }): Promise<unknown> => {
 			const { id, data } = variables;
 
 			return updateTask(id, data);
@@ -47,7 +44,7 @@ export function useUpdateTask(): (
 			},
 			onError: (error: Error, variables, context) => {
 				queryClient.setQueryData('tasks', (context as Context).previousTasks);
-				toaster.send(error.toString());
+				toast(error.toString());
 			},
 			onSettled: async () => {
 				await queryClient.invalidateQueries('tasks');
@@ -55,7 +52,7 @@ export function useUpdateTask(): (
 		}
 	);
 
-	return (id: string | number, data: TaskInput): void => {
+	return (id: string, data: TaskInput): void => {
 		mutate({ id, data });
 	};
 }

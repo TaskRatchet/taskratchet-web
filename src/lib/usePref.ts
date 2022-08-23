@@ -29,7 +29,7 @@ export function usePref<T>(id: string, defaultValue: T): PrefResult<T> {
 			localStorage.setItem(id, JSON.stringify(prefEnvelope));
 
 			// Invalidate this pref so callers will re-ensure the data as needed
-			queryClient.invalidateQueries(queryKey).then(() => refetch());
+			void queryClient.invalidateQueries(queryKey).then(() => refetch());
 		},
 		[id, queryKey, queryClient, refetch]
 	);
@@ -51,7 +51,9 @@ function getPrefFromLocalStorage<T>(id: string) {
 		return;
 	}
 
-	const prefEnvelope: PrefEnvelope<T> = JSON.parse(prefString);
+	const prefEnvelope: PrefEnvelope<T> = JSON.parse(
+		prefString
+	) as PrefEnvelope<T>;
 
 	return prefEnvelope.pref;
 }

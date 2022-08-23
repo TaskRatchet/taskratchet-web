@@ -1,22 +1,21 @@
 import { getUnloadMessage } from './getUnloadMessage';
 import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
-import * as api from './api';
 import { renderWithQueryProvider, resolveWithDelay } from './test/helpers';
+import { vi } from 'vitest';
+import { updateTask } from './api';
 
-jest.mock('./api/updateTask');
+vi.mock('./api/updateTask');
 
 describe('getUnloadMessage', () => {
-	it('does not return message if no pending mutations', async () => {
-		const { queryClient } = await renderWithQueryProvider(
-			<div>Hello World</div>
-		);
+	it('does not return message if no pending mutations', () => {
+		const { queryClient } = renderWithQueryProvider(<div>Hello World</div>);
 
 		expect(getUnloadMessage(queryClient)).toBeFalsy();
 	});
 
-	it('returns message if pending task toggle', async () => {
-		resolveWithDelay(jest.spyOn(api, 'updateTask'), 200);
+	it('returns message if pending task toggle', () => {
+		resolveWithDelay(vi.mocked(updateTask), 200);
 
 		const Component = () => {
 			const updateTask = useUpdateTask();
@@ -26,7 +25,7 @@ describe('getUnloadMessage', () => {
 			return <div>Component</div>;
 		};
 
-		const { queryClient } = await renderWithQueryProvider(<Component />);
+		const { queryClient } = renderWithQueryProvider(<Component />);
 
 		const expected =
 			'There are changes that may be lost if you continue exiting.';

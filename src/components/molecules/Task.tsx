@@ -77,13 +77,13 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 						}}
 						disableRipple
 						inputProps={{
-							'aria-labelledby': `task-${task.id}`,
+							'aria-labelledby': `task-${task.id || 'new'}`,
 						}}
 					/>
 				)}
 			</ListItemIcon>
 			<ListItemText
-				id={`task-${task.id}`}
+				id={`task-${task.id || 'new'}`}
 				primary={task.task || '[Description Missing]'}
 				secondary={
 					<>

@@ -1,7 +1,6 @@
-import { RenderResult, waitFor } from '@testing-library/react';
+import { RenderResult, waitFor, screen } from '@testing-library/react';
 import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
-import * as new_api from '../../lib/api';
 import {
 	loadMe,
 	loadMeWithBeeminder,
@@ -10,20 +9,22 @@ import {
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { act } from 'react-test-renderer';
+import { vi } from 'vitest';
+import { updateMe } from '../../lib/api';
+import { getMe } from '../../lib/api';
 
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateMe');
-jest.mock('../../lib/LegacyApi');
-jest.mock('../../lib/Toaster');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateMe');
+vi.mock('../../lib/LegacyApi');
+vi.mock('react-toastify');
 
-const renderBeeminderSettings = async (): Promise<RenderResult> => {
+const renderBeeminderSettings = (): RenderResult => {
 	return renderWithQueryProvider(<BeeminderSettings />);
 };
 
 describe('BeeminderSettings component', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadMe({});
 		loadUrlParams({
 			access_token: null,
@@ -31,134 +32,16 @@ describe('BeeminderSettings component', () => {
 		});
 	});
 
-	// it('includes enable link', async () => {
-	// 	const { getByText } = await renderBeeminderSettings();
-	//
-	// 	expect(getByText('Enable Beeminder integration')).toBeDefined();
-	// });
-	//
-	// it('gets me', async () => {
-	// 	await renderBeeminderSettings();
-	//
-	// 	expect(new_api.getMe).toBeCalled();
-	// });
-	//
-	// it('does not include enable link if enabled', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByText } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	expect(() => getByText('Enable Beeminder integration')).toThrow();
-	// });
-	//
-	// it('sets enable link href', async () => {
-	// 	const { getByText } = await renderBeeminderSettings();
-	// 	const link = getByText('Enable Beeminder integration');
-	//
-	// 	expect((link as HTMLAnchorElement).href).toContain(
-	// 		'https://www.beeminder.com'
-	// 	);
-	// });
-	//
-	// it('displays beeminder user', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByText } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	expect(getByText('Beeminder user: bm_user')).toBeDefined();
-	// });
-	//
-	// it('includes new tasks goal input', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByLabelText } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	expect(getByLabelText('Post new tasks to goal:')).toBeDefined();
-	// });
-	//
-	// it('pre-fills goal name', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByDisplayValue } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	expect(getByDisplayValue('bm_goal')).toBeDefined();
-	// });
-	//
-	// it('has save button', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByText } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	expect(getByText('Save')).toBeDefined();
-	// });
-	//
-	// it('updates me', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByText, getByRole } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	await userEvent.type(getByRole('textbox'), 'goal_name');
-	// 	userEvent.click(getByText('Save'));
-	//
-	// 	await waitFor(() => expect(new_api.updateMe).toBeCalled());
-	// });
-	//
-	// it('allows goal name change', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByDisplayValue } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	const input = getByDisplayValue('bm_goal');
-	//
-	// 	await userEvent.type(input, '_new');
-	//
-	// 	expect(getByDisplayValue('bm_goal_new')).toBeDefined();
-	// });
-	//
-	// it('saves new goal', async () => {
-	// 	loadMeWithBeeminder();
-	//
-	// 	const { getByDisplayValue, getByText } = await renderBeeminderSettings();
-	//
-	// 	await waitFor(() => expect(new_api.getMe).toBeCalled());
-	//
-	// 	const input = getByDisplayValue('bm_goal');
-	//
-	// 	await userEvent.type(input, '_new');
-	//
-	// 	userEvent.click(getByText('Save'));
-	//
-	// 	await waitFor(() =>
-	// 		expect(new_api.updateMe).toBeCalledWith({
-	// 			beeminder_goal_new_tasks: 'bm_goal_new',
-	// 		})
-	// 	);
-	// });
-
 	it('saves new integration', async () => {
 		loadUrlParams({
 			access_token: 'the_token',
 			username: 'the_user',
 		});
 
-		await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() =>
-			expect(new_api.updateMe).toBeCalledWith({
+			expect(updateMe).toBeCalledWith({
 				beeminder_token: 'the_token',
 				beeminder_user: 'the_user',
 			})
@@ -169,17 +52,17 @@ describe('BeeminderSettings component', () => {
 		await withMutedReactQueryLogger(async () => {
 			loadMeWithBeeminder();
 
-			jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
+			vi.mocked(updateMe).mockImplementation(() => {
 				throw new Error('error');
 			});
 
-			const { getByText } = await renderBeeminderSettings();
+			renderBeeminderSettings();
 
-			await waitFor(() => expect(new_api.getMe).toBeCalled());
+			await waitFor(() => expect(getMe).toBeCalled());
 
-			userEvent.click(getByText('Save'));
+			userEvent.click(await screen.findByText('Save'));
 
-			await waitFor(() => expect(getByText('error')).toBeInTheDocument());
+			await screen.findByText('error');
 		});
 	});
 
@@ -190,69 +73,63 @@ describe('BeeminderSettings component', () => {
 				username: 'the_user',
 			});
 
-			jest.spyOn(new_api, 'updateMe').mockImplementation(() => {
+			vi.mocked(updateMe).mockImplementation(() => {
 				throw new Error('error_message');
 			});
 
-			const { getByText } = await renderBeeminderSettings();
+			renderBeeminderSettings();
 
-			await waitFor(() =>
-				expect(getByText('error_message')).toBeInTheDocument()
-			);
+			await screen.findByText('error_message');
 		});
 	});
 
 	it('displays initial load error', async () => {
-		await act(async () => {
-			await withMutedReactQueryLogger(async () => {
-				jest.spyOn(new_api, 'getMe').mockImplementation(() => {
-					throw new Error('error_message');
-				});
-
-				const { getByText } = await renderBeeminderSettings();
-
-				await waitFor(() =>
-					expect(getByText('error_message')).toBeInTheDocument()
-				);
+		await withMutedReactQueryLogger(async () => {
+			vi.mocked(getMe).mockImplementation(() => {
+				throw new Error('error_message');
 			});
+
+			renderBeeminderSettings();
+
+			await screen.findByText('error_message');
 		});
 	});
 
 	it('rejects invalid goal names', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
-		await waitFor(() => expect(new_api.getMe).toBeCalled());
+		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
-		expect(new_api.updateMe).not.toBeCalled();
+		expect(updateMe).not.toBeCalled();
 	});
 
 	it('allows goal names with hyphens', async () => {
 		loadMeWithBeeminder('the_user', 'goal-name');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
-		await waitFor(() => expect(new_api.getMe).toBeCalled());
+		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
-		await waitFor(() => expect(new_api.updateMe).toBeCalled());
+		await waitFor(() => expect(updateMe).toBeCalled());
 	});
 
 	it('displays error message', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
-		await waitFor(() => expect(new_api.getMe).toBeCalled());
+		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
 		expect(
-			getByText(
+			await screen.findByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
 			)
 		);
@@ -261,48 +138,46 @@ describe('BeeminderSettings component', () => {
 	it('allows unsetting goal name', async () => {
 		loadMeWithBeeminder('the_user', '');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
-		await waitFor(() => expect(new_api.getMe).toBeCalled());
+		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
-		const getError = () =>
-			getByText(
+		expect(
+			screen.queryByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			);
-
-		expect(getError).toThrow();
+			)
+		).not.toBeInTheDocument();
 	});
 
 	it('unsets error on successful save', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText, getByRole } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
-		await waitFor(() => expect(new_api.getMe).toBeCalled());
+		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
-		await userEvent.type(getByRole('textbox'), '{backspace}new_name');
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
+		userEvent.type(await screen.findByRole('textbox'), '{backspace}new_name');
+		userEvent.click(await screen.findByText('Save'));
 
-		const getError = () =>
-			getByText(
+		expect(
+			screen.queryByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			);
-
-		expect(getError).toThrow();
+			)
+		).not.toBeInTheDocument();
 	});
 
 	it('displays error dynamically', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
-		await waitFor(() => expect(new_api.getMe).toBeCalled());
+		await waitFor(() => expect(getMe).toBeCalled());
 
 		expect(
-			getByText(
+			await screen.findByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
 			)
 		);
@@ -311,17 +186,13 @@ describe('BeeminderSettings component', () => {
 	it('displays loading indicator on save', async () => {
 		loadMeWithBeeminder();
 
-		const { container, getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
-		await waitFor(() => expect(new_api.getMe).toBeCalled());
+		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
-		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 
 	// TODO: Add ability to disconnect from Beeminder

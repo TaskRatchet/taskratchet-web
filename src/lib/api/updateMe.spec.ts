@@ -1,14 +1,13 @@
 import { updateMe } from './updateMe';
 import { apiFetch } from './apiFetch';
 import _ from 'lodash';
-import * as api from '.';
+import { vi } from 'vitest';
 
-jest.mock('./apiFetch');
+vi.mock('./apiFetch');
 
 describe('updateMe', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
-		jest.spyOn(api, 'apiFetch').mockResolvedValue({ ok: true } as Response);
+		vi.mocked(apiFetch).mockResolvedValue({ ok: true } as Response);
 	});
 
 	it('reformats beeminder integration token', async () => {

@@ -12,7 +12,7 @@ const DEFAULT_FILTERS = {
 
 const getDefaultFilters = (): { [key in Status]: boolean } => {
 	const cookie = getCookie('tr-filters');
-	let data;
+	let data: unknown;
 
 	try {
 		data = JSON.parse(cookie || '{}');

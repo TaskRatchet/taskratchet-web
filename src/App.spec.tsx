@@ -1,44 +1,45 @@
-import { loadNowDate, loadTasksApiData, makeTask } from './lib/test/helpers';
+import {
+	loadNowDate,
+	loadTasksApiData,
+	makeTask,
+	renderWithQueryProvider,
+} from './lib/test/helpers';
 import browser from './lib/Browser';
-import { render } from '@testing-library/react';
 import React from 'react';
 import { App } from './App';
 import userEvent from '@testing-library/user-event';
 import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
-import { mockReactListRef } from './__mocks__/react-list';
-import { waitFor, screen } from '@testing-library/dom';
+import { __listRef } from 'react-list';
+import { waitFor, screen } from '@testing-library/react';
 import { addTask } from './lib/api';
+import { vi, Mock } from 'vitest';
+import getQueryClient from './lib/getQueryClient';
+import { QueryClient } from 'react-query';
+import loadControlledPromise from './lib/test/loadControlledPromise';
 
-jest.mock('./lib/api/getTasks');
-jest.mock('./lib/api/getMe');
-jest.mock('./lib/api/updateTask');
-jest.mock('./lib/api/addTask');
-jest.mock('./lib/api/useSession');
-jest.mock('./components/molecules/LoadingIndicator');
-jest.mock('react-ga');
+vi.mock('./lib/api/getTasks');
+vi.mock('./lib/api/getMe');
+vi.mock('./lib/api/updateTask');
+vi.mock('./lib/api/addTask');
+vi.mock('./lib/api/useSession');
+vi.mock('./components/molecules/LoadingIndicator');
+vi.mock('react-ga');
+vi.mock('react-list');
+vi.mock('./lib/getQueryClient');
 
-const mockUseSession = useSession as jest.Mock;
+const mockUseSession = useSession as Mock;
 
-const openForm = () =>
-	waitFor(() => userEvent.click(screen.getByLabelText('add')));
+const openForm = () => userEvent.click(screen.getByLabelText('add'));
 
-const getTaskInput = () => screen.getByLabelText('Task *') as HTMLInputElement;
-
-const getDueInput = () =>
-	screen.getByLabelText('Due Date *') as HTMLInputElement;
-
-const getStakesInput = () =>
-	screen.getByLabelText('Stakes *') as HTMLInputElement;
-
-const getAddButton = () => screen.getByText('Add') as HTMLButtonElement;
+const getDueInput = () => screen.getByLabelText('Due Date *');
 
 function renderPage() {
 	mockUseSession.mockReturnValue({
 		email: 'the_email',
 	});
 
-	return render(
+	return renderWithQueryProvider(
 		<MemoryRouter initialEntries={['/']}>
 			<App />
 		</MemoryRouter>
@@ -47,9 +48,19 @@ function renderPage() {
 
 describe('App', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadNowDate(new Date('10/29/2020'));
-		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		window.localStorage.clear();
+		vi.mocked(getQueryClient).mockReturnValue(
+			new QueryClient({
+				defaultOptions: {
+					queries: {
+						retry: false,
+					},
+				},
+			})
+		);
 	});
 
 	it('re-scrolls tasks list when today icon clicked', async () => {
@@ -61,12 +72,10 @@ describe('App', () => {
 
 		renderPage();
 
-		await new Promise(process.nextTick);
-
 		userEvent.click(screen.getByLabelText('today'));
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(0);
+			expect(__listRef.scrollTo).toHaveBeenCalledWith(0);
 		});
 	});
 
@@ -75,7 +84,9 @@ describe('App', () => {
 
 		userEvent.click(screen.getByLabelText('filters'));
 
-		expect(screen.getByLabelText('toggle filter pending')).toBeInTheDocument();
+		expect(
+			await screen.findByLabelText('toggle filter pending')
+		).toBeInTheDocument();
 		expect(screen.getByLabelText('toggle filter complete')).toBeInTheDocument();
 		expect(screen.getByLabelText('toggle filter expired')).toBeInTheDocument();
 	});
@@ -85,14 +96,16 @@ describe('App', () => {
 
 		userEvent.click(screen.getByLabelText('filters'));
 
-		expect(screen.getByLabelText('pending')).toBeChecked();
+		await waitFor(() => {
+			expect(screen.getByLabelText('pending')).toBeChecked();
+		});
 	});
 
 	it('toggles checkmark when entry clicked', async () => {
 		renderPage();
 
-		userEvent.click(screen.getByLabelText('filters'));
-		userEvent.click(screen.getByText('pending'));
+		userEvent.click(await screen.findByLabelText('filters'));
+		userEvent.click(await screen.findByText('pending'));
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('pending')).not.toBeChecked();
@@ -100,26 +113,26 @@ describe('App', () => {
 	});
 
 	it('persists checked state when reopening menu', async () => {
-		const { getByLabelText, getByText, baseElement } = renderPage();
+		renderPage();
 
-		userEvent.click(getByLabelText('filters'));
-		userEvent.click(getByText('pending'));
+		userEvent.click(await screen.findByLabelText('filters'));
+		userEvent.click(await screen.findByText('pending'));
 
-		const backdrop = baseElement.querySelector('.MuiBackdrop-root');
-
-		if (backdrop === null) throw new Error('No backdrop');
+		const backdrop = await screen.findByTestId('mui-backdrop');
 
 		userEvent.click(backdrop);
-		userEvent.click(getByLabelText('filters'));
+		userEvent.click(await screen.findByLabelText('filters'));
 
-		expect(getByLabelText('pending')).not.toBeChecked();
+		const checkbox = await screen.findByLabelText('pending');
+
+		expect(checkbox).not.toBeChecked();
 	});
 
 	it('persists checked state on reload', async () => {
-		const { getByLabelText, getByText, unmount } = renderPage();
+		const { unmount } = renderPage();
 
-		userEvent.click(getByLabelText('filters'));
-		userEvent.click(getByText('pending'));
+		userEvent.click(await screen.findByLabelText('filters'));
+		userEvent.click(await screen.findByText('pending'));
 
 		unmount();
 
@@ -145,8 +158,8 @@ describe('App', () => {
 			expect(screen.getByText('task 1')).toBeInTheDocument();
 		});
 
-		userEvent.click(screen.getByLabelText('filters'));
-		userEvent.click(screen.getByLabelText('toggle filter pending'));
+		userEvent.click(await screen.findByLabelText('filters'));
+		userEvent.click(await screen.findByLabelText('toggle filter pending'));
 
 		await waitFor(() => {
 			expect(screen.queryByText('task 1')).not.toBeInTheDocument();
@@ -158,14 +171,18 @@ describe('App', () => {
 
 		renderPage();
 
-		await openForm();
+		openForm();
 
-		userEvent.type(getTaskInput(), 'task 1');
-		userEvent.click(getAddButton());
+		const { reject } = loadControlledPromise(addTask);
+
+		userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
+		userEvent.click(screen.getByText('Add'));
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(1);
+			expect(__listRef.scrollTo).toHaveBeenCalledWith(1);
 		});
+
+		reject();
 	});
 
 	it('scrolls to today', async () => {
@@ -183,7 +200,7 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('today'));
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toHaveBeenCalledWith(2);
+			expect(__listRef.scrollTo).toHaveBeenCalledWith(2);
 		});
 	});
 
@@ -192,17 +209,15 @@ describe('App', () => {
 
 		renderPage();
 
-		await openForm();
+		openForm();
 
-		await userEvent.type(getDueInput(), '{backspace}0');
+		userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
+
+		userEvent.type(getDueInput(), '{backspace}0');
 
 		userEvent.click(screen.getByText('Add'));
 
-		await waitFor(() => {
-			expect(
-				screen.getByText('Due date must be in the future')
-			).toBeInTheDocument();
-		});
+		await screen.findByText('Due date must be in the future');
 
 		expect(addTask).not.toBeCalled();
 	});
@@ -225,7 +240,7 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Copy'));
 
-		expect(getTaskInput()).toBeInTheDocument();
+		expect(await screen.findByLabelText('Task *')).toBeInTheDocument();
 	});
 
 	it('copies task name into form when copying task', async () => {
@@ -242,7 +257,7 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Copy'));
 
-		expect(getTaskInput()).toHaveValue('the_task');
+		expect(await screen.findByLabelText('Task *')).toHaveValue('the_task');
 	});
 
 	it('copies task due date into form when copying task', async () => {
@@ -261,7 +276,9 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Copy'));
 
-		expect(getDueInput()).toHaveValue('01/01/2020');
+		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
+			'01/01/2020'
+		);
 	});
 
 	it('copies task stakes into form when copying task', async () => {
@@ -278,7 +295,7 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Copy'));
 
-		expect(getStakesInput()).toHaveValue(1);
+		expect(await screen.findByLabelText('Stakes *')).toHaveValue(1);
 	});
 
 	it('sets date input to one week in future when copying task with due date in past', async () => {
@@ -290,14 +307,14 @@ describe('App', () => {
 
 		renderPage();
 
-		await waitFor(() => {
-			expect(screen.getByText('the_task')).toBeInTheDocument();
-		});
+		await screen.findByText('the_task');
 
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Copy'));
 
-		expect(getDueInput()).toHaveValue('02/08/2020');
+		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
+			'02/08/2020'
+		);
 	});
 
 	it('closes menu when clicking copy', async () => {
@@ -322,8 +339,8 @@ describe('App', () => {
 	it('indicates when filters are enabled', async () => {
 		renderPage();
 
-		userEvent.click(screen.getByLabelText('filters'));
-		userEvent.click(screen.getByLabelText('toggle filter pending'));
+		userEvent.click(await screen.findByLabelText('filters'));
+		userEvent.click(await screen.findByLabelText('toggle filter pending'));
 
 		await waitFor(() => {
 			expect(screen.getByText('1')).toBeInTheDocument();
@@ -334,12 +351,12 @@ describe('App', () => {
 		renderPage();
 
 		userEvent.click(screen.getByLabelText('filters'));
-		userEvent.click(screen.getByLabelText('toggle filter pending'));
-		userEvent.click(screen.getByLabelText('toggle filter complete'));
 
-		await waitFor(() => {
-			expect(screen.getByText('2')).toBeInTheDocument();
-		});
+		userEvent.click(await screen.findByLabelText('toggle filter pending'));
+		await screen.findByText('1'); // TODO Resolve race condition to remove this line
+		userEvent.click(await screen.findByLabelText('toggle filter complete'));
+
+		expect(await screen.findByText('2')).toBeInTheDocument();
 	});
 
 	it('includes recurring options', async () => {

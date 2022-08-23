@@ -1,15 +1,19 @@
 import createLoginMachine from './Login.machine';
-import api, { LegacyApi } from '../../lib/LegacyApi';
+import * as api from '../../lib/LegacyApi';
 import { interpret } from 'xstate';
 import { renderWithQueryProvider } from '../../lib/test/helpers';
 import Login from './Login';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
+import { screen } from '@testing-library/react';
 
-let service: any, mockApi: LegacyApi;
+vi.mock('../../lib/LegacyApi');
+
+let service: any;
 
 const createService = () => {
-	const machine = createLoginMachine({ api: mockApi });
+	const machine = createLoginMachine({ api });
 	const service = interpret(machine);
 
 	service.start();
@@ -17,22 +21,11 @@ const createService = () => {
 	return service;
 };
 
-const createMockApi = () => {
-	const mockApi = api;
-
-	mockApi.login = jest.fn();
-	mockApi.requestResetEmail = jest.fn();
-
-	return mockApi;
-};
-
 describe('login machine', () => {
 	service = createService();
-	mockApi = createMockApi();
 
 	beforeEach(() => {
 		service = createService();
-		mockApi = createMockApi();
 	});
 
 	it('tracks email state', () => {
@@ -48,27 +41,27 @@ describe('login machine', () => {
 		service.send('PASSWORD', { value: 'the_password' });
 		service.send('LOGIN');
 
-		expect(mockApi.login).toBeCalled();
+		expect(api.login).toBeCalled();
 	});
 });
 
 describe('login form', () => {
-	it('sends login request', async () => {
-		const { getByLabelText, getByText } = renderWithQueryProvider(<Login />);
+	it('sends login request', () => {
+		renderWithQueryProvider(<Login />);
 
-		userEvent.type(getByLabelText('Email'), 'the_email');
-		userEvent.type(getByLabelText('Password'), 'the_password');
-		userEvent.click(getByText('Submit'));
+		userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		userEvent.type(screen.getByLabelText('Password'), 'the_password');
+		userEvent.click(screen.getByText('Submit'));
 
-		expect(mockApi.login).toBeCalled();
+		expect(api.login).toBeCalled();
 	});
 
-	it('sends reset request', async () => {
-		const { getByLabelText, getByText } = renderWithQueryProvider(<Login />);
+	it('sends reset request', () => {
+		renderWithQueryProvider(<Login />);
 
-		userEvent.type(getByLabelText('Email'), 'the_email');
-		userEvent.click(getByText('Reset Password'));
+		userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		userEvent.click(screen.getByText('Reset Password'));
 
-		expect(mockApi.requestResetEmail).toBeCalled();
+		expect(api.requestResetEmail).toBeCalled();
 	});
 });

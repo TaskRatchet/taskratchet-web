@@ -1,13 +1,6 @@
-import * as new_api from '../../lib/api';
 import { addTask, getTasks, updateTask } from '../../lib/api';
-import toaster from '../../lib/Toaster';
-import {
-	act,
-	fireEvent,
-	render,
-	waitFor,
-	screen,
-} from '@testing-library/react';
+import { toast } from 'react-toastify';
+import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -15,30 +8,32 @@ import {
 	loadNowDate,
 	loadTasksApiData,
 	makeTask,
+	renderWithQueryProvider,
 	resolveWithDelay,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
-import { QueryClient, QueryClientProvider } from 'react-query';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
-import AdapterDateFns from '@mui/lab/AdapterDateFns';
-import LocalizationProvider from '@mui/lab/LocalizationProvider';
-import { mockReactListRef } from '../../__mocks__/react-list';
+import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
+import { vi, Mock } from 'vitest';
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { findTaskCheckbox } from '../../lib/test/queries';
 
-jest.mock('../../lib/api/apiFetch');
-jest.mock('../../lib/api/getTasks');
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateTask');
-jest.mock('../../lib/api/getTimezones');
-jest.mock('../../lib/api/addTask');
-jest.mock('../../lib/Toaster');
-jest.mock('../../lib/LegacyApi');
-jest.mock('../../lib/getUnloadMessage');
-jest.mock('../../lib/api/editTask');
-jest.mock('react-ga');
+vi.mock('../../lib/api/apiFetch');
+vi.mock('../../lib/api/getTasks');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateTask');
+vi.mock('../../lib/api/getTimezones');
+vi.mock('../../lib/api/addTask');
+vi.mock('../../lib/LegacyApi');
+vi.mock('../../lib/getUnloadMessage');
+vi.mock('../../lib/api/editTask');
+vi.mock('react-ga');
+vi.mock('react-list');
+vi.mock('react-toastify');
 
-const mockEditTask = editTask as jest.Mock;
+const mockEditTask = editTask as Mock;
 
 global.document.createRange = () =>
 	({
@@ -76,101 +71,54 @@ const expectTaskSave = async ({
 	expect(addTask).toBeCalledWith(task, dueString, cents, undefined);
 };
 
-const expectCheckboxState = (
-	task: string,
-	expected: boolean,
-	getCheckbox: any
-) => {
-	const checkbox = getCheckbox(task);
-
-	expect(checkbox.checked).toEqual(expected);
-};
-
 const renderTasksPage = () => {
-	const queryClient = new QueryClient();
-	const getters = render(
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<QueryClientProvider client={queryClient}>
-				<Tasks lastToday={undefined} />
-			</QueryClientProvider>
-		</LocalizationProvider>
-	);
-	const { getByLabelText, getByText, debug } = getters;
+	const view = renderWithQueryProvider(<Tasks lastToday={undefined} />);
 
 	return {
-		queryClient,
-		openForm: () => waitFor(() => userEvent.click(getByLabelText('add'))),
-		getTaskInput: () => getByLabelText('Task *') as HTMLInputElement,
-		getDueInput: () => getByLabelText('due date') as HTMLInputElement,
-		getAddButton: () => getByText('Add') as HTMLButtonElement,
-		getCheckbox: (task = 'the_task'): HTMLInputElement | null | undefined => {
-			const desc = getByText(task);
-			return desc
-				?.closest('.molecule-task')
-				?.querySelector('[type="checkbox"]');
+		openForm: async () => {
+			await screen.findByLabelText('add');
+			userEvent.click(screen.getByLabelText('add'));
 		},
-		clickCheckbox: (task = 'the_task') => {
-			const desc = getByText(task);
-			const checkbox = desc
-				?.closest('.molecule-task')
-				?.querySelector('[type="checkbox"]');
-
-			if (!checkbox) {
-				debug();
-				throw Error('Missing task checkbox');
-			}
+		getTaskInput: () => screen.getByLabelText('Task *'),
+		getDueInput: () => screen.getByLabelText('due date'),
+		getAddButton: () => screen.getByText('Add'),
+		clickCheckbox: async (task = 'the_task') => {
+			const checkbox = await findTaskCheckbox(task);
 
 			userEvent.click(checkbox);
 		},
-		...getters,
+		...view,
 	};
 };
 
 describe('tasks page', () => {
 	beforeEach(() => {
-		jest.resetAllMocks();
+		vi.resetAllMocks();
 		loadNowDate(new Date('10/29/2020'));
-		jest.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
 	it('loads tasks', async () => {
 		loadTasksApiData({ tasks: [makeTask()] });
 
-		const { getByText } = renderTasksPage();
+		renderTasksPage();
 
-		await waitFor(() => expect(getByText('the_task')).toBeDefined());
+		expect(await screen.findByText('the_task')).toBeInTheDocument();
 	});
-
-	// it("saves task with free entry", async () => {
-	//     loadNow(new Date('10/29/2020'))
-	//     loadApiData()
-	//
-	//     const {taskInput, addButton} = renderTasksPage()
-	//
-	//     await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled())
-	//
-	//     await userEvent.type(taskInput, "the_task by friday or pay $5")
-	//     userEvent.click(addButton)
-	//
-	//     await expectTaskSave({
-	//         task: "the_task by friday or pay $5",
-	//         due: new Date('10/30/2020 11:59 PM'),
-	//     })
-	// })
 
 	it('saves task', async () => {
 		loadNowDate(new Date('10/29/2020'));
 		loadTasksApiData();
 
-		const { getTaskInput, getAddButton, getByLabelText } = renderTasksPage();
+		renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		/* Open new task form */
-		userEvent.click(getByLabelText('add'));
+		userEvent.click(screen.getByLabelText('add'));
 
-		await userEvent.type(getTaskInput(), 'the_task');
-		userEvent.click(getAddButton());
+		userEvent.type(await screen.findByLabelText(/^Task/), 'the_task');
+		userEvent.click(screen.getByText('Add'));
 
 		await expectTaskSave({
 			task: 'the_task',
@@ -180,45 +128,30 @@ describe('tasks page', () => {
 	});
 
 	it("doesn't accept empty task", async () => {
-		await act(async () => {
-			loadTasksApiData();
+		loadTasksApiData();
 
-			const { getAddButton, openForm } = renderTasksPage();
+		const { getAddButton, openForm } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-			await openForm();
-
-			await waitFor(() => userEvent.click(getAddButton()));
-
-			expect(new_api.addTask).not.toHaveBeenCalled();
+		await waitFor(() => {
+			expect(getTasks).toHaveBeenCalled();
 		});
-	});
 
-	it('displays error on empty task submit', async () => {
-		await act(async () => {
-			loadTasksApiData();
+		await openForm();
+		await screen.findByText('Add');
 
-			const { getAddButton, getByText, openForm } = renderTasksPage();
+		userEvent.click(getAddButton());
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-			await openForm();
-
-			await waitFor(() => userEvent.click(getAddButton()));
-
-			expect(getByText('Task is required')).toBeDefined();
-		});
+		expect(addTask).not.toHaveBeenCalled();
 	});
 
 	it('displays timezone', async () => {
 		loadTasksApiData({ me: { timezone: 'the_timezone' } });
 
-		const { getByText, openForm } = renderTasksPage();
+		const { openForm } = renderTasksPage();
 
 		await openForm();
 
-		await waitFor(() => expect(getByText('the_timezone')).toBeDefined());
+		await screen.findByText('the_timezone');
 	});
 
 	it('tells api task is complete', async () => {
@@ -228,9 +161,9 @@ describe('tasks page', () => {
 
 		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		clickCheckbox();
+		await clickCheckbox();
 
 		await waitFor(() =>
 			expect(updateTask).toBeCalledWith('3', { complete: true })
@@ -244,31 +177,31 @@ describe('tasks page', () => {
 
 		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		clickCheckbox();
+		await clickCheckbox();
 
-		await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
+		await waitFor(() => expect(getTasks).toBeCalledTimes(2));
 	});
 
 	it('toasts task creation failure', async () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData();
-			jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+			vi.mocked(addTask).mockImplementation(() => {
 				throw new Error('Failed to add task');
 			});
 
 			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			await openForm();
 
-			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
 			userEvent.click(getAddButton());
 
 			await waitFor(() =>
-				expect(toaster.send).toBeCalledWith('Error: Failed to add task')
+				expect(toast).toBeCalledWith('Error: Failed to add task')
 			);
 		});
 	});
@@ -277,20 +210,20 @@ describe('tasks page', () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData();
 
-			jest.spyOn(new_api, 'addTask').mockImplementation(() => {
+			vi.mocked(addTask).mockImplementation(() => {
 				throw Error('Oops!');
 			});
 
 			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 			await openForm();
 
-			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
 			userEvent.click(getAddButton());
 
-			await waitFor(() => expect(toaster.send).toBeCalledWith('Error: Oops!'));
+			await waitFor(() => expect(toast).toBeCalledWith('Error: Oops!'));
 		});
 	});
 
@@ -300,17 +233,17 @@ describe('tasks page', () => {
 				tasks: [makeTask({ id: '3' })],
 			});
 
-			jest.spyOn(new_api, 'updateTask').mockImplementation(() => {
+			vi.mocked(updateTask).mockImplementation(() => {
 				throw Error('Oops!');
 			});
 
 			const { clickCheckbox } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-			clickCheckbox();
+			await clickCheckbox();
 
-			await waitFor(() => expect(toaster.send).toBeCalledWith('Error: Oops!'));
+			await waitFor(() => expect(toast).toBeCalledWith('Error: Oops!'));
 		});
 	});
 
@@ -319,16 +252,20 @@ describe('tasks page', () => {
 			tasks: [makeTask({ id: '3' })],
 		});
 
-		const { clickCheckbox, getCheckbox } = renderTasksPage();
+		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		clickCheckbox();
+		const { reject } = loadControlledPromise(getTasks);
 
-		await waitFor(() => {
-			const taskCheckbox = getCheckbox();
+		await clickCheckbox();
+
+		await waitFor(async () => {
+			const taskCheckbox = await findTaskCheckbox();
 			expect(taskCheckbox?.checked).toBeTruthy();
 		});
+
+		reject();
 	});
 
 	it('rolls back checkbox optimistic update', async () => {
@@ -337,21 +274,21 @@ describe('tasks page', () => {
 				tasks: [makeTask({ id: '3', status: 'pending' })],
 			});
 
-			const { clickCheckbox, getCheckbox } = renderTasksPage();
+			const { clickCheckbox } = renderTasksPage();
 
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
+			const { reject } = loadControlledPromise(updateTask);
+			await clickCheckbox();
 
-			jest.spyOn(new_api, 'updateTask').mockRejectedValue('Oops!');
-
-			clickCheckbox();
-
-			await waitFor(() => {
-				const checkbox = getCheckbox();
+			await waitFor(async () => {
+				const checkbox = await findTaskCheckbox();
 				expect(checkbox?.checked).toBeTruthy();
 			});
 
-			await waitFor(() => {
-				const checkbox = getCheckbox();
+			reject();
+
+			await waitFor(async () => {
+				const checkbox = await findTaskCheckbox();
 				expect(checkbox?.checked).toBeFalsy();
 			});
 		});
@@ -364,11 +301,11 @@ describe('tasks page', () => {
 
 		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		const event = new Event('beforeunload');
 
-		clickCheckbox();
+		await clickCheckbox();
 		fireEvent(window, event);
 
 		expect(getUnloadMessage).toBeCalled();
@@ -384,28 +321,25 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { clickCheckbox, getCheckbox } = renderTasksPage();
+		const { clickCheckbox } = renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		// Load slow query response to clobber
 
-		resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
-			makeTask({ task: 'first', id: '3', status: 'complete', complete: true }),
-			makeTask({ task: 'second', id: '4', status: 'pending' }),
-		]);
+		const { resolve } = loadControlledPromise(getTasks);
 
 		// Check first task
 
-		clickCheckbox('first');
+		await clickCheckbox('first');
 
 		// Wait for slow response to be requested
 
-		await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
+		await waitFor(() => expect(getTasks).toBeCalledTimes(2));
 
 		// Load second, fast response
 
-		jest.spyOn(new_api, 'getTasks').mockResolvedValue([
+		vi.mocked(getTasks).mockResolvedValue([
 			makeTask({
 				task: 'first',
 				id: '3',
@@ -422,7 +356,124 @@ describe('tasks page', () => {
 
 		// Check second task
 
-		clickCheckbox('second');
+		await clickCheckbox('second');
+		await waitFor(async () => {
+			const checkbox = await findTaskCheckbox('second');
+			if (!checkbox) {
+				throw new Error('missing checkbox');
+			}
+			expect(checkbox).toBeChecked();
+		});
+		// Resolve getTasks promise
+
+		resolve([
+			makeTask({ task: 'first', id: '3', status: 'complete', complete: true }),
+			makeTask({ task: 'second', id: '4', status: 'pending' }),
+		]);
+
+		// Check that first, slow response didn't clobber second, fast response
+
+		const checkboxLater = await findTaskCheckbox('second');
+		if (!checkboxLater) {
+			throw new Error('missing checkbox');
+		}
+		expect(checkboxLater).toBeChecked();
+	});
+
+	it('has stakes form', async () => {
+		loadTasksApiData();
+
+		const { openForm } = renderTasksPage();
+
+		await openForm();
+
+		expect(screen.getByText('Stakes')).toBeInTheDocument();
+	});
+
+	it('adds task optimistically', async () => {
+		const { getTaskInput, getAddButton, openForm } = renderTasksPage();
+
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
+
+		await openForm();
+
+		userEvent.type(getTaskInput(), 'the_task');
+		userEvent.click(getAddButton());
+
+		expect(await screen.findByText('the_task')).toBeInTheDocument();
+	});
+
+	it('rolls back task add if mutation fails', async () => {
+		await withMutedReactQueryLogger(async () => {
+			loadTasksApiData();
+
+			const { reject } = loadControlledPromise(addTask);
+
+			const { getTaskInput, getAddButton, openForm } = renderTasksPage();
+
+			await waitFor(() => expect(getTasks).toHaveBeenCalled());
+
+			await openForm();
+
+			userEvent.type(getTaskInput(), 'the_task');
+			userEvent.click(getAddButton());
+
+			const bg = await screen.findByTestId('mui-backdrop');
+
+			userEvent.click(bg);
+
+			await waitFor(() => {
+				expect(screen.getByText('the_task')).toBeInTheDocument();
+			});
+
+			reject();
+
+			await waitFor(() => {
+				expect(screen.queryByText('the_task')).not.toBeInTheDocument();
+			});
+		});
+	});
+
+	it('cancels fetches on-mutate', async () => {
+		// Setup & initial render
+
+		loadTasksApiData();
+
+		const { getTaskInput, getAddButton, openForm } = renderTasksPage();
+
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
+
+		// Load slow query response to clobber
+
+		resolveWithDelay(vi.mocked(getTasks), 100, [
+			makeTask({ task: 'first', id: '3' }),
+		]);
+
+		// Add first task
+
+		await openForm();
+
+		userEvent.type(getTaskInput(), 'first');
+		userEvent.click(getAddButton());
+
+		// Wait for slow response to be requested
+
+		await waitFor(() => expect(getTasks).toBeCalledTimes(2));
+
+		// Load second, fast response
+
+		vi.mocked(getTasks).mockResolvedValue([
+			makeTask({ task: 'first', id: '3' }),
+			makeTask({ task: 'second', id: '4' }),
+		]);
+
+		// Add second task
+
+		userEvent.type(
+			getTaskInput(),
+			'{backspace}{backspace}{backspace}{backspace}{backspace}second'
+		);
+		userEvent.click(getAddButton());
 
 		// Sleep 200ms
 
@@ -430,126 +481,7 @@ describe('tasks page', () => {
 
 		// Check that first, slow response didn't clobber second, fast response
 
-		expectCheckboxState('second', true, getCheckbox);
-	});
-
-	it('has stakes form', async () => {
-		loadTasksApiData();
-
-		const { getByText, openForm } = renderTasksPage();
-
-		await openForm();
-
-		expect(getByText('Stakes')).toBeInTheDocument();
-	});
-
-	it('adds task optimistically', async () => {
-		const { getTaskInput, getAddButton, getByText, openForm } =
-			renderTasksPage();
-
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-		await openForm();
-
-		await userEvent.type(getTaskInput(), 'the_task');
-		userEvent.click(getAddButton());
-
-		await waitFor(() => expect(getByText('the_task')).toBeInTheDocument());
-	});
-
-	it('rolls back task add if mutation fails', async () => {
-		await withMutedReactQueryLogger(async () => {
-			loadTasksApiData();
-
-			jest.spyOn(new_api, 'addTask').mockRejectedValue('Oops!');
-
-			const {
-				getTaskInput,
-				getAddButton,
-				getByText,
-				queryByText,
-				openForm,
-				baseElement,
-			} = renderTasksPage();
-
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-			await openForm();
-
-			await userEvent.type(getTaskInput(), 'the_task');
-			userEvent.click(getAddButton());
-
-			const bg = baseElement.querySelector('.MuiBackdrop-root');
-
-			if (!bg) throw new Error('could not find bg');
-
-			userEvent.click(bg);
-
-			await waitFor(() => {
-				expect(getByText('the_task')).toBeInTheDocument();
-			});
-
-			await waitFor(() => {
-				expect(queryByText('the_task')).toBeNull();
-			});
-		});
-	});
-
-	it('cancels fetches on-mutate', async () => {
-		await act(async () => {
-			// Setup & initial render
-
-			loadTasksApiData();
-
-			const { getTaskInput, getAddButton, getByText, openForm } =
-				renderTasksPage();
-
-			await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
-
-			// Load slow query response to clobber
-
-			resolveWithDelay(jest.spyOn(new_api, 'getTasks'), 100, [
-				makeTask({ task: 'first', id: '3' }),
-			]);
-
-			// Add first task
-
-			await openForm();
-
-			await waitFor(async () => {
-				await userEvent.type(getTaskInput(), 'first');
-				userEvent.click(getAddButton());
-			});
-
-			// Wait for slow response to be requested
-
-			await waitFor(() => expect(new_api.getTasks).toBeCalledTimes(2));
-
-			// Load second, fast response
-
-			jest
-				.spyOn(new_api, 'getTasks')
-				.mockResolvedValue([
-					makeTask({ task: 'first', id: '3' }),
-					makeTask({ task: 'second', id: '4' }),
-				]);
-
-			// Add second task
-
-			await userEvent.type(
-				getTaskInput(),
-				'{backspace}{backspace}{backspace}{backspace}{backspace}second'
-			);
-			userEvent.click(getAddButton());
-
-			// Sleep 200ms
-
-			await new Promise((resolve) => setTimeout(resolve, 200));
-
-			// Check that first, slow response didn't clobber second, fast response
-
-			expect(getByText('second')).toBeInTheDocument();
-		});
+		expect(screen.getByText('second')).toBeInTheDocument();
 	});
 
 	it('shows all tasks', async () => {
@@ -557,11 +489,11 @@ describe('tasks page', () => {
 			tasks: [makeTask({ complete: true })],
 		});
 
-		const { getByText } = renderTasksPage();
+		renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		expect(getByText('the_task')).toBeInTheDocument();
+		expect(await screen.findByText('the_task')).toBeInTheDocument();
 	});
 
 	it('shows date headings', async () => {
@@ -569,11 +501,11 @@ describe('tasks page', () => {
 			tasks: [makeTask({ due: '5/22/2020, 11:59 PM' })],
 		});
 
-		const { getByText } = renderTasksPage();
+		renderTasksPage();
 
-		await waitFor(() => expect(new_api.getTasks).toHaveBeenCalled());
+		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		expect(getByText('May 22, 2020')).toBeInTheDocument();
+		expect(await screen.findByText('May 22, 2020')).toBeInTheDocument();
 	});
 
 	it('scrolls next section into view', async () => {
@@ -607,18 +539,17 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { getByText } = renderTasksPage();
+		renderTasksPage();
 
-		await waitFor(() =>
-			expect(getByText((s) => s.indexOf('May') !== -1)).toBeInTheDocument()
-		);
+		expect(
+			await screen.findByText((s) => s.indexOf('May') !== -1)
+		).toBeInTheDocument();
 	});
 
 	it('scrolls new task into view', async () => {
 		loadTasksApiData();
 
-		const { getTaskInput, getAddButton, getByText, openForm } =
-			renderTasksPage();
+		const { getTaskInput, getAddButton, openForm } = renderTasksPage();
 
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'new_task' })],
@@ -630,7 +561,7 @@ describe('tasks page', () => {
 		userEvent.click(getAddButton());
 
 		await waitFor(() => {
-			expect(getByText('new_task')).toBeInTheDocument();
+			expect(screen.getByText('new_task')).toBeInTheDocument();
 		});
 	});
 
@@ -657,11 +588,11 @@ describe('tasks page', () => {
 			],
 		});
 
-		const { getTaskInput, getDueInput, getAddButton, getByText, openForm } =
+		const { getTaskInput, getDueInput, getAddButton, openForm } =
 			renderTasksPage();
 
 		await waitFor(() => {
-			expect(getByText('task 1')).toBeInTheDocument();
+			expect(screen.getByText('task 1')).toBeInTheDocument();
 		});
 
 		await openForm();
@@ -693,19 +624,19 @@ describe('tasks page', () => {
 		userEvent.click(getAddButton());
 
 		await waitFor(() => {
-			const el = getByText('January 8, 2029');
-			expect(el).toBeInTheDocument();
+			expect(getTasks).toBeCalledTimes(2);
 		});
+		await screen.findByText('January 8, 2029');
 	});
 
-	it('does not show empty state while loading', async () => {
+	it('does not show empty state while loading', () => {
 		loadTasksApiData({
 			tasks: [makeTask({ complete: true })],
 		});
 
-		const { queryByText } = renderTasksPage();
+		renderTasksPage();
 
-		expect(queryByText('Nothing here!')).not.toBeInTheDocument();
+		expect(screen.queryByText('Nothing here!')).not.toBeInTheDocument();
 	});
 
 	it('scrolls list', async () => {
@@ -718,7 +649,7 @@ describe('tasks page', () => {
 		renderTasksPage();
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toBeCalled();
+			expect(__listRef.scrollTo).toBeCalled();
 		});
 	});
 
@@ -732,7 +663,7 @@ describe('tasks page', () => {
 		const { queryClient } = renderTasksPage();
 
 		await waitFor(() => {
-			expect(mockReactListRef.scrollTo).toBeCalled();
+			expect(__listRef.scrollTo).toBeCalled();
 		});
 
 		loadTasksApiData({
@@ -745,7 +676,7 @@ describe('tasks page', () => {
 			expect(getTasks).toBeCalledTimes(2);
 		});
 
-		expect(mockReactListRef.scrollTo).toBeCalledTimes(1);
+		expect(__listRef.scrollTo).toBeCalledTimes(1);
 	});
 
 	it('reloads tasks on task edit save', async () => {
@@ -756,9 +687,7 @@ describe('tasks page', () => {
 
 		renderTasksPage();
 
-		await waitFor(() =>
-			expect(screen.getByText('the_task')).toBeInTheDocument()
-		);
+		await screen.findByText('the_task');
 
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Edit'));
@@ -783,7 +712,7 @@ describe('tasks page', () => {
 		userEvent.click(view.getAddButton());
 
 		await waitFor(() => {
-			expect(new_api.addTask).toBeCalledWith(
+			expect(addTask).toBeCalledWith(
 				'task1',
 				expect.anything(),
 				expect.anything(),
@@ -792,7 +721,3 @@ describe('tasks page', () => {
 		});
 	});
 });
-
-// TODO:
-// lazy load API data for tasks
-// Fail on console errors: https://github.com/facebook/jest/issues/6121#issuecomment-529591574

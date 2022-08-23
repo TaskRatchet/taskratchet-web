@@ -1,35 +1,34 @@
 import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/dom';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import ApiSettings from './ApiSettings';
 import { apiFetch } from '../../lib/api';
+import { vi, Mock } from 'vitest';
 
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateMe');
-jest.mock('../../lib/api/apiFetch');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateMe');
+vi.mock('../../lib/api/apiFetch');
 
 describe('API settings', () => {
 	it('displays loading indicator on request click', async () => {
 		loadMe({});
-		(apiFetch as jest.Mock).mockResolvedValue(new Response());
+		(apiFetch as Mock).mockResolvedValue(new Response());
 
-		const { container, getByText } = renderWithQueryProvider(<ApiSettings />);
+		renderWithQueryProvider(<ApiSettings />);
 
-		userEvent.click(getByText('Request API token'));
+		userEvent.click(await screen.findByText('Request API token'));
 
-		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 
 	it('displays user id', async () => {
 		loadMe({ json: { id: 'user_id' } });
 
-		const { getByText } = renderWithQueryProvider(<ApiSettings />);
+		renderWithQueryProvider(<ApiSettings />);
 
-		await waitFor(() => expect(getByText('user_id')).toBeInTheDocument());
+		// await waitFor(() => expect(getByText('user_id')).toBeInTheDocument());
+
+		expect(await screen.findByText('user_id')).toBeInTheDocument();
 	});
 });

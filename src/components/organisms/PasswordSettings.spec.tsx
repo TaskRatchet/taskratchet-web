@@ -2,40 +2,33 @@ import React from 'react';
 import { renderWithQueryProvider } from '../../lib/test/helpers';
 import PasswordSettings from './PasswordSettings';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/dom';
+import { screen } from '@testing-library/react';
+import { vi } from 'vitest';
 
-jest.mock('../../lib/api/updatePassword');
+vi.mock('../../lib/api/updatePassword');
 
 describe('password settings', () => {
 	it('requires passwords to match', async () => {
-		const { getByLabelText, getByText } = renderWithQueryProvider(
-			<PasswordSettings />
-		);
+		renderWithQueryProvider(<PasswordSettings />);
 
-		userEvent.type(getByLabelText('Old Password *'), 'one');
-		userEvent.type(getByLabelText('New Password *'), 'two');
-		userEvent.type(getByLabelText('Retype Password *'), 'three');
+		userEvent.type(await screen.findByLabelText('Old Password *'), 'one');
+		userEvent.type(await screen.findByLabelText('New Password *'), 'two');
+		userEvent.type(await screen.findByLabelText('Retype Password *'), 'three');
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
-		expect(getByText("Passwords don't match")).toBeInTheDocument();
+		await screen.findByText("Passwords don't match");
 	});
 
 	it('indicates loading state', async () => {
-		const { getByLabelText, getByText, container } = renderWithQueryProvider(
-			<PasswordSettings />
-		);
+		renderWithQueryProvider(<PasswordSettings />);
 
-		userEvent.type(getByLabelText('Old Password *'), 'one');
-		userEvent.type(getByLabelText('New Password *'), 'two');
-		userEvent.type(getByLabelText('Retype Password *'), 'two');
+		userEvent.type(await screen.findByLabelText('Old Password *'), 'one');
+		userEvent.type(await screen.findByLabelText('New Password *'), 'two');
+		userEvent.type(await screen.findByLabelText('Retype Password *'), 'two');
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
-		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 });
