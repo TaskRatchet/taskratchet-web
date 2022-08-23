@@ -117,7 +117,7 @@ const Register = (): JSX.Element => {
 
 	return (
 		<Box sx={{ p: 2 }}>
-			<form onSubmit={(e) => void submit(e)}>
+			<form>
 				<h1>Register</h1>
 
 				<Input
@@ -198,8 +198,8 @@ const Register = (): JSX.Element => {
 				</p>
 
 				<Button
-					type="submit"
 					disabled={checkoutSession == null}
+					onClick={(e) => void submit(e)}
 				>
 					Add payment method
 				</Button>

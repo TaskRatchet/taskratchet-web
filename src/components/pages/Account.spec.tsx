@@ -1,4 +1,4 @@
-import { act, waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
 import {
@@ -34,127 +34,97 @@ describe('account page', () => {
 	});
 
 	it('includes Beeminder integration settings', async () => {
-		await act(async () => {
-			loadTimezones();
-			loadMe({});
-			loadCheckoutSession();
+		loadTimezones();
+		loadMe({});
+		loadCheckoutSession();
 
-			const { getByText } = await renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Account />);
 
-			expect(getByText('Enable Beeminder integration')).toBeDefined();
-		});
+		await screen.findByText('Enable Beeminder integration');
 	});
 
 	it('loads name', async () => {
-		await act(async () => {
-			loadMe({
-				json: {
-					name: 'the_name',
-				},
-			});
-
-			const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
-
-			await waitFor(() =>
-				expect(getByDisplayValue('the_name')).toBeInTheDocument()
-			);
+		loadMe({
+			json: {
+				name: 'the_name',
+			},
 		});
+
+		renderWithQueryProvider(<Account />);
+
+		await screen.findByDisplayValue('the_name');
 	});
 
 	it('loads email', async () => {
-		await act(async () => {
-			loadMe({
-				json: {
-					email: 'the_email',
-				},
-			});
-
-			const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
-
-			await waitFor(() =>
-				expect(getByDisplayValue('the_email')).toBeInTheDocument()
-			);
+		loadMe({
+			json: {
+				email: 'the_email',
+			},
 		});
+
+		renderWithQueryProvider(<Account />);
+
+		await screen.findByDisplayValue('the_email');
 	});
 
 	it('loads timezone', async () => {
-		await act(async () => {
-			loadTimezones(['first', 'America/Indiana/Knox', 'third']);
+		loadTimezones(['first', 'America/Indiana/Knox', 'third']);
 
-			loadMe({
-				json: {
-					timezone: 'America/Indiana/Knox',
-				},
-			});
-
-			const { getByDisplayValue } = await renderWithQueryProvider(<Account />);
-
-			await waitFor(() =>
-				expect(getByDisplayValue('America/Indiana/Knox')).toBeInTheDocument()
-			);
+		loadMe({
+			json: {
+				timezone: 'America/Indiana/Knox',
+			},
 		});
+
+		renderWithQueryProvider(<Account />);
+
+		await screen.findByDisplayValue('America/Indiana/Knox');
 	});
 
 	it('loads payment methods', async () => {
-		await act(async () => {
-			loadMe({
-				json: {
-					cards: [
-						{
-							brand: 'visa',
-							last4: '1111',
-						},
-					],
-				},
-			});
-
-			const { getByText } = await renderWithQueryProvider(<Account />);
-
-			await waitFor(() =>
-				expect(getByText('visa ending with 1111')).toBeInTheDocument()
-			);
+		loadMe({
+			json: {
+				cards: [
+					{
+						brand: 'visa',
+						last4: '1111',
+					},
+				],
+			},
 		});
+
+		renderWithQueryProvider(<Account />);
+
+		await screen.findByText('visa ending with 1111');
 	});
 
 	it('gets checkout session only once', async () => {
-		await act(async () => {
-			const { queryClient } = await renderWithQueryProvider(<Account />);
+		const { queryClient } = renderWithQueryProvider(<Account />);
 
-			await queryClient.invalidateQueries('checkoutSession');
+		await queryClient.invalidateQueries('checkoutSession');
 
-			await waitFor(() => expect(getCheckoutSession).toBeCalledTimes(1));
-		});
+		await waitFor(() => expect(getCheckoutSession).toBeCalledTimes(1));
 	});
 
 	it('has token request button', async () => {
-		await act(async () => {
-			const { getByText } = await renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Account />);
 
-			expect(getByText('Request API token')).toBeInTheDocument();
-		});
+		await screen.findByText('Request API token');
 	});
 
 	it('displays response data', async () => {
-		await act(async () => {
-			vi.mocked(useGetApiToken).mockReturnValue({
-				isLoading: false,
-				mutate: () => {
-					/* noop */
-				},
-				data: 'the_token',
-			} as any);
+		vi.mocked(useGetApiToken).mockReturnValue({
+			isLoading: false,
+			mutate: () => {
+				/* noop */
+			},
+			data: 'the_token',
+		} as any);
 
-			const { getByText } = await renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Account />);
 
-			userEvent.click(getByText('Request API token'));
+		userEvent.click(await screen.findByText('Request API token'));
 
-			await waitFor(() => {
-				expect(getByText('the_token')).toBeInTheDocument();
-			});
-		});
+		await screen.findByText('the_token');
 	});
-
-	// TODO: break sections into their own components
-	// TODO: get rid of test run terminal errors
-	// TODO: use loading overlay on payment details until both cards and checkout session loaded
 });

@@ -1,4 +1,4 @@
-import { RenderResult, waitFor, act } from '@testing-library/react';
+import { RenderResult, waitFor, screen } from '@testing-library/react';
 import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
 import {
@@ -18,7 +18,7 @@ vi.mock('../../lib/api/updateMe');
 vi.mock('../../lib/LegacyApi');
 vi.mock('../../lib/Toaster');
 
-const renderBeeminderSettings = async (): Promise<RenderResult> => {
+const renderBeeminderSettings = (): RenderResult => {
 	return renderWithQueryProvider(<BeeminderSettings />);
 };
 
@@ -38,7 +38,7 @@ describe('BeeminderSettings component', () => {
 			username: 'the_user',
 		});
 
-		await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() =>
 			expect(updateMe).toBeCalledWith({
@@ -56,13 +56,13 @@ describe('BeeminderSettings component', () => {
 				throw new Error('error');
 			});
 
-			const { getByText } = await renderBeeminderSettings();
+			renderBeeminderSettings();
 
 			await waitFor(() => expect(getMe).toBeCalled());
 
-			userEvent.click(getByText('Save'));
+			userEvent.click(await screen.findByText('Save'));
 
-			await waitFor(() => expect(getByText('error')).toBeInTheDocument());
+			await screen.findByText('error');
 		});
 	});
 
@@ -77,38 +77,32 @@ describe('BeeminderSettings component', () => {
 				throw new Error('error_message');
 			});
 
-			const { getByText } = await renderBeeminderSettings();
+			renderBeeminderSettings();
 
-			await waitFor(() =>
-				expect(getByText('error_message')).toBeInTheDocument()
-			);
+			await screen.findByText('error_message');
 		});
 	});
 
 	it('displays initial load error', async () => {
-		await act(async () => {
-			await withMutedReactQueryLogger(async () => {
-				vi.mocked(getMe).mockImplementation(() => {
-					throw new Error('error_message');
-				});
-
-				const { getByText } = await renderBeeminderSettings();
-
-				await waitFor(() =>
-					expect(getByText('error_message')).toBeInTheDocument()
-				);
+		await withMutedReactQueryLogger(async () => {
+			vi.mocked(getMe).mockImplementation(() => {
+				throw new Error('error_message');
 			});
+
+			renderBeeminderSettings();
+
+			await screen.findByText('error_message');
 		});
 	});
 
 	it('rejects invalid goal names', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
 		expect(updateMe).not.toBeCalled();
 	});
@@ -116,11 +110,11 @@ describe('BeeminderSettings component', () => {
 	it('allows goal names with hyphens', async () => {
 		loadMeWithBeeminder('the_user', 'goal-name');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
 		await waitFor(() => expect(updateMe).toBeCalled());
 	});
@@ -128,14 +122,14 @@ describe('BeeminderSettings component', () => {
 	it('displays error message', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
 		expect(
-			getByText(
+			await screen.findByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
 			)
 		);
@@ -144,48 +138,46 @@ describe('BeeminderSettings component', () => {
 	it('allows unsetting goal name', async () => {
 		loadMeWithBeeminder('the_user', '');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
-		const getError = () =>
-			getByText(
+		expect(
+			screen.queryByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			);
-
-		expect(getError).toThrow();
+			)
+		).not.toBeInTheDocument();
 	});
 
 	it('unsets error on successful save', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText, getByRole } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
-		await userEvent.type(getByRole('textbox'), '{backspace}new_name');
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
+		userEvent.type(await screen.findByRole('textbox'), '{backspace}new_name');
+		userEvent.click(await screen.findByText('Save'));
 
-		const getError = () =>
-			getByText(
+		expect(
+			screen.queryByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			);
-
-		expect(getError).toThrow();
+			)
+		).not.toBeInTheDocument();
 	});
 
 	it('displays error dynamically', async () => {
 		loadMeWithBeeminder('the_user', '/');
 
-		const { getByText } = await renderBeeminderSettings();
+		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
 		expect(
-			getByText(
+			await screen.findByText(
 				'Goal names can only contain letters, numbers, underscores, and hyphens.'
 			)
 		);
@@ -194,11 +186,11 @@ describe('BeeminderSettings component', () => {
 	it('displays loading indicator on save', async () => {
 		loadMeWithBeeminder();
 
-		const { container, getByText } = await renderBeeminderSettings();
+		const { container } = renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(getByText('Save'));
+		userEvent.click(await screen.findByText('Save'));
 
 		await waitFor(() => {
 			expect(

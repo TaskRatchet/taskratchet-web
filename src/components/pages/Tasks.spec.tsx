@@ -1,11 +1,6 @@
 import { addTask, getTasks, updateTask } from '../../lib/api';
 import toaster from '../../lib/Toaster';
-import {
-	fireEvent,
-	render,
-	waitFor,
-	screen,
-} from '@testing-library/react';
+import { fireEvent, render, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -650,9 +645,9 @@ describe('tasks page', () => {
 		userEvent.click(getAddButton());
 
 		await waitFor(() => {
-			const el = screen.getByText('January 8, 2029');
-			expect(el).toBeInTheDocument();
+			expect(getTasks).toBeCalledTimes(2);
 		});
+		await screen.findByText('January 8, 2029');
 	});
 
 	it('does not show empty state while loading', () => {

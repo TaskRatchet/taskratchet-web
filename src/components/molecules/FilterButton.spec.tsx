@@ -23,15 +23,15 @@ describe('FilterButton', () => {
 		userEvent.click(screen.getByLabelText('filters'));
 
 		await waitFor(async () => {
-			expect(screen.getByLabelText('complete')).not.toBeChecked();
+			expect(await screen.findByLabelText('complete')).not.toBeChecked();
 		});
 	});
 
 	it('sets filters on local storage', async () => {
 		renderWithQueryProvider(<FilterButton />);
 
-		userEvent.click(screen.getByLabelText('filters'));
-		userEvent.click(screen.getByText('pending'));
+		userEvent.click(await screen.findByLabelText('filters'));
+		userEvent.click(await screen.findByText('pending'));
 
 		await waitFor(() => {
 			const actual = JSON.parse(window.localStorage.getItem('filters') || '{}');
@@ -65,7 +65,7 @@ describe('FilterButton', () => {
 		});
 	});
 
-	it('handles corrupted legacy filters', async () => {
+	it('handles corrupted legacy filters', () => {
 		document.cookie = 'tr-filters=l';
 
 		expect(() => renderWithQueryProvider(<FilterButton />)).not.toThrow();

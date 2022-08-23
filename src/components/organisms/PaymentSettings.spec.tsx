@@ -1,7 +1,7 @@
 import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/dom';
+import { waitFor, screen } from '@testing-library/react';
 import PaymentSettings from './PaymentSettings';
 import { useCheckoutSession } from '../../lib/api';
 import { vi, Mock } from 'vitest';
@@ -14,11 +14,9 @@ describe('general settings', () => {
 	it('displays loading indicator on replace click', async () => {
 		loadMe({});
 
-		const { container, getByText } = renderWithQueryProvider(
-			<PaymentSettings />
-		);
+		const { container } = renderWithQueryProvider(<PaymentSettings />);
 
-		userEvent.click(getByText('Replace payment method'));
+		userEvent.click(await screen.findByText('Replace payment method'));
 
 		await waitFor(() => {
 			expect(
@@ -29,51 +27,46 @@ describe('general settings', () => {
 
 	it('displays checkout session error', async () => {
 		loadMe({});
-		(useCheckoutSession as Mock).mockResolvedValue({});
+		vi.mocked(useCheckoutSession).mockResolvedValue({} as any);
 
-		const { getByText } = renderWithQueryProvider(<PaymentSettings />);
+		renderWithQueryProvider(<PaymentSettings />);
 
-		userEvent.click(getByText('Replace payment method'));
+		userEvent.click(await screen.findByText('Replace payment method'));
 
-		await waitFor(() => {
-			expect(getByText('Checkout session error')).toBeInTheDocument();
-		});
+		await screen.findByText('Checkout session error');
 	});
 
 	it('displays stripe errors', async () => {
 		(useCheckoutSession as Mock).mockResolvedValue({ id: 'the_id' });
 
 		window.Stripe = vi.fn(() => ({
-			redirectToCheckout: async () => ({
-				error: { message: 'the_error_message' },
-			}),
+			redirectToCheckout: async () =>
+				Promise.resolve({
+					error: { message: 'the_error_message' },
+				}),
 		}));
 
-		const { getByText } = renderWithQueryProvider(<PaymentSettings />);
+		renderWithQueryProvider(<PaymentSettings />);
 
-		userEvent.click(getByText('Replace payment method'));
+		userEvent.click(await screen.findByText('Replace payment method'));
 
-		await waitFor(() => {
-			expect(getByText('the_error_message')).toBeInTheDocument();
-		});
+		await screen.findByText('the_error_message');
 	});
 
 	it('cancels loading state when error set', async () => {
 		loadMe({});
-		(useCheckoutSession as Mock).mockResolvedValue({});
+		vi.mocked(useCheckoutSession).mockResolvedValue({} as any);
 
-		const { getByText, container } = renderWithQueryProvider(
-			<PaymentSettings />
-		);
+		const { container } = renderWithQueryProvider(<PaymentSettings />);
 
-		userEvent.click(getByText('Replace payment method'));
+		userEvent.click(await screen.findByText('Replace payment method'));
+
+		await screen.findByText('Checkout session error');
 
 		await waitFor(() => {
-			expect(getByText('Checkout session error')).toBeInTheDocument();
+			expect(
+				container.querySelector('.MuiLoadingButton-loading')
+			).not.toBeInTheDocument();
 		});
-
-		expect(
-			container.querySelector('.MuiLoadingButton-loading')
-		).not.toBeInTheDocument();
 	});
 });

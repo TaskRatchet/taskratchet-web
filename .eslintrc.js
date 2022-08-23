@@ -29,8 +29,8 @@ module.exports = {
 	overrides: [
 		{
 			files: [
-				'*.test.ts',
-				'*.test.tsx',
+				'*.spec.ts',
+				'*.spec.tsx',
 				'**/__mocks__/**/*',
 				'**/__tests__/**/*',
 				'global-setup.ts',
