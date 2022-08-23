@@ -1,6 +1,6 @@
 import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { waitFor, screen } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import ApiSettings from './ApiSettings';
 import { apiFetch } from '../../lib/api';
@@ -15,15 +15,11 @@ describe('API settings', () => {
 		loadMe({});
 		(apiFetch as Mock).mockResolvedValue(new Response());
 
-		const { container, getByText } = renderWithQueryProvider(<ApiSettings />);
+		renderWithQueryProvider(<ApiSettings />);
 
-		userEvent.click(getByText('Request API token'));
+		userEvent.click(await screen.findByText('Request API token'));
 
-		await waitFor(() => {
-			expect(
-				container.querySelector('.MuiLoadingButton-loading')
-			).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 
 	it('displays user id', async () => {

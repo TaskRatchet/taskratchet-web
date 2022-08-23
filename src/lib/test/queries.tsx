@@ -18,3 +18,12 @@ export async function findTaskCheckbox(
 	});
 	return checkbox as unknown as HTMLInputElement;
 }
+
+export function queryTaskCheckbox(task = 'the_task'): HTMLInputElement | null {
+	const desc = screen.getByText(task);
+
+	// eslint-disable-next-line testing-library/no-node-access
+	const c = desc.closest('.molecule-task')?.querySelector('[type="checkbox"]');
+
+	return c ? (c as unknown as HTMLInputElement) : null;
+}

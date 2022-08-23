@@ -13,6 +13,7 @@ import browser from '../../lib/Browser';
 import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';
 import { vi, Mock } from 'vitest';
+import { queryTaskCheckbox } from '../../lib/test/queries';
 
 vi.mock('../../lib/api/updateTask');
 vi.mock('date-fns');
@@ -50,23 +51,23 @@ describe('Task component', () => {
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
-	it('disables checkbox for tasks without id', async () => {
+	it('disables checkbox for tasks without id', () => {
 		renderTask({ id: undefined });
 
-		const checkbox = screen.getByRole('checkbox') as HTMLInputElement;
+		const checkbox: HTMLInputElement = screen.getByRole('checkbox');
 
 		userEvent.click(checkbox);
 
 		expect(checkbox.checked).toBeFalsy();
 	});
 
-	it('has task menu', async () => {
+	it('has task menu', () => {
 		renderTask();
 
 		expect(screen.getByLabelText('Menu')).toBeInTheDocument();
 	});
 
-	it('has uncle menu item', async () => {
+	it('has uncle menu item', () => {
 		renderTask();
 
 		const menuButton = screen.getByLabelText('Menu');
@@ -82,9 +83,7 @@ describe('Task component', () => {
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Charge immediately'));
 
-		await waitFor(() => {
-			userEvent.click(screen.getByText('Charge'));
-		});
+		userEvent.click(await screen.findByText('Charge'));
 
 		await waitFor(() =>
 			expect(updateTask).toBeCalledWith('the_id', {
@@ -93,22 +92,19 @@ describe('Task component', () => {
 		);
 	});
 
-	it('disables entry for expired tasks', async () => {
+	it('disables entry for expired tasks', () => {
 		renderTask({ status: 'expired' });
 
-		const desc = screen.getByText('the_task') as HTMLElement;
-		const item = desc.closest('.MuiListItem-root') as HTMLElement;
-
-		expect(item.querySelector('input')).not.toBeInTheDocument();
+		expect(queryTaskCheckbox()).not.toBeInTheDocument();
 	});
 
-	it('replaces checkbox with icon for expired tasks', async () => {
+	it('replaces checkbox with icon for expired tasks', () => {
 		renderTask({ status: 'expired' });
 
 		expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
 	});
 
-	it('disables uncle button if task not pending', async () => {
+	it('disables uncle button if task not pending', () => {
 		renderTask({ status: 'expired' });
 
 		const menuButton = screen.getByLabelText('Menu');
@@ -133,7 +129,7 @@ describe('Task component', () => {
 		});
 	});
 
-	it('closes task menu on edit click', async () => {
+	it('closes task menu on edit click', () => {
 		renderTask();
 
 		userEvent.click(screen.getByLabelText('Menu'));
@@ -147,10 +143,7 @@ describe('Task component', () => {
 
 		await openEditDialog();
 
-		await userEvent.type(
-			screen.getByLabelText('Due Date *'),
-			'{backspace}1{enter}'
-		);
+		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}1{enter}');
 
 		userEvent.click(screen.getByText('Save'));
 
@@ -159,7 +152,7 @@ describe('Task component', () => {
 		});
 	});
 
-	it('disables edit if task is not pending', async () => {
+	it('disables edit if task is not pending', () => {
 		renderTask({ status: 'expired' });
 
 		userEvent.click(screen.getByLabelText('Menu'));
@@ -212,7 +205,7 @@ describe('Task component', () => {
 
 			await openEditDialog();
 
-			await userEvent.type(
+			userEvent.type(
 				screen.getByLabelText('Due Date *'),
 				'{backspace}1{enter}'
 			);
@@ -269,12 +262,7 @@ describe('Task component', () => {
 
 		userEvent.click(screen.getByText('Save'));
 
-		await waitFor(() => {
-			const match = document.querySelector(
-				'.MuiLoadingButton-loadingIndicator'
-			);
-			expect(match).toBeInTheDocument();
-		});
+		await screen.findByRole('progressbar');
 	});
 
 	it('closes edit dialog on save', async () => {
