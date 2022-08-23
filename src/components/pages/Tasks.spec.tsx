@@ -401,7 +401,7 @@ describe('tasks page', () => {
 		expect(await screen.findByText('the_task')).toBeInTheDocument();
 	});
 
-	it.only('rolls back task add if mutation fails', async () => {
+	it('rolls back task add if mutation fails', async () => {
 		await withMutedReactQueryLogger(async () => {
 			loadTasksApiData();
 
