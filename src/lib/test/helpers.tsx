@@ -42,7 +42,7 @@ export const loadMe = ({
 }: {
 	json?: Partial<User>;
 	ok?: boolean;
-}): void => {
+} = {}): void => {
 	const response = makeResponse({ json, ok });
 
 	vi.mocked(getMe).mockResolvedValue(json as User);
