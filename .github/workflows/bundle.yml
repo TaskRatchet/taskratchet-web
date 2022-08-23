@@ -4,7 +4,7 @@ jobs:
   bundle_base:
     runs-on: ubuntu-latest
     outputs:
-      size:
+      size: ${{ steps.size.outputs.size }}
     strategy:
       matrix:
         node-version: ['16.15.0']
@@ -23,13 +23,14 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Save bundle size
+        id: size
         run: |
           echo "::set-output name=size::$(pnpm run size)"
 
   bundle_head:
     runs-on: ubuntu-latest
     outputs:
-      size:
+      size: ${{ steps.size.outputs.size }}
     strategy:
       matrix:
         node-version: ['16.15.0']
@@ -46,6 +47,7 @@ jobs:
       - name: Install dependencies
         run: pnpm install
       - name: Save bundle size
+        id: size
         run: |
           echo "::set-output name=size::$(pnpm run size)"
 
