@@ -1,12 +1,17 @@
 name: Bundle
 on: pull_request
 jobs:
-  bundle:
+  bundle_base:
     runs-on: ubuntu-latest
+    outputs:
+      size:
     strategy:
       matrix:
         node-version: ['16.15.0']
     steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.base_ref }}
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
@@ -15,27 +20,42 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-      - name: Checkout base
-        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: pnpm install
+      - name: Save bundle size
+        run: |
+          echo "::set-output name=size::$(pnpm run size)"
+
+  bundle_head:
+    runs-on: ubuntu-latest
+    outputs:
+      size:
+    strategy:
+      matrix:
+        node-version: ['16.15.0']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.2.2
         with:
-          ref: ${{ github.base_ref }}
+          version: 7
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
-      - name: Save base bundle size
-        id: base-bundle
+      - name: Save bundle size
         run: |
           echo "::set-output name=size::$(pnpm run size)"
-      - name: Checkout proposal
-        uses: actions/checkout@v2
-      - name: Install dependencies
-        run: pnpm install
-      - name: Save proposed bundle size
-        id: new-bundle
-        run: |
-          echo "::set-output name=size::$(pnpm run size)"
+
+  compare:
+    runs-on: ubuntu-latest
+    needs: [bundle_base, bundle_head]
+    steps:
       - name: Compare bundle sizes
         run: |
-          if [ "$(::get-output name=size::base-bundle)" -lt "$(::get-output name=size::new-bundle)" ]; then
+          if [ "${{needs.bundle_base.outputs.size}}" -lt "${{needs.bundle_head.outputs.size}}" ]; then
             exit 1
           else
             exit 0
