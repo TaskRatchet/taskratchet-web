@@ -1,13 +1,17 @@
-import { loadNowDate, loadTasksApiData, makeTask } from './lib/test/helpers';
+import {
+	loadNowDate,
+	loadTasksApiData,
+	makeTask,
+	renderWithQueryProvider,
+} from './lib/test/helpers';
 import browser from './lib/Browser';
-import { render } from '@testing-library/react';
 import React from 'react';
 import { App } from './App';
 import userEvent from '@testing-library/user-event';
 import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
 import { __listRef } from 'react-list';
-import { waitFor, screen } from '@testing-library/dom';
+import { waitFor, screen } from '@testing-library/react';
 import { addTask } from './lib/api';
 import { vi, Mock } from 'vitest';
 import getQueryClient from './lib/getQueryClient';
@@ -28,15 +32,14 @@ const mockUseSession = useSession as Mock;
 
 const openForm = () => userEvent.click(screen.getByLabelText('add'));
 
-const getDueInput = () =>
-	screen.getByLabelText('Due Date *') as HTMLInputElement;
+const getDueInput = () => screen.getByLabelText('Due Date *');
 
 function renderPage() {
 	mockUseSession.mockReturnValue({
 		email: 'the_email',
 	});
 
-	return render(
+	return renderWithQueryProvider(
 		<MemoryRouter initialEntries={['/']}>
 			<App />
 		</MemoryRouter>
@@ -69,8 +72,6 @@ describe('App', () => {
 
 		renderPage();
 
-		await new Promise(process.nextTick);
-
 		userEvent.click(screen.getByLabelText('today'));
 
 		await waitFor(() => {
@@ -83,7 +84,9 @@ describe('App', () => {
 
 		userEvent.click(screen.getByLabelText('filters'));
 
-		expect(await screen.findByLabelText('toggle filter pending')).toBeInTheDocument();
+		expect(
+			await screen.findByLabelText('toggle filter pending')
+		).toBeInTheDocument();
 		expect(screen.getByLabelText('toggle filter complete')).toBeInTheDocument();
 		expect(screen.getByLabelText('toggle filter expired')).toBeInTheDocument();
 	});
@@ -95,7 +98,7 @@ describe('App', () => {
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('pending')).toBeChecked();
-		})
+		});
 	});
 
 	it('toggles checkmark when entry clicked', async () => {
@@ -105,26 +108,22 @@ describe('App', () => {
 		userEvent.click(await screen.findByText('pending'));
 
 		await waitFor(() => {
-			expect( screen.getByLabelText('pending')).not.toBeChecked();
-		})
+			expect(screen.getByLabelText('pending')).not.toBeChecked();
+		});
 	});
 
 	it('persists checked state when reopening menu', async () => {
-		const { baseElement } = renderPage();
+		renderPage();
 
 		userEvent.click(await screen.findByLabelText('filters'));
 		userEvent.click(await screen.findByText('pending'));
 
-		const backdrop = baseElement.querySelector('.MuiBackdrop-root');
-
-		if (backdrop === null) throw new Error('No backdrop');
+		const backdrop = await screen.findByTestId('mui-backdrop');
 
 		userEvent.click(backdrop);
 		userEvent.click(await screen.findByLabelText('filters'));
 
-		const checkbox = (await screen.findByLabelText(
-			'pending'
-		)) as HTMLInputElement;
+		const checkbox = await screen.findByLabelText('pending');
 
 		expect(checkbox).not.toBeChecked();
 	});
@@ -174,7 +173,7 @@ describe('App', () => {
 
 		openForm();
 
-		const {reject} = loadControlledPromise(addTask);
+		const { reject } = loadControlledPromise(addTask);
 
 		userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
 		userEvent.click(screen.getByText('Add'));
@@ -212,10 +211,7 @@ describe('App', () => {
 
 		openForm();
 
-		userEvent.type(
-			await screen.findByLabelText('Task *'),
-			'new_task'
-		);
+		userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
 
 		userEvent.type(getDueInput(), '{backspace}0');
 
