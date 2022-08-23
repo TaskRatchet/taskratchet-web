@@ -22,12 +22,12 @@ function ResetPassword(): JSX.Element {
 
 		if (!validateForm()) return;
 
-		api.resetPassword(token, password).then((res: Response) => {
+		void api.resetPassword(token, password).then((res: Response) => {
 			if (res.ok) {
 				pushMessage('Password reset successfully');
 			} else {
 				pushMessage('Password reset failed');
-				res.text().then((t: string) => console.log(t));
+				void res.text().then((t: string) => console.log(t));
 			}
 		});
 	};
