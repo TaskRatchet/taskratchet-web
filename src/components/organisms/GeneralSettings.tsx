@@ -25,7 +25,7 @@ export default function GeneralSettings(): JSX.Element {
 		return value === '' ? undefined : value;
 	};
 
-	const saveGeneral =  (event: FormEvent<HTMLFormElement>) => {
+	const saveGeneral = (event: FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
 		updateMe.mutate({

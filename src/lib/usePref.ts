@@ -51,7 +51,9 @@ function getPrefFromLocalStorage<T>(id: string) {
 		return;
 	}
 
-	const prefEnvelope: PrefEnvelope<T> = JSON.parse(prefString) as PrefEnvelope<T>;
+	const prefEnvelope: PrefEnvelope<T> = JSON.parse(
+		prefString
+	) as PrefEnvelope<T>;
 
 	return prefEnvelope.pref;
 }

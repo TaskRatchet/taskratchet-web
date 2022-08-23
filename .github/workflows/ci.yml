@@ -5,7 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ["16.15.0"]
+        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
@@ -15,7 +15,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
       - name: Run tests
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ["16.15.0"]
+        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
@@ -34,7 +34,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
       - name: Scan for security issues
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ["16.15.0"]
+        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
@@ -53,7 +53,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
       - name: Scan for outdated dependencies
@@ -62,7 +62,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ["16.15.0"]
+        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
@@ -72,7 +72,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
       - name: Lint code
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: ["16.15.0"]
+        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
@@ -91,6 +91,6 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "pnpm"
+          cache: 'pnpm'
       - name: Run Prettier
         run: pnpm dlx prettier --check .

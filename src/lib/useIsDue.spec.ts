@@ -2,7 +2,7 @@ import useIsDue from './useIsDue';
 import { loadNowTime, makeTask } from './test/helpers';
 
 describe('useIsDue', () => {
-	it('returns is due',  () => {
+	it('returns is due', () => {
 		loadNowTime(1623869940 * 1000);
 
 		const result = useIsDue(
@@ -14,7 +14,7 @@ describe('useIsDue', () => {
 		expect(result).toBeTruthy();
 	});
 
-	it('returns is not due if far future',  () => {
+	it('returns is not due if far future', () => {
 		loadNowTime(1623869940 * 1000);
 
 		const result = useIsDue(
@@ -26,7 +26,7 @@ describe('useIsDue', () => {
 		expect(result).toBeFalsy();
 	});
 
-	it('returns is not due if in past',  () => {
+	it('returns is not due if in past', () => {
 		loadNowTime(1623869940 * 1000);
 
 		const result = useIsDue(
@@ -38,7 +38,7 @@ describe('useIsDue', () => {
 		expect(result).toBeFalsy();
 	});
 
-	it('returns is not due if task completed',  () => {
+	it('returns is not due if task completed', () => {
 		loadNowTime(1623869940 * 1000);
 
 		const result = useIsDue(
@@ -51,7 +51,7 @@ describe('useIsDue', () => {
 		expect(result).toBeFalsy();
 	});
 
-	it('returns is not due if task uncled or expired',  () => {
+	it('returns is not due if task uncled or expired', () => {
 		loadNowTime(1623869940 * 1000);
 
 		const result = useIsDue(

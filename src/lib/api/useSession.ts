@@ -23,7 +23,9 @@ function unsubscribeFromSession(callback: CallableFunction): void {
 export function publishSession(): void {
 	const session: Session | undefined = getSession();
 
-	sessionSubs.forEach((x: CallableFunction) => {x(session)});
+	sessionSubs.forEach((x: CallableFunction) => {
+		x(session);
+	});
 }
 
 // TODO: Should this function be in separate file?
