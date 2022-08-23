@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: [bundle_base, bundle_head]
     steps:
-      - name: Update comment
+      - name: Add comment
         uses: peter-evans/create-or-update-comment@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
