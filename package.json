@@ -11,7 +11,8 @@
 		"start": "vite",
 		"build": "vite build",
 		"test": "vitest",
-		"visualize": "pnpm run build && open ./stats.html"
+		"visualize": "pnpm run build && open ./stats.html",
+		"size": "pnpm run build && du -s dist/ | awk '{print $1}'"
 	},
 	"dependencies": {
 		"@date-io/date-fns": "^1.3.13",
