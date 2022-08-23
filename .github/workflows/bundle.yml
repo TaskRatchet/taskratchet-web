@@ -59,6 +59,14 @@ jobs:
     runs-on: ubuntu-latest
     needs: [bundle_base, bundle_head]
     steps:
+      - name: Update comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.number }}
+          body: |
+            Base: ${{needs.bundle_base.outputs.size}}
+            Head: ${{needs.bundle_head.outputs.size}}
       - name: Compare bundle sizes
         run: |
           if [ "${{needs.bundle_base.outputs.size}}" -lt "${{needs.bundle_head.outputs.size}}" ]; then
