@@ -20,7 +20,7 @@ const TaskEdit = ({
 
 	const onChange = ({ due, cents }: Partial<TaskInput>) => {
 		due && setDue(due);
-		cents && setCents(cents);
+		if (cents !== undefined) setCents(cents);
 	};
 
 	function onSubmit() {

@@ -229,10 +229,6 @@ describe('Task component', () => {
 	});
 
 	it('enforces minimum stakes', async () => {
-		vi.mocked(editTask).mockImplementation(() => {
-			throw new Error('Should not have been called');
-		});
-
 		renderTask({ cents: 500 });
 
 		await openEditDialog();
@@ -240,12 +236,14 @@ describe('Task component', () => {
 		userEvent.type(screen.getByLabelText('Stakes *'), '{backspace}1');
 		userEvent.click(screen.getByText('Save'));
 
+		await screen.findByText('Stakes cannot be less than the original task');
+
 		expect(editTask).not.toBeCalled();
 	});
 
 	it('enforces maximum due', async () => {
 		vi.mocked(editTask).mockImplementation(() => {
-			throw new Error('Should not have been called');
+			throw new Error('Should not have been called (enforces maximum due)');
 		});
 
 		renderTask({ due: '2/1/2022, 11:59 PM' });
