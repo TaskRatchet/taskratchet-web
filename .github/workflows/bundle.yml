@@ -24,6 +24,11 @@ jobs:
         run: pnpm install
       - name: Build
         run: pnpm build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle-${{ github.base_ref }}.html
+          path: ./stats.html
       - name: Save bundle size
         id: size
         run: |
@@ -50,6 +55,11 @@ jobs:
         run: pnpm install
       - name: Build
         run: pnpm build
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: bundle-${{ github.head_ref }}.html
+          path: ./stats.html
       - name: Save bundle size
         id: size
         run: |
@@ -65,8 +75,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.number }}
           body: |
-            Base: ${{needs.bundle_base.outputs.size}}
-            Head: ${{needs.bundle_head.outputs.size}}
+            Base: ${{needs.bundle_base.outputs.size}} ([stats](/repos/taskratchet/taskratchet-web/actions/artifacts/bundle-${{github.base_ref}}.html))
+            Head: ${{needs.bundle_head.outputs.size}} ([stats](/repos/taskratchet/taskratchet-web/actions/artifacts/bundle-${{github.head_ref}}.html))
       - name: Compare bundle sizes
         run: |
           if [ "${{needs.bundle_base.outputs.size}}" -lt "${{needs.bundle_head.outputs.size}}" ]; then
