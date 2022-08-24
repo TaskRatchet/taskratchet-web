@@ -1,7 +1,6 @@
 import Task from './Task';
 import React from 'react';
 import {
-	expectNever,
 	loadNowDate,
 	renderWithQueryProvider,
 	resolveWithDelay,
@@ -230,6 +229,10 @@ describe('Task component', () => {
 	});
 
 	it('enforces minimum stakes', async () => {
+		vi.mocked(editTask).mockImplementation(() => {
+			throw new Error('Should not have been called');
+		});
+
 		renderTask({ cents: 500 });
 
 		await openEditDialog();
@@ -237,17 +240,14 @@ describe('Task component', () => {
 		userEvent.type(screen.getByLabelText('Stakes *'), '{backspace}1');
 		userEvent.click(screen.getByText('Save'));
 
-		// This test may not be effective, since if the submission was made,
-		// the expectation may have happened previous to the request. We can't
-		// wait for an error message because the minimum is enforced on the
-		// stakes field, preventing the request from being made in the first
-		// place. This test used to use `expectNever`, but it's better to
-		// avoid using that since it requires a `waitFor` to timeout before
-		// passing, slowing down the test significantly.
 		expect(editTask).not.toBeCalled();
 	});
 
 	it('enforces maximum due', async () => {
+		vi.mocked(editTask).mockImplementation(() => {
+			throw new Error('Should not have been called');
+		});
+
 		renderTask({ due: '2/1/2022, 11:59 PM' });
 
 		await openEditDialog();
@@ -256,7 +256,7 @@ describe('Task component', () => {
 
 		userEvent.click(screen.getByText('Save'));
 
-		await expectNever(() => expect(editTask).toBeCalled());
+		expect(editTask).not.toBeCalled();
 	});
 
 	it('shows loading indicator on edit save', async () => {

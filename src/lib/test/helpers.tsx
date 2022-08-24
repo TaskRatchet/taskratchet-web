@@ -224,8 +224,3 @@ export const loadTasksApiData = ({
 	loadApiResponse(updateTask as Mock);
 	loadApiResponse(addTask as Mock);
 };
-
-// DEPRECATED: results in slow tests
-export async function expectNever(callable: () => unknown): Promise<void> {
-	await expect(() => waitFor(callable)).rejects.toEqual(expect.anything());
-}
