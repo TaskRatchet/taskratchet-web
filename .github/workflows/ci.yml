@@ -3,18 +3,15 @@ on: push
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.15.0
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.15.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -22,18 +19,15 @@ jobs:
         run: pnpm run test
   audit:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.15.0
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.15.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -41,18 +35,15 @@ jobs:
         run: pnpm audit
   outdated:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.15.0
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.15.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -60,35 +51,29 @@ jobs:
         run: pnpm outdated
   unused:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.15.0
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.15.0
           cache: 'pnpm'
       - name: Scan for unused dependencies
         run: pnpm dlx depcheck
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.15.0
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.15.0
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -96,18 +81,37 @@ jobs:
         run: pnpm run lint
   prettier:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: ['16.15.0']
     steps:
       - uses: actions/checkout@v2
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 16.15.0
         uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 16.15.0
           cache: 'pnpm'
       - name: Run Prettier
         run: pnpm dlx prettier --check .
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - name: Use Node.js 16.15.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.15.0
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm run build
+      - name: Check bundle size
+        env:
+          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_COMMIT_SHA: ${{ github.sha }}
+          CI_BRANCH: ${{ github.ref }}
+        run: pnpm dlx bundlewatch

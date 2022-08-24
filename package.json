@@ -12,8 +12,26 @@
 		"build": "vite build",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
-		"visualize": "pnpm run build && open ./stats.html",
-		"size": "pnpm run build && du -s dist/ | awk '{print $1}'"
+		"visualize": "pnpm run build && open ./stats.html"
+	},
+	"bundlewatch": {
+		"files": [{
+			"path": "dist/**/*.*",
+			"maxSize": "100kB"
+		}],
+		"normalizeFilenames": "^.+?(\\..+?)\\.\\w+$"
+	},
+	"browserslist": {
+		"production": [
+			">0.2%",
+			"not dead",
+			"not op_mini all"
+		],
+		"development": [
+			"last 1 chrome version",
+			"last 1 firefox version",
+			"last 1 safari version"
+		]
 	},
 	"dependencies": {
 		"@emotion/react": "^11.10.0",
@@ -38,18 +56,6 @@
 		"react-router-dom": "^6.3.0",
 		"react-toastify": "^5.5.0"
 	},
-	"browserslist": {
-		"production": [
-			">0.2%",
-			"not dead",
-			"not op_mini all"
-		],
-		"development": [
-			"last 1 chrome version",
-			"last 1 firefox version",
-			"last 1 safari version"
-		]
-	},
 	"devDependencies": {
 		"@testing-library/dom": "^7.31.2",
 		"@testing-library/jest-dom": "^5.16.5",
@@ -68,6 +74,7 @@
 		"@typescript-eslint/parser": "^5.33.0",
 		"@vitejs/plugin-react": "1.1.1",
 		"@vitest/ui": "^0.22.1",
+		"bundlewatch": "^0.3.3",
 		"eslint": "^8.21.0",
 		"eslint-plugin-lodash": "^7.4.0",
 		"eslint-plugin-react": "^7.30.1",
