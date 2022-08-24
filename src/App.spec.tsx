@@ -4,7 +4,6 @@ import {
 	makeTask,
 	renderWithQueryProvider,
 } from './lib/test/helpers';
-import browser from './lib/Browser';
 import React from 'react';
 import { App } from './App';
 import userEvent from '@testing-library/user-event';
@@ -85,6 +84,7 @@ describe('App', () => {
 		expect(
 			await screen.findByLabelText('toggle filter pending')
 		).toBeInTheDocument();
+
 		expect(screen.getByLabelText('toggle filter complete')).toBeInTheDocument();
 		expect(screen.getByLabelText('toggle filter expired')).toBeInTheDocument();
 	});

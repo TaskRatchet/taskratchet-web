@@ -8,7 +8,6 @@ module.exports = {
 		'plugin:react/recommended',
 		'plugin:@typescript-eslint/recommended',
 		'plugin:@typescript-eslint/recommended-requiring-type-checking',
-		'plugin:testing-library/react',
 	],
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
@@ -63,6 +62,7 @@ module.exports = {
 				'global-setup.ts',
 				'src/lib/test/**/*',
 			],
+			extends: ['plugin:testing-library/react'],
 			rules: {
 				'@typescript-eslint/no-explicit-any': 'off',
 				'@typescript-eslint/no-unsafe-return': 'off',
