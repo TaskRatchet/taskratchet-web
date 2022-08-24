@@ -58,6 +58,23 @@ jobs:
         run: pnpm install
       - name: Scan for outdated dependencies
         run: pnpm outdated
+  unused:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: ['16.15.0']
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'pnpm'
+      - name: Scan for unused dependencies
+        run: pnpm dlx depcheck
   lint:
     runs-on: ubuntu-latest
     strategy:
