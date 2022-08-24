@@ -29,7 +29,8 @@ jobs:
         run: |
           echo "::set-output name=size::$(du -s dist/ | awk '{print $1}')"
       - name: Publish result
-        run: pnpm dlx surge ./stats.html https://${{ github.base_ref }}-stats.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+        if: ${{ hashFiles('stats.html') != '' }}
+        run: pnpm dlx surge . https://${{ github.base_ref }}-stats.surge.sh --token ${{ secrets.SURGE_TOKEN }}
 
   bundle_head:
     runs-on: ubuntu-latest
@@ -57,7 +58,8 @@ jobs:
         run: |
           echo "::set-output name=size::$(du -s dist/ | awk '{print $1}')"
       - name: Publish result
-        run: pnpm dlx surge ./stats.html https://${{ github.head_ref }}-stats.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+        if: ${{ hashFiles('stats.html') != '' }}
+        run: pnpm dlx surge . https://${{ github.head_ref }}-stats.surge.sh --token ${{ secrets.SURGE_TOKEN }}
 
   compare:
     runs-on: ubuntu-latest
