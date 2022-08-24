@@ -50,8 +50,6 @@ function renderPage() {
 describe('App', () => {
 	beforeEach(() => {
 		loadNowDate(new Date('10/29/2020'));
-		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
-		window.localStorage.clear();
 		vi.mocked(getQueryClient).mockReturnValue(
 			new QueryClient({
 				defaultOptions: {
@@ -431,8 +429,8 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
 		userEvent.type(screen.getByLabelText('Interval in days'), '7');
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
-
 		userEvent.click(screen.getByText('Add'));
+
 		await waitFor(() => {
 			expect(screen.getByText('non_recurring_task')).toBeInTheDocument();
 		});
@@ -453,13 +451,12 @@ describe('App', () => {
 		openForm();
 
 		userEvent.type(await screen.findByLabelText('Task *'), 'recurring_task');
-
 		userEvent.click(await screen.findByLabelText('Enable recurrence'));
 		userEvent.type(await screen.findByLabelText('Interval in days'), '7');
 		userEvent.click(await screen.findByLabelText('Enable recurrence'));
 		userEvent.click(await screen.findByLabelText('Enable recurrence'));
-
 		userEvent.click(await screen.findByText('Add'));
+
 		await screen.findByText('recurring_task');
 
 		await waitFor(() => {
