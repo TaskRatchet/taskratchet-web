@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import get from 'lodash/get';
 import {
 	Button,
 	Dialog,
@@ -52,7 +52,7 @@ export default function UncleButton({
 					<Button
 						onClick={() => {
 							setOpen(false);
-							const taskId = _.get(task, 'id');
+							const taskId = get(task, 'id');
 							if (taskId) {
 								setUncle(taskId);
 							}

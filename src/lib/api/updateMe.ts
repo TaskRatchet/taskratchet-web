@@ -1,5 +1,6 @@
 import { apiFetch } from './apiFetch';
-import _ from 'lodash';
+import get from 'lodash/get';
+import set from 'lodash/set';
 
 export interface MeInput {
 	name?: string | null;
@@ -17,10 +18,10 @@ const pipe = (
 	output: Record<string, unknown>,
 	outputPath: string
 ) => {
-	const value: unknown = _.get(input, inputPath);
+	const value: unknown = get(input, inputPath);
 
 	if (value) {
-		_.set(output, outputPath, value);
+		set(output, outputPath, value);
 	}
 
 	return output;

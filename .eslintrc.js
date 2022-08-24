@@ -18,8 +18,9 @@ module.exports = {
 		sourceType: 'module',
 		project: './tsconfig.json',
 	},
-	plugins: ['react', '@typescript-eslint', 'regex'],
+	plugins: ['react', '@typescript-eslint', 'regex', 'lodash'],
 	rules: {
+		'lodash/import-scope': 'error',
 		'regex/required': [
 			'error',
 			[
