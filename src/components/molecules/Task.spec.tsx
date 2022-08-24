@@ -16,7 +16,6 @@ import { queryTaskCheckbox } from '../../lib/test/queries';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 
 vi.mock('../../lib/api/updateTask');
-vi.mock('date-fns');
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/addTask');
 vi.mock('../../lib/api/editTask');

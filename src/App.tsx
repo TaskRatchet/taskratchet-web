@@ -22,6 +22,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
+import { ErrorBoundary } from '@highlight-run/react';
 import getQueryClient from './lib/getQueryClient';
 
 toast.configure();
@@ -146,8 +147,12 @@ export function App(): JSX.Element {
 
 export default function AppWithRouter(): JSX.Element {
 	return (
-		<Router>
-			<App />
-		</Router>
+		<React.StrictMode>
+			<ErrorBoundary>
+				<Router>
+					<App />
+				</Router>
+			</ErrorBoundary>
+		</React.StrictMode>
 	);
 }
