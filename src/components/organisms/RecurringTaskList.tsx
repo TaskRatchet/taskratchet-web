@@ -7,10 +7,6 @@ import { useQuery } from 'react-query';
 import TaskMenu from '../molecules/TaskMenu';
 import RecurringTaskEdit from '../organisms/RecurringTaskEdit';
 
-interface RecurringTaskListProps {
-	newTask?: TaskType;
-}
-
 export default function RecurringTaskList(): JSX.Element {
 	const { data = [] } = useQuery(['recurringTasks'], getRecurringTasks);
 	return (
@@ -24,7 +20,7 @@ export default function RecurringTaskList(): JSX.Element {
 							key={t.id}
 							secondaryAction={
 								<TaskMenu
-									renderItems={(handleClose) => {
+									renderItems={(handleClose: () => void) => {
 										return [
 											<RecurringTaskEdit
 												key="edit"

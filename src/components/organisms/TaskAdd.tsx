@@ -46,10 +46,10 @@ export default function TaskAdd({
 	const [error, setError] = useState<string>('');
 	const minDue = browser.getNowDate();
 
-	const onChange = ({ task, due, cents, recurrence }: TaskInput) => {
-		setTask(task);
-		setDue(due);
-		setCents(cents);
+	const onChange = ({ task, due, cents, recurrence }: Partial<TaskInput>) => {
+		if (task !== undefined) setTask(task);
+		if (due) setDue(due);
+		if (cents) setCents(cents);
 		setRecurrence(recurrence);
 	};
 
@@ -72,6 +72,7 @@ export default function TaskAdd({
 				recurrence,
 			})
 		);
+		throw new Error('onSubmit');
 	}
 
 	return (

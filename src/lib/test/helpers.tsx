@@ -86,6 +86,7 @@ export const loadNowTime = (time: number): void => {
 	vi.spyOn(browser, 'getNowTime').mockReturnValue(time);
 };
 
+// DEPRECATED: use `screen.getByTestId('mui-backdrop')` instead
 export function expectLoadingOverlay(
 	container: HTMLElement,
 	options: {
@@ -138,6 +139,7 @@ export function renderWithQueryProvider(
 	};
 }
 
+// DEPRECATED: Use `loadControlledPromise` instead.
 export function sleep<Type>({
 	ms = 50,
 	value = undefined,
@@ -149,6 +151,7 @@ export function sleep<Type>({
 	);
 }
 
+// DEPRECATED: Use `loadControlledPromise` instead.
 export function resolveWithDelay(
 	mock: SpyInstance,
 	ms = 50,
@@ -222,6 +225,7 @@ export const loadTasksApiData = ({
 	loadApiResponse(addTask as Mock);
 };
 
+// DEPRECATED: results in slow tests
 export async function expectNever(callable: () => unknown): Promise<void> {
 	await expect(() => waitFor(callable)).rejects.toEqual(expect.anything());
 }

@@ -8,6 +8,9 @@ function makePicker({
 	parseValue: (value: string) => Date;
 }) {
 	return function MockPicker(p: any) {
+		// if (!(p.value instanceof Date)) {
+		// 	throw new Error('p.value should be instance of Date object');
+		// }
 		const [value, setValue] = React.useState(formatValue(p.value));
 		return p.renderInput({
 			label: p.label,

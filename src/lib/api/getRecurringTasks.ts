@@ -1,3 +1,3 @@
 export default async function getRecurringTasks(): Promise<RecurringTask[]> {
-	return [];
+	return Promise.resolve([]);
 }

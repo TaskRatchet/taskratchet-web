@@ -57,7 +57,7 @@ describe('TaskForm', () => {
 
 	it('calls onChange when task modified', () => {
 		const onChange = vi.fn();
-		const due = new Date('1/1/2022, 11:59 PM');
+		const due = '1/1/2022, 11:59 PM';
 
 		const { taskInput } = renderComponent({ onChange, due });
 
@@ -109,9 +109,7 @@ describe('TaskForm', () => {
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
-				task: '',
 				due: '1/1/2022, 11:59 PM',
-				cents: 500,
 			})
 		);
 	});
@@ -121,7 +119,7 @@ describe('TaskForm', () => {
 
 		const { dueTimeInput } = renderComponent({
 			task: 'the_task',
-			due: new Date('1/1/2020 11:59 PM'),
+			due: '1/1/2020 11:59 PM',
 			cents: 500,
 			onChange,
 		});
@@ -130,9 +128,7 @@ describe('TaskForm', () => {
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
-				task: 'the_task',
-				due: new Date('1/1/2020 11:59 PM'),
-				cents: 500,
+				due: '1/1/2020, 11:59 PM',
 			})
 		);
 	});

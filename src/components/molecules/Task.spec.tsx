@@ -2,6 +2,7 @@ import Task from './Task';
 import React from 'react';
 import {
 	expectNever,
+	loadNowDate,
 	renderWithQueryProvider,
 	resolveWithDelay,
 	withMutedReactQueryLogger,
@@ -236,7 +237,14 @@ describe('Task component', () => {
 		userEvent.type(screen.getByLabelText('Stakes *'), '{backspace}1');
 		userEvent.click(screen.getByText('Save'));
 
-		await expectNever(() => expect(editTask).toBeCalled());
+		// This test may not be effective, since if the submission was made,
+		// the expectation may have happened previous to the request. We can't
+		// wait for an error message because the minimum is enforced on the
+		// stakes field, preventing the request from being made in the first
+		// place. This test used to use `expectNever`, but it's better to
+		// avoid using that since it requires a `waitFor` to timeout before
+		// passing, slowing down the test significantly.
+		expect(editTask).not.toBeCalled();
 	});
 
 	it('enforces maximum due', async () => {
@@ -266,6 +274,8 @@ describe('Task component', () => {
 	});
 
 	it('closes edit dialog on save', async () => {
+		loadNowDate('2/1/2020, 11:59 PM');
+
 		renderTask();
 
 		await openEditDialog();

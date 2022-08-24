@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useMutation } from 'react-query';
 import TaskForm from './TaskForm';
 import { useTimezone } from '../../lib/api/useTimezone';
@@ -17,22 +17,47 @@ export default function RecurringTaskEdit({
 	const [task, setTask] = useState(recurringTask.task);
 	const [error, setError] = useState<string>('');
 	const [isOpen, setIsOpen] = useState<boolean>(false);
+
 	const update = useMutation(updateRecurringTask, {
 		onSuccess: () => {
 			setIsOpen(false);
 		},
 	});
-	const onChange = ({ task, cents }: RecurringTaskInput) => {
-		setTask(task);
-		setCents(cents);
+
+	const errorMessage: string = useMemo(() => {
+		if (update.error instanceof Error) {
+			return update.error.message;
+		}
+
+		return error || '';
+	}, [error, update]);
+
+	const onChange = ({ task, cents }: Partial<RecurringTaskInput>) => {
+		if (task !== undefined) setTask(task);
+		cents && setCents(cents);
 	};
 
 	function onSubmit() {
-		// if (!due || !cents) {
-		// 	return;
-		// }
+		if (!task) {
+			setError('Task is required');
+			return;
+		}
+
+		if (!cents) {
+			setError('Cents is required');
+			return;
+		}
+
+		if (cents < 0) {
+			setError('Cents must be greater than 0');
+			return;
+		}
+
+		setError('');
+
 		update.mutate({ ...recurringTask, task, cents });
 	}
+
 	return (
 		<>
 			<MenuItem
@@ -51,7 +76,7 @@ export default function RecurringTaskEdit({
 						task={task}
 						cents={cents}
 						timezone={timezone}
-						error={update.error?.message || error || ''}
+						error={errorMessage}
 						onChange={onChange}
 						onSubmit={onSubmit}
 						actionLabel={'Save'}

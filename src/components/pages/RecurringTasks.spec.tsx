@@ -5,21 +5,23 @@ import RecurringTasks from './RecurringTasks';
 import getRecurringTasks from '../../lib/api/getRecurringTasks';
 import updateRecurringTask from '../../lib/api/updateRecurringTask';
 import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
+import { vi, Mock } from 'vitest';
 
-jest.mock('../../lib/api/getRecurringTasks');
-jest.mock('../../lib/api/getMe');
-jest.mock('../../lib/api/updateMe');
-jest.mock('../../lib/api/updateRecurringTask');
+vi.mock('../../lib/api/getRecurringTasks');
+vi.mock('../../lib/api/getMe');
+vi.mock('../../lib/api/updateMe');
+vi.mock('../../lib/api/updateRecurringTask');
 
-const mockGetRecurringTasks = getRecurringTasks as jest.Mock;
+const mockGetRecurringTasks = getRecurringTasks as Mock;
 
 describe('recurring tasks', () => {
 	beforeEach(() => {
 		loadMe();
 		mockGetRecurringTasks.mockResolvedValue([
-			{ task: 'recurring_task', id: 'the_id', cents: 100, due: '' },
+			{ task: 'recurring_task', id: 'the_id', cents: 100 },
 		]);
 	});
+
 	it('lists recurring tasks', async () => {
 		renderWithQueryProvider(<RecurringTasks />);
 
@@ -27,7 +29,7 @@ describe('recurring tasks', () => {
 			expect(getRecurringTasks).toHaveBeenCalled();
 		});
 
-		expect(screen.getByText('recurring_task')).toBeInTheDocument();
+		expect(await screen.findByText('recurring_task')).toBeInTheDocument();
 	});
 
 	it('it allows editing', async () => {
@@ -37,7 +39,7 @@ describe('recurring tasks', () => {
 			expect(getRecurringTasks).toHaveBeenCalled();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(await screen.findByLabelText('Menu'));
 	});
 
 	it('it edits recurring task', async () => {
@@ -47,15 +49,16 @@ describe('recurring tasks', () => {
 			expect(getRecurringTasks).toHaveBeenCalled();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(await screen.findByLabelText('Menu'));
 
-		userEvent.click(screen.getByText('Edit'));
+		userEvent.click(await screen.findByText('Edit'));
 
-		const taskInput = screen.getByLabelText(/^Task/);
+		const taskInput = await screen.findByLabelText(/^Task/);
+
 		userEvent.clear(taskInput);
 		userEvent.type(taskInput, 'm_recurring_task');
+		userEvent.click(await screen.findByText('Save'));
 
-		userEvent.click(screen.getByText('Save'));
 		await waitFor(() => {
 			expect(updateRecurringTask).toBeCalled();
 		});
@@ -72,11 +75,10 @@ describe('recurring tasks', () => {
 			expect(getRecurringTasks).toHaveBeenCalled();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
+		userEvent.click(await screen.findByLabelText('Menu'));
+		userEvent.click(await screen.findByText('Edit'));
+		userEvent.click(await screen.findByText('Save'));
 
-		userEvent.click(screen.getByText('Edit'));
-
-		userEvent.click(screen.getByText('Save'));
 		await waitFor(() => {
 			expect(updateRecurringTask).toBeCalled();
 		});
@@ -84,6 +86,5 @@ describe('recurring tasks', () => {
 		expect(updateRecurringTask).toBeCalledWith(
 			expect.not.objectContaining({ due: expect.anything() })
 		);
-
 	});
 });

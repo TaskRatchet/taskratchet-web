@@ -1,4 +1,4 @@
-import React, { FormEvent, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import {
 	Alert,
 	Box,
@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import DueForm from './DueForm';
 import { LoadingButton } from '@mui/lab';
+import { SetOptional } from 'type-fest';
 
 export type TaskFormProps = {
 	task: string;
@@ -20,7 +21,7 @@ export type TaskFormProps = {
 	timezone: string;
 	error: string;
 	onChange: (input: Partial<TaskInput>) => void;
-	onSubmit: (input: TaskInput) => void;
+	onSubmit: (input: SetOptional<TaskInput, 'due'>) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
 	minCents?: number;
@@ -47,16 +48,9 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 	} = props;
 	const [recurrenceEnabled, setRecurrenceEnabled] = useState<boolean>(false);
 	const [interval, setInterval] = useState<number>(1);
-
+	console.log(due);
 	return (
-		<Box
-			component={'form'}
-			onSubmit={(e: FormEvent) => {
-				e.preventDefault();
-				onSubmit({ task, due, cents, recurrence });
-			}}
-			className={'organism-taskForm'}
-		>
+		<Box component={'form'} className={'organism-taskForm'}>
 			<Stack spacing={2}>
 				{error ? <Alert severity={'error'}>{error}</Alert> : null}
 
@@ -95,7 +89,16 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					}}
 					variant="standard"
 				/>
-				{due && <DueForm due={due} onChange={onChange} />}
+				{due ? (
+					<DueForm
+						due={due}
+						onChange={onChange}
+						minDue={minDue}
+						maxDue={maxDue}
+					/>
+				) : (
+					''
+				)}
 				<FormControlLabel
 					control={
 						<Checkbox
@@ -139,8 +142,8 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						loading={isLoading}
 						variant="contained"
 						size={'small'}
-						type="submit"
 						color="primary"
+						onClick={() => onSubmit({ task, due, cents, recurrence })}
 					>
 						{actionLabel}
 					</LoadingButton>

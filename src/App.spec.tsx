@@ -27,6 +27,7 @@ vi.mock('./components/molecules/LoadingIndicator');
 vi.mock('react-ga');
 vi.mock('react-list');
 vi.mock('./lib/getQueryClient');
+vi.mock('@mui/x-date-pickers');
 
 const mockUseSession = useSession as Mock;
 
@@ -48,7 +49,6 @@ function renderPage() {
 
 describe('App', () => {
 	beforeEach(() => {
-		vi.resetAllMocks();
 		loadNowDate(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 		window.localStorage.clear();
@@ -215,7 +215,9 @@ describe('App', () => {
 
 		userEvent.type(getDueInput(), '{backspace}0');
 
-		userEvent.click(screen.getByText('Add'));
+		expect(getDueInput()).toHaveValue('01/08/2020');
+
+		userEvent.click(await screen.findByText('Add'));
 
 		await screen.findByText('Due date must be in the future');
 
@@ -312,9 +314,7 @@ describe('App', () => {
 		userEvent.click(screen.getByLabelText('Menu'));
 		userEvent.click(screen.getByText('Copy'));
 
-		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
-			'02/08/2020'
-		);
+		expect(await screen.findByLabelText(/Due Date/)).toHaveValue('02/08/2020');
 	});
 
 	it('closes menu when clicking copy', async () => {
@@ -362,9 +362,9 @@ describe('App', () => {
 	it('includes recurring options', async () => {
 		renderPage();
 
-		await openForm();
+		openForm();
 
-		userEvent.type(getTaskInput(), 'recurring_task');
+		userEvent.type(await screen.findByLabelText('Task *'), 'recurring_task');
 
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
 		userEvent.type(screen.getByLabelText('Interval in days'), '7');
@@ -375,38 +375,45 @@ describe('App', () => {
 			expect(screen.getByText('recurring_task')).toBeInTheDocument();
 		});
 
-		expect(addTask).toBeCalledWith(
-			expect.any(String),
-			expect.any(String),
-			expect.any(Number),
-			expect.objectContaining({ days: 7 })
-		);
+		await waitFor(() => {
+			expect(addTask).toBeCalledWith(
+				expect.any(String),
+				expect.any(String),
+				expect.any(Number),
+				expect.objectContaining({ days: 7 })
+			);
+		});
 	});
 
 	it('Does not include recurrence options if recurrence is not enabled', async () => {
 		renderPage();
 
-		await openForm();
+		openForm();
 
-		userEvent.type(getTaskInput(), 'non_recurring_task');
+		userEvent.type(
+			await screen.findByLabelText('Task *'),
+			'non_recurring_task'
+		);
 		userEvent.click(screen.getByText('Add'));
 
 		await waitFor(() => {
 			expect(screen.getByText('non_recurring_task')).toBeInTheDocument();
 		});
 
-		expect(addTask).toBeCalledWith(
-			expect.any(String),
-			expect.any(String),
-			expect.any(Number),
-			undefined
-		);
+		await waitFor(() => {
+			expect(addTask).toBeCalledWith(
+				expect.any(String),
+				expect.any(String),
+				expect.any(Number),
+				undefined
+			);
+		});
 	});
 
-	it('does not show interval field if recurrence not enabled', async () => {
+	it('does not show interval field if recurrence not enabled', () => {
 		renderPage();
 
-		await openForm();
+		openForm();
 
 		expect(screen.queryByLabelText('Interval in days')).not.toBeInTheDocument();
 	});
@@ -414,9 +421,12 @@ describe('App', () => {
 	it('does not post recurring options if recurrence not enabled', async () => {
 		renderPage();
 
-		await openForm();
+		openForm();
 
-		userEvent.type(getTaskInput(), 'non_recurring_task');
+		userEvent.type(
+			await screen.findByLabelText('Task *'),
+			'non_recurring_task'
+		);
 
 		userEvent.click(screen.getByLabelText('Enable recurrence'));
 		userEvent.type(screen.getByLabelText('Interval in days'), '7');
@@ -427,36 +437,38 @@ describe('App', () => {
 			expect(screen.getByText('non_recurring_task')).toBeInTheDocument();
 		});
 
-		expect(addTask).toBeCalledWith(
-			expect.any(String),
-			expect.any(String),
-			expect.any(Number),
-			undefined
-		);
+		await waitFor(() => {
+			expect(addTask).toBeCalledWith(
+				expect.any(String),
+				expect.any(String),
+				expect.any(Number),
+				undefined
+			);
+		});
 	});
 
 	it('it remembers recurring options when toggling recurrence', async () => {
 		renderPage();
 
-		await openForm();
+		openForm();
 
-		userEvent.type(getTaskInput(), 'recurring_task');
+		userEvent.type(await screen.findByLabelText('Task *'), 'recurring_task');
 
-		userEvent.click(screen.getByLabelText('Enable recurrence'));
-		userEvent.type(screen.getByLabelText('Interval in days'), '7');
-		userEvent.click(screen.getByLabelText('Enable recurrence'));
-		userEvent.click(screen.getByLabelText('Enable recurrence'));
+		userEvent.click(await screen.findByLabelText('Enable recurrence'));
+		userEvent.type(await screen.findByLabelText('Interval in days'), '7');
+		userEvent.click(await screen.findByLabelText('Enable recurrence'));
+		userEvent.click(await screen.findByLabelText('Enable recurrence'));
 
-		userEvent.click(screen.getByText('Add'));
+		userEvent.click(await screen.findByText('Add'));
+		await screen.findByText('recurring_task');
+
 		await waitFor(() => {
-			expect(screen.getByText('recurring_task')).toBeInTheDocument();
+			expect(addTask).toBeCalledWith(
+				expect.any(String),
+				expect.any(String),
+				expect.any(Number),
+				expect.objectContaining({ days: 7 })
+			);
 		});
-
-		expect(addTask).toBeCalledWith(
-			expect.any(String),
-			expect.any(String),
-			expect.any(Number),
-			expect.objectContaining({ days: 7 })
-		);
 	});
 });

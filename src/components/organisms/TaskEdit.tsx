@@ -18,9 +18,9 @@ const TaskEdit = ({
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const editTask = useEditTask();
 
-	const onChange = ({ due, cents }: TaskInput) => {
-		setDue(due);
-		setCents(cents);
+	const onChange = ({ due, cents }: Partial<TaskInput>) => {
+		due && setDue(due);
+		cents && setCents(cents);
 	};
 
 	function onSubmit() {
@@ -75,7 +75,7 @@ const TaskEdit = ({
 						actionLabel={'Save'}
 						disableTaskField={true}
 						minCents={task.cents}
-						maxDue={task.due}
+						maxDue={new Date(task.due)}
 						isLoading={editTask.isLoading}
 					/>
 				</DialogContent>

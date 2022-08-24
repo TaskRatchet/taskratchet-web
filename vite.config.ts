@@ -1,5 +1,6 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
+/// <reference types="vitest/globals" />
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
@@ -10,5 +11,7 @@ export default defineConfig({
 		environment: 'jsdom',
 		setupFiles: ['./global-setup.ts'],
 		mockReset: true,
+		include: ['./src/**/*.spec.{ts,tsx}'],
+		reporters: 'dot',
 	},
 });

@@ -9,7 +9,6 @@ import {
 	loadTasksApiData,
 	makeTask,
 	renderWithQueryProvider,
-	resolveWithDelay,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
@@ -445,9 +444,7 @@ describe('tasks page', () => {
 
 		// Load slow query response to clobber
 
-		resolveWithDelay(vi.mocked(getTasks), 100, [
-			makeTask({ task: 'first', id: '3' }),
-		]);
+		const { resolve } = loadControlledPromise(getTasks);
 
 		// Add first task
 
@@ -469,19 +466,19 @@ describe('tasks page', () => {
 
 		// Add second task
 
-		userEvent.type(
-			getTaskInput(),
-			'{backspace}{backspace}{backspace}{backspace}{backspace}second'
-		);
+		userEvent.clear(getTaskInput());
+		userEvent.type(getTaskInput(), 'second');
 		userEvent.click(getAddButton());
 
-		// Sleep 200ms
+		await screen.findByText('second');
 
-		await new Promise((resolve) => setTimeout(resolve, 200));
+		// Resolve slow request
+
+		resolve([makeTask({ task: 'first', id: '3' })]);
 
 		// Check that first, slow response didn't clobber second, fast response
 
-		expect(screen.getByText('second')).toBeInTheDocument();
+		expect(await screen.findByText('second')).toBeInTheDocument();
 	});
 
 	it('shows all tasks', async () => {
