@@ -139,27 +139,6 @@ export function renderWithQueryProvider(
 	};
 }
 
-// DEPRECATED: Use `loadControlledPromise` instead.
-export function sleep<Type>({
-	ms = 50,
-	value = undefined,
-}: { ms?: number; value?: Type } = {}): Promise<Type | undefined> {
-	return new Promise((resolve) =>
-		setTimeout(() => {
-			resolve(value);
-		}, ms)
-	);
-}
-
-// DEPRECATED: Use `loadControlledPromise` instead.
-export function resolveWithDelay(
-	mock: SpyInstance,
-	ms = 50,
-	value: unknown = undefined
-): void {
-	mock.mockImplementation(() => sleep({ ms, value }));
-}
-
 export function makeTask({
 	complete = false,
 	due = '5/22/2020, 11:59 PM',

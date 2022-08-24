@@ -3,7 +3,6 @@ import React from 'react';
 import {
 	loadNowDate,
 	renderWithQueryProvider,
-	resolveWithDelay,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
@@ -14,6 +13,7 @@ import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';
 import { vi, Mock, expect, it, describe, beforeEach } from 'vitest';
 import { queryTaskCheckbox } from '../../lib/test/queries';
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 
 vi.mock('../../lib/api/updateTask');
 vi.mock('date-fns');
@@ -260,7 +260,7 @@ describe('Task component', () => {
 	});
 
 	it('shows loading indicator on edit save', async () => {
-		resolveWithDelay(mockEditTask);
+		const { resolve } = loadControlledPromise(editTask);
 
 		renderTask();
 
@@ -271,6 +271,8 @@ describe('Task component', () => {
 		userEvent.click(screen.getByText('Save'));
 
 		await screen.findByRole('progressbar');
+
+		resolve();
 	});
 
 	it('closes edit dialog on save', async () => {
