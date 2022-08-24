@@ -16,6 +16,7 @@ import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import getQueryClient from './lib/getQueryClient';
 import { QueryClient } from 'react-query';
 import loadControlledPromise from './lib/test/loadControlledPromise';
+import browser from './lib/Browser';
 
 vi.mock('./lib/api/getTasks');
 vi.mock('./lib/api/getMe');
@@ -49,6 +50,8 @@ function renderPage() {
 describe('App', () => {
 	beforeEach(() => {
 		loadNowDate(new Date('10/29/2020'));
+		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		window.localStorage.clear();
 		vi.mocked(getQueryClient).mockReturnValue(
 			new QueryClient({
 				defaultOptions: {
