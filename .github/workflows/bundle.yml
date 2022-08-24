@@ -71,8 +71,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.number }}
           body: |
-            Base: [${{needs.bundle_base.outputs.size}}](https://${{ github.base_ref }}-stats.surge.sh)
-            Head: [${{needs.bundle_head.outputs.size}}](https://${{ github.head_ref }}-stats.surge.sh)
+            Base: [${{needs.bundle_base.outputs.size}}](https://${{ github.base_ref }}-stats.surge.sh/stats.html)
+            Head: [${{needs.bundle_head.outputs.size}}](https://${{ github.head_ref }}-stats.surge.sh/stats.html)
       - name: Compare bundle sizes
         run: |
           if [ "${{needs.bundle_base.outputs.size}}" -lt "${{needs.bundle_head.outputs.size}}" ]; then
