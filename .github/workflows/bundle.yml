@@ -70,13 +70,15 @@ jobs:
     needs: [bundle_base, bundle_head]
     steps:
       - name: Add comment
-        uses: peter-evans/create-or-update-comment@v2
+        uses: tonyhallett/artifacts-url-comments@v1.1.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.number }}
-          body: |
-            Base: ${{needs.bundle_base.outputs.size}} ([stats](/repos/taskratchet/taskratchet-web/actions/artifacts/bundle-${{github.base_ref}}.html))
-            Head: ${{needs.bundle_head.outputs.size}} ([stats](/repos/taskratchet/taskratchet-web/actions/artifacts/bundle-${{github.head_ref}}.html))
+          prefix: |
+            Base: ${{needs.bundle_base.outputs.size}}
+            Head: ${{needs.bundle_head.outputs.size}}
+          format: name
+          addTo: pullandissues
       - name: Compare bundle sizes
         run: |
           if [ "${{needs.bundle_base.outputs.size}}" -lt "${{needs.bundle_head.outputs.size}}" ]; then
