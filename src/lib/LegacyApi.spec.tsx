@@ -1,5 +1,6 @@
 import { login } from './LegacyApi';
 import { waitFor } from '@testing-library/react';
+import { expect, it, describe } from 'vitest';
 
 describe('LegacyApi', () => {
 	it('stores session token on successful login', async () => {

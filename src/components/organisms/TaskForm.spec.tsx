@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { TaskFormProps } from './TaskForm';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { vi } from 'vitest';
+import { vi, expect, it, describe } from 'vitest';
 
 vi.mock('../../lib/Browser');
 vi.mock('@mui/x-date-pickers');

@@ -2,7 +2,7 @@ import { getUnloadMessage } from './getUnloadMessage';
 import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
 import { renderWithQueryProvider, resolveWithDelay } from './test/helpers';
-import { vi } from 'vitest';
+import { vi, expect, it, describe } from 'vitest';
 import { updateTask } from './api';
 
 vi.mock('./api/updateTask');

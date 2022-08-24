@@ -13,7 +13,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { __listRef } from 'react-list';
 import { waitFor, screen } from '@testing-library/react';
 import { addTask } from './lib/api';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import getQueryClient from './lib/getQueryClient';
 import { QueryClient } from 'react-query';
 import loadControlledPromise from './lib/test/loadControlledPromise';

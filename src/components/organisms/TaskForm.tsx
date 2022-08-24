@@ -48,7 +48,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 	} = props;
 	const [recurrenceEnabled, setRecurrenceEnabled] = useState<boolean>(false);
 	const [interval, setInterval] = useState<number>(1);
-	console.log(due);
+
 	return (
 		<Box component={'form'} className={'organism-taskForm'}>
 			<Stack spacing={2}>

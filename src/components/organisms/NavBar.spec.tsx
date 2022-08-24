@@ -4,7 +4,7 @@ import { useSession } from '../../lib/api/useSession';
 import userEvent from '@testing-library/user-event';
 import { screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, expect, it, describe } from 'vitest';
 import { renderWithQueryProvider } from '../../lib/test/helpers';
 
 vi.mock('../../lib/api/useSession');

@@ -4,7 +4,7 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import ApiSettings from './ApiSettings';
 import { apiFetch } from '../../lib/api';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, expect, it, describe } from 'vitest';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');

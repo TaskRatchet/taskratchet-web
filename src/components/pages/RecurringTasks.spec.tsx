@@ -5,7 +5,7 @@ import RecurringTasks from './RecurringTasks';
 import getRecurringTasks from '../../lib/api/getRecurringTasks';
 import updateRecurringTask from '../../lib/api/updateRecurringTask';
 import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 
 vi.mock('../../lib/api/getRecurringTasks');
 vi.mock('../../lib/api/getMe');

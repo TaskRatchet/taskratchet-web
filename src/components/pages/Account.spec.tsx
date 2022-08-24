@@ -8,7 +8,7 @@ import {
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
+import { vi, expect, it, describe, beforeEach } from 'vitest';
 import { useGetApiToken } from '../../lib/api';
 import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 

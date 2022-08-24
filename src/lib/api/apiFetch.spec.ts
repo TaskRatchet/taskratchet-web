@@ -1,4 +1,5 @@
 import { apiFetch } from './apiFetch';
+import { expect, it, describe } from 'vitest';
 
 describe('apiFetch', () => {
 	it('uses localStorage token', async () => {

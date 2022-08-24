@@ -1,7 +1,7 @@
 import { updateMe } from './updateMe';
 import { apiFetch } from './apiFetch';
 import _ from 'lodash';
-import { vi } from 'vitest';
+import { vi, expect, it, describe, beforeEach } from 'vitest';
 
 vi.mock('./apiFetch');
 

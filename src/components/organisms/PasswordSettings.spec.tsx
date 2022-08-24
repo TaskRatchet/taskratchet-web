@@ -3,7 +3,7 @@ import { renderWithQueryProvider } from '../../lib/test/helpers';
 import PasswordSettings from './PasswordSettings';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, expect, it, describe } from 'vitest';
 
 vi.mock('../../lib/api/updatePassword');
 
@@ -17,7 +17,9 @@ describe('password settings', () => {
 
 		userEvent.click(await screen.findByText('Save'));
 
-		await screen.findByText("Passwords don't match");
+		expect(
+			await screen.findByText("Passwords don't match")
+		).toBeInTheDocument();
 	});
 
 	it('indicates loading state', async () => {

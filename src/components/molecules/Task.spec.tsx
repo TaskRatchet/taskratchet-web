@@ -13,7 +13,7 @@ import { waitFor } from '@testing-library/dom';
 import browser from '../../lib/Browser';
 import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, expect, it, describe, beforeEach } from 'vitest';
 import { queryTaskCheckbox } from '../../lib/test/queries';
 
 vi.mock('../../lib/api/updateTask');

@@ -3,7 +3,7 @@ import React from 'react';
 import GeneralSettings from './GeneralSettings';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import { vi } from 'vitest';
+import { vi, expect, it, describe } from 'vitest';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');
@@ -16,6 +16,6 @@ describe('general settings', () => {
 
 		userEvent.click(screen.getByText('Save'));
 
-		await screen.findByRole('progressbar');
+		expect(await screen.findByRole('progressbar')).toBeInTheDocument();
 	});
 });

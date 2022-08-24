@@ -13,7 +13,7 @@ import {
 import { waitFor } from '@testing-library/dom';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { vi, Mock, SpyInstance } from 'vitest';
+import { vi, Mock, SpyInstance, expect } from 'vitest';
 import { getMe, updateMe } from '../api';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 

@@ -15,7 +15,7 @@
 		"isolatedModules": true,
 		"noEmit": true,
 		"jsx": "react-jsx",
-		"types": ["vitest/globals", "@testing-library/jest-dom"],
+		"types": ["@testing-library/jest-dom"],
 		"allowUnreachableCode": true
 	},
 	"include": ["src", "vite.config.ts", "global-setup.ts", "__mocks__"],
