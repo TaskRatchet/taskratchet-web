@@ -1,6 +1,6 @@
 import TaskForm from './TaskForm';
 import React from 'react';
-import { render, RenderResult, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TaskFormProps } from './TaskForm';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
@@ -33,35 +33,21 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 		...props,
 	};
 
-	const view: RenderResult = render(
+	return render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<TaskForm {...p} />
 		</LocalizationProvider>
 	);
-
-	return {
-		...view,
-		taskInput: screen.getByLabelText('Task *'),
-		dueDateInput: screen.getByLabelText('Due Date *'),
-		dueTimeInput: screen.getByLabelText('Due Time *'),
-		centsInput: screen.getByLabelText('Stakes *'),
-	};
 };
 
 describe('TaskForm', () => {
-	it('has task input', () => {
-		renderComponent();
-
-		expect(screen.getByLabelText('Task *')).toBeInTheDocument();
-	});
-
-	it('calls onChange when task modified', () => {
+	it('calls onChange when task modified', async () => {
 		const onChange = vi.fn();
 		const due = '1/1/2022, 11:59 PM';
 
-		const { taskInput } = renderComponent({ onChange, due });
+		renderComponent({ onChange, due });
 
-		userEvent.type(taskInput, 'a');
+		userEvent.type(await screen.findByText(/Task/), 'a');
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
@@ -72,12 +58,15 @@ describe('TaskForm', () => {
 		);
 	});
 
-	it('calls onChange when due modified', () => {
+	it('calls onChange when due modified', async () => {
 		const onChange = vi.fn();
 
-		const { dueTimeInput } = renderComponent({ onChange });
+		renderComponent({ onChange });
 
-		userEvent.type(dueTimeInput, '{backspace}{backspace}am');
+		userEvent.type(
+			await screen.findByLabelText('Due Time *'),
+			'{backspace}{backspace}am'
+		);
 
 		expect(onChange).toBeCalled();
 	});
@@ -85,9 +74,9 @@ describe('TaskForm', () => {
 	it('calls onChange when cents modified', () => {
 		const onChange = vi.fn();
 
-		const { centsInput } = renderComponent({ onChange });
+		renderComponent({ onChange });
 
-		userEvent.type(centsInput, '1');
+		userEvent.type(screen.getByLabelText('Stakes *'), '1');
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
@@ -99,13 +88,13 @@ describe('TaskForm', () => {
 	it('preserves time when editing date', () => {
 		const onChange = vi.fn();
 
-		const { dueDateInput } = renderComponent({
+		renderComponent({
 			due: '1/1/2021, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
 
-		userEvent.type(dueDateInput, '{backspace}2{enter}');
+		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}2{enter}');
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
@@ -117,14 +106,14 @@ describe('TaskForm', () => {
 	it('preserves date when editing time', () => {
 		const onChange = vi.fn();
 
-		const { dueTimeInput } = renderComponent({
+		renderComponent({
 			task: 'the_task',
 			due: '1/1/2020 11:59 PM',
 			cents: 500,
 			onChange,
 		});
 
-		userEvent.type(dueTimeInput, '{backspace}M{enter}');
+		userEvent.type(screen.getByLabelText('Due Time *'), '{backspace}M{enter}');
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({

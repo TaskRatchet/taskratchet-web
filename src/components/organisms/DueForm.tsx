@@ -1,7 +1,18 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, Suspense } from 'react';
 import { TextField } from '@mui/material';
-import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+// import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import formatDue from '../../lib/formatDue';
+
+const DatePicker = React.lazy(() =>
+	import('@mui/x-date-pickers').then(({ DatePicker }) => ({
+		default: DatePicker,
+	}))
+);
+const TimePicker = React.lazy(() =>
+	import('@mui/x-date-pickers').then(({ TimePicker }) => ({
+		default: TimePicker,
+	}))
+);
 
 type DueFormProps = {
 	due: string;
@@ -16,7 +27,7 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 		return new Date(due);
 	}, [due]);
 	return (
-		<>
+		<Suspense fallback="loading">
 			<DatePicker
 				label="Due Date"
 				value={dueDate}
@@ -66,6 +77,6 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 					<TextField required variant="standard" {...params} />
 				)}
 			/>
-		</>
+		</Suspense>
 	);
 }

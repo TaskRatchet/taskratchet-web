@@ -1,4 +1,4 @@
-import { render, RenderResult, screen } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import React from 'react';
@@ -21,28 +21,23 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 		...props,
 	};
 
-	const view: RenderResult = render(
+	return render(
 		<LocalizationProvider dateAdapter={AdapterDateFns}>
 			<TaskForm {...p} />
 		</LocalizationProvider>
 	);
-
-	return {
-		...view,
-		taskInput: screen.getByLabelText('Task *'),
-		dueDateInput: screen.getByLabelText('Due Date *'),
-		dueTimeInput: screen.getByLabelText('Due Time *'),
-		centsInput: screen.getByLabelText('Stakes *'),
-	};
 };
 
 describe('due form', () => {
-	it('calls onChange when due modified', () => {
+	it('calls onChange when due modified', async () => {
 		const onChange = vi.fn();
 
-		const { dueTimeInput } = renderComponent({ onChange });
+		renderComponent({ onChange });
 
-		userEvent.type(dueTimeInput, '{backspace}{backspace}am');
+		userEvent.type(
+			await screen.findByLabelText('Due Time *'),
+			'{backspace}{backspace}am'
+		);
 
 		expect(onChange).toBeCalled();
 	});
@@ -50,13 +45,13 @@ describe('due form', () => {
 	it('preserves time when editing date', () => {
 		const onChange = vi.fn();
 
-		const { dueDateInput } = renderComponent({
+		renderComponent({
 			due: '1/1/2021, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
 
-		userEvent.type(dueDateInput, '{backspace}2{enter}');
+		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}2{enter}');
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
@@ -68,13 +63,13 @@ describe('due form', () => {
 	it('preserves date when editing time', () => {
 		const onChange = vi.fn();
 
-		const { dueTimeInput } = renderComponent({
+		renderComponent({
 			due: '1/1/2020, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
 
-		userEvent.type(dueTimeInput, '{backspace}M{enter}');
+		userEvent.type(screen.getByLabelText('Due Time *'), '{backspace}M{enter}');
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
