@@ -6,7 +6,7 @@ import {
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { updateTask } from '../../lib/api';
+import { updateTask } from '../../lib/api/updateTask';
 import { waitFor } from '@testing-library/dom';
 import browser from '../../lib/Browser';
 import { editTask } from '../../lib/api/editTask';

@@ -12,6 +12,7 @@ import {
 import Account from './components/pages/Account';
 import Authenticated from './components/pages/Authenticated';
 import ResetPassword from './components/pages/ResetPassword';
+import RecurringTasks from './components/pages/RecurringTasks';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { isProduction } from './tr_constants';
@@ -122,6 +123,15 @@ export function App(): JSX.Element {
 									element={
 										<Authenticated>
 											<Account />
+										</Authenticated>
+									}
+								/>
+
+								<Route
+									path={'/recurring'}
+									element={
+										<Authenticated>
+											<RecurringTasks />
 										</Authenticated>
 									}
 								/>

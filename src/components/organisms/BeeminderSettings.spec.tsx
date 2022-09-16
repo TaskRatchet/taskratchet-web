@@ -10,8 +10,8 @@ import {
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
-import { updateMe } from '../../lib/api';
-import { getMe } from '../../lib/api';
+import { updateMe } from '../../lib/api/updateMe';
+import { getMe } from '../../lib/api/getMe';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');

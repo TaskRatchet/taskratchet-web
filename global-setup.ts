@@ -19,6 +19,8 @@ module.exports = async () => {
 };
 
 vi.mock('@mui/x-date-pickers');
+vi.mock('./src/lib/api/fetch1');
+vi.mock('./src/lib/api/fetch2');
 
 global.scrollTo = vi.fn() as any;
 

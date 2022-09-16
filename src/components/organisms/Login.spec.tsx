@@ -1,10 +1,16 @@
-import * as api from '../../lib/LegacyApi';
 import { renderWithQueryProvider } from '../../lib/test/helpers';
 import Login from './Login';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
+import { login } from '../../lib/api/login';
+import { requestResetEmail } from '../../lib/api/requestResetEmail';
+
+const api = {
+	login,
+	requestResetEmail,
+};
 
 vi.mock('../../lib/LegacyApi');
 

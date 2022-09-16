@@ -3,14 +3,14 @@ import { logout } from './useSession';
 
 const _get_base = () => {
 	if (isProduction) {
-		return 'https://api.taskratchet.com/api1/';
+		return 'https://api.taskratchet.com/api2/';
 	}
 
 	if (isStaging) {
-		return 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api1/';
+		return 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api2/';
 	}
 
-	return 'http://localhost:8080/api1/';
+	return 'http://localhost:8080/api2/';
 };
 
 const _trim = (s: string, c: string) => {
@@ -19,7 +19,7 @@ const _trim = (s: string, c: string) => {
 	return s.replace(new RegExp('^[' + c + ']+|[' + c + ']+$', 'g'), '');
 };
 
-export async function apiFetch(
+export default async function fetch2(
 	route: string,
 	protected_ = false,
 	method = 'GET',

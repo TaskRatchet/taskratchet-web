@@ -1,5 +1,9 @@
-import { apiFetch } from './apiFetch';
-import { expect, it, describe } from 'vitest';
+import apiFetch from './fetch1';
+import { expect, it, describe, vi } from 'vitest';
+
+vi.mock('./fetch1', () => {
+	return vi.importActual('./fetch1');
+});
 
 describe('apiFetch', () => {
 	it('uses localStorage token', async () => {

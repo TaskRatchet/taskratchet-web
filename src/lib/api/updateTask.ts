@@ -1,4 +1,4 @@
-import { apiFetch } from './apiFetch';
+import apiFetch from './fetch1';
 
 export interface TaskInput {
 	complete?: boolean;

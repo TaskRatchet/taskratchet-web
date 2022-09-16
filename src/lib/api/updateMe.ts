@@ -1,4 +1,4 @@
-import { apiFetch } from './apiFetch';
+import fetch1 from './fetch1';
 import get from 'lodash/get';
 import set from 'lodash/set';
 
@@ -44,7 +44,7 @@ export async function updateMe(input: MeInput): Promise<Response> {
 		['checkout_session_id', 'checkout_session_id'],
 	]);
 
-	const response = await apiFetch('me', true, 'PUT', payload);
+	const response = await fetch1('me', true, 'PUT', payload);
 
 	if (!response.ok) {
 		throw new Error('Failed to update me');

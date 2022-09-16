@@ -3,7 +3,7 @@ import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
 import { renderWithQueryProvider } from './test/helpers';
 import { vi, expect, it, describe } from 'vitest';
-import { updateTask } from './api';
+import { updateTask } from './api/updateTask';
 import loadControlledPromise from './test/loadControlledPromise';
 
 vi.mock('./api/updateTask');

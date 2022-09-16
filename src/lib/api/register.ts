@@ -1,4 +1,4 @@
-import { apiFetch } from './apiFetch';
+import apiFetch from './fetch1';
 
 export default function register(
 	name: string,

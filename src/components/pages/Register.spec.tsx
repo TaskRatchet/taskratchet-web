@@ -7,7 +7,7 @@ import React from 'react';
 import Register from './Register';
 import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { getTimezones } from '../../lib/api';
+import { getTimezones } from '../../lib/api/getTimezones';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
 import register from '../../lib/api/register';
 

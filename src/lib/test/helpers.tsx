@@ -3,17 +3,16 @@ import browser from '../Browser';
 import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
-import {
-	addTask,
-	getCheckoutSession,
-	getTasks,
-	getTimezones,
-	updateTask,
-} from '../api';
+import { addTask } from '../api/addTask';
+import { getCheckoutSession } from '../api/getCheckoutSession';
+import { getTasks } from '../api/getTasks';
+import { getTimezones } from '../api/getTimezones';
+import { updateTask } from '../api/updateTask';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { vi, Mock, expect } from 'vitest';
-import { getMe, updateMe } from '../api';
+import { getMe } from '../api/getMe';
+import { updateMe } from '../api/updateMe';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 vi.mock('../../lib/api/getTimezones');

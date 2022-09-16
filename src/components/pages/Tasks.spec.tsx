@@ -1,4 +1,6 @@
-import { addTask, getTasks, updateTask } from '../../lib/api';
+import { addTask } from '../../lib/api/addTask';
+import { getTasks } from '../../lib/api/getTasks';
+import { updateTask } from '../../lib/api/updateTask';
 import { toast } from 'react-toastify';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
@@ -19,7 +21,7 @@ import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { findTaskCheckbox } from '../../lib/test/queries';
 
-vi.mock('../../lib/api/apiFetch');
+vi.mock('../../lib/api/fetch1');
 vi.mock('../../lib/api/getTasks');
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateTask');

@@ -1,4 +1,4 @@
-import { apiFetch } from './apiFetch';
+import apiFetch from './fetch1';
 
 export function updatePassword(
 	oldPassword: string,

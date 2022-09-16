@@ -1,4 +1,4 @@
-import { apiFetch } from './apiFetch';
+import apiFetch from './fetch1';
 
 export async function getMe(): Promise<User> {
 	const response = await apiFetch('me', true);

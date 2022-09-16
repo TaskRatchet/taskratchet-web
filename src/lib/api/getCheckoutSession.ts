@@ -1,4 +1,4 @@
-import { apiFetch } from './apiFetch';
+import apiFetch from './fetch1';
 
 export async function getCheckoutSession(): Promise<CheckoutSession> {
 	const response = await apiFetch('payments/checkout/session');
