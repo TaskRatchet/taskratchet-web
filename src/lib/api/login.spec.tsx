@@ -2,10 +2,6 @@ import { login } from './login';
 import { waitFor } from '@testing-library/react';
 import { expect, it, describe, vi } from 'vitest';
 
-vi.mock('./api/fetch1', () => {
-	return vi.importActual('./api/fetch1');
-});
-
 describe('login', () => {
 	it('stores session token on successful login', async () => {
 		fetchMock.mockResponse('token');

@@ -7,12 +7,13 @@ import { screen, waitFor } from '@testing-library/react';
 import { login } from '../../lib/api/login';
 import { requestResetEmail } from '../../lib/api/requestResetEmail';
 
+vi.mock('../../lib/api/login');
+vi.mock('../../lib/api/requestResetEmail');
+
 const api = {
 	login,
 	requestResetEmail,
 };
-
-vi.mock('../../lib/LegacyApi');
 
 describe('login form', () => {
 	it('sends login request', async () => {

@@ -3,7 +3,13 @@ import { useSession } from '../../lib/api/useSession';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMutation } from 'react-query';
-import * as api from '../../lib/LegacyApi';
+import { login } from '../../lib/api/login';
+import { requestResetEmail } from '../../lib/api/requestResetEmail';
+
+const api = {
+	login,
+	requestResetEmail,
+};
 
 const Login = (): JSX.Element => {
 	const session = useSession();
