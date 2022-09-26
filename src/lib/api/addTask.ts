@@ -1,4 +1,4 @@
-import apiFetch from './fetch1';
+import apiFetch from './fetch2';
 
 // Requires that user be authenticated.
 export async function addTask(

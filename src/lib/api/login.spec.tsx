@@ -1,6 +1,6 @@
 import { login } from './login';
 import { waitFor } from '@testing-library/react';
-import { expect, it, describe, vi } from 'vitest';
+import { expect, it, describe } from 'vitest';
 
 describe('login', () => {
 	it('stores session token on successful login', async () => {

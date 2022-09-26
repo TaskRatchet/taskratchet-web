@@ -1,50 +1,29 @@
-import { isProduction, isStaging } from '../../tr_constants';
-import { logout } from './useSession';
+import {
+	api1Local,
+	api1Staging,
+	api1Production,
+	isProduction,
+	isStaging,
+} from '../../tr_constants';
+import fetch0 from './fetch0';
 
 const _get_base = () => {
 	if (isProduction) {
-		return 'https://api.taskratchet.com/api1/';
+		return api1Production;
 	}
 
 	if (isStaging) {
-		return 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api1/';
+		return api1Staging;
 	}
 
-	return 'http://localhost:8080/api1/';
+	return api1Local;
 };
 
-const _trim = (s: string, c: string) => {
-	if (c === ']') c = '\\]';
-	if (c === '\\') c = '\\\\';
-	return s.replace(new RegExp('^[' + c + ']+|[' + c + ']+$', 'g'), '');
-};
-
-export default async function fetch1(
+export default function fetch1(
 	route: string,
 	protected_ = false,
 	method = 'GET',
 	data: unknown = null
 ): Promise<Response> {
-	const token = window.localStorage.getItem('token'),
-		route_ = _trim(route, '/'),
-		base = _get_base();
-
-	if (protected_ && !token) {
-		throw new Error('User not logged in');
-	}
-
-	// noinspection SpellCheckingInspection
-	const response = await fetch(base + route_, {
-		method: method,
-		body: data ? JSON.stringify(data) : undefined,
-		headers: {
-			'X-Taskratchet-Token': token || '',
-		},
-	});
-
-	if (response.status === 403) {
-		logout();
-	}
-
-	return response;
+	return fetch0(route, protected_, method, data, _get_base());
 }
