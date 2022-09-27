@@ -1,5 +1,6 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { getMe, useTimezones } from '../../lib/api';
+import { getMe } from '../../lib/api/getMe';
+import { useTimezones } from '../../lib/api/useTimezones';
 import { Stack, TextField, Autocomplete } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import useUpdateMe from '../../lib/api/useUpdateMe';

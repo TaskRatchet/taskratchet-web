@@ -1,13 +1,13 @@
 import { updateMe } from './updateMe';
-import { apiFetch } from './apiFetch';
+import { fetch1 } from './fetch1';
 import set from 'lodash/set';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
-vi.mock('./apiFetch');
+vi.mock('./fetch1');
 
 describe('updateMe', () => {
 	beforeEach(() => {
-		vi.mocked(apiFetch).mockResolvedValue({ ok: true } as Response);
+		vi.mocked(fetch1).mockResolvedValue({ ok: true } as Response);
 	});
 
 	it('reformats beeminder integration token', async () => {
@@ -21,7 +21,7 @@ describe('updateMe', () => {
 			'the_token'
 		);
 
-		expect(apiFetch).toBeCalledWith('me', true, 'PUT', expectedPayload);
+		expect(fetch1).toBeCalledWith('me', true, 'PUT', expectedPayload);
 	});
 
 	it('reformats beeminder integration user', async () => {
@@ -31,7 +31,7 @@ describe('updateMe', () => {
 
 		const expectedPayload = set({}, 'integrations.beeminder.user', 'the_user');
 
-		expect(apiFetch).toBeCalledWith('me', true, 'PUT', expectedPayload);
+		expect(fetch1).toBeCalledWith('me', true, 'PUT', expectedPayload);
 	});
 
 	it('reformats beeminder integration goal', async () => {
@@ -45,7 +45,7 @@ describe('updateMe', () => {
 			'the_goal'
 		);
 
-		expect(apiFetch).toBeCalledWith('me', true, 'PUT', expectedPayload);
+		expect(fetch1).toBeCalledWith('me', true, 'PUT', expectedPayload);
 	});
 
 	it('pipes remaining fields', async () => {
@@ -58,6 +58,6 @@ describe('updateMe', () => {
 
 		await updateMe(inOut);
 
-		expect(apiFetch).toBeCalledWith('me', true, 'PUT', inOut);
+		expect(fetch1).toBeCalledWith('me', true, 'PUT', inOut);
 	});
 });

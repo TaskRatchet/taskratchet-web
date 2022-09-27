@@ -1,7 +1,7 @@
-import { apiFetch } from './apiFetch';
+import { fetch1 } from './fetch1';
 import { describe, it, expect } from 'vitest';
 
-describe('apiFetch', () => {
+describe('fetch1', () => {
 	it('uses localStorage token', async () => {
 		fetchMock.mockResponse(JSON.stringify({}));
 
@@ -10,7 +10,7 @@ describe('apiFetch', () => {
 		global.localStorage.setItem('token', token);
 
 		const url = 'https://example.com';
-		await apiFetch(url);
+		await fetch1(url);
 
 		expect(fetch).toHaveBeenCalledWith(
 			expect.anything(),
