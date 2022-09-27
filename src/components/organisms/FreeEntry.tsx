@@ -1,7 +1,8 @@
 import browser from '../../lib/Browser';
 import React from 'react';
 import * as chrono from 'chrono-node';
-import _ from 'lodash';
+import escape from 'lodash/escape';
+import get from 'lodash/get';
 import './FreeEntry.css';
 
 interface FreeEntryProps {
@@ -36,12 +37,12 @@ const FreeEntry = (props: FreeEntryProps): JSX.Element => {
 
 		let due = null;
 		let taskHighlighted = null;
-		const safe = _.escape(task);
+		const safe = escape(task);
 
 		if (response) {
 			due = response.date();
 
-			if (!_.get(response, 'start.knownValues.hour')) {
+			if (!get(response, 'start.knownValues.hour')) {
 				due.setHours(23, 59);
 			}
 

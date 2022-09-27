@@ -4,6 +4,7 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { renderWithQueryProvider } from '../../lib/test/helpers';
 import { setCookie } from '../../lib/setCookie';
+import { expect, it, describe } from 'vitest';
 
 describe('FilterButton', () => {
 	it('uses local storage', async () => {
