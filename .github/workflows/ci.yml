@@ -1,5 +1,7 @@
 name: CI
 on: push
+env:
+  NODE_VERSION: 16.15.0
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -8,10 +10,10 @@ jobs:
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js 16.15.0
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: 16.15.0
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -24,10 +26,10 @@ jobs:
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js 16.15.0
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: 16.15.0
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -40,10 +42,10 @@ jobs:
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js 16.15.0
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: 16.15.0
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -70,10 +72,10 @@ jobs:
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js 16.15.0
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: 16.15.0
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
@@ -86,10 +88,10 @@ jobs:
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7
-      - name: Use Node.js 16.15.0
+      - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v2
         with:
-          node-version: 16.15.0
+          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
       - name: Run Prettier
         run: pnpm dlx prettier --check .
