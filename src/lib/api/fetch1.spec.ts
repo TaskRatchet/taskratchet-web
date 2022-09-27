@@ -1,4 +1,4 @@
-import { fetch1 } from './fetch1';
+import fetch1 from './fetch1';
 import { describe, it, expect } from 'vitest';
 
 describe('fetch1', () => {

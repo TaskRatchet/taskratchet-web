@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import React from 'react';
 import ApiSettings from './ApiSettings';
-import { fetch1 } from '../../lib/api/fetch1';
+import fetch1 from '../../lib/api/fetch1';
 import { vi, Mock } from 'vitest';
 import { describe, it, expect } from 'vitest';
 

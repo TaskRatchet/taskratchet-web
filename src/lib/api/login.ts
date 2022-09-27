@@ -1,5 +1,5 @@
 import { publishSession } from './useSession';
-import { fetch1 } from './fetch1';
+import fetch1 from './fetch1';
 
 export function login(email: string, password: string): Promise<boolean> {
 	return fetch1('account/login', false, 'POST', {
