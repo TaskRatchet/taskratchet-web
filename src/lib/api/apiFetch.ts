@@ -1,17 +1,5 @@
-import { isProduction, isStaging } from '../../tr_constants';
 import { logout } from './useSession';
-
-const _get_base = () => {
-	if (isProduction) {
-		return 'https://api.taskratchet.com/api1/';
-	}
-
-	if (isStaging) {
-		return 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api1/';
-	}
-
-	return 'http://localhost:8080/api1/';
-};
+import { API1_BASE } from '../../tr_constants';
 
 const _trim = (s: string, c: string) => {
 	if (c === ']') c = '\\]';
@@ -25,16 +13,15 @@ export async function apiFetch(
 	method = 'GET',
 	data: unknown = null
 ): Promise<Response> {
-	const token = window.localStorage.getItem('token'),
-		route_ = _trim(route, '/'),
-		base = _get_base();
+	const token = window.localStorage.getItem('token');
+	const route_ = _trim(route, '/');
 
 	if (protected_ && !token) {
 		throw new Error('User not logged in');
 	}
 
 	// noinspection SpellCheckingInspection
-	const response = await fetch(base + route_, {
+	const response = await fetch(API1_BASE + route_, {
 		method: method,
 		body: data ? JSON.stringify(data) : undefined,
 		headers: {
