@@ -21,11 +21,11 @@ global.document.createRange = () =>
 
 interface RenderComponentProps {
 	task?: string;
-	due?: Date;
+	due?: string;
 	cents?: number;
 	timezone?: string;
 	error?: string;
-	onChange?: (task: string, due: Date, cents: number) => void;
+	onChange?: (updates: Partial<TaskInput>) => void;
 	onSubmit?: () => void;
 	isLoading?: boolean;
 }
@@ -33,7 +33,7 @@ interface RenderComponentProps {
 const renderComponent = (props: RenderComponentProps = {}) => {
 	const {
 		task = '',
-		due = new Date(),
+		due = '1/1/2022, 11:59 PM',
 		cents = 500,
 		timezone = '',
 		error = '',
@@ -61,9 +61,6 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 
 	return {
 		...view,
-		taskInput: screen.getByLabelText('Task *'),
-		dueDateInput: screen.getByLabelText('Due Date *'),
-		dueTimeInput: screen.getByLabelText('Due Time *'),
 		centsInput: screen.getByLabelText('Stakes *'),
 	};
 };
@@ -77,21 +74,26 @@ describe('TaskForm', () => {
 
 	it('calls onChange when task modified', () => {
 		const onChange = vi.fn();
-		const due = new Date();
+		const due = 'the_due';
 
-		const { taskInput } = renderComponent({ onChange, due });
+		renderComponent({ onChange, due });
 
-		userEvent.type(taskInput, 'a');
+		userEvent.type(screen.getByLabelText('Task *'), 'a');
 
-		expect(onChange).toBeCalledWith('a', due, 500);
+		expect(onChange).toBeCalledWith({
+			task: 'a',
+		});
 	});
 
-	it('calls onChange when due modified', () => {
+	it('calls onChange when due modified', async () => {
 		const onChange = vi.fn();
 
-		const { dueTimeInput } = renderComponent({ onChange });
+		renderComponent({ onChange });
 
-		userEvent.type(dueTimeInput, '{backspace}{backspace}am');
+		userEvent.type(
+			await screen.findByLabelText('Due Time *'),
+			'{backspace}{backspace}am'
+		);
 
 		expect(onChange).toBeCalled();
 	});
@@ -103,39 +105,49 @@ describe('TaskForm', () => {
 
 		userEvent.type(centsInput, '1');
 
-		expect(onChange).toBeCalledWith(expect.anything(), expect.anything(), 5100);
+		expect(onChange).toBeCalledWith({
+			cents: 5100,
+		});
 	});
 
-	it('preserves time when editing date', () => {
+	it('preserves time when editing date', async () => {
 		const onChange = vi.fn();
 
-		const { dueDateInput } = renderComponent({
-			due: new Date('1/1/2021 11:59 PM'),
+		renderComponent({
+			due: '1/1/2021, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
 
-		userEvent.type(dueDateInput, '{backspace}2{enter}');
+		userEvent.type(
+			await screen.findByLabelText('Due Date *'),
+			'{backspace}2{enter}'
+		);
 
-		expect(onChange).toBeCalledWith('', new Date('1/1/2022 11:59 PM'), 500);
+		expect(onChange).toBeCalledWith({
+			due: '1/1/2022, 11:59 PM',
+		});
 	});
 
-	it('preserves date when editing time', () => {
+	it('preserves date when editing time', async () => {
 		const onChange = vi.fn();
 
-		const { dueTimeInput } = renderComponent({
+		renderComponent({
 			task: 'the_task',
-			due: new Date('1/1/2020 11:59 PM'),
+			due: '1/1/2020, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
 
-		userEvent.type(dueTimeInput, '{backspace}M{enter}');
+		userEvent.type(
+			await screen.findByLabelText('Due Time *'),
+			'{backspace}M{enter}'
+		);
 
 		expect(onChange).toBeCalledWith(
-			'the_task',
-			new Date('1/1/2020 11:59 PM'),
-			500
+			expect.objectContaining({
+				due: '1/1/2020, 11:59 PM',
+			})
 		);
 	});
 });

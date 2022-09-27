@@ -1,4 +1,4 @@
-import React, { FormEvent } from 'react';
+import React from 'react';
 import {
 	Alert,
 	Box,
@@ -8,16 +8,17 @@ import {
 	TextField,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import DueForm from './DueForm';
+import { SetOptional } from 'type-fest';
 
 interface TaskFormProps {
 	task: string;
-	due: Date;
+	due?: string;
 	cents: number;
 	timezone: string;
 	error: string;
-	onChange: (task: string, due: Date, cents: number) => void;
-	onSubmit: (task: string, due: Date, cents: number) => void;
+	onChange: (updates: Partial<TaskInput>) => void;
+	onSubmit: (input: SetOptional<TaskInput, 'due'>) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
 	minCents?: number;
@@ -43,14 +44,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 	} = props;
 
 	return (
-		<Box
-			component={'form'}
-			onSubmit={(e: FormEvent) => {
-				e.preventDefault();
-				onSubmit(task, due, cents);
-			}}
-			className={'organism-taskForm'}
-		>
+		<Box component={'form'} className={'organism-taskForm'}>
 			<Stack spacing={2}>
 				{error ? <Alert severity={'error'}>{error}</Alert> : null}
 
@@ -60,7 +54,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					required
 					value={task}
 					onChange={(e) => {
-						onChange(e.target.value, due, cents);
+						onChange({ task: e.target.value });
 					}}
 					fullWidth
 					variant="standard"
@@ -75,7 +69,9 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					value={cents / 100}
 					onChange={(e) => {
 						const number = parseInt(e.target.value);
-						onChange(task, due, isNaN(number) ? 0 : number * 100);
+						onChange({
+							cents: isNaN(number) ? 0 : number * 100,
+						});
 					}}
 					InputProps={{
 						startAdornment: <InputAdornment position="start">$</InputAdornment>,
@@ -84,53 +80,17 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					}}
 					variant="standard"
 				/>
-				<DatePicker
-					label="Due Date"
-					value={due}
-					onChange={(value: unknown) => {
-						if (!(value instanceof Date)) return;
-						if (isNaN(value.getTime())) return;
-						if (due) value.setHours(due?.getHours(), due?.getMinutes());
-						onChange(task, value, cents);
-					}}
-					OpenPickerButtonProps={{
-						'aria-label': 'change date',
-					}}
-					disablePast
-					renderInput={(params) => (
-						<TextField
-							required
-							InputLabelProps={{
-								'aria-label': 'due date',
-							}}
-							variant="standard"
-							{...params}
-						/>
-					)}
-					maxDate={maxDue && new Date(maxDue)}
-					minDate={minDue && new Date(minDue)}
-				/>
-				<TimePicker
-					label="Due Time"
-					value={due}
-					onChange={(value: unknown) => {
-						if (!(value instanceof Date)) return;
-						if (isNaN(value.getTime())) return;
-						if (due)
-							value.setFullYear(
-								due.getFullYear(),
-								due.getMonth(),
-								due.getDate()
-							);
-						onChange(task, value, cents);
-					}}
-					OpenPickerButtonProps={{
-						'aria-label': 'change time',
-					}}
-					renderInput={(params) => {
-						return <TextField required variant="standard" {...params} />;
-					}}
-				/>
+
+				{due ? (
+					<DueForm
+						due={due}
+						onChange={onChange}
+						minDue={minDue}
+						maxDue={maxDue}
+					/>
+				) : (
+					''
+				)}
 
 				<Stack direction={'row'} justifyContent={'space-between'}>
 					<Button
@@ -143,10 +103,16 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					</Button>
 
 					<LoadingButton
+						onClick={() =>
+							onSubmit({
+								task,
+								cents,
+								due,
+							})
+						}
 						loading={isLoading}
 						variant="contained"
 						size={'small'}
-						type="submit"
 						color="primary"
 					>
 						{actionLabel}

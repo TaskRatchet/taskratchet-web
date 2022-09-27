@@ -3,8 +3,8 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { waitFor, screen } from '@testing-library/react';
 import PaymentSettings from './PaymentSettings';
-import { useCheckoutSession } from '../../lib/api';
-import { vi, Mock } from 'vitest';
+import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
+import { vi, Mock, expect, it, describe } from 'vitest';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');

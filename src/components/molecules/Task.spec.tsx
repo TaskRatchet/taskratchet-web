@@ -1,22 +1,21 @@
 import Task from './Task';
 import React from 'react';
 import {
-	expectNever,
+	loadNowDate,
 	renderWithQueryProvider,
-	resolveWithDelay,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { updateTask } from '../../lib/api';
+import { updateTask } from '../../lib/api/updateTask';
 import { waitFor } from '@testing-library/dom';
 import browser from '../../lib/Browser';
 import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, expect, it, describe, beforeEach } from 'vitest';
 import { queryTaskCheckbox } from '../../lib/test/queries';
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 
 vi.mock('../../lib/api/updateTask');
-vi.mock('date-fns');
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/addTask');
 vi.mock('../../lib/api/editTask');
@@ -236,10 +235,16 @@ describe('Task component', () => {
 		userEvent.type(screen.getByLabelText('Stakes *'), '{backspace}1');
 		userEvent.click(screen.getByText('Save'));
 
-		await expectNever(() => expect(editTask).toBeCalled());
+		await screen.findByText('Stakes cannot be less than the original task');
+
+		expect(editTask).not.toBeCalled();
 	});
 
 	it('enforces maximum due', async () => {
+		vi.mocked(editTask).mockImplementation(() => {
+			throw new Error('Should not have been called (enforces maximum due)');
+		});
+
 		renderTask({ due: '2/1/2022, 11:59 PM' });
 
 		await openEditDialog();
@@ -248,11 +253,11 @@ describe('Task component', () => {
 
 		userEvent.click(screen.getByText('Save'));
 
-		await expectNever(() => expect(editTask).toBeCalled());
+		expect(editTask).not.toBeCalled();
 	});
 
 	it('shows loading indicator on edit save', async () => {
-		resolveWithDelay(mockEditTask);
+		const { resolve } = loadControlledPromise(editTask);
 
 		renderTask();
 
@@ -263,9 +268,13 @@ describe('Task component', () => {
 		userEvent.click(screen.getByText('Save'));
 
 		await screen.findByRole('progressbar');
+
+		resolve();
 	});
 
 	it('closes edit dialog on save', async () => {
+		loadNowDate('2/1/2020, 11:59 PM');
+
 		renderTask();
 
 		await openEditDialog();

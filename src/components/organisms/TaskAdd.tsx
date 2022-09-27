@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useTimezone } from '../../lib/api/useTimezone';
 import { useAddTask } from '../../lib/api/useAddTask';
 import browser from '../../lib/Browser';
+import formatDue from '../../lib/formatDue';
 
 const getDefaultDue = () => {
 	const due = browser.getNowDate();
@@ -12,7 +13,7 @@ const getDefaultDue = () => {
 	due.setHours(23);
 	due.setMinutes(59);
 
-	return due;
+	return formatDue(due);
 };
 
 export default function TaskAdd({
@@ -29,7 +30,7 @@ export default function TaskAdd({
 	const timezone = useTimezone() || '';
 	const addTask = useAddTask(onSave);
 	const [task, setTask] = useState<string>(baseTask?.task || '');
-	const [due, setDue] = useState<Date>(() => {
+	const [due, setDue] = useState<string>(() => {
 		if (!baseTask) {
 			return getDefaultDue();
 		}
@@ -38,16 +39,16 @@ export default function TaskAdd({
 			return getDefaultDue();
 		}
 
-		return new Date(baseTask.due);
+		return baseTask.due;
 	});
 	const [cents, setCents] = useState<number>(baseTask?.cents || 500);
 	const [error, setError] = useState<string>('');
 	const minDue = browser.getNowDate();
 
-	const onChange = (task: string, due: Date, cents: number) => {
-		setTask(task);
-		setDue(due);
-		setCents(cents);
+	const onChange = ({ task, due, cents }: Partial<TaskInput>) => {
+		if (task !== undefined) setTask(task);
+		if (due !== undefined) setDue(due);
+		if (cents !== undefined) setCents(cents);
 	};
 
 	function onSubmit() {
@@ -60,15 +61,8 @@ export default function TaskAdd({
 			setError('Due date must be in the future');
 			return;
 		}
-		const dueString = due.toLocaleDateString('en-US', {
-			year: 'numeric',
-			month: 'numeric',
-			day: 'numeric',
-			hour: 'numeric',
-			minute: 'numeric',
-		});
 		const lines = task.split(/\r?\n/);
-		lines.forEach((l) => addTask.mutate({ task: l, due: dueString, cents }));
+		lines.forEach((l) => addTask.mutate({ task: l, due, cents }));
 	}
 
 	return (
