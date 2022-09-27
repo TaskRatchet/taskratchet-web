@@ -13,8 +13,8 @@ export default async function fetch0(
 	data: unknown = null,
 	base: string
 ): Promise<Response> {
-	const token = window.localStorage.getItem('token'),
-		route_ = _trim(route, '/');
+	const token = window.localStorage.getItem('token');
+	const route_ = _trim(route, '/');
 
 	if (protected_ && !token) {
 		throw new Error('User not logged in');

@@ -1,15 +1,15 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { isProduction } from '../../tr_constants';
+import { IS_PRODUCTION } from '../../tr_constants';
 import { useMe } from '../../lib/api/useMe';
 import browser from '../../lib/Browser';
 import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import useUpdateMe from '../../lib/api/useUpdateMe';
 
-const beeminderClientId: string = isProduction
+const beeminderClientId: string = IS_PRODUCTION
 		? '1w70sy12t1106s9ptod11ex21'
 		: '29k46vimhtdeptt616tuhmp2r',
-	beeminderRedirect: string = isProduction
+	beeminderRedirect: string = IS_PRODUCTION
 		? 'https://app.taskratchet.com/account'
 		: 'https://staging.taskratchet.com/account',
 	beeminderAuthUrl: string =
