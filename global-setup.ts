@@ -18,11 +18,6 @@ module.exports = async () => {
 	process.env.TZ = 'America/Chicago';
 };
 
-// vi.mock('react', async () => ({
-// 	...(await vi.importActual('react')),
-// 	useLayoutEffect: (await vi.importActual('react')).useEffect,
-// }));
-
 vi.mock('@mui/x-date-pickers');
 
 global.scrollTo = vi.fn() as any;

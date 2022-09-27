@@ -1,7 +1,11 @@
 import React, { FormEvent, useState } from 'react';
-import * as api from '../../lib/LegacyApi';
 import { useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
+import { resetPassword } from '../../lib/api/resetPassword';
+
+const api = {
+	resetPassword,
+};
 
 function ResetPassword(): JSX.Element {
 	const useToken = () => {
