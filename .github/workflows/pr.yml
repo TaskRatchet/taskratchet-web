@@ -15,3 +15,5 @@ jobs:
           warningMessage: ':warning: PR has more than **{allowed} additions**. Consider splitting it into smaller PRs.'
           excludePaths: |
             pnpm-lock.yaml
+            **/*.spec.ts
+            **/*.spec.tsx
