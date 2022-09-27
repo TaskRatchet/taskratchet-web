@@ -8,9 +8,9 @@ import {
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { vi } from 'vitest';
 import { useGetApiToken } from '../../lib/api';
 import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/getMe');
