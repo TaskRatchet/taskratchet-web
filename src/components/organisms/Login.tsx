@@ -1,18 +1,51 @@
-import React from 'react';
-import { useMachine } from '@xstate/react';
-import createLoginMachine from './Login.machine';
+import React, { useState } from 'react';
 import { useSession } from '../../lib/api/useSession';
 import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { useMutation } from 'react-query';
+import { login } from '../../lib/api/login';
+import { requestResetEmail } from '../../lib/api/requestResetEmail';
 
-const machine = createLoginMachine();
+const api = {
+	login,
+	requestResetEmail,
+};
 
 const Login = (): JSX.Element => {
-	const [state, send] = useMachine(machine),
-		session = useSession();
+	const session = useSession();
+	const login = useMutation(
+		() => {
+			setMessage('');
+			return api.login(email, password);
+		},
+		{
+			onError: () => {
+				setMessage('Login failed');
+			},
+		}
+	);
+	const reset = useMutation(
+		() => {
+			setMessage('');
+			return api.requestResetEmail(email);
+		},
+		{
+			onError: () => {
+				setMessage('Reset failed');
+			},
+			onSuccess: () => {
+				setMessage(`Instructions sent to ${email}`);
+			},
+		}
+	);
+	const [emailError, setEmailError] = useState('');
+	const [passwordError, setPasswordError] = useState('');
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [message, setMessage] = useState('');
 
 	const isLoading = () => {
-		return state.matches('authenticating') || state.matches('resetting');
+		return login.isLoading || reset.isLoading;
 	};
 
 	return (
@@ -22,9 +55,9 @@ const Login = (): JSX.Element => {
 			) : (
 				<form>
 					<Stack spacing={2} alignItems={'start'}>
-						{state.context.message ? (
+						{message ? (
 							<div className={'organism-login__message alert info'}>
-								{state.context.message}
+								{message}
 							</div>
 						) : (
 							''
@@ -33,31 +66,27 @@ const Login = (): JSX.Element => {
 						<TextField
 							id={'email'}
 							type={'email'}
-							value={state.context.email}
-							onChange={(e) =>
-								send({
-									type: 'EMAIL',
-									value: e.target.value,
-								})
-							}
+							value={email}
+							onChange={(e) => {
+								setEmail(e.target.value);
+								setEmailError('');
+							}}
 							label={'Email'}
-							error={!!state.context.emailError}
-							helperText={state.context.emailError}
+							error={!!emailError}
+							helperText={emailError}
 						/>
 
 						<TextField
 							id={'password'}
 							type={'password'}
-							value={state.context.password}
-							onChange={(e) =>
-								send({
-									type: 'PASSWORD',
-									value: e.target.value,
-								})
-							}
+							value={password}
+							onChange={(e) => {
+								setPassword(e.target.value);
+								setPasswordError('');
+							}}
 							label={'Password'}
-							error={!!state.context.passwordError}
-							helperText={state.context.passwordError}
+							error={!!passwordError}
+							helperText={passwordError}
 						/>
 
 						<Stack direction={'row'}>
@@ -65,7 +94,12 @@ const Login = (): JSX.Element => {
 								type="submit"
 								onClick={(e) => {
 									e.preventDefault();
-									send('LOGIN');
+									if (email && password) {
+										login.mutate();
+									} else {
+										setEmailError(email ? '' : 'Email is required');
+										setPasswordError(password ? '' : 'Password is required');
+									}
 								}}
 							>
 								Submit
@@ -74,7 +108,11 @@ const Login = (): JSX.Element => {
 								type="submit"
 								onClick={(e) => {
 									e.preventDefault();
-									send('RESET');
+									if (email) {
+										reset.mutate();
+									} else {
+										setEmailError(email ? '' : 'Email is required');
+									}
 								}}
 							>
 								Reset Password
