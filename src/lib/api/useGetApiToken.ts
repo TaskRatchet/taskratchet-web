@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query';
-import apiFetch from './fetch1';
+import fetch1 from './fetch1';
 import { UseMutationResult } from 'react-query';
 
 export function useGetApiToken(): UseMutationResult<
@@ -9,7 +9,7 @@ export function useGetApiToken(): UseMutationResult<
 	unknown
 > {
 	return useMutation<string>('api-token', async () => {
-		const response = await apiFetch('me/token', true, 'GET');
+		const response = await fetch1('me/token', true, 'GET');
 		return response.text();
 	});
 }

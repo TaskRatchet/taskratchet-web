@@ -1,4 +1,4 @@
-import apiFetch from './fetch1';
+import fetch1 from './fetch1';
 
 export default function register(
 	name: string,
@@ -7,7 +7,7 @@ export default function register(
 	timezone: string,
 	checkoutSessionId: string | null
 ): Promise<Response> {
-	return apiFetch('account/register', false, 'POST', {
+	return fetch1('account/register', false, 'POST', {
 		name: name,
 		email: email,
 		password: password,

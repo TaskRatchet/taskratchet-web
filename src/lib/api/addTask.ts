@@ -1,4 +1,4 @@
-import apiFetch from './fetch2';
+import fetch2 from './fetch2';
 
 // Requires that user be authenticated.
 export async function addTask(
@@ -7,7 +7,7 @@ export async function addTask(
 	cents: number,
 	recurrence?: Record<string, number>
 ): Promise<Response> {
-	const response = await apiFetch('me/tasks', true, 'POST', {
+	const response = await fetch2('me/tasks', true, 'POST', {
 		task,
 		due,
 		cents,

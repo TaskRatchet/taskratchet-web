@@ -1,4 +1,4 @@
-import apiFetch from './fetch1';
+import fetch1 from './fetch1';
 
 export interface TaskInput {
 	complete?: boolean;
@@ -7,5 +7,5 @@ export interface TaskInput {
 
 // Requires that user be authenticated.
 export function updateTask(taskId: string, data: TaskInput): Promise<Response> {
-	return apiFetch('me/tasks/' + taskId, true, 'PUT', data);
+	return fetch1('me/tasks/' + taskId, true, 'PUT', data);
 }
