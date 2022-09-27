@@ -1,5 +1,5 @@
-import { apiFetch } from './apiFetch';
+import { fetch1 } from './fetch1';
 
 export function requestResetEmail(email: string): Promise<Response> {
-	return apiFetch('account/forgot-password', false, 'POST', { email: email });
+	return fetch1('account/forgot-password', false, 'POST', { email: email });
 }

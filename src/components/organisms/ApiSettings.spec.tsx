@@ -3,18 +3,18 @@ import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import React from 'react';
 import ApiSettings from './ApiSettings';
-import { apiFetch } from '../../lib/api';
+import { fetch1 } from '../../lib/api/fetch1';
 import { vi, Mock } from 'vitest';
 import { describe, it, expect } from 'vitest';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');
-vi.mock('../../lib/api/apiFetch');
+vi.mock('../../lib/api/fetch1');
 
 describe('API settings', () => {
 	it('displays loading indicator on request click', async () => {
 		loadMe({});
-		(apiFetch as Mock).mockResolvedValue(new Response());
+		(fetch1 as Mock).mockResolvedValue(new Response());
 
 		renderWithQueryProvider(<ApiSettings />);
 

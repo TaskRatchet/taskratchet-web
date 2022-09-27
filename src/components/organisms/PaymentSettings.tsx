@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useCheckoutSession, useMe } from '../../lib/api';
+import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
+import { useMe } from '../../lib/api/useMe';
 import { LoadingButton } from '@mui/lab';
 import {
 	Alert,

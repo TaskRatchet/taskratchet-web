@@ -8,7 +8,7 @@ import {
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
-import { useGetApiToken } from '../../lib/api';
+import { useGetApiToken } from '../../lib/api/useGetApiToken';
 import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
@@ -16,7 +16,7 @@ vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');
 vi.mock('../../lib/api/getCheckoutSession');
-vi.mock('../../lib/api/apiFetch');
+vi.mock('../../lib/api/fetch1');
 vi.mock('../../lib/api/updatePassword');
 vi.mock('../../lib/api/useGetApiToken');
 

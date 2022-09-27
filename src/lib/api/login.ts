@@ -1,8 +1,8 @@
 import { publishSession } from './useSession';
-import { apiFetch } from './apiFetch';
+import { fetch1 } from './fetch1';
 
 export function login(email: string, password: string): Promise<boolean> {
-	return apiFetch('account/login', false, 'POST', {
+	return fetch1('account/login', false, 'POST', {
 		email: email,
 		password: password,
 	}).then((res: Response) => {

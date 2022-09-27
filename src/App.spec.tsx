@@ -12,7 +12,7 @@ import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
 import { __listRef } from 'react-list';
 import { waitFor, screen } from '@testing-library/react';
-import { addTask } from './lib/api';
+import { addTask } from './lib/api/addTask';
 import getQueryClient from './lib/getQueryClient';
 import { QueryClient } from 'react-query';
 import loadControlledPromise from './lib/test/loadControlledPromise';

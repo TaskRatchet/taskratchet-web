@@ -1,4 +1,4 @@
-import { apiFetch } from './apiFetch';
+import { fetch1 } from './fetch1';
 
 // Requires that user be authenticated.
 export async function editTask(
@@ -6,7 +6,7 @@ export async function editTask(
 	due: string,
 	cents: number
 ): Promise<Response> {
-	const response = await apiFetch(`me/tasks/${id}`, true, 'PUT', {
+	const response = await fetch1(`me/tasks/${id}`, true, 'PUT', {
 		due,
 		cents,
 	});
