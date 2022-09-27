@@ -14,7 +14,7 @@ import Authenticated from './components/pages/Authenticated';
 import ResetPassword from './components/pages/ResetPassword';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { isProduction } from './tr_constants';
+import { IS_PRODUCTION } from './tr_constants';
 import { QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
@@ -31,7 +31,7 @@ H.init('qe9174g1', {
 	environment: process.env.NODE_ENV,
 });
 
-window.stripe_key = isProduction
+window.stripe_key = IS_PRODUCTION
 	? 'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd'
 	: 'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp';
 

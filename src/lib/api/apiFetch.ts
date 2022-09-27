@@ -1,12 +1,12 @@
-import { isProduction, isStaging } from '../../tr_constants';
+import { IS_PRODUCTION, IS_STAGING } from '../../tr_constants';
 import { logout } from './useSession';
 
 const _get_base = () => {
-	if (isProduction) {
+	if (IS_PRODUCTION) {
 		return 'https://api.taskratchet.com/api1/';
 	}
 
-	if (isStaging) {
+	if (IS_STAGING) {
 		return 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api1/';
 	}
 

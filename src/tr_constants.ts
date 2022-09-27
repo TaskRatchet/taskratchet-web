@@ -1,3 +1,3 @@
-export const hostname = window && window.location && window.location.hostname;
-export const isProduction = hostname === 'app.taskratchet.com';
-export const isStaging = hostname.includes('deploy-preview');
+export const HOSTNAME = window && window.location && window.location.hostname;
+export const IS_PRODUCTION = HOSTNAME === 'app.taskratchet.com';
+export const IS_STAGING = HOSTNAME.includes('deploy-preview');
