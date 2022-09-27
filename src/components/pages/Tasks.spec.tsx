@@ -1,4 +1,6 @@
-import { addTask, getTasks, updateTask } from '../../lib/api';
+import { addTask } from '../../lib/api/addTask';
+import { getTasks } from '../../lib/api/getTasks';
+import { updateTask } from '../../lib/api/updateTask';
 import { toast } from 'react-toastify';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
@@ -9,14 +11,13 @@ import {
 	loadTasksApiData,
 	makeTask,
 	renderWithQueryProvider,
-	resolveWithDelay,
 	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
 import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
-import { vi, Mock } from 'vitest';
+import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { findTaskCheckbox } from '../../lib/test/queries';
 
@@ -66,7 +67,9 @@ const expectTaskSave = async ({
 		minute: 'numeric',
 	});
 
-	await waitFor(() => expect(addTask).toBeCalledWith(task, dueString, cents));
+	await waitFor(() => expect(addTask).toBeCalled());
+
+	expect(addTask).toBeCalledWith(task, dueString, cents);
 };
 
 const renderTasksPage = () => {
@@ -443,9 +446,7 @@ describe('tasks page', () => {
 
 		// Load slow query response to clobber
 
-		resolveWithDelay(vi.mocked(getTasks), 100, [
-			makeTask({ task: 'first', id: '3' }),
-		]);
+		const { resolve } = loadControlledPromise(getTasks);
 
 		// Add first task
 
@@ -467,19 +468,19 @@ describe('tasks page', () => {
 
 		// Add second task
 
-		userEvent.type(
-			getTaskInput(),
-			'{backspace}{backspace}{backspace}{backspace}{backspace}second'
-		);
+		userEvent.clear(getTaskInput());
+		userEvent.type(getTaskInput(), 'second');
 		userEvent.click(getAddButton());
 
-		// Sleep 200ms
+		await screen.findByText('second');
 
-		await new Promise((resolve) => setTimeout(resolve, 200));
+		// Resolve slow request
+
+		resolve([makeTask({ task: 'first', id: '3' })]);
 
 		// Check that first, slow response didn't clobber second, fast response
 
-		expect(screen.getByText('second')).toBeInTheDocument();
+		expect(await screen.findByText('second')).toBeInTheDocument();
 	});
 
 	it('shows all tasks', async () => {

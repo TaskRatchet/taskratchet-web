@@ -27,12 +27,11 @@ vi.mock('./components/molecules/LoadingIndicator');
 vi.mock('react-ga');
 vi.mock('react-list');
 vi.mock('./lib/getQueryClient');
+vi.mock('@mui/x-date-pickers');
 
 const mockUseSession = useSession as Mock;
 
 const openForm = () => userEvent.click(screen.getByLabelText('add'));
-
-const getDueInput = () => screen.getByLabelText('Due Date *');
 
 function renderPage() {
 	mockUseSession.mockReturnValue({
@@ -48,7 +47,6 @@ function renderPage() {
 
 describe('App', () => {
 	beforeEach(() => {
-		vi.resetAllMocks();
 		loadNowDate(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 		window.localStorage.clear();
@@ -213,7 +211,11 @@ describe('App', () => {
 
 		userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
 
-		userEvent.type(getDueInput(), '{backspace}0');
+		userEvent.type(await screen.findByLabelText('Due Date *'), '{backspace}0');
+
+		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
+			'01/08/2020'
+		);
 
 		userEvent.click(screen.getByText('Add'));
 

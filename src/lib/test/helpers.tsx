@@ -3,18 +3,16 @@ import browser from '../Browser';
 import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
-import {
-	addTask,
-	getCheckoutSession,
-	getTasks,
-	getTimezones,
-	updateTask,
-} from '../api';
-import { waitFor } from '@testing-library/dom';
+import { addTask } from '../api/addTask';
+import { getCheckoutSession } from '../api/getCheckoutSession';
+import { getTasks } from '../api/getTasks';
+import { getTimezones } from '../api/getTimezones';
+import { updateTask } from '../api/updateTask';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { vi, Mock, SpyInstance } from 'vitest';
-import { getMe, updateMe } from '../api';
+import { vi, Mock, expect } from 'vitest';
+import { getMe } from '../api/getMe';
+import { updateMe } from '../api/updateMe';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 vi.mock('../../lib/api/getTimezones');
@@ -86,6 +84,7 @@ export const loadNowTime = (time: number): void => {
 	vi.spyOn(browser, 'getNowTime').mockReturnValue(time);
 };
 
+// DEPRECATED: use `screen.getByTestId('mui-backdrop')` instead
 export function expectLoadingOverlay(
 	container: HTMLElement,
 	options: {
@@ -136,25 +135,6 @@ export function renderWithQueryProvider(
 		...view,
 		queryClient,
 	};
-}
-
-export function sleep<Type>({
-	ms = 50,
-	value = undefined,
-}: { ms?: number; value?: Type } = {}): Promise<Type | undefined> {
-	return new Promise((resolve) =>
-		setTimeout(() => {
-			resolve(value);
-		}, ms)
-	);
-}
-
-export function resolveWithDelay(
-	mock: SpyInstance,
-	ms = 50,
-	value: unknown = undefined
-): void {
-	mock.mockImplementation(() => sleep({ ms, value }));
 }
 
 export function makeTask({
@@ -221,7 +201,3 @@ export const loadTasksApiData = ({
 	loadApiResponse(updateTask as Mock);
 	loadApiResponse(addTask as Mock);
 };
-
-export async function expectNever(callable: () => unknown): Promise<void> {
-	await expect(() => waitFor(callable)).rejects.toEqual(expect.anything());
-}

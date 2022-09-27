@@ -1,9 +1,10 @@
 import { getUnloadMessage } from './getUnloadMessage';
 import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
-import { renderWithQueryProvider, resolveWithDelay } from './test/helpers';
-import { vi } from 'vitest';
-import { updateTask } from './api';
+import { renderWithQueryProvider } from './test/helpers';
+import { vi, expect, it, describe } from 'vitest';
+import { updateTask } from './api/updateTask';
+import loadControlledPromise from './test/loadControlledPromise';
 
 vi.mock('./api/updateTask');
 
@@ -15,12 +16,12 @@ describe('getUnloadMessage', () => {
 	});
 
 	it('returns message if pending task toggle', () => {
-		resolveWithDelay(vi.mocked(updateTask), 200);
+		const { reject } = loadControlledPromise(updateTask);
 
 		const Component = () => {
 			const updateTask = useUpdateTask();
 
-			updateTask(-1, { complete: true });
+			updateTask('-1', { complete: true });
 
 			return <div>Component</div>;
 		};
@@ -31,5 +32,7 @@ describe('getUnloadMessage', () => {
 			'There are changes that may be lost if you continue exiting.';
 
 		expect(getUnloadMessage(queryClient)).toEqual(expected);
+
+		reject();
 	});
 });
