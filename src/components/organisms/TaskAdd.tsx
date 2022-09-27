@@ -13,7 +13,7 @@ const getDefaultDue = () => {
 	due.setHours(23);
 	due.setMinutes(59);
 
-	return due;
+	return formatDue(due);
 };
 
 export default function TaskAdd({
@@ -48,9 +48,9 @@ export default function TaskAdd({
 
 	const onChange = ({ task, due, cents, recurrence }: Partial<TaskInput>) => {
 		if (task !== undefined) setTask(task);
-		if (due) setDue(due);
-		if (cents) setCents(cents);
-		setRecurrence(recurrence);
+		if (due !== undefined) setDue(due);
+		if (cents !== undefined) setCents(cents);
+    setRecurrence(recurrence);
 	};
 
 	function onSubmit() {

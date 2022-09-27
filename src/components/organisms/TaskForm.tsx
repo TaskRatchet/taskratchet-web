@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import DueForm from './DueForm';
 import { LoadingButton } from '@mui/lab';
+import DueForm from './DueForm';
 import { SetOptional } from 'type-fest';
 
 export type TaskFormProps = {
@@ -20,7 +21,7 @@ export type TaskFormProps = {
 	recurrence?: Record<string, number>;
 	timezone: string;
 	error: string;
-	onChange: (input: Partial<TaskInput>) => void;
+	onChange: (updates: Partial<TaskInput>) => void;
 	onSubmit: (input: SetOptional<TaskInput, 'due'>) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
@@ -60,7 +61,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					required
 					value={task}
 					onChange={(e) => {
-						onChange({ task: e.target.value, due, cents, recurrence });
+						onChange({ task: e.target.value });
 					}}
 					fullWidth
 					variant="standard"
@@ -76,10 +77,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					onChange={(e) => {
 						const number = parseInt(e.target.value);
 						onChange({
-							task,
-							due,
 							cents: isNaN(number) ? 0 : number * 100,
-							recurrence,
 						});
 					}}
 					InputProps={{
@@ -89,6 +87,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					}}
 					variant="standard"
 				/>
+
 				{due ? (
 					<DueForm
 						due={due}
@@ -99,6 +98,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				) : (
 					''
 				)}
+
 				<FormControlLabel
 					control={
 						<Checkbox
@@ -139,6 +139,13 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					</Button>
 
 					<LoadingButton
+						onClick={() =>
+							onSubmit({
+								task,
+								cents,
+								due,
+							})
+						}
 						loading={isLoading}
 						variant="contained"
 						size={'small'}

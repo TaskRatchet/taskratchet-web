@@ -51,3 +51,9 @@ type TaskInput = {
 	cents: number;
 	recurrence?: Record<string, number>;
 };
+
+type TaskInput = {
+	task: string;
+	due: string;
+	cents: number;
+};

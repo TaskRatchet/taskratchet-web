@@ -33,8 +33,6 @@ const mockUseSession = useSession as Mock;
 
 const openForm = () => userEvent.click(screen.getByLabelText('add'));
 
-const getDueInput = () => screen.getByLabelText('Due Date *');
-
 function renderPage() {
 	mockUseSession.mockReturnValue({
 		email: 'the_email',
@@ -214,7 +212,11 @@ describe('App', () => {
 
 		userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
 
-		userEvent.type(getDueInput(), '{backspace}0');
+		userEvent.type(await screen.findByLabelText('Due Date *'), '{backspace}0');
+
+		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
+			'01/08/2020'
+		);
 
 		expect(getDueInput()).toHaveValue('01/08/2020');
 

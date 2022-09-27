@@ -43,19 +43,15 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 describe('TaskForm', () => {
 	it('calls onChange when task modified', async () => {
 		const onChange = vi.fn();
-		const due = '1/1/2022, 11:59 PM';
+		const due = 'the_due';
 
 		renderComponent({ onChange, due });
 
-		userEvent.type(await screen.findByText(/Task/), 'a');
+		userEvent.type(screen.getByLabelText('Task *'), 'a');
 
-		expect(onChange).toBeCalledWith(
-			expect.objectContaining({
-				task: 'a',
-				due,
-				cents: 500,
-			})
-		);
+		expect(onChange).toBeCalledWith({
+			task: 'a',
+		});
 	});
 
 	it('calls onChange when due modified', async () => {
@@ -78,14 +74,12 @@ describe('TaskForm', () => {
 
 		userEvent.type(screen.getByLabelText('Stakes *'), '1');
 
-		expect(onChange).toBeCalledWith(
-			expect.objectContaining({
-				cents: 5100,
-			})
-		);
+		expect(onChange).toBeCalledWith({
+			cents: 5100,
+		});
 	});
 
-	it('preserves time when editing date', () => {
+	it('preserves time when editing date', async () => {
 		const onChange = vi.fn();
 
 		renderComponent({
@@ -93,27 +87,31 @@ describe('TaskForm', () => {
 			cents: 500,
 			onChange,
 		});
-
-		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}2{enter}');
-
-		expect(onChange).toBeCalledWith(
-			expect.objectContaining({
-				due: '1/1/2022, 11:59 PM',
-			})
+    
+		userEvent.type(
+			await screen.findByLabelText('Due Date *'),
+			'{backspace}2{enter}'
 		);
+
+		expect(onChange).toBeCalledWith({
+			due: '1/1/2022, 11:59 PM',
+		});
 	});
 
-	it('preserves date when editing time', () => {
+	it('preserves date when editing time', async () => {
 		const onChange = vi.fn();
 
 		renderComponent({
 			task: 'the_task',
-			due: '1/1/2020 11:59 PM',
+			due: '1/1/2020, 11:59 PM',
 			cents: 500,
 			onChange,
 		});
 
-		userEvent.type(screen.getByLabelText('Due Time *'), '{backspace}M{enter}');
+		userEvent.type(
+			await screen.findByLabelText('Due Time *'),
+			'{backspace}M{enter}'
+		);
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({

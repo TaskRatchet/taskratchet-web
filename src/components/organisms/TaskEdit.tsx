@@ -19,7 +19,7 @@ const TaskEdit = ({
 	const editTask = useEditTask();
 
 	const onChange = ({ due, cents }: Partial<TaskInput>) => {
-		due && setDue(due);
+		if (due !== undefined) setDue(due);
 		if (cents !== undefined) setCents(cents);
 	};
 
@@ -35,7 +35,7 @@ const TaskEdit = ({
 			setError('Cannot postpone due date');
 			return;
 		}
-		if (!task.id) {
+		if (task.id === undefined) {
 			setError('Failed to edit task');
 			return;
 		}
