@@ -1,5 +1,6 @@
 import { makeTask } from './test/helpers';
 import { sortTasks } from './sortTasks';
+import { expect, it, describe } from 'vitest';
 
 describe('sortTasks', () => {
 	it('has secondary sort by stakes', () => {

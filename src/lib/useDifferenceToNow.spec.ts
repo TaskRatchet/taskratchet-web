@@ -1,5 +1,6 @@
 import useDifferenceToNow from './useDifferenceToNow';
 import { loadNowTime, makeTask } from './test/helpers';
+import { expect, it, describe } from 'vitest';
 
 describe('useDifferenceToNow', () => {
 	it('handles future due', () => {

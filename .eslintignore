@@ -1,3 +1,4 @@
 /public
 /src/serviceWorker.js
 .eslintrc.js
+/dist

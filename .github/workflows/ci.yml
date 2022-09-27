@@ -51,6 +51,20 @@ jobs:
         run: pnpm install
       - name: Scan for outdated dependencies
         run: pnpm outdated
+  unused:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - name: Use Node.js 16.15.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.15.0
+          cache: 'pnpm'
+      - name: Scan for unused dependencies
+        run: pnpm dlx depcheck
   lint:
     runs-on: ubuntu-latest
     steps:
@@ -81,3 +95,25 @@ jobs:
           cache: 'pnpm'
       - name: Run Prettier
         run: pnpm dlx prettier --check .
+  bundle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7
+      - name: Use Node.js 16.15.0
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16.15.0
+          cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build
+        run: pnpm run build
+      - name: Check bundle size
+        env:
+          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CI_COMMIT_SHA: ${{ github.sha }}
+          CI_BRANCH: ${{ github.ref }}
+        run: pnpm dlx bundlewatch

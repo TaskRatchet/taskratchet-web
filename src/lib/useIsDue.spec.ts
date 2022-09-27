@@ -1,5 +1,6 @@
 import useIsDue from './useIsDue';
 import { loadNowTime, makeTask } from './test/helpers';
+import { expect, it, describe } from 'vitest';
 
 describe('useIsDue', () => {
 	it('returns is due', () => {
