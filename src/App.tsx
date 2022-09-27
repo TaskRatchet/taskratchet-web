@@ -147,10 +147,12 @@ export function App(): JSX.Element {
 
 export default function AppWithRouter(): JSX.Element {
 	return (
-		<ErrorBoundary>
-			<Router>
-				<App />
-			</Router>
-		</ErrorBoundary>
+		<React.StrictMode>
+			<ErrorBoundary>
+				<Router>
+					<App />
+				</Router>
+			</ErrorBoundary>
+		</React.StrictMode>
 	);
 }
