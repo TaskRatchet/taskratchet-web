@@ -9,7 +9,6 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material';
-import DueForm from './DueForm';
 import { LoadingButton } from '@mui/lab';
 import DueForm from './DueForm';
 import { SetOptional } from 'type-fest';
@@ -139,13 +138,6 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					</Button>
 
 					<LoadingButton
-						onClick={() =>
-							onSubmit({
-								task,
-								cents,
-								due,
-							})
-						}
 						loading={isLoading}
 						variant="contained"
 						size={'small'}

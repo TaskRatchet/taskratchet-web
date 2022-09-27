@@ -218,7 +218,9 @@ describe('App', () => {
 			'01/08/2020'
 		);
 
-		expect(getDueInput()).toHaveValue('01/08/2020');
+		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
+			'01/08/2020'
+		);
 
 		userEvent.click(await screen.findByText('Add'));
 

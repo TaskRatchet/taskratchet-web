@@ -41,7 +41,7 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 };
 
 describe('TaskForm', () => {
-	it('calls onChange when task modified', async () => {
+	it('calls onChange when task modified', () => {
 		const onChange = vi.fn();
 		const due = 'the_due';
 
@@ -87,7 +87,7 @@ describe('TaskForm', () => {
 			cents: 500,
 			onChange,
 		});
-    
+
 		userEvent.type(
 			await screen.findByLabelText('Due Date *'),
 			'{backspace}2{enter}'

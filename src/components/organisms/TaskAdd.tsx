@@ -32,11 +32,11 @@ export default function TaskAdd({
 	const [task, setTask] = useState<string>(baseTask?.task || '');
 	const [due, setDue] = useState<string>(() => {
 		if (!baseTask) {
-			return formatDue(getDefaultDue());
+			return getDefaultDue();
 		}
 
 		if (new Date(baseTask.due) < browser.getNowDate()) {
-			return formatDue(getDefaultDue());
+			return getDefaultDue();
 		}
 
 		return baseTask.due;
@@ -50,7 +50,7 @@ export default function TaskAdd({
 		if (task !== undefined) setTask(task);
 		if (due !== undefined) setDue(due);
 		if (cents !== undefined) setCents(cents);
-    setRecurrence(recurrence);
+		setRecurrence(recurrence);
 	};
 
 	function onSubmit() {
