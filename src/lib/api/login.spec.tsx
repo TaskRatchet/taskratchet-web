@@ -1,7 +1,8 @@
-import { login } from './LegacyApi';
+import { login } from './login';
 import { waitFor } from '@testing-library/react';
+import { expect, it, describe } from 'vitest';
 
-describe('LegacyApi', () => {
+describe('login', () => {
 	it('stores session token on successful login', async () => {
 		fetchMock.mockResponse('token');
 

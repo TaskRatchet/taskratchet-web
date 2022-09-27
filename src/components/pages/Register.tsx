@@ -1,6 +1,7 @@
 import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
-import { useCheckoutSession, useTimezones } from '../../lib/api';
+import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
+import { useTimezones } from '../../lib/api/useTimezones';
 import Input from '../molecules/Input';
 import Field from '../molecules/Field';
 import { Box, Button } from '@mui/material';

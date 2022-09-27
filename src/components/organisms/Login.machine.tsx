@@ -10,7 +10,13 @@ import {
 	StateMachine,
 	StateSchema,
 } from 'xstate';
-import * as live_api from '../../lib/LegacyApi';
+import { login } from '../../lib/api/login';
+import { requestResetEmail } from '../../lib/api/requestResetEmail';
+
+const live_api = {
+	login,
+	requestResetEmail,
+};
 
 // https://xstate.js.org/viz/
 
