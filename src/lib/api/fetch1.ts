@@ -7,7 +7,7 @@ const _trim = (s: string, c: string) => {
 	return s.replace(new RegExp('^[' + c + ']+|[' + c + ']+$', 'g'), '');
 };
 
-export async function fetch1(
+export default async function fetch1(
 	route: string,
 	protected_ = false,
 	method = 'GET',

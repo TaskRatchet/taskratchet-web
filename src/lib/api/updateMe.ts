@@ -1,4 +1,4 @@
-import { fetch1 } from './fetch1';
+import fetch1 from './fetch1';
 import set from 'lodash/set';
 import get from 'lodash/get';
 

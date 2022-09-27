@@ -1,5 +1,5 @@
 import { useMutation } from 'react-query';
-import { fetch1 } from './fetch1';
+import fetch1 from './fetch1';
 import { UseMutationResult } from 'react-query';
 
 export function useGetApiToken(): UseMutationResult<

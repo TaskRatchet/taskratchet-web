@@ -1,4 +1,4 @@
-import { fetch1 } from './fetch1';
+import fetch1 from './fetch1';
 
 // Requires that user be authenticated.
 export async function addTask(

@@ -1,5 +1,5 @@
 import { updateMe } from './updateMe';
-import { fetch1 } from './fetch1';
+import fetch1 from './fetch1';
 import set from 'lodash/set';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
