@@ -1,0 +1,15 @@
+on:
+  push:
+    branches:
+      - 'master'
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Post to Beeminder
+        run: |
+          curl -X POST https://www.beeminder.com/api/v1/users/${{ secrets.BEEMINDER_USERNAME }}/goals/merge/datapoints.json \
+            -d auth_token=${{ secrets.BEEMINDER_AUTH_TOKEN }} \
+            -d requestid=${{ github.sha }} \
+            -d value=1 \
+            -d comment="${{ github.event.head_commit.message }} (${{ github.repository }}:${{ github.sha }})"
