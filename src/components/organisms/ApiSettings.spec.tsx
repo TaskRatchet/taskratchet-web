@@ -5,6 +5,7 @@ import React from 'react';
 import ApiSettings from './ApiSettings';
 import { apiFetch } from '../../lib/api';
 import { vi, Mock } from 'vitest';
+import { describe, it, expect } from 'vitest';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');

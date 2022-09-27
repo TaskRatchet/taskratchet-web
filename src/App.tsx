@@ -23,6 +23,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
 import getQueryClient from './lib/getQueryClient';
+import { ErrorBoundary } from '@highlight-run/react';
 
 toast.configure();
 
@@ -146,8 +147,10 @@ export function App(): JSX.Element {
 
 export default function AppWithRouter(): JSX.Element {
 	return (
-		<Router>
-			<App />
-		</Router>
+		<ErrorBoundary>
+			<Router>
+				<App />
+			</Router>
+		</ErrorBoundary>
 	);
 }

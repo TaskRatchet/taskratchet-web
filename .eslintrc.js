@@ -6,9 +6,9 @@ module.exports = {
 	extends: [
 		'eslint:recommended',
 		'plugin:react/recommended',
+		'plugin:react-hooks/recommended',
 		'plugin:@typescript-eslint/recommended',
 		'plugin:@typescript-eslint/recommended-requiring-type-checking',
-		'plugin:testing-library/react',
 	],
 	parser: '@typescript-eslint/parser',
 	parserOptions: {
@@ -19,8 +19,36 @@ module.exports = {
 		sourceType: 'module',
 		project: './tsconfig.json',
 	},
-	plugins: ['react', '@typescript-eslint'],
-	rules: {},
+	plugins: ['react', '@typescript-eslint', 'regex', 'lodash'],
+	rules: {
+		'lodash/import-scope': 'error',
+		'regex/required': [
+			'error',
+			[
+				{
+					regex: 'describe.+from.+vitest',
+					message: 'Import `describe` explicitly.',
+					files: {
+						inspect: '\\.(test|spec)\\.tsx?$',
+					},
+				},
+				{
+					regex: 'it.+from.+vitest',
+					message: 'Import `it` explicitly.',
+					files: {
+						inspect: '\\.(test|spec)\\.tsx?$',
+					},
+				},
+				{
+					regex: 'expect.+from.+vitest',
+					message: 'Import `expect` explicitly.',
+					files: {
+						inspect: '\\.(test|spec)\\.tsx?$',
+					},
+				},
+			],
+		],
+	},
 	settings: {
 		react: {
 			version: 'detect',
@@ -36,6 +64,7 @@ module.exports = {
 				'global-setup.ts',
 				'src/lib/test/**/*',
 			],
+			extends: ['plugin:testing-library/react'],
 			rules: {
 				'@typescript-eslint/no-explicit-any': 'off',
 				'@typescript-eslint/no-unsafe-return': 'off',

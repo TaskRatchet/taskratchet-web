@@ -13,3 +13,5 @@ jobs:
           errorMessage: ':no_entry: PR has more than **{allowed} additions**. Split it into smaller PRs.'
           warningSize: 300
           warningMessage: ':warning: PR has more than **{allowed} additions**. Consider splitting it into smaller PRs.'
+          excludePaths: |
+            pnpm-lock.yaml
