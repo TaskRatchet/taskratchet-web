@@ -63,6 +63,8 @@ jobs:
         with:
           node-version: 16.15.0
           cache: 'pnpm'
+      - name: Install dependencies
+        run: pnpm install
       - name: Scan for unused dependencies
         run: pnpm dlx depcheck
   lint:

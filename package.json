@@ -13,7 +13,8 @@
 		"preview": "vite preview",
 		"test": "vitest",
 		"test:ui": "vitest --ui",
-		"visualize": "pnpm run build && open ./stats.html"
+		"visualize": "pnpm run build && open ./stats.html",
+		"unused": "pnpm dlx depcheck"
 	},
 	"bundlewatch": {
 		"files": [
