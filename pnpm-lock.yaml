@@ -26,7 +26,7 @@ specifiers:
   '@vitejs/plugin-react': 1.1.1
   '@vitest/ui': ^0.22.1
   chrono-node: ^2.3.9
-  date-fns: ^2.29.1
+  dayjs: ^1.11.5
   eslint: ^8.21.0
   eslint-plugin-lodash: ^7.4.0
   eslint-plugin-react: ^7.30.1
@@ -61,9 +61,9 @@ dependencies:
   '@mui/icons-material': 5.8.4_lpwtull7alaet2ki5chrgn24nq
   '@mui/lab': 5.0.0-alpha.94_ygx43i5kwsiw3fruq7l3mbwaom
   '@mui/material': 5.10.0_5qzccxnbu7qcjzagkp6cvtswhu
-  '@mui/x-date-pickers': 5.0.0-beta.5_24kis2b3dykidesvpf5zz27mcu
+  '@mui/x-date-pickers': 5.0.0-beta.5_xbtkrhckdiyivrdwtf6557ntce
   chrono-node: 2.3.9
-  date-fns: 2.29.1
+  dayjs: 1.11.5
   highlight.run: 4.3.3_rollup@2.77.3
   humanize-duration: 3.27.2
   lodash: 4.17.21
@@ -377,7 +377,7 @@ packages:
     resolution: {integrity: sha512-3CRvQUEK7aF87NUOwcTtmJ2Rc1kN0D4jFQUfRoanuAnE4o5HzHx4E2YenjaKjSPWeZYiWG6ZhDomx5hp1AaCJA==}
     dev: false
 
-  /@date-io/date-fns/2.15.0_date-fns@2.29.1:
+  /@date-io/date-fns/2.15.0:
     resolution: {integrity: sha512-hkVeLm0jijHS2F9YVQcf0LSlD55w9xPvvIfuxDE0XWNXOTcRAAhqw2aqOxyeGbmHxc5U4HqyPZaqs9tfeTsomQ==}
     peerDependencies:
       date-fns: ^2.0.0
@@ -386,10 +386,9 @@ packages:
         optional: true
     dependencies:
       '@date-io/core': 2.15.0
-      date-fns: 2.29.1
     dev: false
 
-  /@date-io/dayjs/2.15.0:
+  /@date-io/dayjs/2.15.0_dayjs@1.11.5:
     resolution: {integrity: sha512-wgYzwaXr9KxkHNYxrOb1t8fYLfAdjIf0Q86qdVCwANObcvyGcPBm0uFtpPK7ApeE4DJUlbuG0IX75TtO+uITwQ==}
     peerDependencies:
       dayjs: ^1.8.17
@@ -398,6 +397,7 @@ packages:
         optional: true
     dependencies:
       '@date-io/core': 2.15.0
+      dayjs: 1.11.5
     dev: false
 
   /@date-io/luxon/2.15.0:
@@ -852,7 +852,7 @@ packages:
       react-is: 18.2.0
     dev: false
 
-  /@mui/x-date-pickers/5.0.0-beta.5_24kis2b3dykidesvpf5zz27mcu:
+  /@mui/x-date-pickers/5.0.0-beta.5_xbtkrhckdiyivrdwtf6557ntce:
     resolution: {integrity: sha512-pCVNSHuAcndEJACVS/v2AKBSXemqmhzVvOdsPS9hOIOzGSYawrbCEuhI9+o0/NR/pFLz+JcIYrnVV/Zx8f2ZEw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -882,8 +882,8 @@ packages:
     dependencies:
       '@babel/runtime': 7.18.9
       '@date-io/core': 2.15.0
-      '@date-io/date-fns': 2.15.0_date-fns@2.29.1
-      '@date-io/dayjs': 2.15.0
+      '@date-io/date-fns': 2.15.0
+      '@date-io/dayjs': 2.15.0_dayjs@1.11.5
       '@date-io/luxon': 2.15.0
       '@date-io/moment': 2.15.0
       '@emotion/react': 11.10.0_xoehpqdwuur6opriibtqbjfmpi
@@ -893,7 +893,7 @@ packages:
       '@mui/utils': 5.9.3_react@18.2.0
       '@types/react-transition-group': 4.4.5
       clsx: 1.2.1
-      date-fns: 2.29.1
+      dayjs: 1.11.5
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -1754,11 +1754,6 @@ packages:
       whatwg-mimetype: 3.0.0
       whatwg-url: 11.0.0
     dev: true
-
-  /date-fns/2.29.1:
-    resolution: {integrity: sha512-dlLD5rKaKxpFdnjrs+5azHDFOPEu4ANy/LTh04A1DTzMM7qoajmKCBc8pkKRFT41CNzw+4gQh79X5C+Jq27HAw==}
-    engines: {node: '>=0.11'}
-    dev: false
 
   /dayjs/1.11.5:
     resolution: {integrity: sha512-CAdX5Q3YW3Gclyo5Vpqkgpj8fSdLQcRuzfX6mC6Phy0nfJ0eGYOeS7m4mt2plDWLAtA4TqTakvbboHvUxfe4iA==}

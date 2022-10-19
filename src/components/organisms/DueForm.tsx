@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { TextField } from '@mui/material';
 import formatDue from '../../lib/formatDue';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 type DueFormProps = {
@@ -18,7 +18,7 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 		return new Date(due);
 	}, [due]);
 	return (
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<DatePicker
 				label="Due Date"
 				value={dueDate}
