@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import RegisterForm from './components/pages/Register';
-import Tasks from './components/pages/Tasks';
 import ReactGA from 'react-ga4';
 import {
 	BrowserRouter as Router,
@@ -9,7 +8,6 @@ import {
 	Route,
 	useLocation,
 } from 'react-router-dom';
-import Account from './components/pages/Account';
 import Authenticated from './components/pages/Authenticated';
 import ResetPassword from './components/pages/ResetPassword';
 import { toast } from 'react-toastify';
@@ -47,6 +45,9 @@ function usePageViews(): void {
 		ReactGA.pageview(location.pathname);
 	}, [location]);
 }
+
+const LazyAccount = React.lazy(() => import('./components/pages/Account'));
+const LazyTasks = React.lazy(() => import('./components/pages/Tasks'));
 
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
@@ -122,7 +123,7 @@ export function App(): JSX.Element {
 								path={'/account'}
 								element={
 									<Authenticated>
-										<Account />
+										<LazyAccount />
 									</Authenticated>
 								}
 							/>
@@ -133,7 +134,7 @@ export function App(): JSX.Element {
 								path={'/'}
 								element={
 									<Authenticated>
-										<Tasks lastToday={lastToday} />
+										<LazyTasks lastToday={lastToday} />
 									</Authenticated>
 								}
 							/>
