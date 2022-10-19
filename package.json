@@ -48,7 +48,6 @@
 		"dayjs": "^1.11.5",
 		"highlight.run": "^4.3.3",
 		"humanize-duration": "^3.27.2",
-		"lodash": "^4.17.21",
 		"query-string": "^6.14.1",
 		"react": "^18.2.0",
 		"react-beforeunload": "^2.5.3",

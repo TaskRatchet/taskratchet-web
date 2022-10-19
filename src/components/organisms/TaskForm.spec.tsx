@@ -2,8 +2,6 @@ import TaskForm from './TaskForm';
 import React from 'react';
 import { render, RenderResult, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { vi } from 'vitest';
 import { describe, it, expect } from 'vitest';
 
@@ -44,20 +42,18 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 	} = props;
 
 	const view: RenderResult = render(
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<TaskForm
-				{...{
-					task,
-					due,
-					cents,
-					timezone,
-					error,
-					onChange,
-					onSubmit,
-					isLoading,
-				}}
-			/>
-		</LocalizationProvider>
+		<TaskForm
+			{...{
+				task,
+				due,
+				cents,
+				timezone,
+				error,
+				onChange,
+				onSubmit,
+				isLoading,
+			}}
+		/>
 	);
 
 	return {
