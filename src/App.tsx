@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import './App.css';
 import RegisterForm from './components/pages/Register';
 import Tasks from './components/pages/Tasks';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
 import {
 	BrowserRouter as Router,
 	Routes,
@@ -35,10 +35,16 @@ window.stripe_key = IS_PRODUCTION
 	? 'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd'
 	: 'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp';
 
-ReactGA.initialize('G-Y074NE79ML');
+ReactGA.initialize('G-Y074NE79ML', {
+	gtagOptions: {
+		debug_mode: !IS_PRODUCTION,
+	},
+});
 
 function usePageViews(): void {
 	const location = useLocation();
+
+	console.log('location', location);
 
 	React.useEffect(() => {
 		ReactGA.set({ page: location.pathname });
