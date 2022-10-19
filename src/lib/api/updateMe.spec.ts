@@ -1,6 +1,5 @@
 import { updateMe } from './updateMe';
 import fetch1 from './fetch1';
-import set from 'lodash/set';
 import { describe, it, expect, beforeEach, vi } from 'vitest';
 
 vi.mock('./fetch1');
@@ -15,11 +14,13 @@ describe('updateMe', () => {
 			beeminder_token: 'the_token',
 		});
 
-		const expectedPayload = set(
-			{},
-			'integrations.beeminder.token',
-			'the_token'
-		);
+		const expectedPayload = {
+			integrations: {
+				beeminder: {
+					token: 'the_token',
+				},
+			},
+		};
 
 		expect(fetch1).toBeCalledWith('me', true, 'PUT', expectedPayload);
 	});
@@ -29,7 +30,13 @@ describe('updateMe', () => {
 			beeminder_user: 'the_user',
 		});
 
-		const expectedPayload = set({}, 'integrations.beeminder.user', 'the_user');
+		const expectedPayload = {
+			integrations: {
+				beeminder: {
+					user: 'the_user',
+				},
+			},
+		};
 
 		expect(fetch1).toBeCalledWith('me', true, 'PUT', expectedPayload);
 	});
@@ -39,11 +46,13 @@ describe('updateMe', () => {
 			beeminder_goal_new_tasks: 'the_goal',
 		});
 
-		const expectedPayload = set(
-			{},
-			'integrations.beeminder.goal_new_tasks',
-			'the_goal'
-		);
+		const expectedPayload = {
+			integrations: {
+				beeminder: {
+					goal_new_tasks: 'the_goal',
+				},
+			},
+		};
 
 		expect(fetch1).toBeCalledWith('me', true, 'PUT', expectedPayload);
 	});

@@ -11,4 +11,14 @@ export default defineConfig({
 		mockReset: true,
 		reporters: 'dot',
 	},
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					dom: ['react-dom'],
+					material: ['@mui/material'],
+				},
+			},
+		},
+	},
 });

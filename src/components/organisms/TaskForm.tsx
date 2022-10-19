@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import {
 	Alert,
 	Box,
@@ -8,8 +8,9 @@ import {
 	TextField,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import DueForm from './DueForm';
 import { SetOptional } from 'type-fest';
+
+const LazyDueForm = React.lazy(() => import('./DueForm'));
 
 interface TaskFormProps {
 	task: string;
@@ -82,12 +83,14 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				/>
 
 				{due ? (
-					<DueForm
-						due={due}
-						onChange={onChange}
-						minDue={minDue}
-						maxDue={maxDue}
-					/>
+					<Suspense fallback="loading">
+						<LazyDueForm
+							due={due}
+							onChange={onChange}
+							minDue={minDue}
+							maxDue={maxDue}
+						/>
+					</Suspense>
 				) : (
 					''
 				)}

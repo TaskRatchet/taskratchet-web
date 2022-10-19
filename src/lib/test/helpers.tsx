@@ -8,8 +8,6 @@ import { getCheckoutSession } from '../api/getCheckoutSession';
 import { getTasks } from '../api/getTasks';
 import { getTimezones } from '../api/getTimezones';
 import { updateTask } from '../api/updateTask';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { vi, Mock, expect } from 'vitest';
 import { getMe } from '../api/getMe';
 import { updateMe } from '../api/updateMe';
@@ -124,11 +122,9 @@ export function renderWithQueryProvider(
 	});
 
 	const view = render(
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
-			<ThemeProvider theme={theme}>
-				<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-			</ThemeProvider>
-		</LocalizationProvider>
+		<ThemeProvider theme={theme}>
+			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
+		</ThemeProvider>
 	);
 
 	return {

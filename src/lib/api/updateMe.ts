@@ -1,6 +1,5 @@
+import pipeMap from '../pipeMap';
 import fetch1 from './fetch1';
-import set from 'lodash/set';
-import get from 'lodash/get';
 
 export interface MeInput {
 	name?: string | null;
@@ -12,29 +11,8 @@ export interface MeInput {
 	checkout_session_id?: string | null;
 }
 
-const pipe = (
-	input: MeInput,
-	inputPath: string,
-	output: Record<string, unknown>,
-	outputPath: string
-) => {
-	const value: unknown = get(input, inputPath);
-
-	if (value) {
-		set(output, outputPath, value);
-	}
-
-	return output;
-};
-
-const pipeMap = (input: MeInput, pathPairs: string[][]) => {
-	return pathPairs.reduce((prev: Record<string, unknown>, pair: string[]) => {
-		return pipe(input, pair[0], prev, pair[1]);
-	}, {});
-};
-
 export async function updateMe(input: MeInput): Promise<Response> {
-	const payload = pipeMap(input, [
+	const payload = pipeMap(input as Record<string, unknown>, [
 		['beeminder_token', 'integrations.beeminder.token'],
 		['beeminder_user', 'integrations.beeminder.user'],
 		['beeminder_goal_new_tasks', 'integrations.beeminder.goal_new_tasks'],

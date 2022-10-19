@@ -1,8 +1,6 @@
 import { useCallback, useMemo } from 'react';
 import { usePref } from './usePref';
 import { getCookie } from './getCookie';
-import pick from 'lodash/pick';
-import defaults from 'lodash/defaults';
 
 const DEFAULT_FILTERS = {
 	pending: true,
@@ -23,7 +21,14 @@ const getDefaultFilters = (): { [key in Status]: boolean } => {
 	if (typeof data !== 'object') return DEFAULT_FILTERS;
 	if (data === null) return DEFAULT_FILTERS;
 
-	return defaults(pick(data, Object.keys(DEFAULT_FILTERS)), DEFAULT_FILTERS);
+	return {
+		pending:
+			'pending' in data ? !!(data as { pending: unknown }).pending : true,
+		complete:
+			'complete' in data ? !!(data as { complete: unknown }).complete : true,
+		expired:
+			'expired' in data ? !!(data as { expired: unknown }).expired : true,
+	};
 };
 
 export default function useFilters(): {
