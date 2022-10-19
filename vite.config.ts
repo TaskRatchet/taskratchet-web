@@ -15,6 +15,7 @@ export default defineConfig({
 		rollupOptions: {
 			output: {
 				manualChunks: {
+					dom: ['react-dom'],
 					material: ['@mui/material'],
 				},
 			},
