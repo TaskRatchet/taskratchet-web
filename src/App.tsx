@@ -20,6 +20,8 @@ import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
 import getQueryClient from './lib/getQueryClient';
 import { ErrorBoundary } from '@highlight-run/react';
+import Account from './components/pages/Account';
+import Tasks from './components/pages/Tasks';
 
 toast.configure();
 
@@ -45,9 +47,6 @@ function usePageViews(): void {
 		ReactGA.pageview(location.pathname);
 	}, [location]);
 }
-
-const LazyAccount = React.lazy(() => import('./components/pages/Account'));
-const LazyTasks = React.lazy(() => import('./components/pages/Tasks'));
 
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
@@ -123,7 +122,7 @@ export function App(): JSX.Element {
 								path={'/account'}
 								element={
 									<Authenticated>
-										<LazyAccount />
+										<Account />
 									</Authenticated>
 								}
 							/>
@@ -134,7 +133,7 @@ export function App(): JSX.Element {
 								path={'/'}
 								element={
 									<Authenticated>
-										<LazyTasks lastToday={lastToday} />
+										<Tasks lastToday={lastToday} />
 									</Authenticated>
 								}
 							/>
