@@ -25,7 +25,6 @@ specifiers:
   '@typescript-eslint/parser': ^5.33.0
   '@vitejs/plugin-react': 1.1.1
   '@vitest/ui': ^0.22.1
-  chrono-node: ^2.3.9
   dayjs: ^1.11.5
   eslint: ^8.21.0
   eslint-plugin-lodash: ^7.4.0
@@ -62,7 +61,6 @@ dependencies:
   '@mui/lab': 5.0.0-alpha.94_ygx43i5kwsiw3fruq7l3mbwaom
   '@mui/material': 5.10.0_5qzccxnbu7qcjzagkp6cvtswhu
   '@mui/x-date-pickers': 5.0.0-beta.5_xbtkrhckdiyivrdwtf6557ntce
-  chrono-node: 2.3.9
   dayjs: 1.11.5
   highlight.run: 4.3.3_rollup@2.77.3
   humanize-duration: 3.27.2
@@ -1596,12 +1594,6 @@ packages:
   /check-error/1.0.2:
     resolution: {integrity: sha512-BrgHpW9NURQgzoNyjfq0Wu6VFO6D7IZEmJNdtgNqpzGG8RuNFHt2jQxWlAs4HMe119chBnv+34syEZtc6IhLtA==}
     dev: true
-
-  /chrono-node/2.3.9:
-    resolution: {integrity: sha512-Qg6zmsGwaWzWiMKapr060sL6zgfBIkTxnyCTd7KGQ0YDTYg0VvBfqRRBuaOkGjiVGdKPM/cp4QQTLcpUhZQxXg==}
-    dependencies:
-      dayjs: 1.11.5
-    dev: false
 
   /classnames/2.3.1:
     resolution: {integrity: sha512-OlQdbZ7gLfGarSqxesMesDa5uz7KFbID8Kpq/SxIoNGDqY8lSYs0D+hhtBXhcdB3rcbXArFr7vlHheLk1voeNA==}

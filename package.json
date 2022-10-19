@@ -45,7 +45,6 @@
 		"@mui/lab": "^5.0.0-alpha.94",
 		"@mui/material": "^5.10.0",
 		"@mui/x-date-pickers": "^5.0.0-beta.5",
-		"chrono-node": "^2.3.9",
 		"dayjs": "^1.11.5",
 		"highlight.run": "^4.3.3",
 		"humanize-duration": "^3.27.2",
