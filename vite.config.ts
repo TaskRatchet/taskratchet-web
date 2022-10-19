@@ -11,4 +11,13 @@ export default defineConfig({
 		mockReset: true,
 		reporters: 'dot',
 	},
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					material: ['@mui/material'],
+				},
+			},
+		},
+	},
 });
