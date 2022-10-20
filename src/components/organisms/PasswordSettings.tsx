@@ -54,7 +54,7 @@ export default function PasswordSettings(): JSX.Element {
 					helperText={shouldShowMismatch && mismatch && "Passwords don't match"}
 				/>
 
-				<LoadingButton loading={isLoading} type={'submit'}>
+				<LoadingButton loading={isLoading} type={'submit'} variant="outlined">
 					Save
 				</LoadingButton>
 			</Stack>

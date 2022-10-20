@@ -51,6 +51,7 @@ export default function ApiSettings(): JSX.Element {
 			<LoadingButton
 				loading={getApiToken.isLoading}
 				onClick={() => getApiToken.mutate()}
+				variant="outlined"
 			>
 				Request API token
 			</LoadingButton>

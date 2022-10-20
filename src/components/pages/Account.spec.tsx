@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
 import {
@@ -9,7 +9,6 @@ import {
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
-import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../../lib/api/getTimezones');
@@ -40,7 +39,9 @@ describe('account page', () => {
 
 		renderWithQueryProvider(<Account />);
 
-		await screen.findByText('Enable Beeminder integration');
+		expect(
+			await screen.findByText('Enable Beeminder integration')
+		).toBeInTheDocument();
 	});
 
 	it('loads name', async () => {
@@ -79,31 +80,6 @@ describe('account page', () => {
 		renderWithQueryProvider(<Account />);
 
 		await screen.findByDisplayValue('America/Indiana/Knox');
-	});
-
-	it('loads payment methods', async () => {
-		loadMe({
-			json: {
-				cards: [
-					{
-						brand: 'visa',
-						last4: '1111',
-					},
-				],
-			},
-		});
-
-		renderWithQueryProvider(<Account />);
-
-		await screen.findByText('visa ending with 1111');
-	});
-
-	it('gets checkout session only once', async () => {
-		const { queryClient } = renderWithQueryProvider(<Account />);
-
-		await queryClient.invalidateQueries('checkoutSession');
-
-		await waitFor(() => expect(getCheckoutSession).toBeCalledTimes(1));
 	});
 
 	it('has token request button', async () => {
