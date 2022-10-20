@@ -7,7 +7,7 @@ import {
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
 import { updateTask } from '../../lib/api/updateTask';
-import { waitFor } from '@testing-library/dom';
+import { waitFor } from '@testing-library/react';
 import browser from '../../lib/Browser';
 import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';

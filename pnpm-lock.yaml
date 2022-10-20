@@ -31,7 +31,7 @@ specifiers:
   eslint-plugin-react-hooks: ^4.6.0
   eslint-plugin-regex: ^1.10.0
   eslint-plugin-testing-library: ^5.8.0
-  highlight.run: ^4.5.4
+  highlight.run: 4.4.1
   humanize-duration: ^3.27.3
   jsdom: ^20.0.1
   prettier: 2.4.1
@@ -60,7 +60,7 @@ dependencies:
   '@mui/material': 5.10.10_zf7ckydgka3owh777vmiilym5q
   '@mui/x-date-pickers': 5.0.5_yqwxdv2wo67skjg5a2i3da6ueu
   dayjs: 1.11.5
-  highlight.run: 4.5.4
+  highlight.run: 4.4.1
   humanize-duration: 3.27.3
   query-string: 6.14.1
   react: 18.2.0
@@ -2697,8 +2697,8 @@ packages:
     dependencies:
       function-bind: 1.1.1
 
-  /highlight.run/4.5.4:
-    resolution: {integrity: sha512-3hyEM6jKTsRHKH+/yccQ4VgDlfft7jfjWzgi/7OHQ4jUNQcSwe6G3H3x3UerCFMBA2aA1jRJn59dKPpmiZ3jYg==}
+  /highlight.run/4.4.1:
+    resolution: {integrity: sha512-qx6eR90VKRjjzig0+FlI1C2ugNhMLrvqZeEIF5ePn1bzEt23j/ldmh6s/2uhCt4pdxmqlkpj0+Jc9f5Ns+3wog==}
     dev: false
 
   /hoist-non-react-statics/3.3.2:
