@@ -1,4 +1,4 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
 import {
@@ -9,7 +9,6 @@ import {
 } from '../../lib/test/helpers';
 import userEvent from '@testing-library/user-event';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
-import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../../lib/api/getTimezones');
@@ -40,7 +39,9 @@ describe('account page', () => {
 
 		renderWithQueryProvider(<Account />);
 
-		await screen.findByText('Enable Beeminder integration');
+		expect(
+			await screen.findByText('Enable Beeminder integration')
+		).toBeInTheDocument();
 	});
 
 	it('loads name', async () => {
