@@ -81,31 +81,6 @@ describe('account page', () => {
 		await screen.findByDisplayValue('America/Indiana/Knox');
 	});
 
-	it('loads payment methods', async () => {
-		loadMe({
-			json: {
-				cards: [
-					{
-						brand: 'visa',
-						last4: '1111',
-					},
-				],
-			},
-		});
-
-		renderWithQueryProvider(<Account />);
-
-		await screen.findByText('visa ending with 1111');
-	});
-
-	it('gets checkout session only once', async () => {
-		const { queryClient } = renderWithQueryProvider(<Account />);
-
-		await queryClient.invalidateQueries('checkoutSession');
-
-		await waitFor(() => expect(getCheckoutSession).toBeCalledTimes(1));
-	});
-
 	it('has token request button', async () => {
 		renderWithQueryProvider(<Account />);
 
