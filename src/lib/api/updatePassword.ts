@@ -1,11 +1,20 @@
+import logEvent from '../logEvent';
 import fetch1 from './fetch1';
+import { EventCategory, EventAction } from '../logEvent';
 
-export function updatePassword(
+export async function updatePassword(
 	oldPassword: string,
 	newPassword: string
 ): Promise<Response> {
-	return fetch1('me', true, 'PUT', {
+	const result = await fetch1('me', true, 'PUT', {
 		old_password: oldPassword,
 		new_password: newPassword,
 	});
+
+	logEvent({
+		category: EventCategory.Authentication,
+		action: EventAction.PasswordUpdate,
+	});
+
+	return result;
 }

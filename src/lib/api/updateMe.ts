@@ -1,5 +1,7 @@
+import logEvent from '../logEvent';
 import pipeMap from '../pipeMap';
 import fetch1 from './fetch1';
+import { EventCategory, EventAction } from '../logEvent';
 
 export interface MeInput {
 	name?: string | null;
@@ -27,6 +29,11 @@ export async function updateMe(input: MeInput): Promise<Response> {
 	if (!response.ok) {
 		throw new Error('Failed to update me');
 	}
+
+	logEvent({
+		category: EventCategory.User,
+		action: EventAction.UserUpdate,
+	});
 
 	return response;
 }

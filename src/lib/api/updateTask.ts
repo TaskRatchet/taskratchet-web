@@ -1,4 +1,6 @@
+import logEvent from '../logEvent';
 import fetch1 from './fetch1';
+import { EventCategory, EventAction } from '../logEvent';
 
 export interface TaskInput {
 	complete?: boolean;
@@ -6,6 +8,27 @@ export interface TaskInput {
 }
 
 // Requires that user be authenticated.
-export function updateTask(taskId: string, data: TaskInput): Promise<Response> {
-	return fetch1('me/tasks/' + taskId, true, 'PUT', data);
+export async function updateTask(
+	taskId: string,
+	data: TaskInput
+): Promise<Response> {
+	const result = await fetch1('me/tasks/' + taskId, true, 'PUT', data);
+
+	if (result.ok) {
+		if (data.complete) {
+			logEvent({
+				category: EventCategory.Task,
+				action: EventAction.TaskComplete,
+			});
+		}
+
+		if (data.uncle) {
+			logEvent({
+				category: EventCategory.Task,
+				action: EventAction.TaskUncle,
+			});
+		}
+	}
+
+	return result;
 }
