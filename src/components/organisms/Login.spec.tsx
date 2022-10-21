@@ -6,6 +6,7 @@ import { vi, expect, it, describe } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
 import { login } from '../../lib/api/login';
 import { requestResetEmail } from '../../lib/api/requestResetEmail';
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 
 vi.mock('../../lib/api/login');
 vi.mock('../../lib/api/requestResetEmail');
@@ -19,9 +20,9 @@ describe('login form', () => {
 	it('sends login request', async () => {
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		userEvent.type(screen.getByLabelText('Password'), 'the_password');
-		userEvent.click(screen.getByText('Submit'));
+		await userEvent.type(screen.getByLabelText('Password'), 'the_password');
+		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		await userEvent.click(screen.getByText('Submit'));
 
 		await waitFor(() => {
 			expect(api.login).toBeCalled();
@@ -31,8 +32,8 @@ describe('login form', () => {
 	it('sends reset request', async () => {
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		userEvent.click(screen.getByText('Reset Password'));
+		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		await userEvent.click(screen.getByText('Reset Password'));
 
 		await waitFor(() => {
 			expect(api.requestResetEmail).toBeCalled();
@@ -42,8 +43,8 @@ describe('login form', () => {
 	it('requires email to login', async () => {
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Password'), 'the_password');
-		userEvent.click(screen.getByText('Submit'));
+		await userEvent.type(screen.getByLabelText('Password'), 'the_password');
+		await userEvent.click(screen.getByText('Submit'));
 
 		await screen.findByText('Email is required');
 	});
@@ -51,8 +52,8 @@ describe('login form', () => {
 	it('requires password to login', async () => {
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		userEvent.click(screen.getByText('Submit'));
+		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		await userEvent.click(screen.getByText('Submit'));
 
 		await screen.findByText('Password is required');
 	});
@@ -60,7 +61,7 @@ describe('login form', () => {
 	it('requires email to reset password', async () => {
 		renderWithQueryProvider(<Login />);
 
-		userEvent.click(screen.getByText('Reset Password'));
+		await userEvent.click(screen.getByText('Reset Password'));
 
 		await screen.findByText('Email is required');
 	});
@@ -70,9 +71,9 @@ describe('login form', () => {
 
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		userEvent.type(screen.getByLabelText('Password'), 'the_password');
-		userEvent.click(screen.getByText('Submit'));
+		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		await userEvent.type(screen.getByLabelText('Password'), 'the_password');
+		await userEvent.click(screen.getByText('Submit'));
 
 		expect(await screen.findByText('Login failed')).toBeInTheDocument();
 	});
@@ -82,8 +83,8 @@ describe('login form', () => {
 
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		userEvent.click(screen.getByText('Reset Password'));
+		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		await userEvent.click(screen.getByText('Reset Password'));
 
 		expect(await screen.findByText('Reset failed')).toBeInTheDocument();
 	});
@@ -93,23 +94,27 @@ describe('login form', () => {
 
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		userEvent.click(screen.getByText('Reset Password'));
+		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		await userEvent.click(screen.getByText('Reset Password'));
 
 		expect(await screen.findByText('Reset failed')).toBeInTheDocument();
 
-		userEvent.click(screen.getByText('Reset Password'));
+		const { resolve } = loadControlledPromise(api.requestResetEmail);
+
+		await userEvent.click(screen.getByText('Reset Password'));
 
 		await waitFor(() => {
 			expect(screen.queryByText('Reset failed')).not.toBeInTheDocument();
 		});
+
+		resolve();
 	});
 
 	it('alerts reset success', async () => {
 		renderWithQueryProvider(<Login />);
 
-		userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		userEvent.click(screen.getByText('Reset Password'));
+		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+		await userEvent.click(screen.getByText('Reset Password'));
 
 		expect(
 			await screen.findByText('Instructions sent to the_email')

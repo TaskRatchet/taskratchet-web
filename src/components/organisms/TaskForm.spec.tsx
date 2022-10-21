@@ -8,15 +8,15 @@ import { describe, it, expect } from 'vitest';
 vi.mock('../../lib/Browser');
 vi.mock('@mui/x-date-pickers');
 
-global.document.createRange = () =>
-	({
-		setStart: () => undefined,
-		setEnd: () => undefined,
-		commonAncestorContainer: {
-			nodeName: 'BODY',
-			ownerDocument: document,
-		},
-	} as unknown as Range);
+// global.document.createRange = () =>
+// 	({
+// 		setStart: () => undefined,
+// 		setEnd: () => undefined,
+// 		commonAncestorContainer: {
+// 			nodeName: 'BODY',
+// 			ownerDocument: document,
+// 		},
+// 	} as unknown as Range);
 
 interface RenderComponentProps {
 	task?: string;
@@ -69,13 +69,13 @@ describe('TaskForm', () => {
 		expect(screen.getByLabelText('Task *')).toBeInTheDocument();
 	});
 
-	it('calls onChange when task modified', () => {
+	it('calls onChange when task modified', async () => {
 		const onChange = vi.fn();
 		const due = 'the_due';
 
 		renderComponent({ onChange, due });
 
-		userEvent.type(screen.getByLabelText('Task *'), 'a');
+		await userEvent.type(screen.getByLabelText('Task *'), 'a');
 
 		expect(onChange).toBeCalledWith({
 			task: 'a',
@@ -87,7 +87,7 @@ describe('TaskForm', () => {
 
 		renderComponent({ onChange });
 
-		userEvent.type(
+		await userEvent.type(
 			await screen.findByLabelText('Due Time *'),
 			'{backspace}{backspace}am'
 		);
@@ -95,12 +95,12 @@ describe('TaskForm', () => {
 		expect(onChange).toBeCalled();
 	});
 
-	it('calls onChange when cents modified', () => {
+	it('calls onChange when cents modified', async () => {
 		const onChange = vi.fn();
 
 		const { centsInput } = renderComponent({ onChange });
 
-		userEvent.type(centsInput, '1');
+		await userEvent.type(centsInput, '1');
 
 		expect(onChange).toBeCalledWith({
 			cents: 5100,
@@ -116,7 +116,7 @@ describe('TaskForm', () => {
 			onChange,
 		});
 
-		userEvent.type(
+		await userEvent.type(
 			await screen.findByLabelText('Due Date *'),
 			'{backspace}2{enter}'
 		);
@@ -136,7 +136,7 @@ describe('TaskForm', () => {
 			onChange,
 		});
 
-		userEvent.type(
+		await userEvent.type(
 			await screen.findByLabelText('Due Time *'),
 			'{backspace}M{enter}'
 		);

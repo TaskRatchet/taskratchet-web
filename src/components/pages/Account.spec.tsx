@@ -99,7 +99,7 @@ describe('account page', () => {
 
 		renderWithQueryProvider(<Account />);
 
-		userEvent.click(await screen.findByText('Request API token'));
+		await userEvent.click(await screen.findByText('Request API token'));
 
 		await screen.findByText('the_token');
 	});

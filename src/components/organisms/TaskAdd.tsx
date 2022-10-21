@@ -52,8 +52,10 @@ export default function TaskAdd({
 	};
 
 	function onSubmit() {
-		// TODO: Don't submit if the task is missing...
-		setError(task ? '' : 'Task is required');
+		if (!task) {
+			setError('Task is required');
+			return;
+		}
 		if (!due || !cents) {
 			return;
 		}

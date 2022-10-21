@@ -74,10 +74,13 @@ describe('registration page', () => {
 
 		renderWithQueryProvider(<Register />);
 
-		userEvent.type(await screen.findByLabelText('Name'), 'the_name');
-		userEvent.type(await screen.findByLabelText('Email'), 'the_email');
-		userEvent.type(await screen.findByLabelText('Password'), 'the_password');
-		userEvent.type(
+		await userEvent.type(await screen.findByLabelText('Name'), 'the_name');
+		await userEvent.type(await screen.findByLabelText('Email'), 'the_email');
+		await userEvent.type(
+			await screen.findByLabelText('Password'),
+			'the_password'
+		);
+		await userEvent.type(
 			await screen.findByLabelText('Retype Password'),
 			'the_password'
 		);
@@ -85,12 +88,12 @@ describe('registration page', () => {
 		await waitFor(() => {
 			expect(getTimezones).toBeCalled();
 		});
-		userEvent.selectOptions(
+		await userEvent.selectOptions(
 			await screen.findByLabelText('Timezone'),
 			'the_timezone'
 		);
 
-		userEvent.click(
+		await userEvent.click(
 			await screen.findByLabelText(
 				"I have read and agree to TaskRatchet's privacy policy and terms of service."
 			)
@@ -99,7 +102,7 @@ describe('registration page', () => {
 		await waitFor(() => {
 			expect(screen.getByText('Add payment method')).not.toBeDisabled();
 		});
-		userEvent.click(await screen.findByText('Add payment method'));
+		await userEvent.click(await screen.findByText('Add payment method'));
 
 		await waitFor(() => {
 			expect(register).toBeCalled();

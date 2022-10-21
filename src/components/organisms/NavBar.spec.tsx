@@ -27,7 +27,7 @@ describe('NavBar', () => {
 
 		renderComponent();
 
-		userEvent.click(await screen.findByLabelText('menu'));
+		await userEvent.click(await screen.findByLabelText('menu'));
 
 		await screen.findByText('the_email');
 	});
@@ -49,7 +49,7 @@ describe('NavBar', () => {
 
 		renderComponent();
 
-		userEvent.click(await screen.findByLabelText('menu'));
+		await userEvent.click(await screen.findByLabelText('menu'));
 
 		await screen.findByText('Logout');
 	});
@@ -61,11 +61,11 @@ describe('NavBar', () => {
 
 		renderComponent();
 
-		userEvent.click(await screen.findByLabelText('menu'));
+		await userEvent.click(await screen.findByLabelText('menu'));
 
 		const bg = await screen.findByTestId('mui-backdrop');
 
-		userEvent.click(bg);
+		await userEvent.click(bg);
 
 		await waitFor(() => {
 			expect(screen.queryByText('Logout')).not.toBeInTheDocument();
@@ -75,7 +75,7 @@ describe('NavBar', () => {
 	it('does not display logout link if no session', async () => {
 		renderComponent();
 
-		userEvent.click(await screen.findByLabelText('menu'));
+		await userEvent.click(await screen.findByLabelText('menu'));
 
 		expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 	});
@@ -93,8 +93,8 @@ describe('NavBar', () => {
 
 		renderComponent();
 
-		userEvent.click(await screen.findByLabelText('menu'));
-		userEvent.click(await screen.findByText('Account'));
+		await userEvent.click(await screen.findByLabelText('menu'));
+		await userEvent.click(await screen.findByText('Account'));
 
 		await waitFor(() => {
 			expect(screen.queryByText('Logout')).not.toBeInTheDocument();
