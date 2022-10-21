@@ -78,6 +78,7 @@ export default function TaskAdd({
 					timezone={timezone}
 					error={error}
 					onChange={onChange}
+					onCancel={onClose}
 					onSubmit={onSubmit}
 					isLoading={addTask.isLoading}
 					minDue={minDue}

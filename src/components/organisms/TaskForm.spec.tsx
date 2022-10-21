@@ -25,6 +25,7 @@ interface RenderComponentProps {
 	timezone?: string;
 	error?: string;
 	onChange?: (updates: Partial<TaskInput>) => void;
+	onCancel?: () => void;
 	onSubmit?: () => void;
 	isLoading?: boolean;
 }
@@ -37,6 +38,7 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 		timezone = '',
 		error = '',
 		onChange = () => undefined,
+		onCancel = () => undefined,
 		onSubmit = () => undefined,
 		isLoading = false,
 	} = props;
@@ -50,6 +52,7 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 				timezone,
 				error,
 				onChange,
+				onCancel,
 				onSubmit,
 				isLoading,
 			}}

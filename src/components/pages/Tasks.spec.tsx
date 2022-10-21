@@ -419,9 +419,7 @@ describe('tasks page', () => {
 			await userEvent.type(getTaskInput(), 'the_task');
 			await userEvent.click(getAddButton());
 
-			const bg = await screen.findByTestId('mui-backdrop');
-
-			await userEvent.click(bg);
+			await userEvent.click(await screen.findByText('Cancel'));
 
 			await waitFor(() => {
 				expect(screen.getByText('the_task')).toBeInTheDocument();
