@@ -24,7 +24,7 @@ specifiers:
   '@typescript-eslint/parser': ^5.40.1
   '@vitejs/plugin-react': 1.1.1
   '@vitest/ui': ^0.24.3
-  dayjs: ^1.11.5
+  dayjs: ^1.11.6
   eslint: ^8.25.0
   eslint-config-prettier: ^8.5.0
   eslint-plugin-lodash: ^7.4.0
@@ -60,8 +60,8 @@ dependencies:
   '@mui/icons-material': 5.10.9_b6j77gzkcegqcfyr7ys5cuufoi
   '@mui/lab': 5.0.0-alpha.104_tj7eb2xm62akgv23raitevqcsa
   '@mui/material': 5.10.10_zf7ckydgka3owh777vmiilym5q
-  '@mui/x-date-pickers': 5.0.5_yqwxdv2wo67skjg5a2i3da6ueu
-  dayjs: 1.11.5
+  '@mui/x-date-pickers': 5.0.5_5jrs57nxwnmpwbjimxvbesudna
+  dayjs: 1.11.6
   highlight.run: 4.4.1
   humanize-duration: 3.27.3
   query-string: 6.14.1
@@ -386,7 +386,7 @@ packages:
       '@date-io/core': 2.16.0
     dev: false
 
-  /@date-io/dayjs/2.16.0_dayjs@1.11.5:
+  /@date-io/dayjs/2.16.0_dayjs@1.11.6:
     resolution: {integrity: sha512-y5qKyX2j/HG3zMvIxTobYZRGnd1FUW2olZLS0vTj7bEkBQkjd2RO7/FEwDY03Z1geVGlXKnzIATEVBVaGzV4Iw==}
     peerDependencies:
       dayjs: ^1.8.17
@@ -395,7 +395,7 @@ packages:
         optional: true
     dependencies:
       '@date-io/core': 2.16.0
-      dayjs: 1.11.5
+      dayjs: 1.11.6
     dev: false
 
   /@date-io/luxon/2.16.0:
@@ -891,7 +891,7 @@ packages:
       react-is: 18.2.0
     dev: false
 
-  /@mui/x-date-pickers/5.0.5_yqwxdv2wo67skjg5a2i3da6ueu:
+  /@mui/x-date-pickers/5.0.5_5jrs57nxwnmpwbjimxvbesudna:
     resolution: {integrity: sha512-VHnRTbJlG3yiczwmHOLUKuInKUaDBFsimaIm2ek3lBBWXXvHEo+sIHjG5fgQhj7TragHFh/jPbXqSR87VBkLjA==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -922,7 +922,7 @@ packages:
       '@babel/runtime': 7.19.4
       '@date-io/core': 2.16.0
       '@date-io/date-fns': 2.16.0
-      '@date-io/dayjs': 2.16.0_dayjs@1.11.5
+      '@date-io/dayjs': 2.16.0_dayjs@1.11.6
       '@date-io/luxon': 2.16.0
       '@date-io/moment': 2.16.0
       '@emotion/react': 11.10.4_njgazia4bqs7lyfpxtnamfhsa4
@@ -932,7 +932,7 @@ packages:
       '@mui/utils': 5.10.9_react@18.2.0
       '@types/react-transition-group': 4.4.5
       clsx: 1.2.1
-      dayjs: 1.11.5
+      dayjs: 1.11.6
       prop-types: 15.8.1
       react: 18.2.0
       react-dom: 18.2.0_react@18.2.0
@@ -1729,8 +1729,8 @@ packages:
       whatwg-url: 11.0.0
     dev: true
 
-  /dayjs/1.11.5:
-    resolution: {integrity: sha512-CAdX5Q3YW3Gclyo5Vpqkgpj8fSdLQcRuzfX6mC6Phy0nfJ0eGYOeS7m4mt2plDWLAtA4TqTakvbboHvUxfe4iA==}
+  /dayjs/1.11.6:
+    resolution: {integrity: sha512-zZbY5giJAinCG+7AGaw0wIhNZ6J8AhWuSXKvuc1KAyMiRsvGQWqh4L+MomvhdAYjN+lqvVCMq1I41e3YHvXkyQ==}
     dev: false
 
   /debug/4.3.4:
