@@ -4,8 +4,7 @@ import { screen } from '@testing-library/react';
 import React from 'react';
 import ApiSettings from './ApiSettings';
 import fetch1 from '../../lib/api/fetch1';
-import { vi, Mock } from 'vitest';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 
 vi.mock('../../lib/api/getMe');
