@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import './NavBar.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
 import FilterButton from '../molecules/FilterButton';
