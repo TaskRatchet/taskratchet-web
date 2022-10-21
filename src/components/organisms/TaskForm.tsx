@@ -6,6 +6,7 @@ import {
 	InputAdornment,
 	Stack,
 	TextField,
+	Link,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { SetOptional } from 'type-fest';
@@ -97,37 +98,34 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					''
 				)}
 
-				<Stack direction={'row'} justifyContent={'space-between'} spacing={2}>
-					<Button
-						href={'https://docs.taskratchet.com/timezones.html'}
-						target={'_blank'}
-						rel={'noopener noreferrer'}
-						size={'small'}
-					>
-						{timezone}
+				<Link
+					href={'https://docs.taskratchet.com/timezones.html'}
+					target={'_blank'}
+					rel={'noopener noreferrer'}
+				>
+					{timezone}
+				</Link>
+
+				<Stack direction={'row'} spacing={2} justifyContent="end">
+					<Button onClick={onCancel} variant="outlined">
+						Cancel
 					</Button>
 
-					<Stack direction={'row'} spacing={2}>
-						<Button onClick={onCancel} variant="outlined">
-							Cancel
-						</Button>
-
-						<LoadingButton
-							onClick={() =>
-								onSubmit({
-									task,
-									cents,
-									due,
-								})
-							}
-							loading={isLoading}
-							variant="contained"
-							size={'small'}
-							color="primary"
-						>
-							{actionLabel}
-						</LoadingButton>
-					</Stack>
+					<LoadingButton
+						onClick={() =>
+							onSubmit({
+								task,
+								cents,
+								due,
+							})
+						}
+						loading={isLoading}
+						variant="contained"
+						size={'small'}
+						color="primary"
+					>
+						{actionLabel}
+					</LoadingButton>
 				</Stack>
 			</Stack>
 		</Box>
