@@ -26,6 +26,7 @@ specifiers:
   '@vitest/ui': ^0.22.1
   dayjs: ^1.11.5
   eslint: ^8.25.0
+  eslint-config-prettier: ^8.5.0
   eslint-plugin-lodash: ^7.4.0
   eslint-plugin-react: ^7.31.10
   eslint-plugin-react-hooks: ^4.6.0
@@ -90,6 +91,7 @@ devDependencies:
   '@vitejs/plugin-react': 1.1.1
   '@vitest/ui': 0.22.1
   eslint: 8.25.0
+  eslint-config-prettier: 8.5.0_eslint@8.25.0
   eslint-plugin-lodash: 7.4.0_eslint@8.25.0
   eslint-plugin-react: 7.31.10_eslint@8.25.0
   eslint-plugin-react-hooks: 4.6.0_eslint@8.25.0
@@ -2259,6 +2261,15 @@ packages:
       optionator: 0.8.3
     optionalDependencies:
       source-map: 0.6.1
+    dev: true
+
+  /eslint-config-prettier/8.5.0_eslint@8.25.0:
+    resolution: {integrity: sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==}
+    hasBin: true
+    peerDependencies:
+      eslint: '>=7.0.0'
+    dependencies:
+      eslint: 8.25.0
     dev: true
 
   /eslint-plugin-lodash/7.4.0_eslint@8.25.0:

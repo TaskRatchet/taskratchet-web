@@ -1,5 +1,7 @@
 import { publishSession } from './useSession';
 import fetch1 from './fetch1';
+import logEvent from '../logEvent';
+import { EventCategory, EventAction } from '../logEvent';
 
 export function login(email: string, password: string): Promise<boolean> {
 	return fetch1('account/login', false, 'POST', {
@@ -9,6 +11,11 @@ export function login(email: string, password: string): Promise<boolean> {
 		if (!res.ok) return false;
 
 		void res.text().then((token: string) => _handleLoginResponse(email, token));
+
+		logEvent({
+			category: EventCategory.Authentication,
+			action: EventAction.Login,
+		});
 
 		return true;
 	});
