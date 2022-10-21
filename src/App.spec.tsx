@@ -70,7 +70,7 @@ describe('App', () => {
 
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('today'));
+		await userEvent.click(await screen.findByLabelText('today'));
 
 		await waitFor(() => {
 			expect(__listRef.scrollTo).toHaveBeenCalledWith(0);
@@ -80,7 +80,7 @@ describe('App', () => {
 	it('has filter entries', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByLabelText('filters'));
 
 		expect(
 			await screen.findByLabelText('toggle filter pending')
@@ -96,7 +96,7 @@ describe('App', () => {
 	it('checks items by default', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByLabelText('filters'));
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('pending')).toBeChecked();
@@ -106,8 +106,8 @@ describe('App', () => {
 	it('toggles checkmark when entry clicked', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByText('pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByText('pending'));
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('pending')).not.toBeChecked();
@@ -117,13 +117,13 @@ describe('App', () => {
 	it('persists checked state when reopening menu', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByText('pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByText('pending'));
 
 		const backdrop = await screen.findByTestId('mui-backdrop');
 
-		userEvent.click(backdrop);
-		userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(backdrop);
+		await userEvent.click(await screen.findByLabelText('filters'));
 
 		const checkbox = await screen.findByLabelText('pending');
 
@@ -133,14 +133,14 @@ describe('App', () => {
 	it('persists checked state on reload', async () => {
 		const { unmount } = renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByText('pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByText('pending'));
 
 		unmount();
 
 		const { getByLabelText: getByLabelTextTwo } = renderPage();
 
-		userEvent.click(getByLabelTextTwo('filters'));
+		await userEvent.click(getByLabelTextTwo('filters'));
 
 		await waitFor(() => {
 			expect(getByLabelTextTwo('pending')).not.toBeChecked();
@@ -160,8 +160,10 @@ describe('App', () => {
 			expect(screen.getByText('task 1')).toBeInTheDocument();
 		});
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByLabelText('toggle filter pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter pending')
+		);
 
 		await waitFor(() => {
 			expect(screen.queryByText('task 1')).not.toBeInTheDocument();
@@ -173,12 +175,12 @@ describe('App', () => {
 
 		renderPage();
 
-		openForm();
+		await openForm();
 
 		const { reject } = loadControlledPromise(addTask);
 
-		userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
-		userEvent.click(screen.getByText('Add'));
+		await userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
+		await userEvent.click(screen.getByText('Add'));
 
 		await waitFor(() => {
 			expect(__listRef.scrollTo).toHaveBeenCalledWith(1);
@@ -199,7 +201,7 @@ describe('App', () => {
 
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('today'));
+		await userEvent.click(await screen.findByLabelText('today'));
 
 		await waitFor(() => {
 			expect(__listRef.scrollTo).toHaveBeenCalledWith(2);
@@ -211,17 +213,20 @@ describe('App', () => {
 
 		renderPage();
 
-		openForm();
+		await openForm();
 
-		userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
+		await userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
 
-		userEvent.type(await screen.findByLabelText('Due Date *'), '{backspace}0');
+		await userEvent.type(
+			await screen.findByLabelText('Due Date *'),
+			'{backspace}0'
+		);
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
 			'01/08/2020'
 		);
 
-		userEvent.click(screen.getByText('Add'));
+		await userEvent.click(screen.getByText('Add'));
 
 		await screen.findByText('Due date must be in the future');
 
@@ -243,8 +248,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Task *')).toBeInTheDocument();
 	});
@@ -260,8 +265,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Task *')).toHaveValue('the_task');
 	});
@@ -279,8 +284,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
 			'01/01/2020'
@@ -298,8 +303,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Stakes *')).toHaveValue(1);
 	});
@@ -315,8 +320,8 @@ describe('App', () => {
 
 		await screen.findByText('the_task');
 
-		userEvent.click(await screen.findByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
 			'02/08/2020'
@@ -334,8 +339,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		await waitFor(() => {
 			expect(screen.getByText('Copy')).not.toBeVisible();
@@ -345,8 +350,10 @@ describe('App', () => {
 	it('indicates when filters are enabled', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByLabelText('toggle filter pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter pending')
+		);
 
 		await waitFor(() => {
 			expect(screen.getByText('1')).toBeInTheDocument();
@@ -356,11 +363,15 @@ describe('App', () => {
 	it('counts number of enabled filters', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByLabelText('filters'));
 
-		userEvent.click(await screen.findByLabelText('toggle filter pending'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter pending')
+		);
 		await screen.findByText('1'); // TODO Resolve race condition to remove this line
-		userEvent.click(await screen.findByLabelText('toggle filter complete'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter complete')
+		);
 
 		expect(await screen.findByText('2')).toBeInTheDocument();
 	});

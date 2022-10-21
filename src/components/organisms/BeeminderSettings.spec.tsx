@@ -12,6 +12,7 @@ import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
 import { updateMe } from '../../lib/api/updateMe';
 import { getMe } from '../../lib/api/getMe';
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');
@@ -60,7 +61,7 @@ describe('BeeminderSettings component', () => {
 
 			await waitFor(() => expect(getMe).toBeCalled());
 
-			userEvent.click(await screen.findByText('Save'));
+			await userEvent.click(await screen.findByText('Save'));
 
 			await screen.findByText('error');
 		});
@@ -102,7 +103,7 @@ describe('BeeminderSettings component', () => {
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.click(await screen.findByText('Save'));
 
 		expect(updateMe).not.toBeCalled();
 	});
@@ -114,7 +115,7 @@ describe('BeeminderSettings component', () => {
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.click(await screen.findByText('Save'));
 
 		await waitFor(() => expect(updateMe).toBeCalled());
 	});
@@ -126,7 +127,7 @@ describe('BeeminderSettings component', () => {
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.click(await screen.findByText('Save'));
 
 		expect(
 			await screen.findByText(
@@ -142,7 +143,7 @@ describe('BeeminderSettings component', () => {
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.click(await screen.findByText('Save'));
 
 		expect(
 			screen.queryByText(
@@ -158,9 +159,12 @@ describe('BeeminderSettings component', () => {
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(await screen.findByText('Save'));
-		userEvent.type(await screen.findByRole('textbox'), '{backspace}new_name');
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.click(await screen.findByText('Save'));
+		await userEvent.type(
+			await screen.findByRole('textbox'),
+			'{backspace}new_name'
+		);
+		await userEvent.click(await screen.findByText('Save'));
 
 		expect(
 			screen.queryByText(
@@ -186,13 +190,17 @@ describe('BeeminderSettings component', () => {
 	it('displays loading indicator on save', async () => {
 		loadMeWithBeeminder();
 
+		const { resolve } = loadControlledPromise(updateMe);
+
 		renderBeeminderSettings();
 
 		await waitFor(() => expect(getMe).toBeCalled());
 
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.click(await screen.findByText('Save'));
 
 		await screen.findByRole('progressbar');
+
+		resolve();
 	});
 
 	// TODO: Add ability to disconnect from Beeminder

@@ -37,8 +37,8 @@ function renderTask(task: Partial<TaskType> = {}) {
 }
 
 async function openEditDialog() {
-	userEvent.click(screen.getByLabelText('Menu'));
-	userEvent.click(screen.getByText('Edit'));
+	await userEvent.click(screen.getByLabelText('Menu'));
+	await userEvent.click(screen.getByText('Edit'));
 
 	await waitFor(() => {
 		expect(screen.getByLabelText('Due Date *')).toHaveValue('02/01/2022');
@@ -55,9 +55,7 @@ describe('Task component', () => {
 
 		const checkbox: HTMLInputElement = screen.getByRole('checkbox');
 
-		userEvent.click(checkbox);
-
-		expect(checkbox.checked).toBeFalsy();
+		expect(checkbox).toBeDisabled();
 	});
 
 	it('has task menu', () => {
@@ -66,12 +64,12 @@ describe('Task component', () => {
 		expect(screen.getByLabelText('Menu')).toBeInTheDocument();
 	});
 
-	it('has uncle menu item', () => {
+	it('has uncle menu item', async () => {
 		renderTask();
 
 		const menuButton = screen.getByLabelText('Menu');
 
-		userEvent.click(menuButton);
+		await userEvent.click(menuButton);
 
 		expect(screen.getByText('Charge immediately')).toBeInTheDocument();
 	});
@@ -79,10 +77,10 @@ describe('Task component', () => {
 	it('uncles', async () => {
 		renderTask();
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Charge immediately'));
+		await userEvent.click(screen.getByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Charge immediately'));
 
-		userEvent.click(await screen.findByText('Charge'));
+		await userEvent.click(await screen.findByText('Charge'));
 
 		await waitFor(() =>
 			expect(updateTask).toBeCalledWith('the_id', {
@@ -103,12 +101,12 @@ describe('Task component', () => {
 		expect(screen.queryByRole('checkbox')).not.toBeInTheDocument();
 	});
 
-	it('disables uncle button if task not pending', () => {
+	it('disables uncle button if task not pending', async () => {
 		renderTask({ status: 'expired' });
 
 		const menuButton = screen.getByLabelText('Menu');
 
-		userEvent.click(menuButton);
+		await userEvent.click(menuButton);
 
 		expect(screen.getByText('Charge immediately')).toHaveAttribute(
 			'aria-disabled'
@@ -120,19 +118,19 @@ describe('Task component', () => {
 
 		await openEditDialog();
 
-		userEvent.type(screen.getByLabelText('Stakes *'), '5');
-		userEvent.click(screen.getByText('Save'));
+		await userEvent.type(screen.getByLabelText('Stakes *'), '5');
+		await userEvent.click(screen.getByText('Save'));
 
 		await waitFor(() => {
 			expect(editTask).toBeCalledWith('the_id', '2/1/2022, 11:59 PM', 1500);
 		});
 	});
 
-	it('closes task menu on edit click', () => {
+	it('closes task menu on edit click', async () => {
 		renderTask();
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Edit'));
+		await userEvent.click(screen.getByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Edit'));
 
 		expect(screen.queryByAltText('Edit')).not.toBeInTheDocument();
 	});
@@ -142,19 +140,22 @@ describe('Task component', () => {
 
 		await openEditDialog();
 
-		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}1{enter}');
+		await userEvent.type(
+			screen.getByLabelText('Due Date *'),
+			'{backspace}1{enter}'
+		);
 
-		userEvent.click(screen.getByText('Save'));
+		await userEvent.click(screen.getByText('Save'));
 
 		await waitFor(() => {
 			expect(editTask).toBeCalledWith('the_id', '2/1/2021, 11:59 PM', 100);
 		});
 	});
 
-	it('disables edit if task is not pending', () => {
+	it('disables edit if task is not pending', async () => {
 		renderTask({ status: 'expired' });
 
-		userEvent.click(screen.getByLabelText('Menu'));
+		await userEvent.click(screen.getByLabelText('Menu'));
 
 		expect(screen.getByText('Edit')).toHaveAttribute('aria-disabled');
 	});
@@ -167,8 +168,8 @@ describe('Task component', () => {
 
 		renderTask();
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Charge immediately'));
+		await userEvent.click(screen.getByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Charge immediately'));
 
 		// displays confirmation dialog
 		await waitFor(() => {
@@ -181,8 +182,8 @@ describe('Task component', () => {
 	it("tells you know how much you'll be charged if you uncle", async () => {
 		renderTask({ cents: 100 });
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Charge immediately'));
+		await userEvent.click(screen.getByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Charge immediately'));
 
 		await waitFor(() => {
 			expect(
@@ -204,12 +205,12 @@ describe('Task component', () => {
 
 			await openEditDialog();
 
-			userEvent.type(
+			await userEvent.type(
 				screen.getByLabelText('Due Date *'),
 				'{backspace}1{enter}'
 			);
 
-			userEvent.click(screen.getByText('Save'));
+			await userEvent.click(screen.getByText('Save'));
 
 			await waitFor(() => {
 				expect(editTask).toBeCalledWith('the_id', '2/1/2021, 11:59 PM', 100);
@@ -232,8 +233,8 @@ describe('Task component', () => {
 
 		await openEditDialog();
 
-		userEvent.type(screen.getByLabelText('Stakes *'), '{backspace}1');
-		userEvent.click(screen.getByText('Save'));
+		await userEvent.type(screen.getByLabelText('Stakes *'), '{backspace}1');
+		await userEvent.click(screen.getByText('Save'));
 
 		await screen.findByText('Stakes cannot be less than the original task');
 
@@ -249,9 +250,12 @@ describe('Task component', () => {
 
 		await openEditDialog();
 
-		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}5{enter}');
+		await userEvent.type(
+			screen.getByLabelText('Due Date *'),
+			'{backspace}5{enter}'
+		);
 
-		userEvent.click(screen.getByText('Save'));
+		await userEvent.click(screen.getByText('Save'));
 
 		expect(editTask).not.toBeCalled();
 	});
@@ -263,9 +267,12 @@ describe('Task component', () => {
 
 		await openEditDialog();
 
-		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}1{enter}');
+		await userEvent.type(
+			screen.getByLabelText('Due Date *'),
+			'{backspace}1{enter}'
+		);
 
-		userEvent.click(screen.getByText('Save'));
+		await userEvent.click(screen.getByText('Save'));
 
 		await screen.findByRole('progressbar');
 
@@ -279,9 +286,12 @@ describe('Task component', () => {
 
 		await openEditDialog();
 
-		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}1{enter}');
+		await userEvent.type(
+			screen.getByLabelText('Due Date *'),
+			'{backspace}1{enter}'
+		);
 
-		userEvent.click(screen.getByText('Save'));
+		await userEvent.click(screen.getByText('Save'));
 
 		await waitFor(() => {
 			expect(screen.queryByLabelText('Due Date *')).not.toBeInTheDocument();

@@ -19,6 +19,7 @@ interface TaskFormProps {
 	timezone: string;
 	error: string;
 	onChange: (updates: Partial<TaskInput>) => void;
+	onCancel: () => void;
 	onSubmit: (input: SetOptional<TaskInput, 'due'>) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
@@ -36,6 +37,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		timezone,
 		error,
 		onChange,
+		onCancel,
 		onSubmit,
 		actionLabel = 'Add',
 		maxDue,
@@ -95,7 +97,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					''
 				)}
 
-				<Stack direction={'row'} justifyContent={'space-between'}>
+				<Stack direction={'row'} justifyContent={'space-between'} spacing={2}>
 					<Button
 						href={'https://docs.taskratchet.com/timezones.html'}
 						target={'_blank'}
@@ -105,21 +107,27 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 						{timezone}
 					</Button>
 
-					<LoadingButton
-						onClick={() =>
-							onSubmit({
-								task,
-								cents,
-								due,
-							})
-						}
-						loading={isLoading}
-						variant="contained"
-						size={'small'}
-						color="primary"
-					>
-						{actionLabel}
-					</LoadingButton>
+					<Stack direction={'row'} spacing={2}>
+						<Button onClick={onCancel} variant="outlined">
+							Cancel
+						</Button>
+
+						<LoadingButton
+							onClick={() =>
+								onSubmit({
+									task,
+									cents,
+									due,
+								})
+							}
+							loading={isLoading}
+							variant="contained"
+							size={'small'}
+							color="primary"
+						>
+							{actionLabel}
+						</LoadingButton>
+					</Stack>
 				</Stack>
 			</Stack>
 		</Box>

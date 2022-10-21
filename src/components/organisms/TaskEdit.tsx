@@ -71,6 +71,7 @@ const TaskEdit = ({
 						timezone={timezone}
 						error={editTask.error?.message || error || ''}
 						onChange={onChange}
+						onCancel={() => setIsOpen(false)}
 						onSubmit={onSubmit}
 						actionLabel={'Save'}
 						disableTaskField={true}
