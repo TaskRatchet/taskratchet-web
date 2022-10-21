@@ -1,5 +1,5 @@
 import React, { Ref, Suspense } from 'react';
-import './Task.css';
+import './Task.scss';
 import browser from '../../lib/Browser';
 import TaskMenu from './TaskMenu';
 import { useSetComplete } from '../../lib/api/useSetComplete';

@@ -1,5 +1,5 @@
 import React from 'react';
-import './Field.css';
+import './Field.scss';
 
 interface InputProps {
 	label: string;
