@@ -12,23 +12,41 @@ type DueFormProps = {
 	onChange: (due: Record<string, string>) => void;
 };
 
+function isDayjsObject(value: unknown): value is { $d: Date } {
+	if (typeof value !== 'object' || value === null) {
+		return false;
+	}
+
+	if (!((value as { $d?: unknown }).$d instanceof Date)) {
+		return false;
+	}
+
+	return true;
+}
+
 export default function DueForm(props: DueFormProps): JSX.Element {
 	const { due, minDue, maxDue, onChange } = props;
 	const dueDate = useMemo(() => {
 		return new Date(due);
 	}, [due]);
+
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<DatePicker
 				label="Due Date"
 				value={dueDate}
 				onChange={(value: unknown) => {
-					if (!(value instanceof Date)) return;
-					if (isNaN(value.getTime())) return;
-					if (due) {
-						value.setHours(dueDate?.getHours(), dueDate?.getMinutes());
+					if (!isDayjsObject(value)) {
+						return;
 					}
-					onChange({ due: formatDue(value) });
+
+					const d = value.$d;
+
+					if (isNaN(d.getTime())) return;
+					if (due) {
+						d.setHours(dueDate?.getHours(), dueDate?.getMinutes());
+					}
+					onChange({ due: formatDue(d) });
 				}}
 				OpenPickerButtonProps={{
 					'aria-label': 'change date',
@@ -51,15 +69,20 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 				label="Due Time"
 				value={dueDate}
 				onChange={(value: unknown) => {
-					if (!(value instanceof Date)) return;
-					if (isNaN(value.getTime())) return;
+					if (!isDayjsObject(value)) {
+						return;
+					}
+
+					const d = value.$d;
+
+					if (isNaN(d.getTime())) return;
 					if (due)
-						value.setFullYear(
+						d.setFullYear(
 							dueDate.getFullYear(),
 							dueDate.getMonth(),
 							dueDate.getDate()
 						);
-					onChange({ due: formatDue(value) });
+					onChange({ due: formatDue(d) });
 				}}
 				OpenPickerButtonProps={{
 					'aria-label': 'change time',
