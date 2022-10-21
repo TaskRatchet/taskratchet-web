@@ -81,7 +81,7 @@
 		"eslint-plugin-react": "^7.31.10",
 		"eslint-plugin-react-hooks": "^4.6.0",
 		"eslint-plugin-regex": "^1.10.0",
-		"eslint-plugin-testing-library": "^5.8.0",
+		"eslint-plugin-testing-library": "^5.9.1",
 		"jsdom": "^20.0.1",
 		"prettier": "2.4.1",
 		"rollup-plugin-visualizer": "^5.8.3",
