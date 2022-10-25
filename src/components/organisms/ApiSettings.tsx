@@ -22,7 +22,6 @@ export default function ApiSettings(): JSX.Element {
 		<Stack spacing={2} alignItems={'start'}>
 			<Alert severity="warning">
 				<AlertTitle>Warning</AlertTitle>
-				<p>The API is undocumented and likely to change without notice.</p>
 
 				<p>
 					Requesting a new token will replace your existing token if you have
@@ -31,6 +30,14 @@ export default function ApiSettings(): JSX.Element {
 				</p>
 
 				<p>We don&apos;t store your token, so save it somewhere safe.</p>
+
+				<a
+					href="https://taskratchet.com/help/api.html"
+					target={'_blank'}
+					rel="noreferrer"
+				>
+					Documentation
+				</a>
 			</Alert>
 
 			<TableContainer component={Paper}>
