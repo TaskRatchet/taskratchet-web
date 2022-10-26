@@ -8,7 +8,7 @@ import { getCheckoutSession } from '../api/getCheckoutSession';
 import { getTasks } from '../api/getTasks';
 import { getTimezones } from '../api/getTimezones';
 import { updateTask } from '../api/updateTask';
-import { vi, Mock, expect } from 'vitest';
+import { vi, Mock } from 'vitest';
 import { getMe } from '../api/getMe';
 import { updateMe } from '../api/updateMe';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
