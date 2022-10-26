@@ -3,7 +3,6 @@ import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
 import {
 	loadMe,
-	loadMeWithBeeminder,
 	loadUrlParams,
 	renderWithQueryProvider,
 	withMutedReactQueryLogger,
@@ -21,6 +20,16 @@ vi.mock('react-toastify');
 
 const renderBeeminderSettings = (): RenderResult => {
 	return renderWithQueryProvider(<BeeminderSettings />);
+};
+
+const loadMeWithBeeminder = (user = 'bm_user', goal = 'bm_goal'): void => {
+	loadMe({
+		json: {
+			integrations: {
+				beeminder: { user, goal_new_tasks: goal },
+			},
+		},
+	});
 };
 
 describe('BeeminderSettings component', () => {

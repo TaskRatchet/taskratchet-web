@@ -19,6 +19,7 @@ module.exports = async () => {
 };
 
 vi.mock('@mui/x-date-pickers');
+vi.mock('./src/lib/api/getTimezones');
 
 global.scrollTo = vi.fn() as any;
 

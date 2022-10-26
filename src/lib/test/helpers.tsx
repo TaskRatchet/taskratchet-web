@@ -8,14 +8,12 @@ import { getCheckoutSession } from '../api/getCheckoutSession';
 import { getTasks } from '../api/getTasks';
 import { getTimezones } from '../api/getTimezones';
 import { updateTask } from '../api/updateTask';
-import { vi, Mock, expect } from 'vitest';
+import { vi, Mock } from 'vitest';
 import { getMe } from '../api/getMe';
 import { updateMe } from '../api/updateMe';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-vi.mock('../../lib/api/getTimezones');
-
-export const makeResponse = (
+const makeResponse = (
 	args: {
 		ok?: boolean;
 		json?: Record<string, unknown>;
@@ -45,19 +43,6 @@ export const loadMe = ({
 	vi.mocked(updateMe).mockResolvedValue(response as Response);
 };
 
-export const loadMeWithBeeminder = (
-	user = 'bm_user',
-	goal = 'bm_goal'
-): void => {
-	loadMe({
-		json: {
-			integrations: {
-				beeminder: { user, goal_new_tasks: goal },
-			},
-		},
-	});
-};
-
 export function loadTimezones(timezones: string[] = []): void {
 	vi.mocked(getTimezones).mockResolvedValue(timezones);
 }
@@ -81,22 +66,6 @@ export const loadNowDate = (dateString: string | Date): void => {
 export const loadNowTime = (time: number): void => {
 	vi.spyOn(browser, 'getNowTime').mockReturnValue(time);
 };
-
-// DEPRECATED: use `screen.getByTestId('mui-backdrop')` instead
-export function expectLoadingOverlay(
-	container: HTMLElement,
-	options: {
-		shouldExist?: boolean;
-		extraClasses?: string;
-	} = {}
-): void {
-	const { shouldExist = true, extraClasses = '' } = options;
-
-	expect(
-		// eslint-disable-next-line testing-library/no-node-access
-		container.getElementsByClassName(`loading ${extraClasses}`).length
-	).toBe(+shouldExist);
-}
 
 export function renderWithQueryProvider(
 	ui: ReactElement
