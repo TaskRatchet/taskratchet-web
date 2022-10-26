@@ -4,9 +4,9 @@ import Account from './Account';
 import {
 	loadCheckoutSession,
 	loadMe,
-	loadTimezones,
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
+import { loadTimezones } from '../../lib/test/loadTimezones';
 import userEvent from '@testing-library/user-event';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
 import { describe, it, expect, vi, beforeEach } from 'vitest';

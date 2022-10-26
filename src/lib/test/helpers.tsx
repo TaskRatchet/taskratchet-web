@@ -6,7 +6,6 @@ import { render, RenderResult } from '@testing-library/react';
 import { addTask } from '../api/addTask';
 import { getCheckoutSession } from '../api/getCheckoutSession';
 import { getTasks } from '../api/getTasks';
-import { getTimezones } from '../api/getTimezones';
 import { updateTask } from '../api/updateTask';
 import { vi, Mock } from 'vitest';
 import { getMe } from '../api/getMe';
@@ -42,10 +41,6 @@ export const loadMe = ({
 	vi.mocked(getMe).mockResolvedValue(json as User);
 	vi.mocked(updateMe).mockResolvedValue(response as Response);
 };
-
-export function loadTimezones(timezones: string[] = []): void {
-	vi.mocked(getTimezones).mockResolvedValue(timezones);
-}
 
 export function loadCheckoutSession(): void {
 	vi.mocked(getCheckoutSession).mockResolvedValue({
