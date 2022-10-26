@@ -1,5 +1,6 @@
 import useIsDue from './useIsDue';
-import { loadNowTime, makeTask } from './test/helpers';
+import { loadNowTime } from './test/helpers';
+import { makeTask } from './test/makeTask';
 import { expect, it, describe } from 'vitest';
 
 describe('useIsDue', () => {

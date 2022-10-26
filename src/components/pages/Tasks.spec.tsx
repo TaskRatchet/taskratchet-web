@@ -9,9 +9,9 @@ import userEvent from '@testing-library/user-event';
 import {
 	loadNowDate,
 	loadTasksApiData,
-	makeTask,
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
+import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';

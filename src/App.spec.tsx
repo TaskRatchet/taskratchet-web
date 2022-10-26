@@ -1,9 +1,9 @@
 import {
 	loadNowDate,
 	loadTasksApiData,
-	makeTask,
 	renderWithQueryProvider,
 } from './lib/test/helpers';
+import { makeTask } from './lib/test/makeTask';
 import browser from './lib/Browser';
 import React from 'react';
 import { App } from './App';
