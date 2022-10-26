@@ -35,7 +35,7 @@ specifiers:
   humanize-duration: ^3.27.3
   jsdom: ^20.0.1
   prettier: 2.7.1
-  query-string: ^6.14.1
+  query-string: ^7.1.1
   react: ^18.2.0
   react-beforeunload: ^2.5.3
   react-dom: ^18.2.0
@@ -63,7 +63,7 @@ dependencies:
   dayjs: 1.11.6
   highlight.run: 4.4.1
   humanize-duration: 3.27.3
-  query-string: 6.14.1
+  query-string: 7.1.1
   react: 18.2.0
   react-beforeunload: 2.5.3_react@18.2.0
   react-dom: 18.2.0_react@18.2.0
@@ -3273,8 +3273,8 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /query-string/6.14.1:
-    resolution: {integrity: sha512-XDxAeVmpfu1/6IjyT/gXHOl+S0vQ9owggJ30hhWKdHAsNPOcasn5o9BW0eejZqL2e4vMjhAxoW3jVHcD6mbcYw==}
+  /query-string/7.1.1:
+    resolution: {integrity: sha512-MplouLRDHBZSG9z7fpuAAcI7aAYjDLhtsiVZsevsfaHWDS2IDdORKbSd1kWUA+V4zyva/HZoSfpwnYMMQDhb0w==}
     engines: {node: '>=6'}
     dependencies:
       decode-uri-component: 0.2.0
