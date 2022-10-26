@@ -1,11 +1,8 @@
 import { RenderResult, waitFor, screen } from '@testing-library/react';
 import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
-import {
-	loadMe,
-	loadUrlParams,
-	renderWithQueryProvider,
-} from '../../lib/test/helpers';
+import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
+import { loadUrlParams } from '../../lib/test/loadUrlParams';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe, beforeEach } from 'vitest';

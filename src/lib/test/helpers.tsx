@@ -1,4 +1,3 @@
-import { ParsedQuery } from 'query-string';
 import browser from '../Browser';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import React, { ReactElement } from 'react';
@@ -47,10 +46,6 @@ export function loadCheckoutSession(): void {
 		id: 'session',
 	});
 }
-
-export const loadUrlParams = (params: ParsedQuery): void => {
-	vi.spyOn(browser, 'getUrlParams').mockReturnValue(params);
-};
 
 export const loadNowDate = (dateString: string | Date): void => {
 	vi.spyOn(browser, 'getNowDate').mockImplementation(
