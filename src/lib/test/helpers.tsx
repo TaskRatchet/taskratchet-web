@@ -13,7 +13,7 @@ import { getMe } from '../api/getMe';
 import { updateMe } from '../api/updateMe';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-export const makeResponse = (
+const makeResponse = (
 	args: {
 		ok?: boolean;
 		json?: Record<string, unknown>;
