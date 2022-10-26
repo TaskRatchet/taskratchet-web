@@ -5,8 +5,8 @@ import {
 	loadMe,
 	loadUrlParams,
 	renderWithQueryProvider,
-	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
+import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
 import { updateMe } from '../../lib/api/updateMe';

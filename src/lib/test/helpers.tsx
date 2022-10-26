@@ -1,6 +1,6 @@
 import { ParsedQuery } from 'query-string';
 import browser from '../Browser';
-import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
 import { addTask } from '../api/addTask';
@@ -124,26 +124,6 @@ export function makeTask({
 		isNew,
 		timezone,
 	};
-}
-
-export async function withMutedReactQueryLogger(
-	callback: () => Promise<void>
-): Promise<void> {
-	setLogger({
-		log: () => {
-			/* noop */
-		},
-		warn: () => {
-			/* noop */
-		},
-		error: () => {
-			/* noop */
-		},
-	});
-
-	await callback();
-
-	setLogger(window.console);
 }
 
 const loadApiResponse = (

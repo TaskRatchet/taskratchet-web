@@ -1,10 +1,7 @@
 import Task from './Task';
 import React from 'react';
-import {
-	loadNowDate,
-	renderWithQueryProvider,
-	withMutedReactQueryLogger,
-} from '../../lib/test/helpers';
+import { loadNowDate, renderWithQueryProvider } from '../../lib/test/helpers';
+import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';
 import { updateTask } from '../../lib/api/updateTask';
 import { waitFor } from '@testing-library/react';

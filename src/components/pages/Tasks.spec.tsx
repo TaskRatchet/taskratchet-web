@@ -11,8 +11,8 @@ import {
 	loadTasksApiData,
 	makeTask,
 	renderWithQueryProvider,
-	withMutedReactQueryLogger,
 } from '../../lib/test/helpers';
+import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
 import { __listRef } from '../../../__mocks__/react-list';
