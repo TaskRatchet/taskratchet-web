@@ -13,8 +13,6 @@ import { getMe } from '../api/getMe';
 import { updateMe } from '../api/updateMe';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-vi.mock('../../lib/api/getTimezones');
-
 export const makeResponse = (
 	args: {
 		ok?: boolean;
