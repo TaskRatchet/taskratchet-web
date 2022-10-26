@@ -82,22 +82,6 @@ export const loadNowTime = (time: number): void => {
 	vi.spyOn(browser, 'getNowTime').mockReturnValue(time);
 };
 
-// DEPRECATED: use `screen.getByTestId('mui-backdrop')` instead
-export function expectLoadingOverlay(
-	container: HTMLElement,
-	options: {
-		shouldExist?: boolean;
-		extraClasses?: string;
-	} = {}
-): void {
-	const { shouldExist = true, extraClasses = '' } = options;
-
-	expect(
-		// eslint-disable-next-line testing-library/no-node-access
-		container.getElementsByClassName(`loading ${extraClasses}`).length
-	).toBe(+shouldExist);
-}
-
 export function renderWithQueryProvider(
 	ui: ReactElement
 ): RenderResult & { queryClient: QueryClient } {
