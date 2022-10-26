@@ -43,19 +43,6 @@ export const loadMe = ({
 	vi.mocked(updateMe).mockResolvedValue(response as Response);
 };
 
-export const loadMeWithBeeminder = (
-	user = 'bm_user',
-	goal = 'bm_goal'
-): void => {
-	loadMe({
-		json: {
-			integrations: {
-				beeminder: { user, goal_new_tasks: goal },
-			},
-		},
-	});
-};
-
 export function loadTimezones(timezones: string[] = []): void {
 	vi.mocked(getTimezones).mockResolvedValue(timezones);
 }
