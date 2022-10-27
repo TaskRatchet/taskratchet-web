@@ -1,4 +1,4 @@
-import { loadMe } from '../../lib/test/helpers';
+import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';

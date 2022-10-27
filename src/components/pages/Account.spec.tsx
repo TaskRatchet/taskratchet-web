@@ -1,7 +1,7 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
-import { loadMe } from '../../lib/test/helpers';
+import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import userEvent from '@testing-library/user-event';

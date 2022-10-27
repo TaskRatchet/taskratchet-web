@@ -6,7 +6,7 @@ import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { loadTasksApiData } from '../../lib/test/helpers';
+import { loadTasksApiData } from '../../lib/test/loadTasksApiData';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
