@@ -240,7 +240,7 @@ describe('tasks page', () => {
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		const { reject } = loadControlledPromise(getTasks);
+		const { resolve } = loadControlledPromise(getTasks);
 
 		await clickCheckbox();
 
@@ -249,7 +249,7 @@ describe('tasks page', () => {
 			expect(taskCheckbox?.checked).toBeTruthy();
 		});
 
-		reject();
+		resolve();
 	});
 
 	it('rolls back checkbox optimistic update', async () => {
