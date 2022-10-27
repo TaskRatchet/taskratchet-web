@@ -33,20 +33,6 @@ vi.mock('react-toastify');
 
 const mockEditTask = editTask as Mock;
 
-// global.document.createRange = () =>
-// 	({
-// 		setStart: () => {
-// 			/* noop */
-// 		},
-// 		setEnd: () => {
-// 			/* noop */
-// 		},
-// 		commonAncestorContainer: {
-// 			nodeName: 'BODY',
-// 			ownerDocument: document,
-// 		},
-// 	} as unknown as Range);
-
 const expectTaskSave = async ({
 	task,
 	due,
