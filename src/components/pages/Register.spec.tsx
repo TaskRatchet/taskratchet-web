@@ -5,7 +5,7 @@ import Register from './Register';
 import { waitFor, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getTimezones } from '../../lib/api/getTimezones';
-import { vi, expect, it, describe, beforeEach } from 'vitest';
+import { vi, expect, it, describe } from 'vitest';
 import register from '../../lib/api/register';
 import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { redirectToCheckout } from '../../lib/stripe';
@@ -14,10 +14,6 @@ vi.mock('../../lib/api/getCheckoutSession');
 vi.mock('../../lib/api/register');
 
 describe('registration page', () => {
-	beforeEach(() => {
-		vi.clearAllMocks();
-	});
-
 	it('uses timezone loading placeholder', async () => {
 		renderWithQueryProvider(<Register />);
 

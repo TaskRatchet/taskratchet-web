@@ -8,7 +8,7 @@ export default defineConfig({
 	test: {
 		environment: 'jsdom',
 		setupFiles: ['./global-setup.ts'],
-		mockReset: true,
+		clearMocks: true,
 		reporters: 'dot',
 	},
 	build: {

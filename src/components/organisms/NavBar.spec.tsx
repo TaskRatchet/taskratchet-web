@@ -73,6 +73,8 @@ describe('NavBar', () => {
 	});
 
 	it('does not display logout link if no session', async () => {
+		mockUseSession.mockReturnValue(null);
+
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));

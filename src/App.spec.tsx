@@ -170,6 +170,8 @@ describe('App', () => {
 	it('scrolls to new task', async () => {
 		vi.setSystemTime(new Date('1/1/2020'));
 
+		loadTasksApiData();
+
 		renderPage();
 
 		await openForm();
