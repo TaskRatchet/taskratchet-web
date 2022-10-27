@@ -17,7 +17,12 @@ function isDayjsObject(value: unknown): value is { $d: Date } {
 		return false;
 	}
 
-	if (!((value as { $d?: unknown }).$d instanceof Date)) {
+	const d = (value as { $d?: unknown }).$d;
+	// WORKAROUND: https://stackoverflow.com/a/643827/937377
+	const isDate = Object.prototype.toString.call(d) === '[object Date]';
+
+	if (!isDate) {
+		console.log('$d not a date', value, d);
 		return false;
 	}
 
@@ -36,16 +41,16 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 				label="Due Date"
 				value={dueDate}
 				onChange={(value: unknown) => {
-					if (!isDayjsObject(value)) {
-						return;
-					}
+					if (!isDayjsObject(value)) return;
 
 					const d = value.$d;
 
 					if (isNaN(d.getTime())) return;
+
 					if (due) {
 						d.setHours(dueDate?.getHours(), dueDate?.getMinutes());
 					}
+
 					onChange({ due: formatDue(d) });
 				}}
 				OpenPickerButtonProps={{

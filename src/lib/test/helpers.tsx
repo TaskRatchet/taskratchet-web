@@ -1,4 +1,3 @@
-import browser from '../Browser';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
@@ -46,16 +45,6 @@ export function loadCheckoutSession(): void {
 		id: 'session',
 	});
 }
-
-export const loadNowDate = (dateString: string | Date): void => {
-	vi.spyOn(browser, 'getNowDate').mockImplementation(
-		() => new Date(dateString)
-	);
-};
-
-export const loadNowTime = (time: number): void => {
-	vi.spyOn(browser, 'getNowTime').mockReturnValue(time);
-};
 
 export function renderWithQueryProvider(
 	ui: ReactElement

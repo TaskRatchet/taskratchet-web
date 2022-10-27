@@ -7,7 +7,6 @@ import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
 import {
-	loadNowDate,
 	loadTasksApiData,
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
@@ -95,7 +94,7 @@ const renderTasksPage = () => {
 describe('tasks page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		loadNowDate(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
@@ -108,7 +107,7 @@ describe('tasks page', () => {
 	});
 
 	it('saves task', async () => {
-		loadNowDate(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('10/29/2020'));
 		loadTasksApiData();
 
 		renderTasksPage();
@@ -458,7 +457,7 @@ describe('tasks page', () => {
 	});
 
 	it('scrolls next section into view', async () => {
-		loadNowDate(new Date('3/22/2020'));
+		vi.setSystemTime(new Date('3/22/2020'));
 
 		loadTasksApiData({
 			tasks: [
@@ -515,7 +514,7 @@ describe('tasks page', () => {
 	});
 
 	it('immediately renders future new task', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [
@@ -589,7 +588,7 @@ describe('tasks page', () => {
 	});
 
 	it('scrolls list', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask()],
@@ -603,7 +602,7 @@ describe('tasks page', () => {
 	});
 
 	it('does not scroll list on page refocus', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask()],

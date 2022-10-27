@@ -1,11 +1,10 @@
 import useDifferenceToNow from './useDifferenceToNow';
-import { loadNowTime } from './test/helpers';
 import { makeTask } from './test/makeTask';
-import { expect, it, describe } from 'vitest';
+import { expect, it, describe, vi } from 'vitest';
 
 describe('useDifferenceToNow', () => {
 	it('handles future due', () => {
-		loadNowTime(1623869940 * 1000);
+		vi.setSystemTime(1623869940 * 1000);
 
 		const result = useDifferenceToNow(
 			makeTask({
@@ -17,7 +16,7 @@ describe('useDifferenceToNow', () => {
 	});
 
 	it('handles past due', () => {
-		loadNowTime(1623873540 * 1000);
+		vi.setSystemTime(1623873540 * 1000);
 
 		const result = useDifferenceToNow(
 			makeTask({
@@ -29,7 +28,7 @@ describe('useDifferenceToNow', () => {
 	});
 
 	it('only shows two units max', () => {
-		loadNowTime(1623869940 * 1000);
+		vi.setSystemTime(1623869940 * 1000);
 
 		const result = useDifferenceToNow(
 			makeTask({
@@ -41,7 +40,7 @@ describe('useDifferenceToNow', () => {
 	});
 
 	it('rounds seconds', () => {
-		loadNowTime(1623869940 * 1000 + 10);
+		vi.setSystemTime(1623869940 * 1000 + 10);
 
 		const result = useDifferenceToNow(
 			makeTask({
