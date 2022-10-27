@@ -21,12 +21,7 @@ function isDayjsObject(value: unknown): value is { $d: Date } {
 	// WORKAROUND: https://stackoverflow.com/a/643827/937377
 	const isDate = Object.prototype.toString.call(d) === '[object Date]';
 
-	if (!isDate) {
-		console.log('$d not a date', value, d);
-		return false;
-	}
-
-	return true;
+	return isDate;
 }
 
 export default function DueForm(props: DueFormProps): JSX.Element {

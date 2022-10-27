@@ -6,10 +6,8 @@ import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import {
-	loadTasksApiData,
-	renderWithQueryProvider,
-} from '../../lib/test/helpers';
+import { loadTasksApiData } from '../../lib/test/loadTasksApiData';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
@@ -34,20 +32,6 @@ vi.mock('react-list');
 vi.mock('react-toastify');
 
 const mockEditTask = editTask as Mock;
-
-// global.document.createRange = () =>
-// 	({
-// 		setStart: () => {
-// 			/* noop */
-// 		},
-// 		setEnd: () => {
-// 			/* noop */
-// 		},
-// 		commonAncestorContainer: {
-// 			nodeName: 'BODY',
-// 			ownerDocument: document,
-// 		},
-// 	} as unknown as Range);
 
 const expectTaskSave = async ({
 	task,
@@ -256,7 +240,7 @@ describe('tasks page', () => {
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		const { reject } = loadControlledPromise(getTasks);
+		const { resolve } = loadControlledPromise(getTasks);
 
 		await clickCheckbox();
 
@@ -265,7 +249,7 @@ describe('tasks page', () => {
 			expect(taskCheckbox?.checked).toBeTruthy();
 		});
 
-		reject();
+		resolve();
 	});
 
 	it('rolls back checkbox optimistic update', async () => {

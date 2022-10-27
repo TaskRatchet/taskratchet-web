@@ -2,7 +2,7 @@ import FilterButton from './FilterButton';
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { setCookie } from '../../lib/setCookie';
 import { expect, it, describe } from 'vitest';
 

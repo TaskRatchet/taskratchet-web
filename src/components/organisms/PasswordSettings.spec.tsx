@@ -1,5 +1,5 @@
 import React from 'react';
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import PasswordSettings from './PasswordSettings';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';

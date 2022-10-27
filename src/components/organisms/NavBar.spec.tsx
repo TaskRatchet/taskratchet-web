@@ -5,7 +5,7 @@ import userEvent from '@testing-library/user-event';
 import { screen, waitFor } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { vi, Mock, expect, it, describe } from 'vitest';
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 
 vi.mock('../../lib/api/useSession');
 
@@ -73,6 +73,8 @@ describe('NavBar', () => {
 	});
 
 	it('does not display logout link if no session', async () => {
+		mockUseSession.mockReturnValue(null);
+
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));

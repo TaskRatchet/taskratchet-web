@@ -1,4 +1,4 @@
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import Login from './Login';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
@@ -7,6 +7,7 @@ import { screen, waitFor } from '@testing-library/react';
 import { login } from '../../lib/api/login';
 import { requestResetEmail } from '../../lib/api/requestResetEmail';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 
 vi.mock('../../lib/api/login');
 vi.mock('../../lib/api/requestResetEmail');
@@ -67,47 +68,53 @@ describe('login form', () => {
 	});
 
 	it('displays error message if login fails', async () => {
-		vi.mocked(api.login).mockRejectedValue('the_error');
+		await withMutedReactQueryLogger(async () => {
+			vi.mocked(api.login).mockRejectedValue('the_error');
 
-		renderWithQueryProvider(<Login />);
+			renderWithQueryProvider(<Login />);
 
-		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		await userEvent.type(screen.getByLabelText('Password'), 'the_password');
-		await userEvent.click(screen.getByText('Submit'));
+			await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+			await userEvent.type(screen.getByLabelText('Password'), 'the_password');
+			await userEvent.click(screen.getByText('Submit'));
 
-		expect(await screen.findByText('Login failed')).toBeInTheDocument();
+			expect(await screen.findByText('Login failed')).toBeInTheDocument();
+		});
 	});
 
 	it('displays error message if reset fails', async () => {
-		vi.mocked(api.requestResetEmail).mockRejectedValue('the_error');
+		await withMutedReactQueryLogger(async () => {
+			vi.mocked(api.requestResetEmail).mockRejectedValue('the_error');
 
-		renderWithQueryProvider(<Login />);
+			renderWithQueryProvider(<Login />);
 
-		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		await userEvent.click(screen.getByText('Reset Password'));
+			await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+			await userEvent.click(screen.getByText('Reset Password'));
 
-		expect(await screen.findByText('Reset failed')).toBeInTheDocument();
+			expect(await screen.findByText('Reset failed')).toBeInTheDocument();
+		});
 	});
 
 	it('clears reset error on new attempt', async () => {
-		vi.mocked(api.requestResetEmail).mockRejectedValue('the_error');
+		await withMutedReactQueryLogger(async () => {
+			vi.mocked(api.requestResetEmail).mockRejectedValue('the_error');
 
-		renderWithQueryProvider(<Login />);
+			renderWithQueryProvider(<Login />);
 
-		await userEvent.type(screen.getByLabelText('Email'), 'the_email');
-		await userEvent.click(screen.getByText('Reset Password'));
+			await userEvent.type(screen.getByLabelText('Email'), 'the_email');
+			await userEvent.click(screen.getByText('Reset Password'));
 
-		expect(await screen.findByText('Reset failed')).toBeInTheDocument();
+			expect(await screen.findByText('Reset failed')).toBeInTheDocument();
 
-		const { resolve } = loadControlledPromise(api.requestResetEmail);
+			const { resolve } = loadControlledPromise(api.requestResetEmail);
 
-		await userEvent.click(screen.getByText('Reset Password'));
+			await userEvent.click(screen.getByText('Reset Password'));
 
-		await waitFor(() => {
-			expect(screen.queryByText('Reset failed')).not.toBeInTheDocument();
+			await waitFor(() => {
+				expect(screen.queryByText('Reset failed')).not.toBeInTheDocument();
+			});
+
+			resolve();
 		});
-
-		resolve();
 	});
 
 	it('alerts reset success', async () => {
