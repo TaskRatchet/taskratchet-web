@@ -16,7 +16,7 @@ describe('getUnloadMessage', () => {
 	});
 
 	it('returns message if pending task toggle', () => {
-		const { reject } = loadControlledPromise(updateTask);
+		const { resolve } = loadControlledPromise(updateTask);
 
 		const Component = () => {
 			const updateTask = useUpdateTask();
@@ -33,6 +33,6 @@ describe('getUnloadMessage', () => {
 
 		expect(getUnloadMessage(queryClient)).toEqual(expected);
 
-		reject();
+		resolve();
 	});
 });

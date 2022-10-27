@@ -174,7 +174,7 @@ describe('App', () => {
 
 		await openForm();
 
-		const { reject } = loadControlledPromise(addTask);
+		const { resolve } = loadControlledPromise(addTask);
 
 		await userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
 		await userEvent.click(screen.getByText('Add'));
@@ -183,7 +183,7 @@ describe('App', () => {
 			expect(__listRef.scrollTo).toHaveBeenCalledWith(1);
 		});
 
-		reject();
+		resolve();
 	});
 
 	it('scrolls to today', async () => {
