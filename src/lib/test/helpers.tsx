@@ -74,16 +74,6 @@ export function renderWithQueryProvider(
 	};
 }
 
-const loadApiResponse = (
-	mock: Mock,
-	response: { json?: Record<string, unknown>; ok?: boolean } = {
-		json: undefined,
-		ok: true,
-	}
-) => {
-	mock.mockReturnValue(makeResponse(response));
-};
-
 export const loadTasksApiData = ({
 	tasks = [],
 	me = {},
@@ -91,6 +81,6 @@ export const loadTasksApiData = ({
 	vi.mocked(getTasks).mockResolvedValue(tasks);
 	vi.mocked(getMe).mockResolvedValue(me as User);
 
-	loadApiResponse(updateTask as Mock);
-	loadApiResponse(addTask as Mock);
+	vi.mocked(updateTask).mockResolvedValue(makeResponse() as Response);
+	vi.mocked(addTask).mockResolvedValue(makeResponse() as Response);
 };
