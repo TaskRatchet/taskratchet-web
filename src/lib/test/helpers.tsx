@@ -1,7 +1,7 @@
 import { addTask } from '../api/addTask';
 import { getTasks } from '../api/getTasks';
 import { updateTask } from '../api/updateTask';
-import { vi, Mock } from 'vitest';
+import { vi } from 'vitest';
 import { getMe } from '../api/getMe';
 import { updateMe } from '../api/updateMe';
 
