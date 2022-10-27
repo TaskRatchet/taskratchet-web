@@ -1,7 +1,4 @@
-import {
-	loadCheckoutSession,
-	renderWithQueryProvider,
-} from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/helpers';
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import React from 'react';
 import Register from './Register';
@@ -16,8 +13,7 @@ vi.mock('../../lib/api/register');
 
 describe('registration page', () => {
 	beforeEach(() => {
-		vi.resetAllMocks();
-		loadCheckoutSession();
+		vi.clearAllMocks();
 		window.Stripe = vi.fn(() => ({
 			redirectToCheckout: vi.fn(async () =>
 				Promise.resolve({

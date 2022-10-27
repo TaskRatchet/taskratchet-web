@@ -1,11 +1,7 @@
 import { screen } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
-import {
-	loadCheckoutSession,
-	loadMe,
-	renderWithQueryProvider,
-} from '../../lib/test/helpers';
+import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import userEvent from '@testing-library/user-event';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
@@ -23,7 +19,6 @@ describe('account page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		loadMe({});
-		loadCheckoutSession();
 		vi.mocked(useGetApiToken).mockReturnValue({
 			isLoading: false,
 			mutate: () => {
@@ -35,7 +30,6 @@ describe('account page', () => {
 	it('includes Beeminder integration settings', async () => {
 		loadTimezones();
 		loadMe({});
-		loadCheckoutSession();
 
 		renderWithQueryProvider(<Account />);
 

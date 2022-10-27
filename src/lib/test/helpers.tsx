@@ -2,7 +2,6 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
 import { addTask } from '../api/addTask';
-import { getCheckoutSession } from '../api/getCheckoutSession';
 import { getTasks } from '../api/getTasks';
 import { updateTask } from '../api/updateTask';
 import { vi, Mock } from 'vitest';
@@ -39,12 +38,6 @@ export const loadMe = ({
 	vi.mocked(getMe).mockResolvedValue(json as User);
 	vi.mocked(updateMe).mockResolvedValue(response as Response);
 };
-
-export function loadCheckoutSession(): void {
-	vi.mocked(getCheckoutSession).mockResolvedValue({
-		id: 'session',
-	});
-}
 
 export function renderWithQueryProvider(
 	ui: ReactElement
