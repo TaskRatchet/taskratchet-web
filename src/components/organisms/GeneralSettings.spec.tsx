@@ -1,4 +1,5 @@
-import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
+import { loadMe } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import React from 'react';
 import GeneralSettings from './GeneralSettings';
 import userEvent from '@testing-library/user-event';

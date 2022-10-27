@@ -1,4 +1,4 @@
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import React from 'react';
 import Register from './Register';

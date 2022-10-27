@@ -1,4 +1,5 @@
-import { loadTasksApiData, renderWithQueryProvider } from './lib/test/helpers';
+import { loadTasksApiData } from './lib/test/helpers';
+import { renderWithQueryProvider } from './lib/test/renderWithQueryProvider';
 import { makeTask } from './lib/test/makeTask';
 import browser from './lib/Browser';
 import React from 'react';

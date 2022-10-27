@@ -1,7 +1,8 @@
 import { RenderResult, waitFor, screen } from '@testing-library/react';
 import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
-import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
+import { loadMe } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { loadUrlParams } from '../../lib/test/loadUrlParams';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';

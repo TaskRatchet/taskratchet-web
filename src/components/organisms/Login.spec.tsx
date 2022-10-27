@@ -1,4 +1,4 @@
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import Login from './Login';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
