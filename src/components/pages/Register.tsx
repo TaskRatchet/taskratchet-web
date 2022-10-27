@@ -178,6 +178,7 @@ const Register = (): JSX.Element => {
 				<Button
 					disabled={checkoutSession == null}
 					onClick={(e) => void submit(e)}
+					variant={'contained'}
 				>
 					Add payment method
 				</Button>
