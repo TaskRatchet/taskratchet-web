@@ -6,6 +6,7 @@ import Input from '../molecules/Input';
 import Field from '../molecules/Field';
 import { Box, Button } from '@mui/material';
 import register from '../../lib/api/register';
+import { redirectToCheckout } from '../../lib/stripe';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>(''),
@@ -22,48 +23,24 @@ const Register = (): JSX.Element => {
 
 		const passes = validateRegistrationForm();
 
-		if (!passes) return;
+		if (!passes || !checkoutSession) return;
 
 		const response = await register(
 			name,
 			email,
 			password,
 			timezone,
-			getSessionId()
+			checkoutSession.id
 		);
 
 		if (response.ok) {
 			toast('Redirecting...');
-			redirect();
+			redirectToCheckout(checkoutSession.id).catch((error: string) => {
+				toast(error);
+			});
 		} else {
 			toast('Registration failed');
 		}
-	};
-
-	const redirect = () => {
-		if (checkoutSession == null) return;
-
-		const stripe = window.Stripe(window.stripe_key);
-
-		void stripe
-			.redirectToCheckout({
-				sessionId: getSessionId(),
-			})
-			.then((result: { error: { message: string } }) => {
-				// If `redirectToCheckout` fails due to a browser or network
-				// error, display the localized error message to your customer
-				// using `result.error.message`.
-				toast(result.error.message);
-
-				console.log('Checkout redirect error');
-				console.log(result);
-			});
-	};
-
-	const getSessionId = () => {
-		if (checkoutSession == null) return null;
-
-		return checkoutSession.id;
 	};
 
 	const validateRegistrationForm = () => {

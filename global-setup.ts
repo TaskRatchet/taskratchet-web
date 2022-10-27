@@ -5,6 +5,7 @@ import matchers, {
 } from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
 import { getCheckoutSession } from './src/lib/api/getCheckoutSession';
+import { redirectToCheckout } from './src/lib/stripe';
 
 afterEach(() => {
 	cleanup();
@@ -22,6 +23,7 @@ module.exports = async () => {
 vi.mock('@mui/x-date-pickers');
 vi.mock('./src/lib/api/getTimezones');
 vi.mock('./src/lib/api/getCheckoutSession');
+vi.mock('./src/lib/stripe');
 
 global.scrollTo = vi.fn() as any;
 
@@ -46,4 +48,5 @@ beforeEach(() => {
 	vi.mocked(getCheckoutSession).mockResolvedValue({
 		id: 'session',
 	});
+	vi.mocked(redirectToCheckout).mockResolvedValue();
 });
