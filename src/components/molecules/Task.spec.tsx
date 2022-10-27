@@ -1,10 +1,7 @@
 import Task from './Task';
 import React from 'react';
-import {
-	loadNowDate,
-	renderWithQueryProvider,
-	withMutedReactQueryLogger,
-} from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';
 import { updateTask } from '../../lib/api/updateTask';
 import { waitFor } from '@testing-library/react';
@@ -280,7 +277,7 @@ describe('Task component', () => {
 	});
 
 	it('closes edit dialog on save', async () => {
-		loadNowDate('2/1/2020, 11:59 PM');
+		vi.setSystemTime('2/1/2020, 11:59 PM');
 
 		renderTask();
 

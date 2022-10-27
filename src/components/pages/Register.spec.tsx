@@ -1,8 +1,8 @@
 import {
 	loadCheckoutSession,
-	loadTimezones,
 	renderWithQueryProvider,
 } from '../../lib/test/helpers';
+import { loadTimezones } from '../../lib/test/loadTimezones';
 import React from 'react';
 import Register from './Register';
 import { waitFor, screen } from '@testing-library/react';

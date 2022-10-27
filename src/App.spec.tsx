@@ -1,9 +1,5 @@
-import {
-	loadNowDate,
-	loadTasksApiData,
-	makeTask,
-	renderWithQueryProvider,
-} from './lib/test/helpers';
+import { loadTasksApiData, renderWithQueryProvider } from './lib/test/helpers';
+import { makeTask } from './lib/test/makeTask';
 import browser from './lib/Browser';
 import React from 'react';
 import { App } from './App';
@@ -47,7 +43,7 @@ function renderPage() {
 
 describe('App', () => {
 	beforeEach(() => {
-		loadNowDate(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 		window.localStorage.clear();
 		vi.mocked(getQueryClient).mockReturnValue(
@@ -62,7 +58,7 @@ describe('App', () => {
 	});
 
 	it('re-scrolls tasks list when today icon clicked', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
@@ -148,7 +144,7 @@ describe('App', () => {
 	});
 
 	it('filters tasks', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
@@ -171,7 +167,7 @@ describe('App', () => {
 	});
 
 	it('scrolls to new task', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		renderPage();
 
@@ -190,7 +186,7 @@ describe('App', () => {
 	});
 
 	it('scrolls to today', async () => {
-		loadNowDate(new Date('1/7/2020'));
+		vi.setSystemTime(new Date('1/7/2020'));
 
 		loadTasksApiData({
 			tasks: [
@@ -209,7 +205,7 @@ describe('App', () => {
 	});
 
 	it('prevents adding task with due date in the past', async () => {
-		loadNowDate('1/1/2023');
+		vi.setSystemTime(new Date('1/1/2023'));
 
 		renderPage();
 
@@ -272,7 +268,7 @@ describe('App', () => {
 	});
 
 	it('copies task due date into form when copying task', async () => {
-		loadNowDate('2/1/2000');
+		vi.setSystemTime('2/1/2000');
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
@@ -310,7 +306,7 @@ describe('App', () => {
 	});
 
 	it('sets date input to one week in future when copying task with due date in past', async () => {
-		loadNowDate('2/1/2020');
+		vi.setSystemTime('2/1/2020');
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],

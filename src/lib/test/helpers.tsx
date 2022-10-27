@@ -1,12 +1,9 @@
-import { ParsedQuery } from 'query-string';
-import browser from '../Browser';
-import { QueryClient, QueryClientProvider, setLogger } from 'react-query';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import React, { ReactElement } from 'react';
 import { render, RenderResult } from '@testing-library/react';
 import { addTask } from '../api/addTask';
 import { getCheckoutSession } from '../api/getCheckoutSession';
 import { getTasks } from '../api/getTasks';
-import { getTimezones } from '../api/getTimezones';
 import { updateTask } from '../api/updateTask';
 import { vi, Mock } from 'vitest';
 import { getMe } from '../api/getMe';
@@ -43,29 +40,11 @@ export const loadMe = ({
 	vi.mocked(updateMe).mockResolvedValue(response as Response);
 };
 
-export function loadTimezones(timezones: string[] = []): void {
-	vi.mocked(getTimezones).mockResolvedValue(timezones);
-}
-
 export function loadCheckoutSession(): void {
 	vi.mocked(getCheckoutSession).mockResolvedValue({
 		id: 'session',
 	});
 }
-
-export const loadUrlParams = (params: ParsedQuery): void => {
-	vi.spyOn(browser, 'getUrlParams').mockReturnValue(params);
-};
-
-export const loadNowDate = (dateString: string | Date): void => {
-	vi.spyOn(browser, 'getNowDate').mockImplementation(
-		() => new Date(dateString)
-	);
-};
-
-export const loadNowTime = (time: number): void => {
-	vi.spyOn(browser, 'getNowTime').mockReturnValue(time);
-};
 
 export function renderWithQueryProvider(
 	ui: ReactElement
@@ -100,50 +79,6 @@ export function renderWithQueryProvider(
 		...view,
 		queryClient,
 	};
-}
-
-export function makeTask({
-	complete = false,
-	due = '5/22/2020, 11:59 PM',
-	due_timestamp = undefined,
-	id = Math.random().toString(),
-	cents = 100,
-	task = 'the_task',
-	status = complete ? 'complete' : 'pending',
-	isNew = undefined,
-	timezone = 'Etc/GMT',
-}: Partial<TaskType> = {}): TaskType {
-	return {
-		complete,
-		due,
-		due_timestamp,
-		id,
-		cents,
-		task,
-		status,
-		isNew,
-		timezone,
-	};
-}
-
-export async function withMutedReactQueryLogger(
-	callback: () => Promise<void>
-): Promise<void> {
-	setLogger({
-		log: () => {
-			/* noop */
-		},
-		warn: () => {
-			/* noop */
-		},
-		error: () => {
-			/* noop */
-		},
-	});
-
-	await callback();
-
-	setLogger(window.console);
 }
 
 const loadApiResponse = (
