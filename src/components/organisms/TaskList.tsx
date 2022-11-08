@@ -29,15 +29,14 @@ const TaskList = ({ newTask }: TaskListProps): JSX.Element => {
 			? (tasks ?? []).filter((t) => filters[t.status])
 			: tasks ?? [];
 
-		const { entries: newEntries, newTaskIndex: taskIndexUpdate } =
-			createListItems({
-				tasks: filtered,
-				newTask,
-				minDue: browser.getLastMidnight(),
-			});
+		const { entries: e, newTaskIndex: i } = createListItems({
+			tasks: filtered,
+			newTask,
+			minDue: browser.getLastMidnight(),
+		});
 
-		setEntries(newEntries);
-		setNewTaskIndex(taskIndexUpdate);
+		setEntries(e);
+		setNewTaskIndex(i);
 	}, [tasks, newTask, filters]);
 
 	useEffect(() => {
