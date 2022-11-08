@@ -3,15 +3,7 @@ import { Link } from 'react-router-dom';
 import { useLocation, useNavigate } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
 import FilterButton from '../molecules/FilterButton';
-import {
-	AppBar,
-	Box,
-	Button,
-	IconButton,
-	Toolbar,
-	Tooltip,
-	Typography,
-} from '@mui/material';
+import { AppBar, Box, IconButton, Toolbar, Tooltip } from '@mui/material';
 import { Today, Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
 
