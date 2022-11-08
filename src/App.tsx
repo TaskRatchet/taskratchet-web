@@ -46,14 +46,10 @@ function usePageViews(): void {
 }
 
 export function App(): JSX.Element {
-	const [lastToday, setLastToday] = useState<Date>();
+	const [lastToday] = useState<Date>();
 	const ref = useRef<HTMLElement>();
 	const location = useLocation();
 	const queryClient = getQueryClient();
-
-	const handleTodayClick = () => {
-		setLastToday(browser.getNowDate());
-	};
 
 	useEffect(() => {
 		document.title = 'TaskRatchet';
@@ -80,7 +76,7 @@ export function App(): JSX.Element {
 		<QueryClientProvider client={queryClient}>
 			<CssBaseline />
 			<Stack sx={{ height: '100vh' }}>
-				<NavBar onTodayClick={handleTodayClick} />
+				<NavBar />
 				<Box ref={ref} overflow={'scroll'} flexGrow={1}>
 					<Container
 						maxWidth={'sm'}
@@ -90,6 +86,9 @@ export function App(): JSX.Element {
 						}}
 					>
 						<Routes>
+							<Route path="/maybe" element={<>maybe</>} />
+							<Route path="/archive" element={<>archive</>} />
+
 							<Route path={'/register'} element={<RegisterForm />} />
 
 							<Route

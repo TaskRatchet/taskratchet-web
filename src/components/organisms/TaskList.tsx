@@ -8,7 +8,6 @@ import Task from '../molecules/Task';
 import useFilters from '../../lib/useFilters';
 
 interface TaskListProps {
-	lastToday?: Date;
 	newTask?: TaskType;
 }
 
@@ -16,12 +15,11 @@ function isTask(value: unknown): value is TaskType {
 	return Object.prototype.hasOwnProperty.call(value || {}, 'task');
 }
 
-const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
+const TaskList = ({ newTask }: TaskListProps): JSX.Element => {
 	const { data: tasks, isFetched } = useTasks();
 	const { filters } = useFilters();
 	const listRef = useRef<ReactList>(null);
 	const [entries, setEntries] = useState<(TaskType | string)[]>([]);
-	const [nextHeadingIndex, setNextHeadingIndex] = useState<number>();
 	const [newTaskIndex, setNewTaskIndex] = useState<number>();
 	const [index, setIndex] = useState<number>(0);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
@@ -30,22 +28,12 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 		const sorted = sortTasks(tasks || []);
 		const filtered = filters ? sorted.filter((t) => filters[t.status]) : sorted;
 
-		const {
-			entries: newEntries,
-			nextHeadingIndex: headingIndexUpdate,
-			newTaskIndex: taskIndexUpdate,
-		} = createListItems(filtered, newTask);
+		const { entries: newEntries, newTaskIndex: taskIndexUpdate } =
+			createListItems(filtered, newTask);
 
-		setNextHeadingIndex(headingIndexUpdate);
 		setEntries(newEntries);
 		setNewTaskIndex(taskIndexUpdate);
-	}, [tasks, newTask, filters, nextHeadingIndex]);
-
-	useEffect(() => {
-		if (nextHeadingIndex === undefined) return;
-		setIndex(nextHeadingIndex);
-		setShouldScroll(true);
-	}, [nextHeadingIndex, isFetched, lastToday]);
+	}, [tasks, newTask, filters]);
 
 	useEffect(() => {
 		if (newTaskIndex === undefined) return;

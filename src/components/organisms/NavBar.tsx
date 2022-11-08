@@ -1,25 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
 import FilterButton from '../molecules/FilterButton';
-import { AppBar, Box, IconButton, Toolbar, Tooltip } from '@mui/material';
-import { Today, Menu } from '@mui/icons-material';
+import {
+	AppBar,
+	Box,
+	Button,
+	IconButton,
+	Toolbar,
+	Tooltip,
+} from '@mui/material';
+import { Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
 
-interface NavBarProps {
-	onTodayClick?: () => void;
-}
-
-export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
+export default function NavBar(): JSX.Element {
 	const location = useLocation();
-	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const toggleMenu = () => setIsOpen(!isOpen);
-	const handleTodayClick = () => {
-		onTodayClick && onTodayClick();
-		navigate('/');
-	};
 
 	useEffect(() => setIsOpen(false), [location]);
 
@@ -29,12 +27,15 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 				<LoadingIndicator />
 			</Box>
 
-			<Toolbar>
+			<Toolbar
+				sx={{
+					justifyContent: 'space-between',
+				}}
+			>
 				<Link
 					to={'/'}
 					style={{
 						display: 'flex',
-						flexGrow: 1,
 					}}
 				>
 					<img
@@ -45,31 +46,33 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 					/>
 				</Link>
 
-				<FilterButton />
+				<Box>
+					<Button color="inherit" component={Link} to={'/'}>
+						Next
+					</Button>
+					<Button color="inherit" component={Link} to={'/maybe'}>
+						Maybe
+					</Button>
+					<Button color="inherit" component={Link} to={'/archive'}>
+						Archive
+					</Button>
+				</Box>
 
-				<Tooltip title={'Jump to Today'}>
-					<IconButton
-						onClick={handleTodayClick}
-						edge="start"
-						color="inherit"
-						aria-label="today"
-						sx={{ m: 0.1 }}
-					>
-						<Today />
-					</IconButton>
-				</Tooltip>
+				<Box>
+					<FilterButton />
 
-				<Tooltip title={'Menu'}>
-					<IconButton
-						onClick={toggleMenu}
-						edge="start"
-						color="inherit"
-						aria-label="menu"
-						sx={{ m: 0.1 }}
-					>
-						<Menu />
-					</IconButton>
-				</Tooltip>
+					<Tooltip title={'Menu'}>
+						<IconButton
+							onClick={toggleMenu}
+							edge="start"
+							color="inherit"
+							aria-label="menu"
+							sx={{ m: 0.1 }}
+						>
+							<Menu />
+						</IconButton>
+					</Tooltip>
+				</Box>
 			</Toolbar>
 
 			<NavDrawer isOpen={isOpen} onClose={toggleMenu} />

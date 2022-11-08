@@ -78,7 +78,7 @@ const renderTasksPage = () => {
 describe('tasks page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.setSystemTime(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('1/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
@@ -569,46 +569,6 @@ describe('tasks page', () => {
 		renderTasksPage();
 
 		expect(screen.queryByText('Nothing here!')).not.toBeInTheDocument();
-	});
-
-	it('scrolls list', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		renderTasksPage();
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toBeCalled();
-		});
-	});
-
-	it('does not scroll list on page refocus', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		const { queryClient } = renderTasksPage();
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toBeCalled();
-		});
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		await queryClient.invalidateQueries('tasks');
-
-		await waitFor(() => {
-			expect(getTasks).toBeCalledTimes(2);
-		});
-
-		expect(__listRef.scrollTo).toBeCalledTimes(1);
 	});
 
 	it('reloads tasks on task edit save', async () => {

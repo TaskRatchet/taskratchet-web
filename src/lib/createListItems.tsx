@@ -17,16 +17,16 @@ export default function createListItems(
 	newTask: TaskType | undefined
 ): {
 	entries: Entries;
-	nextHeadingIndex: number | undefined;
 	newTaskIndex: number | undefined;
 } {
 	const now = browser.getNowDate();
 
 	let lastTitle: string;
-	let nextHeadingIndex: number | undefined = undefined;
 	let newTaskIndex: number | undefined = undefined;
 
 	const entries = sortedTasks.reduce((acc: Entries, t: TaskType): Entries => {
+		if (new Date(t.due) < now) return acc;
+
 		const title = makeTitle(t);
 		const shouldAddHeading = title !== lastTitle || !acc.length;
 
@@ -35,9 +35,6 @@ export default function createListItems(
 		}
 
 		if (shouldAddHeading) {
-			if (nextHeadingIndex === undefined && new Date(t.due) > now) {
-				nextHeadingIndex = acc.length;
-			}
 			lastTitle = title;
 			return [...acc, title, t];
 		}
@@ -47,7 +44,6 @@ export default function createListItems(
 
 	return {
 		entries,
-		nextHeadingIndex,
 		newTaskIndex,
 	};
 }
