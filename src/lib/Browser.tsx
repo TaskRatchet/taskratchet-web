@@ -90,7 +90,7 @@ export class Browser {
 		return el.scrollTop / (el.scrollHeight - el.clientHeight);
 	}
 
-	getLastMidnight(date: Date): Date {
+	getLastMidnight(date: Date = browser.getNowDate()): Date {
 		const d = new Date(date);
 		d.setHours(0, 0, 0, 0);
 		return d;

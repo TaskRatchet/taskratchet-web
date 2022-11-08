@@ -5,6 +5,7 @@ import ReactList from 'react-list';
 import { Alert, AlertTitle, ListSubheader } from '@mui/material';
 import Task from '../molecules/Task';
 import useFilters from '../../lib/useFilters';
+import browser from '../../lib/Browser';
 
 interface TaskListProps {
 	newTask?: TaskType;
@@ -32,6 +33,7 @@ const TaskList = ({ newTask }: TaskListProps): JSX.Element => {
 			createListItems({
 				tasks: filtered,
 				newTask,
+				minDue: browser.getLastMidnight(),
 			});
 
 		setEntries(newEntries);

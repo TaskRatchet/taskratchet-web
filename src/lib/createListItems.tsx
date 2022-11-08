@@ -16,21 +16,20 @@ type Entries = (TaskType | string)[];
 type Options = {
 	tasks: TaskType[];
 	newTask: TaskType | undefined;
+	minDue: Date;
 };
 
-export default function createListItems({ tasks, newTask }: Options): {
+export default function createListItems({ tasks, newTask, minDue }: Options): {
 	entries: Entries;
 	newTaskIndex: number | undefined;
 } {
-	const now = browser.getNowDate();
-	const lastMidnight = browser.getLastMidnight(now);
 	const sortedTasks = sortTasks(tasks);
 
 	let lastTitle: string;
 	let newTaskIndex: number | undefined = undefined;
 
 	const entries = sortedTasks.reduce((acc: Entries, t: TaskType): Entries => {
-		if (new Date(t.due) < lastMidnight) return acc;
+		if (new Date(t.due) < minDue) return acc;
 
 		const title = makeTitle(t);
 		const shouldAddHeading = title !== lastTitle || !acc.length;
