@@ -43,7 +43,11 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 			}}
 			dense
 		>
-			<ListItemIcon>
+			<ListItemIcon
+				sx={{
+					minWidth: 0,
+				}}
+			>
 				{task.status === 'expired' ? (
 					<Box style={{ padding: 9 }}>
 						<EventBusyIcon />
