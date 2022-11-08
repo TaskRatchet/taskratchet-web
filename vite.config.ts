@@ -1,16 +1,9 @@
-/// <reference types="vitest" />
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig({
 	plugins: [react(), visualizer()],
-	test: {
-		environment: 'jsdom',
-		setupFiles: ['./global-setup.ts'],
-		clearMocks: true,
-		reporters: 'dot',
-	},
 	build: {
 		rollupOptions: {
 			output: {

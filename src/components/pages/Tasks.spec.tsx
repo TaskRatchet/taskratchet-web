@@ -55,7 +55,7 @@ const expectTaskSave = async ({
 };
 
 const renderTasksPage = () => {
-	const view = renderWithQueryProvider(<Tasks lastToday={undefined} />);
+	const view = renderWithQueryProvider(<Tasks />);
 
 	return {
 		openForm: async () => {

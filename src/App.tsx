@@ -128,7 +128,7 @@ export function App(): JSX.Element {
 								path={'/'}
 								element={
 									<Authenticated>
-										<Tasks lastToday={lastToday} />
+										<Tasks />
 									</Authenticated>
 								}
 							/>

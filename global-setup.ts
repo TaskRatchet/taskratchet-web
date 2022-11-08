@@ -24,6 +24,10 @@ vi.mock('@mui/x-date-pickers');
 vi.mock('./src/lib/api/getTimezones');
 vi.mock('./src/lib/api/getCheckoutSession');
 vi.mock('./src/lib/stripe');
+vi.mock('./src/lib/api/getTasks');
+vi.mock('./src/lib/api/getMe');
+vi.mock('./src/lib/api/updateTask');
+vi.mock('./src/lib/api/addTask');
 
 global.scrollTo = vi.fn() as any;
 
