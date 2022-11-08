@@ -611,4 +611,16 @@ describe('tasks page', () => {
 			);
 		});
 	});
+
+	it('displays task that is due in past but on same date', async () => {
+		vi.setSystemTime(new Date('1/1/2020, 2:00 PM'));
+
+		loadTasksApiData({
+			tasks: [makeTask({ task: 'the_task', due: '1/1/2020, 1:00 PM' })],
+		});
+
+		renderTasksPage();
+
+		await screen.findByText('the_task');
+	});
 });

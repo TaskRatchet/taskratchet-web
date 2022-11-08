@@ -20,12 +20,13 @@ export default function createListItems(
 	newTaskIndex: number | undefined;
 } {
 	const now = browser.getNowDate();
+	const lastMidnight = browser.getLastMidnight(now);
 
 	let lastTitle: string;
 	let newTaskIndex: number | undefined = undefined;
 
 	const entries = sortedTasks.reduce((acc: Entries, t: TaskType): Entries => {
-		if (new Date(t.due) < now) return acc;
+		if (new Date(t.due) < lastMidnight) return acc;
 
 		const title = makeTitle(t);
 		const shouldAddHeading = title !== lastTitle || !acc.length;

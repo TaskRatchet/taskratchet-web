@@ -89,6 +89,12 @@ export class Browser {
 	getScrollPercentage(el: Element): number {
 		return el.scrollTop / (el.scrollHeight - el.clientHeight);
 	}
+
+	getLastMidnight(date: Date): Date {
+		const d = new Date(date);
+		d.setHours(0, 0, 0, 0);
+		return d;
+	}
 }
 
 const browser = new Browser();
