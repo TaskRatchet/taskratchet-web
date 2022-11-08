@@ -1,4 +1,5 @@
 import browser from './Browser';
+import { sortTasks } from './sortTasks';
 
 function makeTitle(task: TaskType) {
 	return browser.getString(new Date(task.due));
@@ -13,16 +14,17 @@ const isNewTask = (t: TaskType, n: TaskType | undefined): boolean => {
 type Entries = (TaskType | string)[];
 
 type Options = {
-	sortedTasks: TaskType[];
+	tasks: TaskType[];
 	newTask: TaskType | undefined;
 };
 
-export default function createListItems({ sortedTasks, newTask }: Options): {
+export default function createListItems({ tasks, newTask }: Options): {
 	entries: Entries;
 	newTaskIndex: number | undefined;
 } {
 	const now = browser.getNowDate();
 	const lastMidnight = browser.getLastMidnight(now);
+	const sortedTasks = sortTasks(tasks);
 
 	let lastTitle: string;
 	let newTaskIndex: number | undefined = undefined;

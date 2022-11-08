@@ -12,7 +12,6 @@ import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
-import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
 import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';

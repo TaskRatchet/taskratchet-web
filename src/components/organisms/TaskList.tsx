@@ -25,12 +25,13 @@ const TaskList = ({ newTask }: TaskListProps): JSX.Element => {
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
 	useEffect(() => {
-		const sorted = sortTasks(tasks || []);
-		const filtered = filters ? sorted.filter((t) => filters[t.status]) : sorted;
+		const filtered = filters
+			? (tasks ?? []).filter((t) => filters[t.status])
+			: tasks ?? [];
 
 		const { entries: newEntries, newTaskIndex: taskIndexUpdate } =
 			createListItems({
-				sortedTasks: filtered,
+				tasks: filtered,
 				newTask,
 			});
 
