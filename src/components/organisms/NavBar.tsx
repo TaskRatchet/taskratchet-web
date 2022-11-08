@@ -38,16 +38,20 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 			</Box>
 
 			<Toolbar>
-				<Typography
-					className={'organism-navBar__title'}
-					variant="h6"
-					component="div"
-					sx={{ flexGrow: 1 }}
+				<Link
+					to={'/'}
+					style={{
+						display: 'flex',
+						flexGrow: 1,
+					}}
 				>
-					<Button component={Link} to={'/'} color={'inherit'}>
-						TaskRatchet
-					</Button>
-				</Typography>
+					<img
+						src="/android-chrome-192x192.png"
+						height={32}
+						width={32}
+						alt="TaskRatchet"
+					/>
+				</Link>
 
 				<FilterButton />
 
