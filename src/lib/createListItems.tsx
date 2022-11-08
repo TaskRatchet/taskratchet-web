@@ -12,10 +12,12 @@ const isNewTask = (t: TaskType, n: TaskType | undefined): boolean => {
 
 type Entries = (TaskType | string)[];
 
-export default function createListItems(
-	sortedTasks: TaskType[],
-	newTask: TaskType | undefined
-): {
+type Options = {
+	sortedTasks: TaskType[];
+	newTask: TaskType | undefined;
+};
+
+export default function createListItems({ sortedTasks, newTask }: Options): {
 	entries: Entries;
 	newTaskIndex: number | undefined;
 } {

@@ -29,7 +29,10 @@ const TaskList = ({ newTask }: TaskListProps): JSX.Element => {
 		const filtered = filters ? sorted.filter((t) => filters[t.status]) : sorted;
 
 		const { entries: newEntries, newTaskIndex: taskIndexUpdate } =
-			createListItems(filtered, newTask);
+			createListItems({
+				sortedTasks: filtered,
+				newTask,
+			});
 
 		setEntries(newEntries);
 		setNewTaskIndex(taskIndexUpdate);
