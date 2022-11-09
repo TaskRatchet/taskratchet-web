@@ -6,13 +6,10 @@ import { Alert, AlertTitle, ListSubheader } from '@mui/material';
 import Task from '../molecules/Task';
 import useFilters from '../../lib/useFilters';
 import browser from '../../lib/Browser';
+import isTask from '../../lib/isTask';
 
 interface TaskListProps {
 	newTask?: TaskType;
-}
-
-function isTask(value: unknown): value is TaskType {
-	return Object.prototype.hasOwnProperty.call(value || {}, 'task');
 }
 
 const TaskList = ({ newTask }: TaskListProps): JSX.Element => {

@@ -15,21 +15,34 @@ type Entries = (TaskType | string)[];
 
 type Options = {
 	tasks: TaskType[];
-	newTask: TaskType | undefined;
-	minDue: Date;
+	newTask?: TaskType;
+	minDue?: Date;
+	maxDue?: Date;
+	reverse?: boolean;
 };
 
-export default function createListItems({ tasks, newTask, minDue }: Options): {
+export default function createListItems({
+	tasks,
+	newTask,
+	minDue,
+	maxDue,
+	reverse,
+}: Options): {
 	entries: Entries;
 	newTaskIndex: number | undefined;
 } {
 	const sortedTasks = sortTasks(tasks);
 
+	if (reverse) {
+		sortedTasks.reverse();
+	}
+
 	let lastTitle: string;
 	let newTaskIndex: number | undefined = undefined;
 
 	const entries = sortedTasks.reduce((acc: Entries, t: TaskType): Entries => {
-		if (new Date(t.due) < minDue) return acc;
+		if (minDue && new Date(t.due) < minDue) return acc;
+		if (maxDue && new Date(t.due) > maxDue) return acc;
 
 		const title = makeTitle(t);
 		const shouldAddHeading = title !== lastTitle || !acc.length;

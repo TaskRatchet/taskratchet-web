@@ -21,6 +21,7 @@ import { ErrorBoundary } from '@highlight-run/react';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
 import ga from './lib/ga';
+import Archive from './components/pages/Archive';
 
 toast.configure();
 
@@ -86,7 +87,15 @@ export function App(): JSX.Element {
 					>
 						<Routes>
 							<Route path="/maybe" element={<>maybe</>} />
-							<Route path="/archive" element={<>archive</>} />
+
+							<Route
+								path="/archive"
+								element={
+									<Authenticated>
+										<Archive />
+									</Authenticated>
+								}
+							/>
 
 							<Route path={'/register'} element={<RegisterForm />} />
 

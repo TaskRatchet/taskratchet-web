@@ -8,6 +8,8 @@ import {
 	Box,
 	Button,
 	IconButton,
+	Tab,
+	Tabs,
 	Toolbar,
 	Tooltip,
 } from '@mui/material';
@@ -31,6 +33,7 @@ export default function NavBar(): JSX.Element {
 				sx={{
 					justifyContent: 'space-between',
 				}}
+				variant="dense"
 			>
 				<Link
 					to={'/'}
@@ -46,17 +49,38 @@ export default function NavBar(): JSX.Element {
 					/>
 				</Link>
 
-				<Box>
-					<Button color="inherit" component={Link} to={'/'}>
-						Next
-					</Button>
-					<Button color="inherit" component={Link} to={'/maybe'}>
-						Maybe
-					</Button>
-					<Button color="inherit" component={Link} to={'/archive'}>
-						Archive
-					</Button>
-				</Box>
+				<Tabs textColor="inherit" value={location.pathname}>
+					<Tab
+						label="Next"
+						value="/"
+						to={'/'}
+						component={Link}
+						sx={{
+							minWidth: 0,
+							p: 1,
+						}}
+					/>
+					<Tab
+						label="Maybe"
+						value="/maybe"
+						to={'/maybe'}
+						component={Link}
+						sx={{
+							minWidth: 0,
+							p: 1,
+						}}
+					/>
+					<Tab
+						label="Archive"
+						value="/archive"
+						to={'/archive'}
+						component={Link}
+						sx={{
+							minWidth: 0,
+							p: 1,
+						}}
+					/>
+				</Tabs>
 
 				<Box>
 					<FilterButton />
