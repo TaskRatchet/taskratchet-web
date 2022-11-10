@@ -2,7 +2,7 @@ import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider'
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import React from 'react';
 import Register from './Register';
-import { waitFor, screen } from '@testing-library/react';
+import { waitFor, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { getTimezones } from '../../lib/api/getTimezones';
 import { vi, expect, it, describe } from 'vitest';
@@ -14,20 +14,6 @@ vi.mock('../../lib/api/getCheckoutSession');
 vi.mock('../../lib/api/register');
 
 describe('registration page', () => {
-	it('uses timezone loading placeholder', async () => {
-		renderWithQueryProvider(<Register />);
-
-		await screen.findByText('Loading...');
-	});
-
-	it('defaults to "Choose your timezone..." option', async () => {
-		loadTimezones();
-
-		renderWithQueryProvider(<Register />);
-
-		await screen.findByText('Choose your timezone...');
-	});
-
 	it('uses Input for name field', async () => {
 		renderWithQueryProvider(<Register />);
 
@@ -75,10 +61,12 @@ describe('registration page', () => {
 		await waitFor(() => {
 			expect(getTimezones).toBeCalled();
 		});
-		await userEvent.selectOptions(
-			await screen.findByLabelText('Timezone'),
-			'the_timezone'
-		);
+
+		await userEvent.click(await screen.findByLabelText('Timezone'));
+
+		const listbox = within(screen.getByRole('listbox'));
+
+		await userEvent.click(listbox.getByText('the_timezone'));
 
 		await userEvent.click(
 			await screen.findByLabelText(
@@ -131,10 +119,14 @@ describe('registration page', () => {
 		await waitFor(() => {
 			expect(getTimezones).toBeCalled();
 		});
-		await userEvent.selectOptions(
-			await screen.findByLabelText('Timezone'),
-			'the_timezone'
-		);
+
+		const timezoneLabels = await screen.findAllByLabelText('Timezone');
+
+		await userEvent.click(timezoneLabels[0]);
+
+		const listbox = within(screen.getByRole('listbox'));
+
+		await userEvent.click(listbox.getByText('the_timezone'));
 
 		await userEvent.click(
 			await screen.findByLabelText(

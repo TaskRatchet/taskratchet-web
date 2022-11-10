@@ -4,9 +4,16 @@ import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { useTimezones } from '../../lib/api/useTimezones';
 import Input from '../molecules/Input';
 import Field from '../molecules/Field';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import register from '../../lib/api/register';
 import { redirectToCheckout } from '../../lib/stripe';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>(''),
@@ -72,74 +79,73 @@ const Register = (): JSX.Element => {
 	const getTimezoneOptions = () => {
 		if (!timezones)
 			return (
-				<option value={''} disabled>
+				<MenuItem value={''} disabled>
 					Loading...
-				</option>
+				</MenuItem>
 			);
 
-		return (
-			<>
-				{
-					<option value={''} disabled>
-						Choose your timezone...
-					</option>
-				}
-				{timezones.map((tz: string, i: number) => (
-					<option value={tz} key={i}>
-						{tz}
-					</option>
-				))}
-			</>
-		);
+		return [
+			<MenuItem value={''} key="default" disabled>
+				Choose your timezone...
+			</MenuItem>,
+			...timezones.map((tz: string, i: number) => (
+				<MenuItem value={tz} key={i}>
+					{tz}
+				</MenuItem>
+			)),
+		];
 	};
 
 	return (
 		<Box sx={{ p: 2 }}>
 			<form>
 				<h1>Register</h1>
+				<Stack spacing={2}>
+					<TextField
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						label={'Name'}
+						id={'name'}
+					/>
 
-				<Input
-					type="text"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					label={'Name'}
-					id={'name'}
-				/>
+					<TextField
+						type="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						id={'email'}
+						label={'Email'}
+					/>
 
-				<Input
-					type="email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					id={'email'}
-					label={'Email'}
-				/>
+					<TextField
+						type="password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						id={'password'}
+						label={'Password'}
+					/>
 
-				<Input
-					type="password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-					id={'password'}
-					label={'Password'}
-				/>
+					<TextField
+						type="password"
+						value={password2}
+						onChange={(e) => setPassword2(e.target.value)}
+						id={'password2'}
+						label={'Retype Password'}
+					/>
 
-				<Input
-					type="password"
-					value={password2}
-					onChange={(e) => setPassword2(e.target.value)}
-					id={'password2'}
-					label={'Retype Password'}
-				/>
-
-				<Field label={'Timezone'} id={'timezone'}>
-					<select
-						id="timezone"
-						name="timezone"
-						value={timezone}
-						onChange={(e) => setTimezone(e.target.value)}
-					>
-						{getTimezoneOptions()}
-					</select>
-				</Field>
+					<FormControl>
+						<InputLabel id={'timezone'}>Timezone</InputLabel>
+						<Select
+							labelId={'timezone'}
+							label={'Timezone'}
+							id="timezone"
+							name="timezone"
+							value={timezone}
+							onChange={(e) => setTimezone(e.target.value)}
+						>
+							{getTimezoneOptions()}
+						</Select>
+					</FormControl>
+				</Stack>
 
 				<p>
 					<label>
