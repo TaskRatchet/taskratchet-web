@@ -2,8 +2,6 @@ import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { useTimezones } from '../../lib/api/useTimezones';
-import Input from '../molecules/Input';
-import Field from '../molecules/Field';
 import { Box, Button, Stack } from '@mui/material';
 import register from '../../lib/api/register';
 import { redirectToCheckout } from '../../lib/stripe';
@@ -12,8 +10,6 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>(''),
