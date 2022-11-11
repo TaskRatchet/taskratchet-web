@@ -10,16 +10,18 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
+import saveFeedback from '../../lib/saveFeedback';
 
 const Register = (): JSX.Element => {
-	const [name, setName] = useState<string>(''),
-		[email, setEmail] = useState<string>(''),
-		[password, setPassword] = useState<string>(''),
-		[password2, setPassword2] = useState<string>(''),
-		{ data: timezones } = useTimezones(),
-		checkoutSession = useCheckoutSession(),
-		[timezone, setTimezone] = useState<string>(''),
-		[agreed, setAgreed] = useState<boolean>(false);
+	const [name, setName] = useState<string>('');
+	const [email, setEmail] = useState<string>('');
+	const [password, setPassword] = useState<string>('');
+	const [password2, setPassword2] = useState<string>('');
+	const { data: timezones } = useTimezones();
+	const checkoutSession = useCheckoutSession();
+	const [timezone, setTimezone] = useState<string>('');
+	const [agreed, setAgreed] = useState<boolean>(false);
+	const [referral, setReferral] = useState<string>('');
 
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -27,6 +29,13 @@ const Register = (): JSX.Element => {
 		const passes = validateRegistrationForm();
 
 		if (!passes || !checkoutSession) return;
+
+		saveFeedback({
+			userName: name,
+			userEmail: email,
+			prompt: 'How did you hear about us?',
+			response: referral,
+		});
 
 		const response = await register(
 			name,
@@ -141,6 +150,13 @@ const Register = (): JSX.Element => {
 							{getTimezoneOptions()}
 						</Select>
 					</FormControl>
+
+					<TextField
+						value={referral}
+						onChange={(e) => setReferral(e.target.value)}
+						label={'How did you hear about us?'}
+						id={'referral'}
+					/>
 				</Stack>
 
 				<p>
