@@ -9,9 +9,51 @@ import { vi, expect, it, describe } from 'vitest';
 import register from '../../lib/api/register';
 import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { redirectToCheckout } from '../../lib/stripe';
+import saveFeedback from '../../lib/saveFeedback';
 
 vi.mock('../../lib/api/getCheckoutSession');
 vi.mock('../../lib/api/register');
+
+async function fillForm() {
+	loadTimezones(['the_timezone']);
+
+	vi.mocked(register).mockImplementation(async () => {
+		return Promise.resolve(new Response());
+	});
+
+	renderWithQueryProvider(<Register />);
+
+	await userEvent.type(await screen.findByLabelText('Name'), 'the_name');
+	await userEvent.type(await screen.findByLabelText('Email'), 'the_email');
+	await userEvent.type(
+		await screen.findByLabelText('Password'),
+		'the_password'
+	);
+	await userEvent.type(
+		await screen.findByLabelText('Retype Password'),
+		'the_password'
+	);
+
+	await waitFor(() => {
+		expect(getTimezones).toBeCalled();
+	});
+
+	await userEvent.click(await screen.findByLabelText('Timezone'));
+
+	const listbox = within(screen.getByRole('listbox'));
+
+	await userEvent.click(listbox.getByText('the_timezone'));
+
+	await userEvent.click(
+		await screen.findByLabelText(
+			"I have read and agree to TaskRatchet's privacy policy and terms of service."
+		)
+	);
+
+	await waitFor(() => {
+		expect(screen.getByText('Add payment method')).not.toBeDisabled();
+	});
+}
 
 describe('registration page', () => {
 	it('uses Input for name field', async () => {
@@ -39,44 +81,8 @@ describe('registration page', () => {
 	});
 
 	it('submits registration', async () => {
-		loadTimezones(['the_timezone']);
+		await fillForm();
 
-		vi.mocked(register).mockImplementation(async () => {
-			return Promise.resolve(new Response());
-		});
-
-		renderWithQueryProvider(<Register />);
-
-		await userEvent.type(await screen.findByLabelText('Name'), 'the_name');
-		await userEvent.type(await screen.findByLabelText('Email'), 'the_email');
-		await userEvent.type(
-			await screen.findByLabelText('Password'),
-			'the_password'
-		);
-		await userEvent.type(
-			await screen.findByLabelText('Retype Password'),
-			'the_password'
-		);
-
-		await waitFor(() => {
-			expect(getTimezones).toBeCalled();
-		});
-
-		await userEvent.click(await screen.findByLabelText('Timezone'));
-
-		const listbox = within(screen.getByRole('listbox'));
-
-		await userEvent.click(listbox.getByText('the_timezone'));
-
-		await userEvent.click(
-			await screen.findByLabelText(
-				"I have read and agree to TaskRatchet's privacy policy and terms of service."
-			)
-		);
-
-		await waitFor(() => {
-			expect(screen.getByText('Add payment method')).not.toBeDisabled();
-		});
 		await userEvent.click(await screen.findByText('Add payment method'));
 
 		await waitFor(() => {
@@ -97,50 +103,30 @@ describe('registration page', () => {
 			id: 'session_id',
 		});
 
-		loadTimezones(['the_timezone']);
+		await fillForm();
 
-		vi.mocked(register).mockImplementation(async () => {
-			return Promise.resolve(new Response());
-		});
-
-		renderWithQueryProvider(<Register />);
-
-		await userEvent.type(await screen.findByLabelText('Name'), 'the_name');
-		await userEvent.type(await screen.findByLabelText('Email'), 'the_email');
-		await userEvent.type(
-			await screen.findByLabelText('Password'),
-			'the_password'
-		);
-		await userEvent.type(
-			await screen.findByLabelText('Retype Password'),
-			'the_password'
-		);
-
-		await waitFor(() => {
-			expect(getTimezones).toBeCalled();
-		});
-
-		const timezoneLabels = await screen.findAllByLabelText('Timezone');
-
-		await userEvent.click(timezoneLabels[0]);
-
-		const listbox = within(screen.getByRole('listbox'));
-
-		await userEvent.click(listbox.getByText('the_timezone'));
-
-		await userEvent.click(
-			await screen.findByLabelText(
-				"I have read and agree to TaskRatchet's privacy policy and terms of service."
-			)
-		);
-
-		await waitFor(() => {
-			expect(screen.getByText('Add payment method')).not.toBeDisabled();
-		});
 		await userEvent.click(await screen.findByText('Add payment method'));
 
 		await waitFor(() => {
 			expect(redirectToCheckout).toBeCalledWith('session_id');
+		});
+	});
+
+	it('collects how they learned about TaskRatchet', async () => {
+		await fillForm();
+
+		await userEvent.type(
+			await screen.findByLabelText('How did you hear about us?'),
+			'the_referral'
+		);
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		expect(saveFeedback).toBeCalledWith({
+			userName: 'the_name',
+			userEmail: 'the_email',
+			prompt: 'How did you hear about us?',
+			response: 'the_referral',
 		});
 	});
 });
