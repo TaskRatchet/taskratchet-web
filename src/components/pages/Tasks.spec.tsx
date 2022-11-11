@@ -490,7 +490,10 @@ describe('tasks page', () => {
 		await openForm();
 
 		await userEvent.type(getTaskInput(), 'new_task');
+
 		await userEvent.click(getAddButton());
+
+		await userEvent.clear(getTaskInput());
 
 		await waitFor(() => {
 			expect(screen.getByText('new_task')).toBeInTheDocument();
