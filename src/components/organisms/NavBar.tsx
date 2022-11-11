@@ -14,6 +14,8 @@ import {
 } from '@mui/material';
 import { Today, Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import { H } from 'highlight.run';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
@@ -60,6 +62,18 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 						sx={{ m: 0.1 }}
 					>
 						<Today />
+					</IconButton>
+				</Tooltip>
+
+				<Tooltip title={'Feedback'}>
+					<IconButton
+						onClick={() => H.toggleSessionFeedbackModal()}
+						edge="start"
+						color="inherit"
+						aria-label="feedback"
+						sx={{ m: 0.1 }}
+					>
+						<FeedbackIcon />
 					</IconButton>
 				</Tooltip>
 
