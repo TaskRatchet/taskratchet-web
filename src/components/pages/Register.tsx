@@ -2,21 +2,26 @@ import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { useTimezones } from '../../lib/api/useTimezones';
-import Input from '../molecules/Input';
-import Field from '../molecules/Field';
-import { Box, Button } from '@mui/material';
+import { Box, Button, Stack } from '@mui/material';
 import register from '../../lib/api/register';
 import { redirectToCheckout } from '../../lib/stripe';
+import TextField from '@mui/material/TextField';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import saveFeedback from '../../lib/saveFeedback';
 
 const Register = (): JSX.Element => {
-	const [name, setName] = useState<string>(''),
-		[email, setEmail] = useState<string>(''),
-		[password, setPassword] = useState<string>(''),
-		[password2, setPassword2] = useState<string>(''),
-		{ data: timezones } = useTimezones(),
-		checkoutSession = useCheckoutSession(),
-		[timezone, setTimezone] = useState<string>(''),
-		[agreed, setAgreed] = useState<boolean>(false);
+	const [name, setName] = useState<string>('');
+	const [email, setEmail] = useState<string>('');
+	const [password, setPassword] = useState<string>('');
+	const [password2, setPassword2] = useState<string>('');
+	const { data: timezones } = useTimezones();
+	const checkoutSession = useCheckoutSession();
+	const [timezone, setTimezone] = useState<string>('');
+	const [agreed, setAgreed] = useState<boolean>(false);
+	const [referral, setReferral] = useState<string>('');
 
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
@@ -24,6 +29,15 @@ const Register = (): JSX.Element => {
 		const passes = validateRegistrationForm();
 
 		if (!passes || !checkoutSession) return;
+
+		if (referral) {
+			saveFeedback({
+				userName: name,
+				userEmail: email,
+				prompt: 'How did you hear about us?',
+				response: referral,
+			});
+		}
 
 		const response = await register(
 			name,
@@ -72,74 +86,80 @@ const Register = (): JSX.Element => {
 	const getTimezoneOptions = () => {
 		if (!timezones)
 			return (
-				<option value={''} disabled>
+				<MenuItem value={''} disabled>
 					Loading...
-				</option>
+				</MenuItem>
 			);
 
-		return (
-			<>
-				{
-					<option value={''} disabled>
-						Choose your timezone...
-					</option>
-				}
-				{timezones.map((tz: string, i: number) => (
-					<option value={tz} key={i}>
-						{tz}
-					</option>
-				))}
-			</>
-		);
+		return [
+			<MenuItem value={''} key="default" disabled>
+				Choose your timezone...
+			</MenuItem>,
+			...timezones.map((tz: string, i: number) => (
+				<MenuItem value={tz} key={i}>
+					{tz}
+				</MenuItem>
+			)),
+		];
 	};
 
 	return (
 		<Box sx={{ p: 2 }}>
 			<form>
 				<h1>Register</h1>
+				<Stack spacing={2}>
+					<TextField
+						value={name}
+						onChange={(e) => setName(e.target.value)}
+						label={'Name'}
+						id={'name'}
+					/>
 
-				<Input
-					type="text"
-					value={name}
-					onChange={(e) => setName(e.target.value)}
-					label={'Name'}
-					id={'name'}
-				/>
+					<TextField
+						type="email"
+						value={email}
+						onChange={(e) => setEmail(e.target.value)}
+						id={'email'}
+						label={'Email'}
+					/>
 
-				<Input
-					type="email"
-					value={email}
-					onChange={(e) => setEmail(e.target.value)}
-					id={'email'}
-					label={'Email'}
-				/>
+					<TextField
+						type="password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						id={'password'}
+						label={'Password'}
+					/>
 
-				<Input
-					type="password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-					id={'password'}
-					label={'Password'}
-				/>
+					<TextField
+						type="password"
+						value={password2}
+						onChange={(e) => setPassword2(e.target.value)}
+						id={'password2'}
+						label={'Retype Password'}
+					/>
 
-				<Input
-					type="password"
-					value={password2}
-					onChange={(e) => setPassword2(e.target.value)}
-					id={'password2'}
-					label={'Retype Password'}
-				/>
+					<FormControl>
+						<InputLabel id={'timezone'}>Timezone</InputLabel>
+						<Select
+							labelId={'timezone'}
+							label={'Timezone'}
+							id="timezone"
+							name="timezone"
+							value={timezone}
+							onChange={(e) => setTimezone(e.target.value)}
+						>
+							{getTimezoneOptions()}
+						</Select>
+					</FormControl>
 
-				<Field label={'Timezone'} id={'timezone'}>
-					<select
-						id="timezone"
-						name="timezone"
-						value={timezone}
-						onChange={(e) => setTimezone(e.target.value)}
-					>
-						{getTimezoneOptions()}
-					</select>
-				</Field>
+					<TextField
+						value={referral}
+						onChange={(e) => setReferral(e.target.value)}
+						label={'How did you hear about us?'}
+						id={'referral'}
+					/>
+				</Stack>
 
 				<p>
 					<label>

@@ -15,6 +15,8 @@ import {
 } from '@mui/material';
 import { Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
+import FeedbackIcon from '@mui/icons-material/Feedback';
+import { H } from 'highlight.run';
 
 export default function NavBar(): JSX.Element {
 	const location = useLocation();
@@ -85,18 +87,30 @@ export default function NavBar(): JSX.Element {
 				<Box>
 					<FilterButton />
 
-					<Tooltip title={'Menu'}>
-						<IconButton
-							onClick={toggleMenu}
-							edge="start"
-							color="inherit"
-							aria-label="menu"
-							sx={{ m: 0.1 }}
-						>
-							<Menu />
-						</IconButton>
-					</Tooltip>
-				</Box>
+				<Tooltip title={'Feedback'}>
+					<IconButton
+						onClick={() => H.toggleSessionFeedbackModal()}
+						edge="start"
+						color="inherit"
+						aria-label="feedback"
+						sx={{ m: 0.1 }}
+					>
+						<FeedbackIcon />
+					</IconButton>
+				</Tooltip>
+
+				<Tooltip title={'Menu'}>
+					<IconButton
+						onClick={toggleMenu}
+						edge="start"
+						color="inherit"
+						aria-label="menu"
+						sx={{ m: 0.1 }}
+					>
+						<Menu />
+					</IconButton>
+				</Tooltip>
+        </Box>
 			</Toolbar>
 
 			<NavDrawer isOpen={isOpen} onClose={toggleMenu} />

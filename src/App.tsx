@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import './App.css';
+import './App.scss';
 import RegisterForm from './components/pages/Register';
 import {
 	BrowserRouter as Router,
@@ -27,6 +27,9 @@ toast.configure();
 
 H.init('qe9174g1', {
 	environment: process.env.NODE_ENV,
+	feedbackWidget: {
+		enabled: true,
+	},
 });
 
 window.stripe_key = IS_PRODUCTION

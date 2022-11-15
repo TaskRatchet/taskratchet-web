@@ -29,6 +29,7 @@ vi.mock('./src/lib/api/getMe');
 vi.mock('./src/lib/api/updateTask');
 vi.mock('./src/lib/api/addTask');
 vi.mock('react-list');
+vi.mock('./src/lib/saveFeedback');
 
 global.scrollTo = vi.fn() as any;
 
