@@ -53,9 +53,9 @@ jobs:
         id: outdated
         run: |
           echo "### Outdated dependencies" >> ./outdated.md
-          echo "```" >> ./outdated.md
+          echo "\`\`\`" >> ./outdated.md
           echo "$(pnpm outdated)" >> ./outdated.md
-          echo "```" >> ./outdated.md
+          echo "\`\`\`" >> ./outdated.md
       - name: Find comment
         uses: peter-evans/find-comment@v2
         id: fc
