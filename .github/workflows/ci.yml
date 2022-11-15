@@ -51,7 +51,9 @@ jobs:
         run: pnpm install
       - name: Scan for outdated dependencies
         id: outdated
-        run: echo "OUTDATED=\"$(pnpm outdated)\"" >> $GITHUB_ENV
+        run: |
+          echo "### Outdated dependencies" >> ./outdated.md
+          echo "$(pnpm outdated)" >> ./outdated.md
       - name: Find comment
         uses: peter-evans/find-comment@v2
         id: fc
@@ -64,9 +66,7 @@ jobs:
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
-          body: |
-            Outdated dependencies
-            ${{ steps.outdated.outputs.OUTDATED }}
+          body-file: ./outdated.md
           edit-mode: replace
   unused:
     runs-on: ubuntu-latest
