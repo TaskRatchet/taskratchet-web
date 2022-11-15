@@ -24,6 +24,11 @@ vi.mock('@mui/x-date-pickers');
 vi.mock('./src/lib/api/getTimezones');
 vi.mock('./src/lib/api/getCheckoutSession');
 vi.mock('./src/lib/stripe');
+vi.mock('./src/lib/api/getTasks');
+vi.mock('./src/lib/api/getMe');
+vi.mock('./src/lib/api/updateTask');
+vi.mock('./src/lib/api/addTask');
+vi.mock('react-list');
 vi.mock('./src/lib/saveFeedback');
 
 global.scrollTo = vi.fn() as any;
@@ -46,6 +51,8 @@ beforeEach(() => {
 	fetchMock.resetMocks();
 	deleteAllCookies();
 	window.localStorage.clear();
+	vi.setSystemTime(new Date('2020-01-01T00:00:00.000Z'));
+
 	vi.mocked(getCheckoutSession).mockResolvedValue({
 		id: 'session',
 	});

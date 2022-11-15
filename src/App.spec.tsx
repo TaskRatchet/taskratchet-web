@@ -58,22 +58,6 @@ describe('App', () => {
 		);
 	});
 
-	it('re-scrolls tasks list when today icon clicked', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
-		});
-
-		renderPage();
-
-		await userEvent.click(await screen.findByLabelText('today'));
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toHaveBeenCalledWith(0);
-		});
-	});
-
 	it('has filter entries', async () => {
 		renderPage();
 
@@ -188,25 +172,6 @@ describe('App', () => {
 		resolve();
 	});
 
-	it('scrolls to today', async () => {
-		vi.setSystemTime(new Date('1/7/2020'));
-
-		loadTasksApiData({
-			tasks: [
-				makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' }),
-				makeTask({ due: '1/7/2020, 11:59 PM', task: 'task 1' }),
-			],
-		});
-
-		renderPage();
-
-		await userEvent.click(await screen.findByLabelText('today'));
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toHaveBeenCalledWith(2);
-		});
-	});
-
 	it('prevents adding task with due date in the past', async () => {
 		vi.setSystemTime(new Date('1/1/2023'));
 
@@ -233,9 +198,7 @@ describe('App', () => {
 	});
 
 	it('allows user to create new task based on existing task', async () => {
-		// User should be able to select "Copy" from a task's context menu. This
-		// should open the "New Task" form, prefilling the form with the existing
-		// task's title, due date, and stakes.
+		vi.setSystemTime(new Date('1/29/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'the_task' })],
@@ -254,6 +217,8 @@ describe('App', () => {
 	});
 
 	it('copies task name into form when copying task', async () => {
+		vi.setSystemTime(new Date('1/29/2020'));
+
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'the_task' })],
 		});
@@ -292,6 +257,8 @@ describe('App', () => {
 	});
 
 	it('copies task stakes into form when copying task', async () => {
+		vi.setSystemTime(new Date('1/29/2020'));
+
 		loadTasksApiData({
 			tasks: [makeTask({ cents: 100 })],
 		});
@@ -308,26 +275,9 @@ describe('App', () => {
 		expect(await screen.findByLabelText('Stakes *')).toHaveValue(1);
 	});
 
-	it('sets date input to one week in future when copying task with due date in past', async () => {
-		vi.setSystemTime('2/1/2020');
-
-		loadTasksApiData({
-			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
-		});
-
-		renderPage();
-
-		await screen.findByText('the_task');
-
-		await userEvent.click(await screen.findByLabelText('Menu'));
-		await userEvent.click(screen.getByText('Copy'));
-
-		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
-			'02/08/2020'
-		);
-	});
-
 	it('closes menu when clicking copy', async () => {
+		vi.setSystemTime(new Date('1/29/2020'));
+
 		loadTasksApiData({
 			tasks: [makeTask({ task: 'the_task' })],
 		});

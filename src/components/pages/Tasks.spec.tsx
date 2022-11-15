@@ -12,7 +12,6 @@ import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
-import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
 import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
@@ -56,7 +55,7 @@ const expectTaskSave = async ({
 };
 
 const renderTasksPage = () => {
-	const view = renderWithQueryProvider(<Tasks lastToday={undefined} />);
+	const view = renderWithQueryProvider(<Tasks />);
 
 	return {
 		openForm: async () => {
@@ -78,7 +77,7 @@ const renderTasksPage = () => {
 describe('tasks page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		vi.setSystemTime(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('1/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
@@ -574,46 +573,6 @@ describe('tasks page', () => {
 		expect(screen.queryByText('Nothing here!')).not.toBeInTheDocument();
 	});
 
-	it('scrolls list', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		renderTasksPage();
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toBeCalled();
-		});
-	});
-
-	it('does not scroll list on page refocus', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		const { queryClient } = renderTasksPage();
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toBeCalled();
-		});
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		await queryClient.invalidateQueries('tasks');
-
-		await waitFor(() => {
-			expect(getTasks).toBeCalledTimes(2);
-		});
-
-		expect(__listRef.scrollTo).toBeCalledTimes(1);
-	});
-
 	it('reloads tasks on task edit save', async () => {
 		loadTasksApiData({
 			tasks: [makeTask()],
@@ -653,5 +612,17 @@ describe('tasks page', () => {
 				expect.anything()
 			);
 		});
+	});
+
+	it('displays task that is due in past but on same date', async () => {
+		vi.setSystemTime(new Date('1/1/2020, 2:00 PM'));
+
+		loadTasksApiData({
+			tasks: [makeTask({ task: 'the_task', due: '1/1/2020, 1:00 PM' })],
+		});
+
+		renderTasksPage();
+
+		await screen.findByText('the_task');
 	});
 });

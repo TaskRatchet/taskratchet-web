@@ -14,7 +14,6 @@ import 'react-toastify/dist/ReactToastify.css';
 import { IS_PRODUCTION } from './tr_constants';
 import { QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
-import browser from './lib/Browser';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
 import getQueryClient from './lib/getQueryClient';
@@ -22,6 +21,7 @@ import { ErrorBoundary } from '@highlight-run/react';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
 import ga from './lib/ga';
+import Archive from './components/pages/Archive';
 
 toast.configure();
 
@@ -49,14 +49,10 @@ function usePageViews(): void {
 }
 
 export function App(): JSX.Element {
-	const [lastToday, setLastToday] = useState<Date>();
+	const [lastToday] = useState<Date>();
 	const ref = useRef<HTMLElement>();
 	const location = useLocation();
 	const queryClient = getQueryClient();
-
-	const handleTodayClick = () => {
-		setLastToday(browser.getNowDate());
-	};
 
 	useEffect(() => {
 		document.title = 'TaskRatchet';
@@ -83,7 +79,7 @@ export function App(): JSX.Element {
 		<QueryClientProvider client={queryClient}>
 			<CssBaseline />
 			<Stack sx={{ height: '100vh' }}>
-				<NavBar onTodayClick={handleTodayClick} />
+				<NavBar />
 				<Box ref={ref} overflow={'scroll'} flexGrow={1}>
 					<Container
 						maxWidth={'sm'}
@@ -93,6 +89,17 @@ export function App(): JSX.Element {
 						}}
 					>
 						<Routes>
+							<Route path="/maybe" element={<>maybe</>} />
+
+							<Route
+								path="/archive"
+								element={
+									<Authenticated>
+										<Archive />
+									</Authenticated>
+								}
+							/>
+
 							<Route path={'/register'} element={<RegisterForm />} />
 
 							<Route
@@ -133,7 +140,7 @@ export function App(): JSX.Element {
 								path={'/'}
 								element={
 									<Authenticated>
-										<Tasks lastToday={lastToday} />
+										<Tasks />
 									</Authenticated>
 								}
 							/>

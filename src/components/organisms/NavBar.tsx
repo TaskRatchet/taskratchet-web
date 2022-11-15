@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import NavDrawer from '../molecules/NavDrawer';
 import FilterButton from '../molecules/FilterButton';
 import {
@@ -8,28 +8,20 @@ import {
 	Box,
 	Button,
 	IconButton,
+	Tab,
+	Tabs,
 	Toolbar,
 	Tooltip,
-	Typography,
 } from '@mui/material';
-import { Today, Menu } from '@mui/icons-material';
+import { Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 import { H } from 'highlight.run';
 
-interface NavBarProps {
-	onTodayClick?: () => void;
-}
-
-export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
+export default function NavBar(): JSX.Element {
 	const location = useLocation();
-	const navigate = useNavigate();
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const toggleMenu = () => setIsOpen(!isOpen);
-	const handleTodayClick = () => {
-		onTodayClick && onTodayClick();
-		navigate('/');
-	};
 
 	useEffect(() => setIsOpen(false), [location]);
 
@@ -39,31 +31,61 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 				<LoadingIndicator />
 			</Box>
 
-			<Toolbar>
-				<Typography
-					className={'organism-navBar__title'}
-					variant="h6"
-					component="div"
-					sx={{ flexGrow: 1 }}
+			<Toolbar
+				sx={{
+					justifyContent: 'space-between',
+				}}
+				variant="dense"
+			>
+				<Link
+					to={'/'}
+					style={{
+						display: 'flex',
+					}}
 				>
-					<Button component={Link} to={'/'} color={'inherit'}>
-						TaskRatchet
-					</Button>
-				</Typography>
+					<img
+						src="/android-chrome-192x192.png"
+						height={32}
+						width={32}
+						alt="TaskRatchet"
+					/>
+				</Link>
 
-				<FilterButton />
+				<Tabs textColor="inherit" value={location.pathname}>
+					<Tab
+						label="Next"
+						value="/"
+						to={'/'}
+						component={Link}
+						sx={{
+							minWidth: 0,
+							p: 1,
+						}}
+					/>
+					<Tab
+						label="Maybe"
+						value="/maybe"
+						to={'/maybe'}
+						component={Link}
+						sx={{
+							minWidth: 0,
+							p: 1,
+						}}
+					/>
+					<Tab
+						label="Archive"
+						value="/archive"
+						to={'/archive'}
+						component={Link}
+						sx={{
+							minWidth: 0,
+							p: 1,
+						}}
+					/>
+				</Tabs>
 
-				<Tooltip title={'Jump to Today'}>
-					<IconButton
-						onClick={handleTodayClick}
-						edge="start"
-						color="inherit"
-						aria-label="today"
-						sx={{ m: 0.1 }}
-					>
-						<Today />
-					</IconButton>
-				</Tooltip>
+				<Box>
+					<FilterButton />
 
 				<Tooltip title={'Feedback'}>
 					<IconButton
@@ -88,6 +110,7 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 						<Menu />
 					</IconButton>
 				</Tooltip>
+        </Box>
 			</Toolbar>
 
 			<NavDrawer isOpen={isOpen} onClose={toggleMenu} />

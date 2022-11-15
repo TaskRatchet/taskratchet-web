@@ -82,12 +82,6 @@ describe('NavBar', () => {
 		expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 	});
 
-	it('has today button', async () => {
-		renderComponent();
-
-		await screen.findByLabelText('today');
-	});
-
 	it('closes drawer on navigate', async () => {
 		mockUseSession.mockReturnValue({
 			email: 'the_email',

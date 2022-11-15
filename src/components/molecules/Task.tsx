@@ -37,13 +37,18 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 			}`}
 			secondaryAction={<TaskMenu task={task} />}
 			disablePadding
+			disableGutters
 			sx={{
 				borderLeft: isDue ? 3 : 0,
 				borderColor: red[600],
 			}}
 			dense
 		>
-			<ListItemIcon>
+			<ListItemIcon
+				sx={{
+					minWidth: 0,
+				}}
+			>
 				{task.status === 'expired' ? (
 					<Box style={{ padding: 9 }}>
 						<EventBusyIcon />
@@ -74,7 +79,7 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 						</Suspense>
 					</>
 				}
-				sx={{ mr: 7 }}
+				sx={{ mr: 5 }}
 			/>
 		</ListItem>
 	);

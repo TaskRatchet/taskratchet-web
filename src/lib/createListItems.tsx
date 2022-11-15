@@ -1,4 +1,5 @@
 import browser from './Browser';
+import { sortTasks } from './sortTasks';
 
 function makeTitle(task: TaskType) {
 	return browser.getString(new Date(task.due));
@@ -12,21 +13,37 @@ const isNewTask = (t: TaskType, n: TaskType | undefined): boolean => {
 
 type Entries = (TaskType | string)[];
 
-export default function createListItems(
-	sortedTasks: TaskType[],
-	newTask: TaskType | undefined
-): {
+type Options = {
+	tasks: TaskType[];
+	newTask?: TaskType;
+	minDue?: Date;
+	maxDue?: Date;
+	reverse?: boolean;
+};
+
+export default function createListItems({
+	tasks,
+	newTask,
+	minDue,
+	maxDue,
+	reverse,
+}: Options): {
 	entries: Entries;
-	nextHeadingIndex: number | undefined;
 	newTaskIndex: number | undefined;
 } {
-	const now = browser.getNowDate();
+	const sortedTasks = sortTasks(tasks);
+
+	if (reverse) {
+		sortedTasks.reverse();
+	}
 
 	let lastTitle: string;
-	let nextHeadingIndex: number | undefined = undefined;
 	let newTaskIndex: number | undefined = undefined;
 
 	const entries = sortedTasks.reduce((acc: Entries, t: TaskType): Entries => {
+		if (minDue && new Date(t.due) < minDue) return acc;
+		if (maxDue && new Date(t.due) > maxDue) return acc;
+
 		const title = makeTitle(t);
 		const shouldAddHeading = title !== lastTitle || !acc.length;
 
@@ -35,9 +52,6 @@ export default function createListItems(
 		}
 
 		if (shouldAddHeading) {
-			if (nextHeadingIndex === undefined && new Date(t.due) > now) {
-				nextHeadingIndex = acc.length;
-			}
 			lastTitle = title;
 			return [...acc, title, t];
 		}
@@ -47,7 +61,6 @@ export default function createListItems(
 
 	return {
 		entries,
-		nextHeadingIndex,
 		newTaskIndex,
 	};
 }
