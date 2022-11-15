@@ -129,4 +129,12 @@ describe('registration page', () => {
 			response: 'the_referral',
 		});
 	});
+
+	it('skips sending referral if none provided', async () => {
+		await fillForm();
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		expect(saveFeedback).not.toBeCalled();
+	});
 });

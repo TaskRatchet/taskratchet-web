@@ -30,12 +30,14 @@ const Register = (): JSX.Element => {
 
 		if (!passes || !checkoutSession) return;
 
-		saveFeedback({
-			userName: name,
-			userEmail: email,
-			prompt: 'How did you hear about us?',
-			response: referral,
-		});
+		if (referral) {
+			saveFeedback({
+				userName: name,
+				userEmail: email,
+				prompt: 'How did you hear about us?',
+				response: referral,
+			});
+		}
 
 		const response = await register(
 			name,
