@@ -49,10 +49,27 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
-      - name: Check for outdated dependencies
-        uses: ycjcl868/outdated-version-action@v1
+      - name: Scan for outdated dependencies
+        id: outdated
+        run: |
+          echo "### Outdated dependencies" >> ./outdated.md
+          echo "```" >> ./outdated.md
+          echo "$(pnpm outdated)" >> ./outdated.md
+          echo "```" >> ./outdated.md
+      - name: Find comment
+        uses: peter-evans/find-comment@v2
+        id: fc
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          comment-author: 'github-actions[bot]'
+          body-includes: 'Outdated dependencies'
+      - name: Create or update comment
+        uses: peter-evans/create-or-update-comment@v2
+        with:
+          comment-id: ${{ steps.fc.outputs.comment-id }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body-file: ./outdated.md
+          edit-mode: replace
   unused:
     runs-on: ubuntu-latest
     steps:
