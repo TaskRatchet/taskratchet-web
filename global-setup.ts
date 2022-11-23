@@ -23,6 +23,7 @@ module.exports = async () => {
 vi.mock('@mui/x-date-pickers');
 vi.mock('./src/lib/api/getTimezones');
 vi.mock('./src/lib/api/getCheckoutSession');
+vi.mock('./src/lib/api/getMe');
 vi.mock('./src/lib/stripe');
 vi.mock('./src/lib/saveFeedback');
 
@@ -41,6 +42,8 @@ function deleteAllCookies() {
 
 const fetchMock = createFetchMock(vi);
 fetchMock.enableMocks();
+
+window.FreshworksWidget = vi.fn() as any;
 
 beforeEach(() => {
 	fetchMock.resetMocks();
