@@ -14,8 +14,6 @@ import {
 } from '@mui/material';
 import { Today, Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
-import FeedbackIcon from '@mui/icons-material/Feedback';
-import { H } from 'highlight.run';
 import FeedbackButton from './FeedbackButton';
 
 interface NavBarProps {
