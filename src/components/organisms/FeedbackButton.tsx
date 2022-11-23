@@ -6,13 +6,9 @@ import { useMe } from '../../lib/api/useMe';
 export default function FeedbackButton() {
 	useMe({
 		onSuccess: (data) => {
-			console.log('identifying', data);
 			window.FreshworksWidget('identify', 'ticketForm', {
-				name: data.name,
-				email: data.email,
-			});
-			window.FreshworksWidget('prefill', 'ticketForm', {
-				custom_fields: data,
+				name: data?.name,
+				email: data?.email,
 			});
 		},
 	});
