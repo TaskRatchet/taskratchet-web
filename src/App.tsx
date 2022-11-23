@@ -71,11 +71,11 @@ export function App(): JSX.Element {
 
 	const email = (
 		<a
-			href="mailto:nathan@taskratchet.com"
+			href="mailto:support@taskratchet.com"
 			target={'_blank'}
 			rel="noopener noreferrer"
 		>
-			nathan@taskratchet.com
+			support@taskratchet.com
 		</a>
 	);
 
