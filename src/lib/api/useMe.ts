@@ -3,7 +3,6 @@ import { getMe } from './getMe';
 import { UseQueryOptions } from 'react-query';
 import { H } from 'highlight.run';
 import { useEffect } from 'react';
-import mapValues from 'lodash/mapValues';
 
 export function useMe(
 	queryOptions: UseQueryOptions<User> | undefined = {}
@@ -18,10 +17,16 @@ export function useMe(
 
 	useEffect(() => {
 		if (!data) return;
-		H.identify(
-			data.id,
-			mapValues(data, (v) => v.toString())
-		);
+
+		const metadata = Object.keys(data).reduce((prev, key) => {
+			const value = data[key as keyof User];
+
+			prev[key] = typeof value === 'string' ? value : JSON.stringify(value);
+
+			return prev;
+		}, {} as Record<string, string>);
+
+		H.identify(data.id, metadata);
 	}, [data]);
 
 	return result;

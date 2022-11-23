@@ -1,9 +1,6 @@
-import {
-	loadNowDate,
-	loadTasksApiData,
-	makeTask,
-	renderWithQueryProvider,
-} from './lib/test/helpers';
+import { loadTasksApiData } from './lib/test/loadTasksApiData';
+import { renderWithQueryProvider } from './lib/test/renderWithQueryProvider';
+import { makeTask } from './lib/test/makeTask';
 import React from 'react';
 import { App } from './App';
 import userEvent from '@testing-library/user-event';
@@ -47,7 +44,7 @@ function renderPage() {
 
 describe('App', () => {
 	beforeEach(() => {
-		loadNowDate(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 		window.localStorage.clear();
 		vi.mocked(getQueryClient).mockReturnValue(
@@ -62,7 +59,7 @@ describe('App', () => {
 	});
 
 	it('re-scrolls tasks list when today icon clicked', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
@@ -70,7 +67,7 @@ describe('App', () => {
 
 		renderPage();
 
-		userEvent.click(screen.getByLabelText('today'));
+		await userEvent.click(await screen.findByLabelText('today'));
 
 		await waitFor(() => {
 			expect(__listRef.scrollTo).toHaveBeenCalledWith(0);
@@ -80,20 +77,23 @@ describe('App', () => {
 	it('has filter entries', async () => {
 		renderPage();
 
-		userEvent.click(screen.getByLabelText('filters'));
+		await userEvent.click(await screen.findByLabelText('filters'));
 
 		expect(
 			await screen.findByLabelText('toggle filter pending')
 		).toBeInTheDocument();
-
-		expect(screen.getByLabelText('toggle filter complete')).toBeInTheDocument();
-		expect(screen.getByLabelText('toggle filter expired')).toBeInTheDocument();
+		expect(
+			await screen.findByLabelText('toggle filter complete')
+		).toBeInTheDocument();
+		expect(
+			await screen.findByLabelText('toggle filter expired')
+		).toBeInTheDocument();
 	});
 
 	it('checks items by default', async () => {
 		renderPage();
 
-		userEvent.click(screen.getByLabelText('filters'));
+		await userEvent.click(await screen.findByLabelText('filters'));
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('pending')).toBeChecked();
@@ -103,8 +103,8 @@ describe('App', () => {
 	it('toggles checkmark when entry clicked', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByText('pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByText('pending'));
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('pending')).not.toBeChecked();
@@ -114,13 +114,13 @@ describe('App', () => {
 	it('persists checked state when reopening menu', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByText('pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByText('pending'));
 
 		const backdrop = await screen.findByTestId('mui-backdrop');
 
-		userEvent.click(backdrop);
-		userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(backdrop);
+		await userEvent.click(await screen.findByLabelText('filters'));
 
 		const checkbox = await screen.findByLabelText('pending');
 
@@ -130,14 +130,14 @@ describe('App', () => {
 	it('persists checked state on reload', async () => {
 		const { unmount } = renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByText('pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByText('pending'));
 
 		unmount();
 
 		const { getByLabelText: getByLabelTextTwo } = renderPage();
 
-		userEvent.click(getByLabelTextTwo('filters'));
+		await userEvent.click(getByLabelTextTwo('filters'));
 
 		await waitFor(() => {
 			expect(getByLabelTextTwo('pending')).not.toBeChecked();
@@ -145,7 +145,7 @@ describe('App', () => {
 	});
 
 	it('filters tasks', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
@@ -157,8 +157,10 @@ describe('App', () => {
 			expect(screen.getByText('task 1')).toBeInTheDocument();
 		});
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByLabelText('toggle filter pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter pending')
+		);
 
 		await waitFor(() => {
 			expect(screen.queryByText('task 1')).not.toBeInTheDocument();
@@ -166,26 +168,28 @@ describe('App', () => {
 	});
 
 	it('scrolls to new task', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
+
+		loadTasksApiData();
 
 		renderPage();
 
-		openForm();
+		await openForm();
 
-		const { reject } = loadControlledPromise(addTask);
+		const { resolve } = loadControlledPromise(addTask);
 
-		userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
-		userEvent.click(screen.getByText('Add'));
+		await userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
+		await userEvent.click(screen.getByText('Add'));
 
 		await waitFor(() => {
 			expect(__listRef.scrollTo).toHaveBeenCalledWith(1);
 		});
 
-		reject();
+		resolve();
 	});
 
 	it('scrolls to today', async () => {
-		loadNowDate(new Date('1/7/2020'));
+		vi.setSystemTime(new Date('1/7/2020'));
 
 		loadTasksApiData({
 			tasks: [
@@ -196,7 +200,7 @@ describe('App', () => {
 
 		renderPage();
 
-		userEvent.click(screen.getByLabelText('today'));
+		await userEvent.click(await screen.findByLabelText('today'));
 
 		await waitFor(() => {
 			expect(__listRef.scrollTo).toHaveBeenCalledWith(2);
@@ -204,15 +208,18 @@ describe('App', () => {
 	});
 
 	it('prevents adding task with due date in the past', async () => {
-		loadNowDate('1/1/2023');
+		vi.setSystemTime(new Date('1/1/2023'));
 
 		renderPage();
 
-		openForm();
+		await openForm();
 
-		userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
+		await userEvent.type(await screen.findByLabelText('Task *'), 'new_task');
 
-		userEvent.type(await screen.findByLabelText('Due Date *'), '{backspace}0');
+		await userEvent.type(
+			await screen.findByLabelText('Due Date *'),
+			'{backspace}0'
+		);
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
 			'01/08/2020'
@@ -244,8 +251,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Task *')).toBeInTheDocument();
 	});
@@ -261,14 +268,14 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Task *')).toHaveValue('the_task');
 	});
 
 	it('copies task due date into form when copying task', async () => {
-		loadNowDate('2/1/2000');
+		vi.setSystemTime('2/1/2000');
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
@@ -280,8 +287,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
 			'01/01/2020'
@@ -299,14 +306,14 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Stakes *')).toHaveValue(1);
 	});
 
 	it('sets date input to one week in future when copying task with due date in past', async () => {
-		loadNowDate('2/1/2020');
+		vi.setSystemTime('2/1/2020');
 
 		loadTasksApiData({
 			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
@@ -316,8 +323,8 @@ describe('App', () => {
 
 		await screen.findByText('the_task');
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText(/Due Date/)).toHaveValue('02/08/2020');
 	});
@@ -333,8 +340,8 @@ describe('App', () => {
 			expect(screen.getByText('the_task')).toBeInTheDocument();
 		});
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Copy'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Copy'));
 
 		await waitFor(() => {
 			expect(screen.getByText('Copy')).not.toBeVisible();
@@ -344,8 +351,10 @@ describe('App', () => {
 	it('indicates when filters are enabled', async () => {
 		renderPage();
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByLabelText('toggle filter pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter pending')
+		);
 
 		await waitFor(() => {
 			expect(screen.getByText('1')).toBeInTheDocument();
@@ -355,11 +364,15 @@ describe('App', () => {
 	it('counts number of enabled filters', async () => {
 		renderPage();
 
-		userEvent.click(screen.getByLabelText('filters'));
+		await userEvent.click(await screen.findByLabelText('filters'));
 
-		userEvent.click(await screen.findByLabelText('toggle filter pending'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter pending')
+		);
 		await screen.findByText('1'); // TODO Resolve race condition to remove this line
-		userEvent.click(await screen.findByLabelText('toggle filter complete'));
+		await userEvent.click(
+			await screen.findByLabelText('toggle filter complete')
+		);
 
 		expect(await screen.findByText('2')).toBeInTheDocument();
 	});
@@ -452,7 +465,7 @@ describe('App', () => {
 		});
 	});
 
-	it('it remembers recurring options when toggling recurrence', async () => {
+	it.only('it remembers recurring options when toggling recurrence', async () => {
 		renderPage();
 
 		openForm();
@@ -463,8 +476,6 @@ describe('App', () => {
 		userEvent.click(await screen.findByLabelText('Enable recurrence'));
 		userEvent.click(await screen.findByLabelText('Enable recurrence'));
 		userEvent.click(await screen.findByText('Add'));
-
-		await screen.findByText('recurring_task');
 
 		await waitFor(() => {
 			expect(addTask).toBeCalledWith(

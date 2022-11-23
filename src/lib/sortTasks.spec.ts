@@ -1,4 +1,4 @@
-import { makeTask } from './test/helpers';
+import { makeTask } from './test/makeTask';
 import { sortTasks } from './sortTasks';
 import { expect, it, describe } from 'vitest';
 

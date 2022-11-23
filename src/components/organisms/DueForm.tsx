@@ -1,18 +1,9 @@
-import React, { useMemo, Suspense } from 'react';
+import React, { useMemo } from 'react';
 import { TextField } from '@mui/material';
-// import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import formatDue from '../../lib/formatDue';
-
-const DatePicker = React.lazy(() =>
-	import('@mui/x-date-pickers').then(({ DatePicker }) => ({
-		default: DatePicker,
-	}))
-);
-const TimePicker = React.lazy(() =>
-	import('@mui/x-date-pickers').then(({ TimePicker }) => ({
-		default: TimePicker,
-	}))
-);
+import { DatePicker, TimePicker } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 
 type DueFormProps = {
 	due: string;
@@ -21,23 +12,41 @@ type DueFormProps = {
 	onChange: (due: Record<string, string>) => void;
 };
 
+function isDayjsObject(value: unknown): value is { $d: Date } {
+	if (typeof value !== 'object' || value === null) {
+		return false;
+	}
+
+	const d = (value as { $d?: unknown }).$d;
+	// WORKAROUND: https://stackoverflow.com/a/643827/937377
+	const isDate = Object.prototype.toString.call(d) === '[object Date]';
+
+	return isDate;
+}
+
 export default function DueForm(props: DueFormProps): JSX.Element {
 	const { due, minDue, maxDue, onChange } = props;
 	const dueDate = useMemo(() => {
 		return new Date(due);
 	}, [due]);
+
 	return (
-		<Suspense fallback="loading">
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<DatePicker
 				label="Due Date"
 				value={dueDate}
 				onChange={(value: unknown) => {
-					if (!(value instanceof Date)) return;
-					if (isNaN(value.getTime())) return;
+					if (!isDayjsObject(value)) return;
+
+					const d = value.$d;
+
+					if (isNaN(d.getTime())) return;
+
 					if (due) {
-						value.setHours(dueDate?.getHours(), dueDate?.getMinutes());
+						d.setHours(dueDate?.getHours(), dueDate?.getMinutes());
 					}
-					onChange({ due: formatDue(value) });
+
+					onChange({ due: formatDue(d) });
 				}}
 				OpenPickerButtonProps={{
 					'aria-label': 'change date',
@@ -60,15 +69,20 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 				label="Due Time"
 				value={dueDate}
 				onChange={(value: unknown) => {
-					if (!(value instanceof Date)) return;
-					if (isNaN(value.getTime())) return;
+					if (!isDayjsObject(value)) {
+						return;
+					}
+
+					const d = value.$d;
+
+					if (isNaN(d.getTime())) return;
 					if (due)
-						value.setFullYear(
+						d.setFullYear(
 							dueDate.getFullYear(),
 							dueDate.getMonth(),
 							dueDate.getDate()
 						);
-					onChange({ due: formatDue(value) });
+					onChange({ due: formatDue(d) });
 				}}
 				OpenPickerButtonProps={{
 					'aria-label': 'change time',
@@ -77,6 +91,6 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 					<TextField required variant="standard" {...params} />
 				)}
 			/>
-		</Suspense>
+		</LocalizationProvider>
 	);
 }

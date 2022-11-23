@@ -60,7 +60,11 @@ export default function GeneralSettings(): JSX.Element {
 					renderInput={(p) => <TextField {...p} label={'Timezone'} />}
 				/>
 
-				<LoadingButton type={'submit'} loading={updateMe.isLoading}>
+				<LoadingButton
+					type={'submit'}
+					loading={updateMe.isLoading}
+					variant="outlined"
+				>
 					Save
 				</LoadingButton>
 			</Stack>

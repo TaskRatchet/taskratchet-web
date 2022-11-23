@@ -1,6 +1,8 @@
 import MenuItem from '@mui/material/MenuItem';
 import React, { useState } from 'react';
+import logEvent from '../../lib/logEvent';
 import TaskAdd from './TaskAdd';
+import { EventCategory, EventAction } from '../../lib/logEvent';
 
 export default function TaskCopy({
 	task,
@@ -19,6 +21,11 @@ export default function TaskCopy({
 					if (onOpen) {
 						onOpen();
 					}
+					logEvent({
+						category: EventCategory.Task,
+						action: EventAction.TaskCopy,
+						value: task.cents / 100,
+					});
 				}}
 			>
 				Copy

@@ -17,7 +17,9 @@ function makePicker({
 			value,
 			onChange: (e: any) => {
 				setValue(e.target.value);
-				p.onChange(parseValue(e.target.value));
+				p.onChange({
+					$d: parseValue(e.target.value),
+				});
 			},
 			...p.InputProps,
 		});

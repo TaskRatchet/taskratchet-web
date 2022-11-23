@@ -1,4 +1,6 @@
 import fetch2 from './fetch2';
+import logEvent from '../logEvent';
+import { EventCategory, EventAction } from '../logEvent';
 
 // Requires that user be authenticated.
 export async function addTask(
@@ -17,6 +19,12 @@ export async function addTask(
 	if (!response.ok) {
 		throw new Error('Failed to add task');
 	}
+
+	logEvent({
+		category: EventCategory.Task,
+		action: EventAction.TaskCreate,
+		value: cents / 100,
+	});
 
 	return response;
 }

@@ -1,10 +1,10 @@
 import useIsDue from './useIsDue';
-import { loadNowTime, makeTask } from './test/helpers';
-import { expect, it, describe } from 'vitest';
+import { makeTask } from './test/makeTask';
+import { expect, it, describe, vi } from 'vitest';
 
 describe('useIsDue', () => {
 	it('returns is due', () => {
-		loadNowTime(1623869940 * 1000);
+		vi.setSystemTime(1623869940 * 1000);
 
 		const result = useIsDue(
 			makeTask({
@@ -16,7 +16,7 @@ describe('useIsDue', () => {
 	});
 
 	it('returns is not due if far future', () => {
-		loadNowTime(1623869940 * 1000);
+		vi.setSystemTime(1623869940 * 1000);
 
 		const result = useIsDue(
 			makeTask({
@@ -28,7 +28,7 @@ describe('useIsDue', () => {
 	});
 
 	it('returns is not due if in past', () => {
-		loadNowTime(1623869940 * 1000);
+		vi.setSystemTime(1623869940 * 1000);
 
 		const result = useIsDue(
 			makeTask({
@@ -40,7 +40,7 @@ describe('useIsDue', () => {
 	});
 
 	it('returns is not due if task completed', () => {
-		loadNowTime(1623869940 * 1000);
+		vi.setSystemTime(1623869940 * 1000);
 
 		const result = useIsDue(
 			makeTask({
@@ -53,7 +53,7 @@ describe('useIsDue', () => {
 	});
 
 	it('returns is not due if task uncled or expired', () => {
-		loadNowTime(1623869940 * 1000);
+		vi.setSystemTime(1623869940 * 1000);
 
 		const result = useIsDue(
 			makeTask({

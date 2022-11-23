@@ -10,15 +10,15 @@ import { vi, expect, it, describe } from 'vitest';
 vi.mock('../../lib/Browser');
 vi.mock('@mui/x-date-pickers');
 
-global.document.createRange = () =>
-	({
-		setStart: () => undefined,
-		setEnd: () => undefined,
-		commonAncestorContainer: {
-			nodeName: 'BODY',
-			ownerDocument: document,
-		},
-	} as unknown as Range);
+// global.document.createRange = () =>
+// 	({
+// 		setStart: () => undefined,
+// 		setEnd: () => undefined,
+// 		commonAncestorContainer: {
+// 			nodeName: 'BODY',
+// 			ownerDocument: document,
+// 		},
+// 	} as unknown as Range);
 
 const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 	const p: TaskFormProps = {
@@ -29,6 +29,7 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 		error: '',
 		onChange: () => undefined,
 		onSubmit: () => undefined,
+		onCancel: () => undefined,
 		isLoading: false,
 		...props,
 	};
@@ -41,13 +42,19 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 };
 
 describe('TaskForm', () => {
-	it('calls onChange when task modified', () => {
+	it('has task input', () => {
+		renderComponent();
+
+		expect(screen.getByLabelText('Task *')).toBeInTheDocument();
+	});
+
+	it('calls onChange when task modified', async () => {
 		const onChange = vi.fn();
 		const due = 'the_due';
 
 		renderComponent({ onChange, due });
 
-		userEvent.type(screen.getByLabelText('Task *'), 'a');
+		await userEvent.type(screen.getByLabelText('Task *'), 'a');
 
 		expect(onChange).toBeCalledWith({
 			task: 'a',
@@ -59,7 +66,7 @@ describe('TaskForm', () => {
 
 		renderComponent({ onChange });
 
-		userEvent.type(
+		await userEvent.type(
 			await screen.findByLabelText('Due Time *'),
 			'{backspace}{backspace}am'
 		);
@@ -67,12 +74,12 @@ describe('TaskForm', () => {
 		expect(onChange).toBeCalled();
 	});
 
-	it('calls onChange when cents modified', () => {
+	it('calls onChange when cents modified', async () => {
 		const onChange = vi.fn();
 
 		renderComponent({ onChange });
 
-		userEvent.type(screen.getByLabelText('Stakes *'), '1');
+		await userEvent.type(screen.getByLabelText('Stakes *'), '1');
 
 		expect(onChange).toBeCalledWith({
 			cents: 5100,
@@ -88,7 +95,7 @@ describe('TaskForm', () => {
 			onChange,
 		});
 
-		userEvent.type(
+		await userEvent.type(
 			await screen.findByLabelText('Due Date *'),
 			'{backspace}2{enter}'
 		);
@@ -108,7 +115,7 @@ describe('TaskForm', () => {
 			onChange,
 		});
 
-		userEvent.type(
+		await userEvent.type(
 			await screen.findByLabelText('Due Time *'),
 			'{backspace}M{enter}'
 		);

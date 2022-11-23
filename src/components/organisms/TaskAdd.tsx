@@ -54,8 +54,10 @@ export default function TaskAdd({
 	};
 
 	function onSubmit() {
-		// TODO: Don't submit if the task is missing...
-		setError(task ? '' : 'Task is required');
+		if (!task) {
+			setError('Task is required');
+			return;
+		}
 		if (!due || !cents) {
 			return;
 		}
@@ -87,6 +89,7 @@ export default function TaskAdd({
 					timezone={timezone}
 					error={error}
 					onChange={onChange}
+					onCancel={onClose}
 					onSubmit={onSubmit}
 					isLoading={addTask.isLoading}
 					minDue={minDue}

@@ -92,6 +92,7 @@ const Login = (): JSX.Element => {
 						<Stack direction={'row'}>
 							<LoadingButton
 								type="submit"
+								variant="contained"
 								onClick={(e) => {
 									e.preventDefault();
 									if (email && password) {

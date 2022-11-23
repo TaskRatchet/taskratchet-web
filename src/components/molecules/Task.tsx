@@ -1,5 +1,5 @@
-import React, { Ref } from 'react';
-import './Task.css';
+import React, { Ref, Suspense } from 'react';
+import './Task.scss';
 import browser from '../../lib/Browser';
 import TaskMenu from './TaskMenu';
 import { useSetComplete } from '../../lib/api/useSetComplete';
@@ -9,13 +9,13 @@ import {
 	ListItem,
 	ListItemIcon,
 	ListItemText,
-	Typography,
 } from '@mui/material';
 import { red } from '@mui/material/colors';
 
 import EventBusyIcon from '@mui/icons-material/EventBusy';
 import useIsDue from '../../lib/useIsDue';
-import useDifferenceToNow from '../../lib/useDifferenceToNow';
+
+const LazyDiffToNow = React.lazy(() => import('../atoms/diffToNow'));
 
 import TaskEdit from '../organisms/TaskEdit';
 import UncleButton from '../organisms/UncleButton';
@@ -29,7 +29,6 @@ export interface TaskProps {
 const Task = ({ task }: TaskProps): JSX.Element => {
 	const setComplete = useSetComplete();
 	const isDue = useIsDue(task);
-	const difference = useDifferenceToNow(task);
 	const dueDate = new Date(task.due);
 	const dateString = browser.getDateString(dueDate);
 	const timeString = browser.getTimeString(dueDate);
@@ -87,19 +86,10 @@ const Task = ({ task }: TaskProps): JSX.Element => {
 				primary={task.task || '[Description Missing]'}
 				secondary={
 					<>
-						${task.cents / 100} &#8226; due by {dateString} {timeString}{' '}
-						{difference && (
-							<>
-								&#8226;{' '}
-								<Typography
-									component={'span'}
-									color={isDue ? 'error' : 'inherit'}
-									sx={{ fontSize: 'inherit' }}
-								>
-									{difference}
-								</Typography>
-							</>
-						)}
+						${task.cents / 100} &#8226; due by {dateString} {timeString} &#8226;{' '}
+						<Suspense fallback="">
+							<LazyDiffToNow task={task} />
+						</Suspense>
 					</>
 				}
 				sx={{ mr: 7 }}

@@ -2,7 +2,7 @@ import FilterButton from './FilterButton';
 import { screen, waitFor } from '@testing-library/react';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { setCookie } from '../../lib/setCookie';
 import { expect, it, describe } from 'vitest';
 
@@ -21,7 +21,7 @@ describe('FilterButton', () => {
 
 		renderWithQueryProvider(<FilterButton />);
 
-		userEvent.click(screen.getByLabelText('filters'));
+		await userEvent.click(screen.getByLabelText('filters'));
 
 		await waitFor(async () => {
 			expect(await screen.findByLabelText('complete')).not.toBeChecked();
@@ -31,8 +31,8 @@ describe('FilterButton', () => {
 	it('sets filters on local storage', async () => {
 		renderWithQueryProvider(<FilterButton />);
 
-		userEvent.click(await screen.findByLabelText('filters'));
-		userEvent.click(await screen.findByText('pending'));
+		await userEvent.click(await screen.findByLabelText('filters'));
+		await userEvent.click(await screen.findByText('pending'));
 
 		await waitFor(() => {
 			const actual = JSON.parse(window.localStorage.getItem('filters') || '{}');
@@ -59,7 +59,7 @@ describe('FilterButton', () => {
 
 		renderWithQueryProvider(<FilterButton />);
 
-		userEvent.click(screen.getByLabelText('filters'));
+		await userEvent.click(screen.getByLabelText('filters'));
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('complete')).not.toBeChecked();

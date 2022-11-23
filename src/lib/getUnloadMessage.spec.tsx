@@ -1,7 +1,7 @@
 import { getUnloadMessage } from './getUnloadMessage';
 import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
-import { renderWithQueryProvider } from './test/helpers';
+import { renderWithQueryProvider } from './test/renderWithQueryProvider';
 import { vi, expect, it, describe } from 'vitest';
 import { updateTask } from './api/updateTask';
 import loadControlledPromise from './test/loadControlledPromise';
@@ -16,7 +16,7 @@ describe('getUnloadMessage', () => {
 	});
 
 	it('returns message if pending task toggle', () => {
-		const { reject } = loadControlledPromise(updateTask);
+		const { resolve } = loadControlledPromise(updateTask);
 
 		const Component = () => {
 			const updateTask = useUpdateTask();
@@ -33,6 +33,6 @@ describe('getUnloadMessage', () => {
 
 		expect(getUnloadMessage(queryClient)).toEqual(expected);
 
-		reject();
+		resolve();
 	});
 });

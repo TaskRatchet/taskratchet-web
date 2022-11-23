@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import logEvent from '../logEvent';
+import { EventCategory, EventAction } from '../logEvent';
 
 // TODO: Add proper type
 let sessionSubs: Array<CallableFunction> = [];
@@ -30,6 +32,11 @@ export function publishSession(): void {
 
 // TODO: Should this function be in separate file?
 export function logout(): void {
+	logEvent({
+		category: EventCategory.Authentication,
+		action: EventAction.Logout,
+	});
+
 	window.localStorage.removeItem('email');
 	window.localStorage.removeItem('token');
 

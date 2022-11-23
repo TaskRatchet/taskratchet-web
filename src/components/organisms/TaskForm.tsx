@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { Suspense, useState } from 'react';
 import {
 	Alert,
 	Box,
@@ -8,10 +8,12 @@ import {
 	InputAdornment,
 	Stack,
 	TextField,
+	Link,
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import DueForm from './DueForm';
 import { SetOptional } from 'type-fest';
+
+const LazyDueForm = React.lazy(() => import('./DueForm'));
 
 export type TaskFormProps = {
 	task: string;
@@ -21,6 +23,7 @@ export type TaskFormProps = {
 	timezone: string;
 	error: string;
 	onChange: (updates: Partial<TaskInput>) => void;
+	onCancel: () => void;
 	onSubmit: (input: SetOptional<TaskInput, 'due'>) => void;
 	actionLabel?: string;
 	disableTaskField?: boolean;
@@ -39,6 +42,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		timezone,
 		error,
 		onChange,
+		onCancel,
 		onSubmit,
 		actionLabel = 'Add',
 		maxDue,
@@ -88,15 +92,18 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				/>
 
 				{due ? (
-					<DueForm
-						due={due}
-						onChange={onChange}
-						minDue={minDue}
-						maxDue={maxDue}
-					/>
+					<Suspense fallback="loading">
+						<LazyDueForm
+							due={due}
+							onChange={onChange}
+							minDue={minDue}
+							maxDue={maxDue}
+						/>
+					</Suspense>
 				) : (
 					''
 				)}
+
 
 				<FormControlLabel
 					control={
@@ -127,14 +134,17 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					/>
 				)}
 
-				<Stack direction={'row'} justifyContent={'space-between'}>
-					<Button
-						href={'https://docs.taskratchet.com/timezones.html'}
-						target={'_blank'}
-						rel={'noopener noreferrer'}
-						size={'small'}
-					>
-						{timezone}
+				<Link
+					href={'https://docs.taskratchet.com/timezones.html'}
+					target={'_blank'}
+					rel={'noopener noreferrer'}
+				>
+					{timezone}
+				</Link>
+
+				<Stack direction={'row'} spacing={2} justifyContent="end">
+					<Button onClick={onCancel} variant="outlined">
+						Cancel
 					</Button>
 
 					<LoadingButton

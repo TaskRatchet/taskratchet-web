@@ -8,7 +8,17 @@ export default defineConfig({
 	test: {
 		environment: 'jsdom',
 		setupFiles: ['./global-setup.ts'],
-		mockReset: true,
+		clearMocks: true,
 		reporters: 'dot',
+	},
+	build: {
+		rollupOptions: {
+			output: {
+				manualChunks: {
+					dom: ['react-dom'],
+					material: ['@mui/material'],
+				},
+			},
+		},
 	},
 });

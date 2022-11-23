@@ -1,16 +1,12 @@
-import { screen, waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
 import React from 'react';
 import Account from './Account';
-import {
-	loadCheckoutSession,
-	loadMe,
-	loadTimezones,
-	renderWithQueryProvider,
-} from '../../lib/test/helpers';
+import { loadMe } from '../../lib/test/loadMe';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import { loadTimezones } from '../../lib/test/loadTimezones';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
-import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 
 vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/getMe');
@@ -24,7 +20,6 @@ describe('account page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		loadMe({});
-		loadCheckoutSession();
 		vi.mocked(useGetApiToken).mockReturnValue({
 			isLoading: false,
 			mutate: () => {
@@ -36,11 +31,12 @@ describe('account page', () => {
 	it('includes Beeminder integration settings', async () => {
 		loadTimezones();
 		loadMe({});
-		loadCheckoutSession();
 
 		renderWithQueryProvider(<Account />);
 
-		await screen.findByText('Enable Beeminder integration');
+		expect(
+			await screen.findByText('Enable Beeminder integration')
+		).toBeInTheDocument();
 	});
 
 	it('loads name', async () => {
@@ -81,31 +77,6 @@ describe('account page', () => {
 		await screen.findByDisplayValue('America/Indiana/Knox');
 	});
 
-	it('loads payment methods', async () => {
-		loadMe({
-			json: {
-				cards: [
-					{
-						brand: 'visa',
-						last4: '1111',
-					},
-				],
-			},
-		});
-
-		renderWithQueryProvider(<Account />);
-
-		await screen.findByText('visa ending with 1111');
-	});
-
-	it('gets checkout session only once', async () => {
-		const { queryClient } = renderWithQueryProvider(<Account />);
-
-		await queryClient.invalidateQueries('checkoutSession');
-
-		await waitFor(() => expect(getCheckoutSession).toBeCalledTimes(1));
-	});
-
 	it('has token request button', async () => {
 		renderWithQueryProvider(<Account />);
 
@@ -123,7 +94,7 @@ describe('account page', () => {
 
 		renderWithQueryProvider(<Account />);
 
-		userEvent.click(await screen.findByText('Request API token'));
+		await userEvent.click(await screen.findByText('Request API token'));
 
 		await screen.findByText('the_token');
 	});

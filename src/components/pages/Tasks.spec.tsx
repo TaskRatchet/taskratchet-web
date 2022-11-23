@@ -6,13 +6,10 @@ import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import {
-	loadNowDate,
-	loadTasksApiData,
-	makeTask,
-	renderWithQueryProvider,
-	withMutedReactQueryLogger,
-} from '../../lib/test/helpers';
+import { loadTasksApiData } from '../../lib/test/loadTasksApiData';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import { makeTask } from '../../lib/test/makeTask';
+import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import browser from '../../lib/Browser';
 import { __listRef } from '../../../__mocks__/react-list';
@@ -35,20 +32,6 @@ vi.mock('react-list');
 vi.mock('react-toastify');
 
 const mockEditTask = editTask as Mock;
-
-global.document.createRange = () =>
-	({
-		setStart: () => {
-			/* noop */
-		},
-		setEnd: () => {
-			/* noop */
-		},
-		commonAncestorContainer: {
-			nodeName: 'BODY',
-			ownerDocument: document,
-		},
-	} as unknown as Range);
 
 const expectTaskSave = async ({
 	task,
@@ -78,7 +61,7 @@ const renderTasksPage = () => {
 	return {
 		openForm: async () => {
 			await screen.findByLabelText('add');
-			userEvent.click(screen.getByLabelText('add'));
+			await userEvent.click(screen.getByLabelText('add'));
 		},
 		getTaskInput: () => screen.getByLabelText('Task *'),
 		getDueInput: () => screen.getByLabelText('due date'),
@@ -86,7 +69,7 @@ const renderTasksPage = () => {
 		clickCheckbox: async (task = 'the_task') => {
 			const checkbox = await findTaskCheckbox(task);
 
-			userEvent.click(checkbox);
+			await userEvent.click(checkbox);
 		},
 		...view,
 	};
@@ -95,7 +78,7 @@ const renderTasksPage = () => {
 describe('tasks page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
-		loadNowDate(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 	});
 
@@ -108,7 +91,7 @@ describe('tasks page', () => {
 	});
 
 	it('saves task', async () => {
-		loadNowDate(new Date('10/29/2020'));
+		vi.setSystemTime(new Date('10/29/2020'));
 		loadTasksApiData();
 
 		renderTasksPage();
@@ -116,10 +99,10 @@ describe('tasks page', () => {
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
 		/* Open new task form */
-		userEvent.click(screen.getByLabelText('add'));
+		await userEvent.click(screen.getByLabelText('add'));
 
-		userEvent.type(await screen.findByLabelText(/^Task/), 'the_task');
-		userEvent.click(screen.getByText('Add'));
+		await userEvent.type(await screen.findByLabelText(/^Task/), 'the_task');
+		await userEvent.click(screen.getByText('Add'));
 
 		await expectTaskSave({
 			task: 'the_task',
@@ -140,7 +123,7 @@ describe('tasks page', () => {
 		await openForm();
 		await screen.findByText('Add');
 
-		userEvent.click(getAddButton());
+		await userEvent.click(getAddButton());
 
 		expect(addTask).not.toHaveBeenCalled();
 	});
@@ -198,8 +181,8 @@ describe('tasks page', () => {
 
 			await openForm();
 
-			userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
-			userEvent.click(getAddButton());
+			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			await userEvent.click(getAddButton());
 
 			await waitFor(() =>
 				expect(toast).toBeCalledWith('Error: Failed to add task')
@@ -221,8 +204,8 @@ describe('tasks page', () => {
 
 			await openForm();
 
-			userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
-			userEvent.click(getAddButton());
+			await userEvent.type(getTaskInput(), 'the_task by Friday or pay $5');
+			await userEvent.click(getAddButton());
 
 			await waitFor(() => expect(toast).toBeCalledWith('Error: Oops!'));
 		});
@@ -257,7 +240,7 @@ describe('tasks page', () => {
 
 		await waitFor(() => expect(getTasks).toHaveBeenCalled());
 
-		const { reject } = loadControlledPromise(getTasks);
+		const { resolve } = loadControlledPromise(getTasks);
 
 		await clickCheckbox();
 
@@ -266,7 +249,7 @@ describe('tasks page', () => {
 			expect(taskCheckbox?.checked).toBeTruthy();
 		});
 
-		reject();
+		resolve();
 	});
 
 	it('rolls back checkbox optimistic update', async () => {
@@ -398,8 +381,8 @@ describe('tasks page', () => {
 
 		await openForm();
 
-		userEvent.type(getTaskInput(), 'the_task');
-		userEvent.click(getAddButton());
+		await userEvent.type(getTaskInput(), 'the_task');
+		await userEvent.click(getAddButton());
 
 		expect(await screen.findByText('the_task')).toBeInTheDocument();
 	});
@@ -416,12 +399,10 @@ describe('tasks page', () => {
 
 			await openForm();
 
-			userEvent.type(getTaskInput(), 'the_task');
-			userEvent.click(getAddButton());
+			await userEvent.type(getTaskInput(), 'the_task');
+			await userEvent.click(getAddButton());
 
-			const bg = await screen.findByTestId('mui-backdrop');
-
-			userEvent.click(bg);
+			await userEvent.click(await screen.findByText('Cancel'));
 
 			await waitFor(() => {
 				expect(screen.getByText('the_task')).toBeInTheDocument();
@@ -433,54 +414,6 @@ describe('tasks page', () => {
 				expect(screen.queryByText('the_task')).not.toBeInTheDocument();
 			});
 		});
-	});
-
-	it('cancels fetches on-mutate', async () => {
-		// Setup & initial render
-
-		loadTasksApiData();
-
-		const { getTaskInput, getAddButton, openForm } = renderTasksPage();
-
-		await waitFor(() => expect(getTasks).toHaveBeenCalled());
-
-		// Load slow query response to clobber
-
-		const { resolve } = loadControlledPromise(getTasks);
-
-		// Add first task
-
-		await openForm();
-
-		userEvent.type(getTaskInput(), 'first');
-		userEvent.click(getAddButton());
-
-		// Wait for slow response to be requested
-
-		await waitFor(() => expect(getTasks).toBeCalledTimes(2));
-
-		// Load second, fast response
-
-		vi.mocked(getTasks).mockResolvedValue([
-			makeTask({ task: 'first', id: '3' }),
-			makeTask({ task: 'second', id: '4' }),
-		]);
-
-		// Add second task
-
-		userEvent.clear(getTaskInput());
-		userEvent.type(getTaskInput(), 'second');
-		userEvent.click(getAddButton());
-
-		await screen.findByText('second');
-
-		// Resolve slow request
-
-		resolve([makeTask({ task: 'first', id: '3' })]);
-
-		// Check that first, slow response didn't clobber second, fast response
-
-		expect(await screen.findByText('second')).toBeInTheDocument();
 	});
 
 	it('shows all tasks', async () => {
@@ -508,7 +441,7 @@ describe('tasks page', () => {
 	});
 
 	it('scrolls next section into view', async () => {
-		loadNowDate(new Date('3/22/2020'));
+		vi.setSystemTime(new Date('3/22/2020'));
 
 		loadTasksApiData({
 			tasks: [
@@ -556,8 +489,11 @@ describe('tasks page', () => {
 
 		await openForm();
 
-		userEvent.type(getTaskInput(), 'new_task');
-		userEvent.click(getAddButton());
+		await userEvent.type(getTaskInput(), 'new_task');
+
+		await userEvent.click(getAddButton());
+
+		await userEvent.clear(getTaskInput());
 
 		await waitFor(() => {
 			expect(screen.getByText('new_task')).toBeInTheDocument();
@@ -565,7 +501,7 @@ describe('tasks page', () => {
 	});
 
 	it('immediately renders future new task', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [
@@ -596,8 +532,8 @@ describe('tasks page', () => {
 
 		await openForm();
 
-		userEvent.type(getTaskInput(), 'new_task');
-		userEvent.type(getDueInput(), '{backspace}9');
+		await userEvent.type(getTaskInput(), 'new_task');
+		await userEvent.type(getDueInput(), '{backspace}9');
 
 		loadTasksApiData({
 			tasks: [
@@ -620,7 +556,7 @@ describe('tasks page', () => {
 			],
 		});
 
-		userEvent.click(getAddButton());
+		await userEvent.click(getAddButton());
 
 		await waitFor(() => {
 			expect(getTasks).toBeCalledTimes(2);
@@ -639,7 +575,7 @@ describe('tasks page', () => {
 	});
 
 	it('scrolls list', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask()],
@@ -653,7 +589,7 @@ describe('tasks page', () => {
 	});
 
 	it('does not scroll list on page refocus', async () => {
-		loadNowDate(new Date('1/1/2020'));
+		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
 			tasks: [makeTask()],
@@ -688,14 +624,14 @@ describe('tasks page', () => {
 
 		await screen.findByText('the_task');
 
-		userEvent.click(screen.getByLabelText('Menu'));
-		userEvent.click(screen.getByText('Edit'));
+		await userEvent.click(screen.getByLabelText('Menu'));
+		await userEvent.click(screen.getByText('Edit'));
 
 		await waitFor(() => {
 			expect(screen.getByLabelText('Due Date *')).toBeInTheDocument();
 		});
 
-		userEvent.click(screen.getByText('Save'));
+		await userEvent.click(screen.getByText('Save'));
 
 		await waitFor(() => {
 			expect(getTasks).toBeCalledTimes(2);
@@ -707,8 +643,8 @@ describe('tasks page', () => {
 
 		await view.openForm();
 
-		userEvent.type(view.getTaskInput(), 'task1{enter}task2');
-		userEvent.click(view.getAddButton());
+		await userEvent.type(view.getTaskInput(), 'task1{enter}task2');
+		await userEvent.click(view.getAddButton());
 
 		await waitFor(() => {
 			expect(addTask).toBeCalledWith(
