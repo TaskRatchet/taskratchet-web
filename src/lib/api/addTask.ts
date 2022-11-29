@@ -1,17 +1,19 @@
+import fetch2 from './fetch2';
 import logEvent from '../logEvent';
-import fetch1 from './fetch1';
 import { EventCategory, EventAction } from '../logEvent';
 
 // Requires that user be authenticated.
 export async function addTask(
 	task: string,
 	due: string,
-	cents: number
+	cents: number,
+	recurrence?: Record<string, number>
 ): Promise<Response> {
-	const response = await fetch1('me/tasks', true, 'POST', {
+	const response = await fetch2('me/tasks', true, 'POST', {
 		task,
 		due,
 		cents,
+		recurrence,
 	});
 
 	if (!response.ok) {

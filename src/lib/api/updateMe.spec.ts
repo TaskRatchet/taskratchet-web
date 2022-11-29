@@ -1,6 +1,6 @@
 import { updateMe } from './updateMe';
 import fetch1 from './fetch1';
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { vi, expect, it, describe, beforeEach } from 'vitest';
 
 vi.mock('./fetch1');
 

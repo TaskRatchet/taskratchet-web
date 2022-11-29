@@ -5,8 +5,8 @@ import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import userEvent from '@testing-library/user-event';
+import { vi, expect, it, describe, beforeEach } from 'vitest';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 
 vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/getMe');

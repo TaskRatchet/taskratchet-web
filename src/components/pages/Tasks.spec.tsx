@@ -52,7 +52,7 @@ const expectTaskSave = async ({
 
 	await waitFor(() => expect(addTask).toBeCalled());
 
-	expect(addTask).toBeCalledWith(task, dueString, cents);
+	expect(addTask).toBeCalledWith(task, dueString, cents, undefined);
 };
 
 const renderTasksPage = () => {
@@ -650,7 +650,8 @@ describe('tasks page', () => {
 			expect(addTask).toBeCalledWith(
 				'task1',
 				expect.anything(),
-				expect.anything()
+				expect.anything(),
+				undefined
 			);
 		});
 	});

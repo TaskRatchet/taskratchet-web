@@ -1,8 +1,10 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useState } from 'react';
 import {
 	Alert,
 	Box,
 	Button,
+	Checkbox,
+	FormControlLabel,
 	InputAdornment,
 	Stack,
 	TextField,
@@ -13,10 +15,11 @@ import { SetOptional } from 'type-fest';
 
 const LazyDueForm = React.lazy(() => import('./DueForm'));
 
-interface TaskFormProps {
+export type TaskFormProps = {
 	task: string;
 	due?: string;
 	cents: number;
+	recurrence?: Record<string, number>;
 	timezone: string;
 	error: string;
 	onChange: (updates: Partial<TaskInput>) => void;
@@ -28,13 +31,14 @@ interface TaskFormProps {
 	maxDue?: Date;
 	minDue?: Date;
 	isLoading: boolean;
-}
+};
 
 const TaskForm = (props: TaskFormProps): JSX.Element => {
 	const {
 		task,
 		due,
 		cents,
+		recurrence,
 		timezone,
 		error,
 		onChange,
@@ -46,6 +50,8 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		minCents = 100,
 		isLoading,
 	} = props;
+	const [recurrenceEnabled, setRecurrenceEnabled] = useState<boolean>(false);
+	const [interval, setInterval] = useState<number>(1);
 
 	return (
 		<Box component={'form'} className={'organism-taskForm'}>
@@ -98,6 +104,33 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					''
 				)}
 
+				<FormControlLabel
+					control={
+						<Checkbox
+							onChange={(e) => {
+								setRecurrenceEnabled(e.target.checked);
+								onChange({
+									task,
+									due,
+									cents,
+									recurrence: e.target.checked ? { days: interval } : {},
+								});
+							}}
+						/>
+					}
+					label="Enable recurrence"
+				/>
+				{recurrenceEnabled && (
+					<TextField
+						label="Interval in days"
+						onChange={(e) => {
+							const n = parseInt(e.target.value);
+							onChange({ task, due, cents, recurrence: { days: n } });
+							setInterval(n);
+						}}
+					/>
+				)}
+
 				<Link
 					href={'https://docs.taskratchet.com/timezones.html'}
 					target={'_blank'}
@@ -112,17 +145,11 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					</Button>
 
 					<LoadingButton
-						onClick={() =>
-							onSubmit({
-								task,
-								cents,
-								due,
-							})
-						}
 						loading={isLoading}
 						variant="contained"
 						size={'small'}
 						color="primary"
+						onClick={() => onSubmit({ task, due, cents, recurrence })}
 					>
 						{actionLabel}
 					</LoadingButton>

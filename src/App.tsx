@@ -9,6 +9,7 @@ import {
 } from 'react-router-dom';
 import Authenticated from './components/pages/Authenticated';
 import ResetPassword from './components/pages/ResetPassword';
+import RecurringTasks from './components/pages/RecurringTasks';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { IS_PRODUCTION } from './tr_constants';
@@ -17,8 +18,8 @@ import NavBar from './components/organisms/NavBar';
 import browser from './lib/Browser';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
-import getQueryClient from './lib/getQueryClient';
 import { ErrorBoundary } from '@highlight-run/react';
+import getQueryClient from './lib/getQueryClient';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
 import ga from './lib/ga';
@@ -123,6 +124,15 @@ export function App(): JSX.Element {
 								element={
 									<Authenticated>
 										<Account />
+									</Authenticated>
+								}
+							/>
+
+							<Route
+								path={'/recurring'}
+								element={
+									<Authenticated>
+										<RecurringTasks />
 									</Authenticated>
 								}
 							/>

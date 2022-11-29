@@ -39,6 +39,17 @@ type TaskType = {
 	complete: boolean;
 	status: Status;
 	timezone: string;
+	recurrence?: Record<string, number>;
+};
+
+type RecurringTaskInput = Omit<TaskInput, 'due'>;
+type RecurringTask = Omit<TaskType, 'due'> & { id: string };
+
+type TaskInput = {
+	task: string;
+	due: string;
+	cents: number;
+	recurrence?: Record<string, number>;
 };
 
 type TaskInput = {
