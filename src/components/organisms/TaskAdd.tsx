@@ -42,7 +42,7 @@ export default function TaskAdd({
 		return baseTask.due;
 	});
 	const [cents, setCents] = useState<number>(baseTask?.cents || 500);
-	const [recurrence, setRecurrence] = useState<Record<string, number>>();
+	const [recurrence, setRecurrence] = useState<Record<string, number>>({});
 	const [error, setError] = useState<string>('');
 	const minDue = browser.getNowDate();
 
@@ -50,7 +50,7 @@ export default function TaskAdd({
 		if (task !== undefined) setTask(task);
 		if (due !== undefined) setDue(due);
 		if (cents !== undefined) setCents(cents);
-		setRecurrence(recurrence);
+		if (recurrence !== undefined) setRecurrence(recurrence);
 	};
 
 	function onSubmit() {
@@ -71,7 +71,7 @@ export default function TaskAdd({
 				task: l,
 				due,
 				cents,
-				recurrence,
+				recurrence: Object.keys(recurrence).length ? recurrence : undefined,
 			})
 		);
 		throw new Error('onSubmit');

@@ -104,19 +104,16 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 					''
 				)}
 
-
 				<FormControlLabel
 					control={
 						<Checkbox
-							onChange={() => {
-								setRecurrenceEnabled(!recurrenceEnabled);
+							onChange={(e) => {
+								setRecurrenceEnabled(e.target.checked);
 								onChange({
 									task,
 									due,
 									cents,
-									recurrence: recurrenceEnabled
-										? undefined
-										: { days: interval },
+									recurrence: e.target.checked ? { days: interval } : {},
 								});
 							}}
 						/>

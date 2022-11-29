@@ -3,7 +3,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { TaskFormProps } from './TaskForm';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { vi, expect, it, describe } from 'vitest';
 
@@ -35,7 +35,7 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 	};
 
 	return render(
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<TaskForm {...p} />
 		</LocalizationProvider>
 	);

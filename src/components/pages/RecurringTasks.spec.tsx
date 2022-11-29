@@ -4,7 +4,8 @@ import userEvent from '@testing-library/user-event';
 import RecurringTasks from './RecurringTasks';
 import getRecurringTasks from '../../lib/api/getRecurringTasks';
 import updateRecurringTask from '../../lib/api/updateRecurringTask';
-import { loadMe, renderWithQueryProvider } from '../../lib/test/helpers';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import { loadMe } from '../../lib/test/loadMe';
 import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 
 vi.mock('../../lib/api/getRecurringTasks');
@@ -39,7 +40,7 @@ describe('recurring tasks', () => {
 			expect(getRecurringTasks).toHaveBeenCalled();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
 	});
 
 	it('it edits recurring task', async () => {
@@ -49,15 +50,15 @@ describe('recurring tasks', () => {
 			expect(getRecurringTasks).toHaveBeenCalled();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
 
-		userEvent.click(await screen.findByText('Edit'));
+		await userEvent.click(await screen.findByText('Edit'));
 
 		const taskInput = await screen.findByLabelText(/^Task/);
 
-		userEvent.clear(taskInput);
-		userEvent.type(taskInput, 'm_recurring_task');
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.clear(taskInput);
+		await userEvent.type(taskInput, 'm_recurring_task');
+		await userEvent.click(await screen.findByText('Save'));
 
 		await waitFor(() => {
 			expect(updateRecurringTask).toBeCalled();
@@ -75,9 +76,9 @@ describe('recurring tasks', () => {
 			expect(getRecurringTasks).toHaveBeenCalled();
 		});
 
-		userEvent.click(await screen.findByLabelText('Menu'));
-		userEvent.click(await screen.findByText('Edit'));
-		userEvent.click(await screen.findByText('Save'));
+		await userEvent.click(await screen.findByLabelText('Menu'));
+		await userEvent.click(await screen.findByText('Edit'));
+		await userEvent.click(await screen.findByText('Save'));
 
 		await waitFor(() => {
 			expect(updateRecurringTask).toBeCalled();

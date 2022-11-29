@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import React from 'react';
 import TaskForm, { TaskFormProps } from './TaskForm';
@@ -17,12 +17,13 @@ const renderComponent = (props: Partial<TaskFormProps> = {}) => {
 		error: '',
 		onChange: () => undefined,
 		onSubmit: () => undefined,
+		onCancel: () => undefined,
 		isLoading: false,
 		...props,
 	};
 
 	return render(
-		<LocalizationProvider dateAdapter={AdapterDateFns}>
+		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<TaskForm {...p} />
 		</LocalizationProvider>
 	);
@@ -34,7 +35,7 @@ describe('due form', () => {
 
 		renderComponent({ onChange });
 
-		userEvent.type(
+		await userEvent.type(
 			await screen.findByLabelText('Due Time *'),
 			'{backspace}{backspace}am'
 		);
@@ -42,7 +43,7 @@ describe('due form', () => {
 		expect(onChange).toBeCalled();
 	});
 
-	it('preserves time when editing date', () => {
+	it('preserves time when editing date', async () => {
 		const onChange = vi.fn();
 
 		renderComponent({
@@ -51,7 +52,10 @@ describe('due form', () => {
 			onChange,
 		});
 
-		userEvent.type(screen.getByLabelText('Due Date *'), '{backspace}2{enter}');
+		await userEvent.type(
+			screen.getByLabelText('Due Date *'),
+			'{backspace}2{enter}'
+		);
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
@@ -60,7 +64,7 @@ describe('due form', () => {
 		);
 	});
 
-	it('preserves date when editing time', () => {
+	it('preserves date when editing time', async () => {
 		const onChange = vi.fn();
 
 		renderComponent({
@@ -69,7 +73,10 @@ describe('due form', () => {
 			onChange,
 		});
 
-		userEvent.type(screen.getByLabelText('Due Time *'), '{backspace}M{enter}');
+		await userEvent.type(
+			screen.getByLabelText('Due Time *'),
+			'{backspace}M{enter}'
+		);
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
