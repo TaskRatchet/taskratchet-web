@@ -57,13 +57,13 @@ export default function NavDrawer({
 						</ListItem>
 					</>
 				)}
-				{/*TODO: rel noopener etc*/}
 				<ListItem disablePadding>
 					<ListItemButton
 						component={'a'}
 						href={'https://taskratchet.com/help.html'}
 						target={'_blank'}
 						color="inherit"
+						rel={'noopener'}
 					>
 						<ListItemIcon>
 							<HelpIcon />
