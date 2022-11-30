@@ -52,7 +52,7 @@ const expectTaskSave = async ({
 
 	await waitFor(() => expect(addTask).toBeCalled());
 
-	expect(addTask).toBeCalledWith(task, dueString, cents);
+	expect(addTask).toBeCalledWith({ task, due: dueString, cents });
 };
 
 const renderTasksPage = () => {
@@ -648,9 +648,9 @@ describe('tasks page', () => {
 
 		await waitFor(() => {
 			expect(addTask).toBeCalledWith(
-				'task1',
-				expect.anything(),
-				expect.anything()
+				expect.objectContaining({
+					task: 'task1',
+				})
 			);
 		});
 	});
