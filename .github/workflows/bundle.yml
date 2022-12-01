@@ -1,5 +1,9 @@
 name: Bundle
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 env:
   NODE_VERSION: 16.15.0
 jobs:
