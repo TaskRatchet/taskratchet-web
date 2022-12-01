@@ -61,7 +61,7 @@ jobs:
 
   compare:
     runs-on: ubuntu-latest
-    needs: [bundle_base, bundle_head]
+    needs: [base, head]
     if: github.event_name == 'pull_request'
     steps:
       - name: Find comment
@@ -79,11 +79,11 @@ jobs:
           edit-mode: replace
           body: |
             ### Bundle size comparison
-            - Base: [${{needs.bundle_base.outputs.size}}](https://${{ github.base_ref }}-stats.surge.sh/stats.html)
-            - Head: [${{needs.bundle_head.outputs.size}}](https://${{ github.head_ref }}-stats.surge.sh/stats.html)
+            - Base: [${{needs.base.outputs.size}}](https://${{ github.base_ref }}-stats.surge.sh/stats.html)
+            - Head: [${{needs.head.outputs.size}}](https://${{ github.head_ref }}-stats.surge.sh/stats.html)
       - name: Compare bundle sizes
         run: |
-          if [ "${{needs.bundle_base.outputs.size}}" -lt "${{needs.bundle_head.outputs.size}}" ]; then
+          if [ "${{needs.base.outputs.size}}" -lt "${{needs.head.outputs.size}}" ]; then
             exit 1
           else
             exit 0
