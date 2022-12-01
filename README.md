@@ -1,6 +1,6 @@
 # taskratchet-web
 
-Deployed to <https://app.taskratchet.com/>
+Live at <https://app.taskratchet.com/>.
 
 ## Development
 
