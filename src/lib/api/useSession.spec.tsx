@@ -14,7 +14,7 @@ describe('useSession', () => {
 		expect(result.current).toEqual(session);
 	});
 
-	it('should delete session on logout', () => {
+	it('should delete session on logout', async () => {
 		const session = {
 			email: 'the_email',
 			token: 'the_token',
@@ -26,7 +26,8 @@ describe('useSession', () => {
 
 		expect(result.current).toEqual(session);
 
-		act(() => {
+		// eslint-disable-next-line @typescript-eslint/require-await
+		await act(async () => {
 			logout();
 		});
 
