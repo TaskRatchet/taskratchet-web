@@ -82,7 +82,7 @@
 		"eslint-plugin-regex": "^1.10.0",
 		"eslint-plugin-testing-library": "^5.9.1",
 		"jsdom": "^20.0.3",
-		"prettier": "2.7.1",
+		"prettier": "2.8.0",
 		"rollup-plugin-visualizer": "^5.8.3",
 		"sass": "^1.56.1",
 		"type-fest": "^3.3.0",
