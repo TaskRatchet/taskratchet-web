@@ -9,7 +9,6 @@ interface Context {
 export function useUpdateTask(): (id: string, data: TaskInput) => void {
 	const queryClient = useQueryClient();
 
-	// TODO: replace any type
 	const { mutate } = useMutation(
 		(variables: { id: string; data: TaskInput }): Promise<unknown> => {
 			const { id, data } = variables;
