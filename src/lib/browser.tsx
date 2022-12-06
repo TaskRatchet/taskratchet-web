@@ -3,7 +3,6 @@ import queryString, { ParsedQuery } from 'query-string';
 // https://htmldom.dev/get-the-first-scrollable-parent-of-an-element/
 const isScrollable = function (el: Element) {
 	const hasScrollableContent = el.scrollHeight > el.clientHeight;
-
 	const overflowYStyle = window.getComputedStyle(el).overflowY;
 	const isOverflowHidden = overflowYStyle.indexOf('hidden') !== -1;
 
