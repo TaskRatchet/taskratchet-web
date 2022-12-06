@@ -10,6 +10,6 @@ export function useGetApiToken(): UseMutationResult<
 > {
 	return useMutation<string>('api-token', async () => {
 		const response = await fetch1('me/token', true, 'GET');
-		return response.text();
+		return response?.text();
 	});
 }
