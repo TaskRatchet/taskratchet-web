@@ -2,6 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box } from '@mui/material';
 import { resetPassword } from '../../lib/api/resetPassword';
+import useDocumentTitle from '../../lib/useDocumentTitle';
 
 const api = {
 	resetPassword,
@@ -18,6 +19,8 @@ function ResetPassword(): JSX.Element {
 	const [password, setPassword] = useState<string>('');
 	const [password2, setPassword2] = useState<string>('');
 	const token = useToken();
+
+	useDocumentTitle('Reset Password | TaskRatchet');
 
 	const resetPassword = (event: FormEvent) => {
 		event.preventDefault();
