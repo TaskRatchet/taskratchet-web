@@ -5,7 +5,7 @@ import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLog
 import userEvent from '@testing-library/user-event';
 import { updateTask } from '../../lib/api/updateTask';
 import { waitFor } from '@testing-library/react';
-import browser from '../../lib/Browser';
+import * as browser from '../../lib/browser';
 import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';
 import { vi, Mock, expect, it, describe, beforeEach } from 'vitest';

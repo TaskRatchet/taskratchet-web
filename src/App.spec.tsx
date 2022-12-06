@@ -1,7 +1,7 @@
 import { loadTasksApiData } from './lib/test/loadTasksApiData';
 import { renderWithQueryProvider } from './lib/test/renderWithQueryProvider';
 import { makeTask } from './lib/test/makeTask';
-import browser from './lib/Browser';
+import * as browser from './lib/browser';
 import React from 'react';
 import { App } from './App';
 import userEvent from '@testing-library/user-event';

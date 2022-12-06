@@ -11,7 +11,7 @@ import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider'
 import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
-import browser from '../../lib/Browser';
+import * as browser from '../../lib/browser';
 import { __listRef } from '../../../__mocks__/react-list';
 import { editTask } from '../../lib/api/editTask';
 import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';

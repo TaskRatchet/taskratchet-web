@@ -1,4 +1,4 @@
-import browser from './Browser';
+import * as browser from './browser';
 import humanizeDuration from 'humanize-duration';
 
 const shortEnglishHumanizer = humanizeDuration.humanizer({

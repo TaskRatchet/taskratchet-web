@@ -1,4 +1,4 @@
-import browser from './Browser';
+import * as browser from './browser';
 
 export default function useIsDue({ due_timestamp, status }: TaskType): boolean {
 	if (due_timestamp === undefined) return false;

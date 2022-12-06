@@ -3,7 +3,7 @@ import TaskForm from './TaskForm';
 import React, { useState } from 'react';
 import { useTimezone } from '../../lib/api/useTimezone';
 import { useAddTask } from '../../lib/api/useAddTask';
-import browser from '../../lib/Browser';
+import * as browser from '../../lib/browser';
 import formatDue from '../../lib/formatDue';
 
 const getDefaultDue = () => {
