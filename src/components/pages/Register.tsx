@@ -11,6 +11,7 @@ import InputLabel from '@mui/material/InputLabel';
 import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import saveFeedback from '../../lib/saveFeedback';
+import useDocumentTitle from '../../lib/useDocumentTitle';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>('');
@@ -22,6 +23,8 @@ const Register = (): JSX.Element => {
 	const [timezone, setTimezone] = useState<string>('');
 	const [agreed, setAgreed] = useState<boolean>(false);
 	const [referral, setReferral] = useState<string>('');
+
+	useDocumentTitle('Register | TaskRatchet');
 
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
