@@ -1,5 +1,5 @@
 import { ParsedQuery } from 'query-string';
-import browser from '../Browser';
+import * as browser from '../browser';
 import { vi } from 'vitest';
 
 export const loadUrlParams = (params: ParsedQuery): void => {

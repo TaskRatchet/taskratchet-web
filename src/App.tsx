@@ -14,7 +14,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { IS_PRODUCTION } from './tr_constants';
 import { QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
-import browser from './lib/Browser';
+import * as browser from './lib/browser';
 import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
 import getQueryClient from './lib/getQueryClient';

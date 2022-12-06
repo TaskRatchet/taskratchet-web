@@ -1,7 +1,7 @@
 import React, { FormEvent, useEffect, useState } from 'react';
 import { IS_PRODUCTION } from '../../tr_constants';
 import { useMe } from '../../lib/api/useMe';
-import browser from '../../lib/Browser';
+import * as browser from '../../lib/browser';
 import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import useUpdateMe from '../../lib/api/useUpdateMe';

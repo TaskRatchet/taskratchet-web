@@ -1,4 +1,4 @@
-import browser from './Browser';
+import * as browser from './browser';
 
 function makeTitle(task: TaskType) {
 	return browser.getString(new Date(task.due));

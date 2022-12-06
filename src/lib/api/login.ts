@@ -5,8 +5,8 @@ import { EventCategory, EventAction } from '../logEvent';
 
 export async function login(email: string, password: string): Promise<boolean> {
 	const res = await fetch1('account/login', false, 'POST', {
-		email: email,
-		password: password,
+		email,
+		password,
 	});
 
 	if (!res.ok) return false;
