@@ -10,9 +10,11 @@ import register from '../../lib/api/register';
 import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { redirectToCheckout } from '../../lib/stripe';
 import saveFeedback from '../../lib/saveFeedback';
+import { toast } from 'react-toastify';
 
 vi.mock('../../lib/api/getCheckoutSession');
 vi.mock('../../lib/api/register');
+vi.mock('react-toastify');
 
 async function fillForm() {
 	loadTimezones(['the_timezone']);
@@ -24,13 +26,13 @@ async function fillForm() {
 	renderWithQueryProvider(<Register />);
 
 	await userEvent.type(await screen.findByLabelText('Name'), 'the_name');
-	await userEvent.type(await screen.findByLabelText('Email'), 'the_email');
+	await userEvent.type(await screen.findByLabelText(/Email/), 'the_email');
 	await userEvent.type(
-		await screen.findByLabelText('Password'),
+		await screen.findByLabelText(/^Password/),
 		'the_password'
 	);
 	await userEvent.type(
-		await screen.findByLabelText('Retype Password'),
+		await screen.findByLabelText(/Retype Password/),
 		'the_password'
 	);
 
@@ -38,7 +40,7 @@ async function fillForm() {
 		expect(getTimezones).toBeCalled();
 	});
 
-	await userEvent.click(await screen.findByLabelText('Timezone'));
+	await userEvent.click(await screen.findByLabelText(/Timezone/));
 
 	const listbox = within(screen.getByRole('listbox'));
 
@@ -65,19 +67,19 @@ describe('registration page', () => {
 	it('uses Input for email field', async () => {
 		renderWithQueryProvider(<Register />);
 
-		await screen.findByLabelText('Email');
+		await screen.findByLabelText(/Email/);
 	});
 
 	it('uses Input for password field', async () => {
 		renderWithQueryProvider(<Register />);
 
-		await screen.findByLabelText('Password');
+		await screen.findByLabelText(/^Password/);
 	});
 
 	it('uses Input for password2 field', async () => {
 		renderWithQueryProvider(<Register />);
 
-		await screen.findByLabelText('Retype Password');
+		await screen.findByLabelText(/Retype Password/);
 	});
 
 	it('submits registration', async () => {
@@ -122,11 +124,13 @@ describe('registration page', () => {
 
 		await userEvent.click(await screen.findByText('Add payment method'));
 
-		expect(saveFeedback).toBeCalledWith({
-			userName: 'the_name',
-			userEmail: 'the_email',
-			prompt: 'How did you hear about us?',
-			response: 'the_referral',
+		await waitFor(() => {
+			expect(saveFeedback).toBeCalledWith({
+				userName: 'the_name',
+				userEmail: 'the_email',
+				prompt: 'How did you hear about us?',
+				response: 'the_referral',
+			});
 		});
 	});
 
@@ -136,5 +140,75 @@ describe('registration page', () => {
 		await userEvent.click(await screen.findByText('Add payment method'));
 
 		expect(saveFeedback).not.toBeCalled();
+	});
+
+	it('shows missing email error if none provided', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/Email/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Email is required');
+	});
+
+	it('shows missing password error if none provided', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/^Password/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Password is required');
+	});
+
+	it('shows missing password2 error if none provided', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/Retype Password/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Password is required');
+	});
+
+	it('shows missing timezone error if none provided', async () => {
+		renderWithQueryProvider(<Register />);
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Timezone is required');
+	});
+
+	it('hides validation errors until attempted submission', () => {
+		renderWithQueryProvider(<Register />);
+
+		expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
+	});
+
+	it('shows error if user did not agree to terms', async () => {
+		await fillForm();
+
+		await userEvent.click(
+			await screen.findByLabelText(
+				"I have read and agree to TaskRatchet's privacy policy and terms of service."
+			)
+		);
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText(/You must agree/);
+	});
+
+	it('does not use toast for validation errors', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/Email/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		expect(await screen.findByText(/is required/)).toBeInTheDocument();
+
+		expect(toast).not.toBeCalled();
 	});
 });

@@ -12,6 +12,8 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import saveFeedback from '../../lib/saveFeedback';
 import useDocumentTitle from '../../lib/useDocumentTitle';
+import FormHelperText from '@mui/material/FormHelperText';
+import Checkbox from '@mui/material/Checkbox';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>('');
@@ -23,11 +25,14 @@ const Register = (): JSX.Element => {
 	const [timezone, setTimezone] = useState<string>('');
 	const [agreed, setAgreed] = useState<boolean>(false);
 	const [referral, setReferral] = useState<string>('');
+	const [showErrors, setShowErrors] = useState<boolean>(false);
 
 	useDocumentTitle('Register | TaskRatchet');
 
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
+
+		setShowErrors(true);
 
 		const passes = validateRegistrationForm();
 
@@ -61,29 +66,7 @@ const Register = (): JSX.Element => {
 	};
 
 	const validateRegistrationForm = () => {
-		let passes = true;
-
-		if (!email) {
-			toast('Email missing');
-			passes = false;
-		}
-
-		if (!password || !password2) {
-			toast('Please enter password twice');
-			passes = false;
-		}
-
-		if (password !== password2) {
-			toast("Passwords don't match");
-			passes = false;
-		}
-
-		if (!agreed) {
-			toast('Please agree before submitting');
-			passes = false;
-		}
-
-		return passes;
+		return email && password && password2 && password === password2 && agreed;
 	};
 
 	const getTimezoneOptions = () => {
@@ -124,6 +107,9 @@ const Register = (): JSX.Element => {
 						onChange={(e) => setEmail(e.target.value)}
 						id={'email'}
 						label={'Email'}
+						required
+						error={showErrors && !email}
+						helperText={showErrors && !email && 'Email is required'}
 					/>
 
 					<TextField
@@ -132,6 +118,9 @@ const Register = (): JSX.Element => {
 						onChange={(e) => setPassword(e.target.value)}
 						id={'password'}
 						label={'Password'}
+						required
+						error={showErrors && !password}
+						helperText={showErrors && !password && 'Password is required'}
 					/>
 
 					<TextField
@@ -140,9 +129,12 @@ const Register = (): JSX.Element => {
 						onChange={(e) => setPassword2(e.target.value)}
 						id={'password2'}
 						label={'Retype Password'}
+						required
+						error={showErrors && !password2}
+						helperText={showErrors && !password2 && 'Password is required'}
 					/>
 
-					<FormControl>
+					<FormControl required error={showErrors && !timezone}>
 						<InputLabel id={'timezone'}>Timezone</InputLabel>
 						<Select
 							labelId={'timezone'}
@@ -154,6 +146,9 @@ const Register = (): JSX.Element => {
 						>
 							{getTimezoneOptions()}
 						</Select>
+						{showErrors && !timezone && (
+							<FormHelperText>Timezone is required</FormHelperText>
+						)}
 					</FormControl>
 
 					<TextField
@@ -162,36 +157,37 @@ const Register = (): JSX.Element => {
 						label={'How did you hear about us?'}
 						id={'referral'}
 					/>
-				</Stack>
 
-				<p>
-					<label>
-						<input
-							type="checkbox"
-							value={'yes'}
-							onChange={(e) => {
-								setAgreed(e.target.value === 'yes');
-							}}
-						/>
-						&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
-						<a
-							href="https://taskratchet.com/privacy/"
-							target={'_blank'}
-							rel={'noopener noreferrer'}
-						>
-							privacy policy
-						</a>{' '}
-						and{' '}
-						<a
-							href="https://taskratchet.com/terms/"
-							target={'_blank'}
-							rel={'noopener noreferrer'}
-						>
-							terms of service
-						</a>
-						.
-					</label>
-				</p>
+					<FormControl required error={showErrors && !agreed}>
+						<label>
+							<Checkbox
+								value={agreed}
+								onChange={(e) => setAgreed(e.target.checked)}
+							/>
+							&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
+							<a
+								href="https://taskratchet.com/privacy/"
+								target={'_blank'}
+								rel={'noopener noreferrer'}
+							>
+								privacy policy
+							</a>{' '}
+							and{' '}
+							<a
+								href="https://taskratchet.com/terms/"
+								target={'_blank'}
+								rel={'noopener noreferrer'}
+							>
+								terms of service
+							</a>
+							.
+						</label>
+
+						{showErrors && !agreed && (
+							<FormHelperText>You must agree to the terms</FormHelperText>
+						)}
+					</FormControl>
+				</Stack>
 
 				<p>
 					Press the button below to be redirected to our payments provider to
