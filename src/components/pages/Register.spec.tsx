@@ -10,9 +10,11 @@ import register from '../../lib/api/register';
 import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { redirectToCheckout } from '../../lib/stripe';
 import saveFeedback from '../../lib/saveFeedback';
+import { toast } from 'react-toastify';
 
 vi.mock('../../lib/api/getCheckoutSession');
 vi.mock('../../lib/api/register');
+vi.mock('react-toastify');
 
 async function fillForm() {
 	loadTimezones(['the_timezone']);
@@ -122,11 +124,13 @@ describe('registration page', () => {
 
 		await userEvent.click(await screen.findByText('Add payment method'));
 
-		expect(saveFeedback).toBeCalledWith({
-			userName: 'the_name',
-			userEmail: 'the_email',
-			prompt: 'How did you hear about us?',
-			response: 'the_referral',
+		await waitFor(() => {
+			expect(saveFeedback).toBeCalledWith({
+				userName: 'the_name',
+				userEmail: 'the_email',
+				prompt: 'How did you hear about us?',
+				response: 'the_referral',
+			});
 		});
 	});
 
@@ -180,5 +184,31 @@ describe('registration page', () => {
 		renderWithQueryProvider(<Register />);
 
 		expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
+	});
+
+	it('shows error if user did not agree to terms', async () => {
+		await fillForm();
+
+		await userEvent.click(
+			await screen.findByLabelText(
+				"I have read and agree to TaskRatchet's privacy policy and terms of service."
+			)
+		);
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText(/You must agree/);
+	});
+
+	it('does not use toast for validation errors', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/Email/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		expect(await screen.findByText(/is required/)).toBeInTheDocument();
+
+		expect(toast).not.toBeCalled();
 	});
 });

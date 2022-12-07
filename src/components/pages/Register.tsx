@@ -13,6 +13,7 @@ import MenuItem from '@mui/material/MenuItem';
 import saveFeedback from '../../lib/saveFeedback';
 import useDocumentTitle from '../../lib/useDocumentTitle';
 import FormHelperText from '@mui/material/FormHelperText';
+import Checkbox from '@mui/material/Checkbox';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>('');
@@ -65,29 +66,7 @@ const Register = (): JSX.Element => {
 	};
 
 	const validateRegistrationForm = () => {
-		let passes = true;
-
-		if (!email) {
-			toast('Email missing');
-			passes = false;
-		}
-
-		if (!password || !password2) {
-			toast('Please enter password twice');
-			passes = false;
-		}
-
-		if (password !== password2) {
-			toast("Passwords don't match");
-			passes = false;
-		}
-
-		if (!agreed) {
-			toast('Please agree before submitting');
-			passes = false;
-		}
-
-		return passes;
+		return email && password && password2 && password === password2 && agreed;
 	};
 
 	const getTimezoneOptions = () => {
@@ -178,36 +157,37 @@ const Register = (): JSX.Element => {
 						label={'How did you hear about us?'}
 						id={'referral'}
 					/>
-				</Stack>
 
-				<p>
-					<label>
-						<input
-							type="checkbox"
-							value={'yes'}
-							onChange={(e) => {
-								setAgreed(e.target.value === 'yes');
-							}}
-						/>
-						&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
-						<a
-							href="https://taskratchet.com/privacy/"
-							target={'_blank'}
-							rel={'noopener noreferrer'}
-						>
-							privacy policy
-						</a>{' '}
-						and{' '}
-						<a
-							href="https://taskratchet.com/terms/"
-							target={'_blank'}
-							rel={'noopener noreferrer'}
-						>
-							terms of service
-						</a>
-						.
-					</label>
-				</p>
+					<FormControl required error={showErrors && !agreed}>
+						<label>
+							<Checkbox
+								value={agreed}
+								onChange={(e) => setAgreed(e.target.checked)}
+							/>
+							&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
+							<a
+								href="https://taskratchet.com/privacy/"
+								target={'_blank'}
+								rel={'noopener noreferrer'}
+							>
+								privacy policy
+							</a>{' '}
+							and{' '}
+							<a
+								href="https://taskratchet.com/terms/"
+								target={'_blank'}
+								rel={'noopener noreferrer'}
+							>
+								terms of service
+							</a>
+							.
+						</label>
+
+						{showErrors && !agreed && (
+							<FormHelperText>You must agree to the terms</FormHelperText>
+						)}
+					</FormControl>
+				</Stack>
 
 				<p>
 					Press the button below to be redirected to our payments provider to
