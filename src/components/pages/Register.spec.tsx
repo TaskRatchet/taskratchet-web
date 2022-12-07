@@ -24,13 +24,13 @@ async function fillForm() {
 	renderWithQueryProvider(<Register />);
 
 	await userEvent.type(await screen.findByLabelText('Name'), 'the_name');
-	await userEvent.type(await screen.findByLabelText('Email'), 'the_email');
+	await userEvent.type(await screen.findByLabelText(/Email/), 'the_email');
 	await userEvent.type(
-		await screen.findByLabelText('Password'),
+		await screen.findByLabelText(/^Password/),
 		'the_password'
 	);
 	await userEvent.type(
-		await screen.findByLabelText('Retype Password'),
+		await screen.findByLabelText(/Retype Password/),
 		'the_password'
 	);
 
@@ -38,7 +38,7 @@ async function fillForm() {
 		expect(getTimezones).toBeCalled();
 	});
 
-	await userEvent.click(await screen.findByLabelText('Timezone'));
+	await userEvent.click(await screen.findByLabelText(/Timezone/));
 
 	const listbox = within(screen.getByRole('listbox'));
 
@@ -65,19 +65,19 @@ describe('registration page', () => {
 	it('uses Input for email field', async () => {
 		renderWithQueryProvider(<Register />);
 
-		await screen.findByLabelText('Email');
+		await screen.findByLabelText(/Email/);
 	});
 
 	it('uses Input for password field', async () => {
 		renderWithQueryProvider(<Register />);
 
-		await screen.findByLabelText('Password');
+		await screen.findByLabelText(/^Password/);
 	});
 
 	it('uses Input for password2 field', async () => {
 		renderWithQueryProvider(<Register />);
 
-		await screen.findByLabelText('Retype Password');
+		await screen.findByLabelText(/Retype Password/);
 	});
 
 	it('submits registration', async () => {
@@ -136,5 +136,49 @@ describe('registration page', () => {
 		await userEvent.click(await screen.findByText('Add payment method'));
 
 		expect(saveFeedback).not.toBeCalled();
+	});
+
+	it('shows missing email error if none provided', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/Email/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Email is required');
+	});
+
+	it('shows missing password error if none provided', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/^Password/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Password is required');
+	});
+
+	it('shows missing password2 error if none provided', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/Retype Password/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Password is required');
+	});
+
+	it('shows missing timezone error if none provided', async () => {
+		renderWithQueryProvider(<Register />);
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Timezone is required');
+	});
+
+	it('hides validation errors until attempted submission', () => {
+		renderWithQueryProvider(<Register />);
+
+		expect(screen.queryByText(/is required/)).not.toBeInTheDocument();
 	});
 });

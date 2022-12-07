@@ -12,6 +12,7 @@ import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import saveFeedback from '../../lib/saveFeedback';
 import useDocumentTitle from '../../lib/useDocumentTitle';
+import FormHelperText from '@mui/material/FormHelperText';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>('');
@@ -23,11 +24,14 @@ const Register = (): JSX.Element => {
 	const [timezone, setTimezone] = useState<string>('');
 	const [agreed, setAgreed] = useState<boolean>(false);
 	const [referral, setReferral] = useState<string>('');
+	const [showErrors, setShowErrors] = useState<boolean>(false);
 
 	useDocumentTitle('Register | TaskRatchet');
 
 	const submit = async (event: FormEvent) => {
 		event.preventDefault();
+
+		setShowErrors(true);
 
 		const passes = validateRegistrationForm();
 
@@ -124,6 +128,9 @@ const Register = (): JSX.Element => {
 						onChange={(e) => setEmail(e.target.value)}
 						id={'email'}
 						label={'Email'}
+						required
+						error={showErrors && !email}
+						helperText={showErrors && !email && 'Email is required'}
 					/>
 
 					<TextField
@@ -132,6 +139,9 @@ const Register = (): JSX.Element => {
 						onChange={(e) => setPassword(e.target.value)}
 						id={'password'}
 						label={'Password'}
+						required
+						error={showErrors && !password}
+						helperText={showErrors && !password && 'Password is required'}
 					/>
 
 					<TextField
@@ -140,9 +150,12 @@ const Register = (): JSX.Element => {
 						onChange={(e) => setPassword2(e.target.value)}
 						id={'password2'}
 						label={'Retype Password'}
+						required
+						error={showErrors && !password2}
+						helperText={showErrors && !password2 && 'Password is required'}
 					/>
 
-					<FormControl>
+					<FormControl required error={showErrors && !timezone}>
 						<InputLabel id={'timezone'}>Timezone</InputLabel>
 						<Select
 							labelId={'timezone'}
@@ -154,6 +167,9 @@ const Register = (): JSX.Element => {
 						>
 							{getTimezoneOptions()}
 						</Select>
+						{showErrors && !timezone && (
+							<FormHelperText>Timezone is required</FormHelperText>
+						)}
 					</FormControl>
 
 					<TextField
