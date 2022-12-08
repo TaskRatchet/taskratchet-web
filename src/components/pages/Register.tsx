@@ -14,6 +14,7 @@ import saveFeedback from '../../lib/saveFeedback';
 import useDocumentTitle from '../../lib/useDocumentTitle';
 import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
+import FormControlLabel from '@mui/material/FormControlLabel';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>('');
@@ -159,29 +160,35 @@ const Register = (): JSX.Element => {
 					/>
 
 					<FormControl required error={showErrors && !agreed}>
-						<label>
-							<Checkbox
-								value={agreed}
-								onChange={(e) => setAgreed(e.target.checked)}
-							/>
-							&nbsp;I have read and agree to TaskRatchet&apos;s{' '}
-							<a
-								href="https://taskratchet.com/privacy/"
-								target={'_blank'}
-								rel={'noopener noreferrer'}
-							>
-								privacy policy
-							</a>{' '}
-							and{' '}
-							<a
-								href="https://taskratchet.com/terms/"
-								target={'_blank'}
-								rel={'noopener noreferrer'}
-							>
-								terms of service
-							</a>
-							.
-						</label>
+						<FormControlLabel
+							control={
+								<Checkbox
+									value={agreed}
+									onChange={(e) => setAgreed(e.target.checked)}
+								/>
+							}
+							label={
+								<>
+									I have read and agree to TaskRatchet&apos;s{' '}
+									<a
+										href="https://taskratchet.com/privacy/"
+										target={'_blank'}
+										rel={'noopener noreferrer'}
+									>
+										privacy policy
+									</a>{' '}
+									and{' '}
+									<a
+										href="https://taskratchet.com/terms/"
+										target={'_blank'}
+										rel={'noopener noreferrer'}
+									>
+										terms of service
+									</a>
+									.
+								</>
+							}
+						/>
 
 						{showErrors && !agreed && (
 							<FormHelperText>You must agree to the terms</FormHelperText>
