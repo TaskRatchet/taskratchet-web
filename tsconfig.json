@@ -18,6 +18,12 @@
 		"types": ["@testing-library/jest-dom"],
 		"allowUnreachableCode": true
 	},
-	"include": ["src", "vite.config.ts", "global-setup.ts", "__mocks__"],
+	"include": [
+		"src",
+		"vite.config.ts",
+		"global-setup.ts",
+		"__mocks__",
+		"vite.d.ts"
+	],
 	"references": [{ "path": "./tsconfig.node.json" }]
 }
