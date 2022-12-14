@@ -6,6 +6,7 @@ import matchers, {
 import { cleanup } from '@testing-library/react';
 import { getCheckoutSession } from './src/lib/api/getCheckoutSession';
 import { redirectToCheckout } from './src/lib/stripe';
+import { signOut } from 'firebase/auth';
 
 afterEach(() => {
 	cleanup();
@@ -55,4 +56,5 @@ beforeEach(() => {
 		id: 'session',
 	});
 	vi.mocked(redirectToCheckout).mockResolvedValue();
+	vi.mocked(signOut).mockResolvedValue();
 });

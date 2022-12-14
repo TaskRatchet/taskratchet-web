@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import logEvent from '../logEvent';
 import { EventCategory, EventAction } from '../logEvent';
+import { getAuth, signOut } from 'firebase/auth';
 
 // TODO: Add proper type
 let sessionSubs: Array<CallableFunction> = [];
@@ -39,6 +40,13 @@ export function logout(): void {
 
 	window.localStorage.removeItem('email');
 	window.localStorage.removeItem('token');
+	window.localStorage.removeItem('firebase_token');
+
+	const auth = getAuth();
+	signOut(auth).catch((e) => {
+		// TODO find better logging
+		console.log(e);
+	});
 
 	publishSession();
 }
