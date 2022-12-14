@@ -20,6 +20,7 @@ export default defineConfig(({ mode }) => {
 					manualChunks: {
 						dom: ['react-dom'],
 						material: ['@mui/material'],
+						firebase: ['firebase/auth'],
 					},
 				},
 			},
