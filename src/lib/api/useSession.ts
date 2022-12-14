@@ -40,6 +40,8 @@ export function logout(): void {
 	window.localStorage.removeItem('email');
 	window.localStorage.removeItem('token');
 
+	// TODO: remove firebase_token, too
+
 	publishSession();
 }
 
