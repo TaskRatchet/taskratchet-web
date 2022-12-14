@@ -1,8 +1,19 @@
 import { login } from './login';
 import { waitFor } from '@testing-library/react';
-import { expect, it, describe } from 'vitest';
+import { expect, it, describe, vi, beforeEach } from 'vitest';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+
+vi.mock('firebase/auth');
 
 describe('login', () => {
+	beforeEach(() => {
+		vi.mocked(signInWithEmailAndPassword).mockResolvedValue({
+			user: {
+				getIdToken: () => Promise.resolve('token'),
+			},
+		} as any);
+	});
+
 	it('stores session token on successful login', async () => {
 		fetchMock.mockResponse('token');
 

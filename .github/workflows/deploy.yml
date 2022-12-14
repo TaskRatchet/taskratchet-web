@@ -17,6 +17,10 @@ jobs:
           cache: 'pnpm'
       - name: Install dependencies
         run: pnpm install
+      - name: Create env file
+        run: echo "$DOTENV" > .env
+        env:
+          DOTENV: ${{secrets.DOTENV}}
       - name: Build
         run: pnpm build
       - name: Deploy to Netlify
