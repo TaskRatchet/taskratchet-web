@@ -11,4 +11,4 @@ export const API2_BASE = IS_PRODUCTION
 	? 'https://api.taskratchet.com/api2/'
 	: IS_STAGING
 	? 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api2/'
-	: 'http://localhost:8080/api2/';
+	: 'http://localhost:8081/api2/';
