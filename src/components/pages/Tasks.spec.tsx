@@ -6,7 +6,10 @@ import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
 import React from 'react';
 import userEvent from '@testing-library/user-event';
-import { loadTasksApiData } from '../../lib/test/loadTasksApiData';
+import {
+	loadTasksApiData,
+	convertToNewTask,
+} from '../../lib/test/loadTasksApiData';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
@@ -324,18 +327,22 @@ describe('tasks page', () => {
 		// Load second, fast response
 
 		vi.mocked(getTasks).mockResolvedValue([
-			makeTask({
-				task: 'first',
-				id: '3',
-				status: 'complete',
-				complete: true,
-			}),
-			makeTask({
-				task: 'second',
-				id: '4',
-				status: 'complete',
-				complete: true,
-			}),
+			convertToNewTask(
+				makeTask({
+					task: 'first',
+					id: '3',
+					status: 'complete',
+					complete: true,
+				})
+			),
+			convertToNewTask(
+				makeTask({
+					task: 'second',
+					id: '4',
+					status: 'complete',
+					complete: true,
+				})
+			),
 		]);
 
 		// Check second task
@@ -351,8 +358,17 @@ describe('tasks page', () => {
 		// Resolve getTasks promise
 
 		resolve([
-			makeTask({ task: 'first', id: '3', status: 'complete', complete: true }),
-			makeTask({ task: 'second', id: '4', status: 'pending' }),
+			convertToNewTask(
+				makeTask({
+					task: 'first',
+					id: '3',
+					status: 'complete',
+					complete: true,
+				})
+			),
+			convertToNewTask(
+				makeTask({ task: 'second', id: '4', status: 'pending' })
+			),
 		]);
 
 		// Check that first, slow response didn't clobber second, fast response
