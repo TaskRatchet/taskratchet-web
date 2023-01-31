@@ -89,7 +89,7 @@ const Login = (): JSX.Element => {
 							helperText={passwordError}
 						/>
 
-						<Stack direction={'row'}>
+						<Stack direction={'row'} spacing={2}>
 							<LoadingButton
 								type="submit"
 								variant="contained"

@@ -15,13 +15,14 @@ import { IS_PRODUCTION } from './tr_constants';
 import { QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
 import * as browser from './lib/browser';
-import { Box, Container, CssBaseline, Stack, Alert } from '@mui/material';
+import { Box, Container, Stack, Alert } from '@mui/material';
 import { H } from 'highlight.run';
 import getQueryClient from './lib/getQueryClient';
 import { ErrorBoundary } from '@highlight-run/react';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
 import ga from './lib/ga';
+import AndTheme from './components/HOCs/AndTheme';
 
 toast.configure();
 
@@ -81,66 +82,67 @@ export function App(): JSX.Element {
 
 	return (
 		<QueryClientProvider client={queryClient}>
-			<CssBaseline />
-			<Stack sx={{ height: '100vh' }}>
-				<NavBar onTodayClick={handleTodayClick} />
-				<Box ref={ref} overflow={'scroll'} flexGrow={1}>
-					<Container
-						maxWidth={'sm'}
-						disableGutters
-						sx={{
-							minHeight: 1,
-						}}
-					>
-						<Routes>
-							<Route path={'/register'} element={<RegisterForm />} />
+			<AndTheme>
+				<Stack sx={{ height: '100vh' }}>
+					<NavBar onTodayClick={handleTodayClick} />
+					<Box ref={ref} overflow={'scroll'} flexGrow={1}>
+						<Container
+							maxWidth={'sm'}
+							disableGutters
+							sx={{
+								minHeight: 1,
+							}}
+						>
+							<Routes>
+								<Route path={'/register'} element={<RegisterForm />} />
 
-							<Route
-								path={'/success'}
-								element={
-									<Box sx={{ p: 2 }}>
-										<Alert severity="success">
-											Your payment method has been saved successfully.
-										</Alert>
-									</Box>
-								}
-							/>
+								<Route
+									path={'/success'}
+									element={
+										<Box sx={{ p: 2 }}>
+											<Alert severity="success">
+												Your payment method has been saved successfully.
+											</Alert>
+										</Box>
+									}
+								/>
 
-							<Route
-								path={'/cancel'}
-								element={
-									<Box sx={{ p: 2 }}>
-										<Alert severity="error">
-											Your payment method could not be saved. Please contact{' '}
-											{email} for assistance.
-										</Alert>
-									</Box>
-								}
-							/>
+								<Route
+									path={'/cancel'}
+									element={
+										<Box sx={{ p: 2 }}>
+											<Alert severity="error">
+												Your payment method could not be saved. Please contact{' '}
+												{email} for assistance.
+											</Alert>
+										</Box>
+									}
+								/>
 
-							<Route
-								path={'/account'}
-								element={
-									<Authenticated>
-										<Account />
-									</Authenticated>
-								}
-							/>
+								<Route
+									path={'/account'}
+									element={
+										<Authenticated>
+											<Account />
+										</Authenticated>
+									}
+								/>
 
-							<Route path={'/reset'} element={<ResetPassword />} />
+								<Route path={'/reset'} element={<ResetPassword />} />
 
-							<Route
-								path={'/'}
-								element={
-									<Authenticated>
-										<Tasks lastToday={lastToday} />
-									</Authenticated>
-								}
-							/>
-						</Routes>
-					</Container>
-				</Box>
-			</Stack>
+								<Route
+									path={'/'}
+									element={
+										<Authenticated>
+											<Tasks lastToday={lastToday} />
+										</Authenticated>
+									}
+								/>
+							</Routes>
+						</Container>
+					</Box>
+				</Stack>
+			</AndTheme>
 		</QueryClientProvider>
 	);
 }

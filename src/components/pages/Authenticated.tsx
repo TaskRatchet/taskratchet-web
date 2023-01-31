@@ -1,8 +1,7 @@
 import React from 'react';
 import LoginForm from '../organisms/Login';
-import { Link } from 'react-router-dom';
 import { useSession } from '../../lib/api/useSession';
-import { Box } from '@mui/material';
+import { Box, Link } from '@mui/material';
 
 const Authenticated = ({
 	children,
@@ -14,7 +13,7 @@ const Authenticated = ({
 	return (
 		<Box sx={{ p: 2 }}>
 			<p>
-				Please login or <Link to={'/register'}>register</Link> to view this
+				Please login or <Link href={'/register'}>register</Link> to view this
 				page.
 			</p>
 			<LoginForm />
