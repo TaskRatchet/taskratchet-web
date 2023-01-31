@@ -9,7 +9,7 @@ import {
 	Link as RouterLink,
 	LinkProps as RouterLinkProps,
 } from 'react-router-dom';
-import Link, { LinkProps } from '@mui/material/Link';
+import { LinkProps } from '@mui/material/Link';
 
 const colors = {
 	warm: {
