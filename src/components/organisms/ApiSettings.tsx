@@ -5,6 +5,7 @@ import { LoadingButton } from '@mui/lab';
 import {
 	Alert,
 	AlertTitle,
+	Link,
 	Paper,
 	Stack,
 	Table,
@@ -31,13 +32,13 @@ export default function ApiSettings(): JSX.Element {
 
 				<p>We don&apos;t store your token, so save it somewhere safe.</p>
 
-				<a
+				<Link
 					href="https://taskratchet.com/help/api.html"
 					target={'_blank'}
 					rel="noreferrer"
 				>
 					Documentation
-				</a>
+				</Link>
 			</Alert>
 
 			<TableContainer component={Paper}>
