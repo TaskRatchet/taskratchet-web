@@ -2,7 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { useTimezones } from '../../lib/api/useTimezones';
-import { Box, Button, Stack } from '@mui/material';
+import { Box, Button, Link, Stack } from '@mui/material';
 import register from '../../lib/api/register';
 import { redirectToCheckout } from '../../lib/stripe';
 import TextField from '@mui/material/TextField';
@@ -170,21 +170,21 @@ const Register = (): JSX.Element => {
 							label={
 								<>
 									I have read and agree to TaskRatchet&apos;s{' '}
-									<a
-										href="https://taskratchet.com/privacy/"
+									<Link
+										href="https://taskratchet.com/privacy.html"
 										target={'_blank'}
 										rel={'noopener noreferrer'}
 									>
 										privacy policy
-									</a>{' '}
+									</Link>{' '}
 									and{' '}
-									<a
-										href="https://taskratchet.com/terms/"
+									<Link
+										href="https://taskratchet.com/terms.html"
 										target={'_blank'}
 										rel={'noopener noreferrer'}
 									>
 										terms of service
-									</a>
+									</Link>
 									.
 								</>
 							}

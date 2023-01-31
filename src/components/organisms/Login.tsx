@@ -44,12 +44,8 @@ const Login = (): JSX.Element => {
 	const [password, setPassword] = useState('');
 	const [message, setMessage] = useState('');
 
-	const isLoading = () => {
-		return login.isLoading || reset.isLoading;
-	};
-
 	return (
-		<div className={isLoading() ? 'loading' : ''}>
+		<div>
 			{session ? (
 				<p>You are logged in as {session.email}</p>
 			) : (
@@ -89,7 +85,7 @@ const Login = (): JSX.Element => {
 							helperText={passwordError}
 						/>
 
-						<Stack direction={'row'}>
+						<Stack direction={'row'} spacing={2}>
 							<LoadingButton
 								type="submit"
 								variant="contained"
@@ -102,6 +98,8 @@ const Login = (): JSX.Element => {
 										setPasswordError(password ? '' : 'Password is required');
 									}
 								}}
+								loading={login.isLoading}
+								disabled={login.isLoading || reset.isLoading}
 							>
 								Submit
 							</LoadingButton>
@@ -115,6 +113,8 @@ const Login = (): JSX.Element => {
 										setEmailError(email ? '' : 'Email is required');
 									}
 								}}
+								loading={reset.isLoading}
+								disabled={login.isLoading || reset.isLoading}
 							>
 								Reset Password
 							</LoadingButton>

@@ -99,7 +99,7 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				)}
 
 				<Link
-					href={'https://docs.taskratchet.com/timezones.html'}
+					href={'https://taskratchet.com/help/timezones.html'}
 					target={'_blank'}
 					rel={'noopener noreferrer'}
 				>

@@ -2,6 +2,7 @@ import { logout, useSession } from '../../lib/api/useSession';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import {
+	Divider,
 	Drawer,
 	List,
 	ListItem,
@@ -28,6 +29,12 @@ export default function NavDrawer({
 			anchor={'right'}
 			open={isOpen}
 			onClose={onClose}
+			PaperProps={{
+				sx: {
+					width: 250,
+					maxWidth: '100%',
+				},
+			}}
 		>
 			<List>
 				{session && (
@@ -35,6 +42,7 @@ export default function NavDrawer({
 						<ListItem>
 							<ListItemText>{session.email}</ListItemText>
 						</ListItem>
+						<Divider />
 						<ListItem disablePadding>
 							<ListItemButton
 								className={'link'}

@@ -116,10 +116,6 @@ describe('App', () => {
 
 		await userEvent.click(await screen.findByLabelText('filters'));
 		await userEvent.click(await screen.findByText('pending'));
-
-		const backdrop = await screen.findByTestId('mui-backdrop');
-
-		await userEvent.click(backdrop);
 		await userEvent.click(await screen.findByLabelText('filters'));
 
 		const checkbox = await screen.findByLabelText('pending');
