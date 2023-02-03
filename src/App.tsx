@@ -70,6 +70,7 @@ export function App(): JSX.Element {
 
 	usePageViews();
 
+	// TODO: use MUI Link component
 	const email = (
 		<a
 			href="mailto:support@taskratchet.com"
