@@ -1,5 +1,3 @@
-// TODO: Fix compare function
-
 function compareDate(a: TaskType, b: TaskType): number {
 	const aDate = new Date(a.due),
 		bDate = new Date(b.due);

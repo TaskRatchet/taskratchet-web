@@ -4,10 +4,6 @@ import { Box } from '@mui/material';
 import { resetPassword } from '../../lib/api/resetPassword';
 import useDocumentTitle from '../../lib/useDocumentTitle';
 
-const api = {
-	resetPassword,
-};
-
 function ResetPassword(): JSX.Element {
 	const useToken = () => {
 		const query = new URLSearchParams(useLocation().search);
@@ -22,14 +18,14 @@ function ResetPassword(): JSX.Element {
 
 	useDocumentTitle('Reset Password | TaskRatchet');
 
-	const resetPassword = (event: FormEvent) => {
+	const submitForm = (event: FormEvent) => {
 		event.preventDefault();
 
 		clearMessages();
 
 		if (!validateForm()) return;
 
-		void api.resetPassword(token, password).then((res: Response) => {
+		void resetPassword(token, password).then((res: Response) => {
 			if (res.ok) {
 				pushMessage('Password reset successfully');
 			} else {
@@ -63,9 +59,10 @@ function ResetPassword(): JSX.Element {
 		return passes;
 	};
 
+	// TODO: Use MUI Input, Alert, Button, and Stack components
 	return (
 		<Box sx={{ p: 2 }}>
-			<form onSubmit={resetPassword}>
+			<form onSubmit={submitForm}>
 				<h1>Reset Password</h1>
 
 				{messages.map((msg, i) => (

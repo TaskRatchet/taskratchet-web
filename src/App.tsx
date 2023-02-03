@@ -63,6 +63,7 @@ export function App(): JSX.Element {
 		document.title = 'TaskRatchet';
 	}, []);
 
+	// TODO: see if react-router has a way to do this without needing to use a ref
 	useEffect(() => {
 		if (!ref.current || !('scrollTo' in ref.current)) return;
 		ref.current.scrollTo(0, 0);
@@ -70,6 +71,7 @@ export function App(): JSX.Element {
 
 	usePageViews();
 
+	// TODO: use MUI Link component
 	const email = (
 		<a
 			href="mailto:support@taskratchet.com"
