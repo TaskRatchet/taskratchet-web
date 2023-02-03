@@ -63,6 +63,7 @@ function ResetPassword(): JSX.Element {
 		return passes;
 	};
 
+	// TODO: Use MUI Input, Alert, Button, and Stack components
 	return (
 		<Box sx={{ p: 2 }}>
 			<form onSubmit={resetPassword}>
