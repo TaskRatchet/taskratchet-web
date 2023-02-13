@@ -21,7 +21,6 @@ import getQueryClient from './lib/getQueryClient';
 import { ErrorBoundary } from '@highlight-run/react';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
-import ga from './lib/ga';
 import AndTheme from './components/HOCs/AndTheme';
 
 toast.configure();
@@ -36,18 +35,6 @@ H.init('qe9174g1', {
 window.stripe_key = IS_PRODUCTION
 	? 'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd'
 	: 'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp';
-
-function usePageViews(): void {
-	const location = useLocation();
-
-	React.useEffect(() => {
-		ga.set({ page: location.pathname });
-		ga.send({
-			hitType: 'pageview',
-			page: location.pathname,
-		});
-	}, [location]);
-}
 
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
@@ -68,8 +55,6 @@ export function App(): JSX.Element {
 		if (!ref.current || !('scrollTo' in ref.current)) return;
 		ref.current.scrollTo(0, 0);
 	}, [location]);
-
-	usePageViews();
 
 	// TODO: use MUI Link component
 	const email = (
