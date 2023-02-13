@@ -15,7 +15,7 @@ import { IS_PRODUCTION } from './tr_constants';
 import { QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
 import * as browser from './lib/browser';
-import { Box, Container, Stack, Alert } from '@mui/material';
+import { Box, Container, Stack, Alert, Link } from '@mui/material';
 import { H } from 'highlight.run';
 import getQueryClient from './lib/getQueryClient';
 import { ErrorBoundary } from '@highlight-run/react';
@@ -56,17 +56,6 @@ export function App(): JSX.Element {
 		ref.current.scrollTo(0, 0);
 	}, [location]);
 
-	// TODO: use MUI Link component
-	const email = (
-		<a
-			href="mailto:support@taskratchet.com"
-			target={'_blank'}
-			rel="noopener noreferrer"
-		>
-			support@taskratchet.com
-		</a>
-	);
-
 	return (
 		<QueryClientProvider client={queryClient}>
 			<AndTheme>
@@ -100,7 +89,14 @@ export function App(): JSX.Element {
 										<Box sx={{ p: 2 }}>
 											<Alert severity="error">
 												Your payment method could not be saved. Please contact{' '}
-												{email} for assistance.
+												<Link
+													href="mailto:support@taskratchet.com"
+													target={'_blank'}
+													rel="noopener noreferrer"
+												>
+													support@taskratchet.com
+												</Link>{' '}
+												for assistance.
 											</Alert>
 										</Box>
 									}

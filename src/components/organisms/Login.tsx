@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useSession } from '../../lib/api/useSession';
-import { Stack, TextField } from '@mui/material';
+import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMutation } from 'react-query';
 import { login } from '../../lib/api/login';
@@ -52,9 +52,9 @@ const Login = (): JSX.Element => {
 				<form>
 					<Stack spacing={2} alignItems={'start'}>
 						{message ? (
-							<div className={'organism-login__message alert info'}>
+							<Alert severity="info" variant="filled">
 								{message}
-							</div>
+							</Alert>
 						) : (
 							''
 						)}
