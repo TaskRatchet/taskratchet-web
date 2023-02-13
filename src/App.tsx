@@ -56,16 +56,6 @@ export function App(): JSX.Element {
 		ref.current.scrollTo(0, 0);
 	}, [location]);
 
-	const email = (
-		<Link
-			href="mailto:support@taskratchet.com"
-			target={'_blank'}
-			rel="noopener noreferrer"
-		>
-			support@taskratchet.com
-		</Link>
-	);
-
 	return (
 		<QueryClientProvider client={queryClient}>
 			<AndTheme>
@@ -99,7 +89,14 @@ export function App(): JSX.Element {
 										<Box sx={{ p: 2 }}>
 											<Alert severity="error">
 												Your payment method could not be saved. Please contact{' '}
-												{email} for assistance.
+												<Link
+													href="mailto:support@taskratchet.com"
+													target={'_blank'}
+													rel="noopener noreferrer"
+												>
+													support@taskratchet.com
+												</Link>{' '}
+												for assistance.
 											</Alert>
 										</Box>
 									}
