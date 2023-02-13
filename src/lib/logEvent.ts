@@ -1,4 +1,3 @@
-import ga from './ga';
 import { H } from 'highlight.run';
 
 export enum EventCategory {
@@ -52,6 +51,5 @@ type GaEvent =
 	  };
 
 export default function logEvent(event: GaEvent) {
-	ga.event(event);
 	H.track(event.action, event);
 }
