@@ -1,13 +1,12 @@
 import React, { FormEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Box } from '@mui/material';
+import { Box, Input, Button, Stack } from '@mui/material';
 import { resetPassword } from '../../lib/api/resetPassword';
 import useDocumentTitle from '../../lib/useDocumentTitle';
 
 function ResetPassword(): JSX.Element {
 	const useToken = () => {
 		const query = new URLSearchParams(useLocation().search);
-
 		return query.get('t') || '';
 	};
 
@@ -69,25 +68,27 @@ function ResetPassword(): JSX.Element {
 					<p key={i}>{msg}</p>
 				))}
 
-				<input
-					type="password"
-					value={password}
-					onChange={(e) => setPassword(e.target.value)}
-					name={'password'}
-					placeholder={'Password'}
-				/>
-				<br />
+				<Stack spacing={2} alignItems={'start'}>
+					<Input
+						type="password"
+						value={password}
+						onChange={(e) => setPassword(e.target.value)}
+						name={'password'}
+						placeholder={'Password'}
+					/>
 
-				<input
-					type="password"
-					value={password2}
-					onChange={(e) => setPassword2(e.target.value)}
-					name={'password2'}
-					placeholder={'Retype Password'}
-				/>
-				<br />
+					<Input
+						type="password"
+						value={password2}
+						onChange={(e) => setPassword2(e.target.value)}
+						name={'password2'}
+						placeholder={'Retype Password'}
+					/>
 
-				<input type="submit" value={'Save new password'} />
+					<Button type="submit" variant="contained">
+						Save new password
+					</Button>
+				</Stack>
 			</form>
 		</Box>
 	);
