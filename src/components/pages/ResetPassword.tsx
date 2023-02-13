@@ -58,7 +58,8 @@ function ResetPassword(): JSX.Element {
 		return passes;
 	};
 
-	// TODO: Use MUI Alert and LoadingButton components. Use the 'filled' variant for the Alert component.
+	// TODO: Use MUI Alert and LoadingButton components. Use the 'filled'
+	// variant for the Alert component.
 	return (
 		<Box sx={{ p: 2 }}>
 			<form onSubmit={submitForm}>
