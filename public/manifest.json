@@ -1,20 +1,39 @@
 {
 	"short_name": "TaskRatchet",
 	"name": "TaskRatchet",
+	"description": "TaskRatchet is a todo list with teeth. You decide what you want to do, when you'll do it by, and how much you'll pay if you don't. TaskRatchet makes sure you follow through.",
 	"icons": [
 		{
 			"src": "android-chrome-192x192.png",
 			"sizes": "192x192",
-			"type": "image/png"
+			"type": "image/png",
+			"purpose": "any"
 		},
 		{
 			"src": "android-chrome-512x512.png",
 			"sizes": "512x512",
-			"type": "image/png"
+			"type": "image/png",
+			"purpose": "any"
 		}
 	],
 	"start_url": ".",
-	"display": "standalone",
 	"theme_color": "#000000",
-	"background_color": "#ffffff"
+	"background_color": "#ffffff",
+	"orientation": "portrait",
+	"shortcuts": [
+		{
+			"name": "Tasks",
+			"url": "/"
+		},
+		{
+			"name": "Account",
+			"url": "/account"
+		}
+	],
+	"screenshots": [],
+	"prefer_related_applications": false,
+	"related_applications": [],
+	"categories": ["productivity"],
+	"display": "standalone",
+	"display_override": ["minimal-ui", "browser"]
 }
