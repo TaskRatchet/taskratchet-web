@@ -4,7 +4,7 @@ import { render, RenderResult } from '@testing-library/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 export function renderWithQueryProvider(
-	ui: ReactElement
+	ui: ReactElement,
 ): RenderResult & { queryClient: QueryClient } {
 	const queryClient = new QueryClient({
 		defaultOptions: {
@@ -29,7 +29,7 @@ export function renderWithQueryProvider(
 	const view = render(
 		<ThemeProvider theme={theme}>
 			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-		</ThemeProvider>
+		</ThemeProvider>,
 	);
 
 	return {

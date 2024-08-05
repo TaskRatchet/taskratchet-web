@@ -1,70 +1,56 @@
 name: CI
 on: pull_request
 env:
-  NODE_VERSION: 16.15.0
+  PNPM_VERSION: 9
 jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Run tests
-        run: pnpm run test
+      - run: pnpm install
+      - run: pnpm run test
   audit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Scan for security issues
-        run: pnpm audit
+      - run: pnpm install
+      - run: pnpm audit
   outdated:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Scan for outdated dependencies
-        id: outdated
+      - run: pnpm install
+      - id: outdated
         run: |
           echo "### Outdated dependencies" >> ./outdated.md
           echo "\`\`\`" >> ./outdated.md
           echo "$(pnpm outdated)" >> ./outdated.md
           echo "\`\`\`" >> ./outdated.md
-      - name: Find comment
-        uses: peter-evans/find-comment@v2
+      - uses: peter-evans/find-comment@v2
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
           comment-author: 'github-actions[bot]'
           body-includes: 'Outdated dependencies'
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v2
+      - uses: peter-evans/create-or-update-comment@v2
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
           issue-number: ${{ github.event.pull_request.number }}
@@ -73,46 +59,35 @@ jobs:
   unused:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - name: Use Node.js 16.15.0
-        uses: actions/setup-node@v2
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
         with:
-          node-version: 16.15.0
           cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Scan for unused dependencies
-        run: pnpm dlx depcheck
+      - run: pnpm install
+      - run: pnpm dlx depcheck
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Lint code
-        run: pnpm run lint
+      - run: pnpm install
+      - run: pnpm run lint
   prettier:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-      - name: Run Prettier
-        run: pnpm dlx prettier --check .
+      - run: pnpm dlx prettier --check .

@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
-import { editTask } from './editTask';
+import { editTask } from '@taskratchet/sdk';
 
 type EditParams = { id: string; due: string; cents: number };
 
@@ -20,6 +20,6 @@ export default function useEditTask(): UseMutationResult<
 			onSettled: async () => {
 				await queryClient.refetchQueries('tasks');
 			},
-		}
+		},
 	);
 }

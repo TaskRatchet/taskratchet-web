@@ -18,7 +18,7 @@ export function usePref<T>(id: string, defaultValue: T): PrefResult<T> {
 		},
 		{
 			initialData: () => getPrefFromLocalStorage<T>(id) ?? defaultValue,
-		}
+		},
 	);
 
 	const setPref = useCallback(
@@ -31,7 +31,7 @@ export function usePref<T>(id: string, defaultValue: T): PrefResult<T> {
 			// Invalidate this pref so callers will re-ensure the data as needed
 			void queryClient.invalidateQueries(queryKey).then(() => refetch());
 		},
-		[id, queryKey, queryClient, refetch]
+		[id, queryKey, queryClient, refetch],
 	);
 
 	return {
@@ -52,7 +52,7 @@ function getPrefFromLocalStorage<T>(id: string) {
 	}
 
 	const prefEnvelope: PrefEnvelope<T> = JSON.parse(
-		prefString
+		prefString,
 	) as PrefEnvelope<T>;
 
 	return prefEnvelope.pref;

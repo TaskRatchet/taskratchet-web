@@ -7,12 +7,9 @@ import { loadUrlParams } from '../../lib/test/loadUrlParams';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
-import { updateMe } from '../../lib/api/updateMe';
-import { getMe } from '../../lib/api/getMe';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { getMe, updateMe } from '@taskratchet/sdk';
 
-vi.mock('../../lib/api/getMe');
-vi.mock('../../lib/api/updateMe');
 vi.mock('../../lib/LegacyApi');
 vi.mock('react-toastify');
 
@@ -52,7 +49,7 @@ describe('BeeminderSettings component', () => {
 			expect(updateMe).toBeCalledWith({
 				beeminder_token: 'the_token',
 				beeminder_user: 'the_user',
-			})
+			}),
 		);
 	});
 
@@ -138,8 +135,8 @@ describe('BeeminderSettings component', () => {
 
 		expect(
 			await screen.findByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		);
 	});
 
@@ -154,8 +151,8 @@ describe('BeeminderSettings component', () => {
 
 		expect(
 			screen.queryByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		).not.toBeInTheDocument();
 	});
 
@@ -169,14 +166,14 @@ describe('BeeminderSettings component', () => {
 		await userEvent.click(await screen.findByText('Save'));
 		await userEvent.type(
 			await screen.findByRole('textbox'),
-			'{backspace}new_name'
+			'{backspace}new_name',
 		);
 		await userEvent.click(await screen.findByText('Save'));
 
 		expect(
 			screen.queryByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		).not.toBeInTheDocument();
 	});
 
@@ -189,8 +186,8 @@ describe('BeeminderSettings component', () => {
 
 		expect(
 			await screen.findByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		);
 	});
 

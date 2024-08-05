@@ -5,10 +5,10 @@ export const IS_LOCAL = !IS_PRODUCTION && !IS_STAGING;
 export const API1_BASE = IS_PRODUCTION
 	? 'https://api.taskratchet.com/api1/'
 	: IS_STAGING
-	? 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api1/'
-	: 'http://localhost:8080/api1/';
+		? 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api1/'
+		: 'http://localhost:8080/api1/';
 export const API2_BASE = IS_PRODUCTION
 	? 'https://api.taskratchet.com/api2/'
 	: IS_STAGING
-	? 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api2/'
-	: 'http://localhost:8080/api2/';
+		? 'https://taskratchet-api-node-c3yk2gl5eq-uc.a.run.app/api2/'
+		: 'http://localhost:8080/api2/';

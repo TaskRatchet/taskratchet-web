@@ -1,6 +1,3 @@
-import { addTask } from '../../lib/api/addTask';
-import { getTasks } from '../../lib/api/getTasks';
-import { updateTask } from '../../lib/api/updateTask';
 import { toast } from 'react-toastify';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
@@ -13,10 +10,10 @@ import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLog
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import * as browser from '../../lib/browser';
 import { __listRef } from '../../../__mocks__/react-list';
-import { editTask } from '../../lib/api/editTask';
 import { vi, Mock, describe, it, expect, beforeEach } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { findTaskCheckbox } from '../../lib/test/queries';
+import { addTask, editTask, getTasks, updateTask } from '@taskratchet/sdk';
 
 vi.mock('../../lib/api/fetch1');
 vi.mock('../../lib/api/getTasks');
@@ -150,7 +147,7 @@ describe('tasks page', () => {
 		await clickCheckbox();
 
 		await waitFor(() =>
-			expect(updateTask).toBeCalledWith('3', { complete: true })
+			expect(updateTask).toBeCalledWith('3', { complete: true }),
 		);
 	});
 
@@ -185,7 +182,7 @@ describe('tasks page', () => {
 			await userEvent.click(getAddButton());
 
 			await waitFor(() =>
-				expect(toast).toBeCalledWith('Error: Failed to add task')
+				expect(toast).toBeCalledWith('Error: Failed to add task'),
 			);
 		});
 	});
@@ -474,7 +471,7 @@ describe('tasks page', () => {
 		renderTasksPage();
 
 		expect(
-			await screen.findByText((s) => s.indexOf('May') !== -1)
+			await screen.findByText((s) => s.indexOf('May') !== -1),
 		).toBeInTheDocument();
 	});
 
@@ -650,7 +647,7 @@ describe('tasks page', () => {
 			expect(addTask).toBeCalledWith(
 				expect.objectContaining({
 					task: 'task1',
-				})
+				}),
 			);
 		});
 	});

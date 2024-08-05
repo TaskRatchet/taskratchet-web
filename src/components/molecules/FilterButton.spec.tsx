@@ -16,7 +16,7 @@ describe('FilterButton', () => {
 					complete: false,
 					expired: true,
 				},
-			})
+			}),
 		);
 
 		renderWithQueryProvider(<FilterButton />);
@@ -41,7 +41,7 @@ describe('FilterButton', () => {
 					pref: expect.objectContaining({
 						pending: false,
 					}),
-				})
+				}),
 			);
 		});
 	});
@@ -54,7 +54,7 @@ describe('FilterButton', () => {
 				complete: false,
 				expired: true,
 			},
-			30
+			30,
 		);
 
 		renderWithQueryProvider(<FilterButton />);

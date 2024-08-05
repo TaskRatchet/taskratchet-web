@@ -1,13 +1,13 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config';
-import { loadEnv } from 'vite';
+import { UserConfig, defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd());
-	return {
-		plugins: [react(), visualizer()],
+
+	const config: UserConfig = {
+		plugins: [react(), visualizer({ template: 'raw-data' })],
 		test: {
 			environment: 'jsdom',
 			setupFiles: ['./global-setup.ts'],
@@ -31,12 +31,14 @@ export default defineConfig(({ mode }) => {
 			__FIREBASE_DATABASE_URL__: JSON.stringify(env.VITE_FIREBASE_DATABASE_URL),
 			__FIREBASE_PROJECT_ID__: JSON.stringify(env.VITE_FIREBASE_PROJECT_ID),
 			__FIREBASE_STORAGE_BUCKET__: JSON.stringify(
-				env.VITE_FIREBASE_STORAGE_BUCKET
+				env.VITE_FIREBASE_STORAGE_BUCKET,
 			),
 			__FIREBASE_MESSAGING_SENDER_ID__: JSON.stringify(
-				env.VITE_FIREBASE_MESSAGING_SENDER_ID
+				env.VITE_FIREBASE_MESSAGING_SENDER_ID,
 			),
 			__FIREBASE_APP_ID__: JSON.stringify(env.VITE_FIREBASE_APP_ID),
 		},
 	};
+
+	return config;
 });

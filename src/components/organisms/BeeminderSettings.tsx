@@ -5,6 +5,7 @@ import * as browser from '../../lib/browser';
 import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import useUpdateMe from '../../lib/api/useUpdateMe';
+import { User } from '@taskratchet/sdk';
 
 const beeminderClientId: string = IS_PRODUCTION
 		? '1w70sy12t1106s9ptod11ex21'
@@ -15,7 +16,7 @@ const beeminderClientId: string = IS_PRODUCTION
 	beeminderAuthUrl: string =
 		`https://www.beeminder.com/apps/authorize?client_id=${beeminderClientId}` +
 		`&redirect_uri=${encodeURIComponent(
-			beeminderRedirect
+			beeminderRedirect,
 		)}&response_type=token`;
 
 const BeeminderSettings = (): JSX.Element => {
@@ -37,7 +38,7 @@ const BeeminderSettings = (): JSX.Element => {
 		setValidationError(
 			/^[-\w]*$/.test(bmGoal)
 				? ''
-				: 'Goal names can only contain letters, numbers, underscores, and hyphens.'
+				: 'Goal names can only contain letters, numbers, underscores, and hyphens.',
 		);
 	}, [bmGoal]);
 

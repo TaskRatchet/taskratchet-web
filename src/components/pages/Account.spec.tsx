@@ -7,6 +7,7 @@ import { loadTimezones } from '../../lib/test/loadTimezones';
 import userEvent from '@testing-library/user-event';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { getCheckoutSession } from '@taskratchet/sdk';
 
 vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/getMe');
@@ -26,6 +27,9 @@ describe('account page', () => {
 				/* noop */
 			},
 		} as any);
+		vi.mocked(getCheckoutSession).mockResolvedValue({
+			id: 'session',
+		});
 	});
 
 	it('includes Beeminder integration settings', async () => {
@@ -35,7 +39,7 @@ describe('account page', () => {
 		renderWithQueryProvider(<Account />);
 
 		expect(
-			await screen.findByText('Enable Beeminder integration')
+			await screen.findByText('Enable Beeminder integration'),
 		).toBeInTheDocument();
 	});
 

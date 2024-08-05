@@ -11,6 +11,7 @@
 		"start": "vite",
 		"build": "vite build",
 		"preview": "vite preview",
+		"dev": "pnpm run start",
 		"test": "vitest --segfault-retry=3",
 		"test:ui": "vitest --segfault-retry=3 --ui",
 		"visualize": "pnpm run build && open ./stats.html",
@@ -45,6 +46,7 @@
 		"@mui/lab": "^5.0.0-alpha.119",
 		"@mui/material": "^5.11.8",
 		"@mui/x-date-pickers": "^5.0.18",
+		"@taskratchet/sdk": "^0.0.2",
 		"dayjs": "^1.11.7",
 		"firebase": "^9.17.1",
 		"highlight.run": "5.1.5",
@@ -82,13 +84,13 @@
 		"eslint-plugin-regex": "^1.10.0",
 		"eslint-plugin-testing-library": "^5.10.1",
 		"jsdom": "^21.1.0",
-		"prettier": "2.8.4",
+		"prettier": "3.3.3",
 		"rollup-plugin-visualizer": "^5.9.0",
 		"sass": "^1.58.0",
 		"type-fest": "^3.5.7",
 		"typescript": "^4.9.5",
-		"vite": "^4.1.1",
-		"vitest": "^0.28.5",
+		"vite": "^4.4.4",
+		"vitest": "^0.33.0",
 		"vitest-fetch-mock": "^0.2.1"
 	}
 }

@@ -5,116 +5,64 @@ on:
       - master
   pull_request:
 env:
-  NODE_VERSION: 16.15.0
+  PNPM_VERSION: 9
 jobs:
-  base:
+  # Build current and upload stats.json
+  # You may replace this with your own build method. All that
+  # is required is that the stats.json be an artifact
+  build-head:
     runs-on: ubuntu-latest
-    outputs:
-      size: ${{ steps.size.outputs.size }}
-    if: github.event_name == 'pull_request'
+    permissions:
+      contents: read
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{github.event.pull_request.head.ref}}
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm run build
+      - uses: actions/upload-artifact@v4
+        with:
+          path: ./dist/stats.json
+
+  # Build base for comparison and upload stats.json
+  # You may replace this with your own build method. All that
+  # is required is that the stats.json be an artifact
+  build-base:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.base_ref }}
-      - uses: pnpm/action-setup@v2.2.2
+      - uses: pnpm/action-setup@v4
         with:
-          version: 7
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Build
-        run: pnpm build
-      - name: Save bundle size
-        id: size
-        run: |
-          echo "::set-output name=size::$(du -s dist/ | awk '{print $1}')"
-      - name: Publish result
-        if: ${{ hashFiles('stats.html') != '' }}
-        run: pnpm dlx surge . https://${{ github.base_ref }}-stats.surge.sh --token ${{ secrets.SURGE_TOKEN }}
-
-  head:
-    runs-on: ubuntu-latest
-    outputs:
-      size: ${{ steps.size.outputs.size }}
-    if: github.event_name == 'pull_request'
-    steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
+      - run: pnpm install
+      - run: pnpm run build
+      - uses: actions/upload-artifact@v4
         with:
-          version: 7
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Build
-        run: pnpm build
-      - name: Save bundle size
-        id: size
-        run: |
-          echo "::set-output name=size::$(du -s dist/ | awk '{print $1}')"
-      - name: Publish result
-        if: ${{ hashFiles('stats.html') != '' }}
-        run: pnpm dlx surge . https://${{ github.head_ref }}-stats.surge.sh --token ${{ secrets.SURGE_TOKEN }}
+          path: ./dist/stats.json
 
+  # run the action against the stats.json files
   compare:
     runs-on: ubuntu-latest
-    needs: [base, head]
-    if: github.event_name == 'pull_request'
+    needs: [build-base, build-head]
+    permissions:
+      pull-requests: write
     steps:
-      - name: Find comment
-        id: fc
-        uses: peter-evans/find-comment@v2
+      - uses: actions/download-artifact@v4
+      - uses: twk3/rollup-size-compare-action@v1.0.0
         with:
-          issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: 'Bundle size comparison'
-      - name: Create or update comment
-        uses: peter-evans/create-or-update-comment@v2
-        with:
-          comment-id: ${{ steps.fc.outputs.comment-id }}
-          issue-number: ${{ github.event.number }}
-          edit-mode: replace
-          body: |
-            ### Bundle size comparison
-            - Base: [${{needs.base.outputs.size}}](https://${{ github.base_ref }}-stats.surge.sh/stats.html)
-            - Head: [${{needs.head.outputs.size}}](https://${{ github.head_ref }}-stats.surge.sh/stats.html)
-      - name: Compare bundle sizes
-        run: |
-          if [ "${{needs.base.outputs.size}}" -lt "${{needs.head.outputs.size}}" ]; then
-            exit 1
-          else
-            exit 0
-          fi
-
-  bundlewatch:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: pnpm/action-setup@v2.2.2
-        with:
-          version: 7
-      - name: Use Node.js 16.15.0
-        uses: actions/setup-node@v2
-        with:
-          node-version: 16.15.0
-          cache: 'pnpm'
-      - name: Install dependencies
-        run: pnpm install
-      - name: Build
-        run: pnpm run build
-      - name: Check bundle size
-        env:
-          BUNDLEWATCH_GITHUB_TOKEN: ${{ secrets.BUNDLEWATCH_GITHUB_TOKEN }}
-          GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CI_REPO_OWNER: ${{ github.repository_owner }}
-          CI_REPO_NAME: taskratchet-web
-          CI_COMMIT_SHA: ${{ github.sha }}
-          CI_BRANCH: ${{ github.ref_name }}
-        run: pnpm dlx bundlewatch
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          current-stats-json-path: ./head-stats/stats.json
+          base-stats-json-path: ./base-stats/stats.json

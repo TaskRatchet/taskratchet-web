@@ -1,7 +1,6 @@
 import { vi } from 'vitest';
-import { getMe } from '../api/getMe';
-import { updateMe } from '../api/updateMe';
 import { makeResponse } from './makeResponse';
+import { User, getMe, updateMe } from '@taskratchet/sdk';
 
 export const loadMe = ({
 	json = {},

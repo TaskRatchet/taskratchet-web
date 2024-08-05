@@ -3,7 +3,7 @@ import {
 	useQueryClient,
 	UseBaseMutationResult,
 } from 'react-query';
-import { MeInput, updateMe as mutator } from './updateMe';
+import { MeInput, updateMe } from '@taskratchet/sdk';
 
 export default function useUpdateMe(): UseBaseMutationResult<
 	Response,
@@ -12,9 +12,7 @@ export default function useUpdateMe(): UseBaseMutationResult<
 	unknown
 > {
 	const queryClient = useQueryClient();
-	return useMutation(mutator, {
-		onSuccess: async () => {
-			await queryClient.invalidateQueries('me');
-		},
+	return useMutation(updateMe, {
+		onSuccess: () => queryClient.invalidateQueries('me'),
 	});
 }

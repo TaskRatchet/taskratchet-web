@@ -1,6 +1,7 @@
-import { logout, useSession } from './useSession';
-import { act, renderHook } from '@testing-library/react';
-import { expect, it, describe } from 'vitest';
+import { useSession } from './useSession';
+import { renderHook } from '@testing-library/react';
+import { getSession } from '@taskratchet/sdk';
+import { expect, it, describe, vi } from 'vitest';
 
 describe('useSession', () => {
 	it('should return the session', () => {
@@ -8,30 +9,11 @@ describe('useSession', () => {
 			email: 'the_email',
 			token: 'the_token',
 		};
-		window.localStorage.setItem('email', session.email);
-		window.localStorage.setItem('token', session.token);
+
+		vi.mocked(getSession).mockReturnValue(session);
+
 		const { result } = renderHook(useSession);
-		expect(result.current).toEqual(session);
-	});
-
-	it('should delete session on logout', async () => {
-		const session = {
-			email: 'the_email',
-			token: 'the_token',
-		};
-		window.localStorage.setItem('email', session.email);
-		window.localStorage.setItem('token', session.token);
-
-		const { result } = renderHook(() => useSession());
 
 		expect(result.current).toEqual(session);
-
-		// eslint-disable-next-line @typescript-eslint/require-await
-		await act(async () => {
-			logout();
-		});
-
-		expect(window.localStorage.getItem('email')).toBeNull();
-		expect(window.localStorage.getItem('token')).toBeNull();
 	});
 });

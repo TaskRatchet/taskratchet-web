@@ -68,7 +68,7 @@ export default function AndTheme({
 					},
 				},
 			}),
-		[prefersDarkMode]
+		[prefersDarkMode],
 	);
 
 	return (

@@ -56,7 +56,7 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 				onSubmit,
 				isLoading,
 			}}
-		/>
+		/>,
 	);
 
 	return {
@@ -92,7 +92,7 @@ describe('TaskForm', () => {
 
 		await userEvent.type(
 			await screen.findByLabelText('Due Time *'),
-			'{backspace}{backspace}am'
+			'{backspace}{backspace}am',
 		);
 
 		expect(onChange).toBeCalled();
@@ -121,7 +121,7 @@ describe('TaskForm', () => {
 
 		await userEvent.type(
 			await screen.findByLabelText('Due Date *'),
-			'{backspace}2{enter}'
+			'{backspace}2{enter}',
 		);
 
 		expect(onChange).toBeCalledWith({
@@ -141,13 +141,13 @@ describe('TaskForm', () => {
 
 		await userEvent.type(
 			await screen.findByLabelText('Due Time *'),
-			'{backspace}M{enter}'
+			'{backspace}M{enter}',
 		);
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
 				due: '1/1/2020, 11:59 PM',
-			})
+			}),
 		);
 	});
 });

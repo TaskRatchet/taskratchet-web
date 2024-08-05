@@ -1,5 +1,5 @@
-import { getCheckoutSession } from './getCheckoutSession';
 import { useEffect, useState } from 'react';
+import { CheckoutSession, getCheckoutSession } from '@taskratchet/sdk';
 
 export function useCheckoutSession(): CheckoutSession | null {
 	const [checkoutSession, setCheckoutSession] =

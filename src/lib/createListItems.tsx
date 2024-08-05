@@ -14,7 +14,7 @@ type Entries = (TaskType | string)[];
 
 export default function createListItems(
 	sortedTasks: TaskType[],
-	newTask: TaskType | undefined
+	newTask: TaskType | undefined,
 ): {
 	entries: Entries;
 	nextHeadingIndex: number | undefined;

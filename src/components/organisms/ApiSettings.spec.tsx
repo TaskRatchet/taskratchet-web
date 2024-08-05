@@ -4,19 +4,15 @@ import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import React from 'react';
 import ApiSettings from './ApiSettings';
-import fetch1 from '../../lib/api/fetch1';
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
-
-vi.mock('../../lib/api/getMe');
-vi.mock('../../lib/api/updateMe');
-vi.mock('../../lib/api/fetch1');
+import { getApiToken } from '@taskratchet/sdk';
 
 describe('API settings', () => {
 	it('displays loading indicator on request click', async () => {
 		loadMe({});
 
-		const { resolve } = loadControlledPromise(fetch1);
+		const { resolve } = loadControlledPromise(getApiToken);
 
 		renderWithQueryProvider(<ApiSettings />);
 

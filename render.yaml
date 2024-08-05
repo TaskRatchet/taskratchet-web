@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: tr-web
+    runtime: static
+    buildCommand: npm run build
+    staticPublishPath: ./dist
+    pullRequestPreviewsEnabled: true

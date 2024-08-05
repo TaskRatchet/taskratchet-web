@@ -3,8 +3,7 @@ import { useSession } from '../../lib/api/useSession';
 import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMutation } from 'react-query';
-import { login } from '../../lib/api/login';
-import { requestResetEmail } from '../../lib/api/requestResetEmail';
+import { login, requestResetEmail } from '@taskratchet/sdk';
 
 const api = {
 	login,
@@ -22,7 +21,7 @@ const Login = (): JSX.Element => {
 			onError: () => {
 				setMessage('Login failed');
 			},
-		}
+		},
 	);
 	const reset = useMutation(
 		() => {
@@ -36,7 +35,7 @@ const Login = (): JSX.Element => {
 			onSuccess: () => {
 				setMessage(`Instructions sent to ${email}`);
 			},
-		}
+		},
 	);
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');

@@ -2,7 +2,7 @@ export const makeResponse = (
 	args: {
 		ok?: boolean;
 		json?: Record<string, unknown>;
-	} = {}
+	} = {},
 ): Partial<Response> => {
 	const { ok = true, json = null } = args;
 

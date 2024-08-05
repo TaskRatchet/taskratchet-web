@@ -1,6 +1,6 @@
 import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
-import { addTask } from './addTask';
 import { toast } from 'react-toastify';
+import { addTask } from '@taskratchet/sdk';
 
 interface Input {
 	task: string;
@@ -9,7 +9,7 @@ interface Input {
 }
 
 export function useAddTask(
-	onSave: (t: TaskType) => void
+	onSave: (t: TaskType) => void,
 ): UseMutationResult<Response, Error, Input> {
 	const queryClient = useQueryClient();
 

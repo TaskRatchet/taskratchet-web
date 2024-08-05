@@ -2,8 +2,7 @@ import React, { FormEvent, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { useTimezones } from '../../lib/api/useTimezones';
-import { Box, Button, Link, Stack } from '@mui/material';
-import register from '../../lib/api/register';
+import { Alert, Box, Button, Link, Stack } from '@mui/material';
 import { redirectToCheckout } from '../../lib/stripe';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
@@ -15,6 +14,7 @@ import useDocumentTitle from '../../lib/useDocumentTitle';
 import FormHelperText from '@mui/material/FormHelperText';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import { register } from '@taskratchet/sdk';
 
 const Register = (): JSX.Element => {
 	const [name, setName] = useState<string>('');
@@ -27,6 +27,7 @@ const Register = (): JSX.Element => {
 	const [agreed, setAgreed] = useState<boolean>(false);
 	const [referral, setReferral] = useState<string>('');
 	const [showErrors, setShowErrors] = useState<boolean>(false);
+	const [registerError, setRegisterError] = useState<string>('');
 
 	useDocumentTitle('Register | TaskRatchet');
 
@@ -53,7 +54,7 @@ const Register = (): JSX.Element => {
 			email,
 			password,
 			timezone,
-			checkoutSession.id
+			checkoutSession.id,
 		);
 
 		if (response.ok) {
@@ -62,7 +63,8 @@ const Register = (): JSX.Element => {
 				toast(error);
 			});
 		} else {
-			toast('Registration failed');
+			const error = await response.text();
+			setRegisterError(`${response.status}: ${response.statusText} - ${error}`);
 		}
 	};
 
@@ -100,6 +102,9 @@ const Register = (): JSX.Element => {
 						onChange={(e) => setName(e.target.value)}
 						label={'Name'}
 						id={'name'}
+						required
+						error={showErrors && !name}
+						helperText={showErrors && !name && 'Name is required'}
 					/>
 
 					<TextField
@@ -200,6 +205,24 @@ const Register = (): JSX.Element => {
 					Press the button below to be redirected to our payments provider to
 					add your payment method.
 				</p>
+
+				{registerError.length > 0 ? (
+					<Alert severity="error">
+						<p>Registration failed</p>
+						<p>{registerError}</p>
+						<p>
+							Please contact{' '}
+							<Link
+								href="mailto:support@taskratchet.com"
+								target={'_blank'}
+								rel="noopener noreferrer"
+							>
+								support@taskratchet.com
+							</Link>{' '}
+							for assistance.
+						</p>
+					</Alert>
+				) : null}
 
 				<Button
 					disabled={checkoutSession == null}

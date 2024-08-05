@@ -4,13 +4,9 @@ import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe } from 'vitest';
 import { screen, waitFor } from '@testing-library/react';
-import { login } from '../../lib/api/login';
-import { requestResetEmail } from '../../lib/api/requestResetEmail';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
-
-vi.mock('../../lib/api/login');
-vi.mock('../../lib/api/requestResetEmail');
+import { login, requestResetEmail } from '@taskratchet/sdk';
 
 const api = {
 	login,
@@ -124,7 +120,7 @@ describe('login form', () => {
 		await userEvent.click(screen.getByText('Reset Password'));
 
 		expect(
-			await screen.findByText('Instructions sent to the_email')
+			await screen.findByText('Instructions sent to the_email'),
 		).toBeInTheDocument();
 	});
 });

@@ -3,11 +3,9 @@ import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider'
 import PasswordSettings from './PasswordSettings';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import { vi, expect, it, describe } from 'vitest';
-import { updatePassword } from '../../lib/api/updatePassword';
+import { expect, it, describe } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
-
-vi.mock('../../lib/api/updatePassword');
+import { updatePassword } from '@taskratchet/sdk';
 
 describe('password settings', () => {
 	it('requires passwords to match', async () => {
@@ -17,13 +15,13 @@ describe('password settings', () => {
 		await userEvent.type(await screen.findByLabelText('New Password *'), 'two');
 		await userEvent.type(
 			await screen.findByLabelText('Retype Password *'),
-			'three'
+			'three',
 		);
 
 		await userEvent.click(await screen.findByText('Save'));
 
 		expect(
-			await screen.findByText("Passwords don't match")
+			await screen.findByText("Passwords don't match"),
 		).toBeInTheDocument();
 	});
 
@@ -36,7 +34,7 @@ describe('password settings', () => {
 		await userEvent.type(await screen.findByLabelText('New Password *'), 'two');
 		await userEvent.type(
 			await screen.findByLabelText('Retype Password *'),
-			'two'
+			'two',
 		);
 
 		await userEvent.click(await screen.findByText('Save'));

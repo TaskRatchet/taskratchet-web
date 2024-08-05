@@ -3,8 +3,8 @@ import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
 import { renderWithQueryProvider } from './test/renderWithQueryProvider';
 import { vi, expect, it, describe } from 'vitest';
-import { updateTask } from './api/updateTask';
 import loadControlledPromise from './test/loadControlledPromise';
+import { updateTask } from '@taskratchet/sdk';
 
 vi.mock('./api/updateTask');
 

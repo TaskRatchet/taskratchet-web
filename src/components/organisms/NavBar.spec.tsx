@@ -13,7 +13,7 @@ function renderComponent() {
 	return renderWithQueryProvider(
 		<BrowserRouter>
 			<NavBar />
-		</BrowserRouter>
+		</BrowserRouter>,
 	);
 }
 

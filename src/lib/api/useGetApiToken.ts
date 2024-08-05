@@ -1,6 +1,6 @@
 import { useMutation } from 'react-query';
-import fetch1 from './fetch1';
 import { UseMutationResult } from 'react-query';
+import { getApiToken } from '@taskratchet/sdk';
 
 export function useGetApiToken(): UseMutationResult<
 	string,
@@ -8,8 +8,5 @@ export function useGetApiToken(): UseMutationResult<
 	void,
 	unknown
 > {
-	return useMutation<string>('api-token', async () => {
-		const response = await fetch1('me/token', true, 'GET');
-		return response?.text();
-	});
+	return useMutation<string>('api-token', getApiToken);
 }

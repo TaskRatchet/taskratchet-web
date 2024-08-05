@@ -4,16 +4,12 @@ import React from 'react';
 import Register from './Register';
 import { waitFor, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { getTimezones } from '../../lib/api/getTimezones';
 import { vi, expect, it, describe } from 'vitest';
-import register from '../../lib/api/register';
-import { getCheckoutSession } from '../../lib/api/getCheckoutSession';
 import { redirectToCheckout } from '../../lib/stripe';
 import saveFeedback from '../../lib/saveFeedback';
 import { toast } from 'react-toastify';
+import { getCheckoutSession, getTimezones, register } from '@taskratchet/sdk';
 
-vi.mock('../../lib/api/getCheckoutSession');
-vi.mock('../../lib/api/register');
 vi.mock('react-toastify');
 
 async function fillForm() {
@@ -25,15 +21,15 @@ async function fillForm() {
 
 	renderWithQueryProvider(<Register />);
 
-	await userEvent.type(await screen.findByLabelText('Name'), 'the_name');
+	await userEvent.type(await screen.findByLabelText(/Name/), 'the_name');
 	await userEvent.type(await screen.findByLabelText(/Email/), 'the_email');
 	await userEvent.type(
 		await screen.findByLabelText(/^Password/),
-		'the_password'
+		'the_password',
 	);
 	await userEvent.type(
 		await screen.findByLabelText(/Retype Password/),
-		'the_password'
+		'the_password',
 	);
 
 	await waitFor(() => {
@@ -48,8 +44,8 @@ async function fillForm() {
 
 	await userEvent.click(
 		await screen.findByLabelText(
-			"I have read and agree to TaskRatchet's privacy policy and terms of service."
-		)
+			"I have read and agree to TaskRatchet's privacy policy and terms of service.",
+		),
 	);
 
 	await waitFor(() => {
@@ -61,7 +57,7 @@ describe('registration page', () => {
 	it('uses Input for name field', async () => {
 		renderWithQueryProvider(<Register />);
 
-		await screen.findByLabelText('Name');
+		await screen.findByLabelText(/Name/);
 	});
 
 	it('uses Input for email field', async () => {
@@ -96,7 +92,7 @@ describe('registration page', () => {
 			'the_email',
 			'the_password',
 			'the_timezone',
-			'session'
+			'session',
 		);
 	});
 
@@ -119,7 +115,7 @@ describe('registration page', () => {
 
 		await userEvent.type(
 			await screen.findByLabelText('How did you hear about us?'),
-			'the_referral'
+			'the_referral',
 		);
 
 		await userEvent.click(await screen.findByText('Add payment method'));
@@ -191,8 +187,8 @@ describe('registration page', () => {
 
 		await userEvent.click(
 			await screen.findByLabelText(
-				"I have read and agree to TaskRatchet's privacy policy and terms of service."
-			)
+				"I have read and agree to TaskRatchet's privacy policy and terms of service.",
+			),
 		);
 
 		await userEvent.click(await screen.findByText('Add payment method'));
@@ -208,6 +204,32 @@ describe('registration page', () => {
 		await userEvent.click(await screen.findByText('Add payment method'));
 
 		expect(await screen.findByText(/is required/)).toBeInTheDocument();
+
+		expect(toast).not.toBeCalled();
+	});
+
+	it('requires name', async () => {
+		await fillForm();
+
+		await userEvent.clear(await screen.findByLabelText(/Name/));
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText('Name is required');
+	});
+
+	it('does not use toast for registration errors', async () => {
+		await fillForm();
+
+		vi.mocked(register).mockResolvedValue({
+			ok: false,
+			status: 400,
+			text: () => Promise.resolve('the_error'),
+		} as any);
+
+		await userEvent.click(await screen.findByText('Add payment method'));
+
+		await screen.findByText(/the_error/);
 
 		expect(toast).not.toBeCalled();
 	});
