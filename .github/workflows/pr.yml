@@ -8,16 +8,15 @@ on:
 
 jobs:
   size:
-    name: Check PR size
     runs-on: ubuntu-latest
     steps:
       - uses: ookami-kb/gh-pr-size-watcher@v1
         with:
           githubToken: ${{ secrets.GITHUB_TOKEN }}
           errorSize: 500
-          errorMessage: ':no_entry: PR has more than **{allowed} additions**. Split it into smaller PRs.'
+          errorMessage: ":no_entry: PR has more than **{allowed} additions**. Split it into smaller PRs."
           warningSize: 300
-          warningMessage: ':warning: PR has more than **{allowed} additions**. Consider splitting it into smaller PRs.'
+          warningMessage: ":warning: PR has more than **{allowed} additions**. Consider splitting it into smaller PRs."
           excludePaths: |
             pnpm-lock.yaml
             **/*.spec.ts

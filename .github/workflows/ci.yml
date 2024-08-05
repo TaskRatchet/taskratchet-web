@@ -12,7 +12,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm install
       - run: pnpm run test
   audit:
@@ -24,7 +24,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm install
       - run: pnpm audit
   outdated:
@@ -36,7 +36,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm install
       - id: outdated
         run: |
@@ -48,8 +48,8 @@ jobs:
         id: fc
         with:
           issue-number: ${{ github.event.pull_request.number }}
-          comment-author: 'github-actions[bot]'
-          body-includes: 'Outdated dependencies'
+          comment-author: "github-actions[bot]"
+          body-includes: "Outdated dependencies"
       - uses: peter-evans/create-or-update-comment@v2
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
@@ -63,10 +63,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
-      - name: Use Node.js 16.15.0
-        uses: actions/setup-node@v4
+      - uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm install
       - run: pnpm dlx depcheck
   lint:
@@ -76,9 +75,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm install
       - run: pnpm run lint
   prettier:
@@ -88,7 +87,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: ${{ env.PNPM_VERSION }}
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          cache: 'pnpm'
+          cache: "pnpm"
       - run: pnpm dlx prettier --check .
