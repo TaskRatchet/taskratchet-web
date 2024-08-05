@@ -1,12 +1,12 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vitest/config';
-import { loadEnv } from 'vite';
+import { UserConfig, defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
 import { visualizer } from 'rollup-plugin-visualizer';
 
 export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd());
-	return {
+
+	const config: UserConfig = {
 		plugins: [react(), visualizer()],
 		test: {
 			environment: 'jsdom',
@@ -39,4 +39,6 @@ export default defineConfig(({ mode }) => {
 			__FIREBASE_APP_ID__: JSON.stringify(env.VITE_FIREBASE_APP_ID),
 		},
 	};
+
+	return config;
 });

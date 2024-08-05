@@ -3,8 +3,7 @@ import { useSession } from '../../lib/api/useSession';
 import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import { useMutation } from 'react-query';
-import { login } from '../../lib/api/login';
-import { requestResetEmail } from '../../lib/api/requestResetEmail';
+import { login, requestResetEmail } from '@taskratchet/sdk';
 
 const api = {
 	login,

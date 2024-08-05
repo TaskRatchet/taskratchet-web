@@ -6,7 +6,7 @@ import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
 import { vi, expect, it, describe } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
-import { updateMe } from '../../lib/api/updateMe';
+import { updateMe } from '@taskratchet/sdk';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');

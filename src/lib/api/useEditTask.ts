@@ -1,5 +1,5 @@
 import { useMutation, UseMutationResult, useQueryClient } from 'react-query';
-import { editTask } from './editTask';
+import { editTask } from '@taskratchet/sdk';
 
 type EditParams = { id: string; due: string; cents: number };
 

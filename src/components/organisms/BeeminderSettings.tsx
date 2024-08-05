@@ -5,6 +5,7 @@ import * as browser from '../../lib/browser';
 import { Stack, TextField, Alert } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import useUpdateMe from '../../lib/api/useUpdateMe';
+import { User } from '@taskratchet/sdk';
 
 const beeminderClientId: string = IS_PRODUCTION
 		? '1w70sy12t1106s9ptod11ex21'

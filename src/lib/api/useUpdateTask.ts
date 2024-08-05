@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from 'react-query';
-import { TaskInput, updateTask } from './updateTask';
 import { toast } from 'react-toastify';
+import { updateTask, TaskInput } from '@taskratchet/sdk';
 
 interface Context {
 	previousTasks: TaskType[] | undefined;

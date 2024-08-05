@@ -1,4 +1,3 @@
-import { logout, useSession } from '../../lib/api/useSession';
 import { Link } from 'react-router-dom';
 import React from 'react';
 import {
@@ -13,6 +12,8 @@ import {
 import LogoutIcon from '@mui/icons-material/Logout';
 import HelpIcon from '@mui/icons-material/Help';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useSession } from '../../lib/api/useSession';
+import { logout } from '@taskratchet/sdk';
 
 export default function NavDrawer({
 	isOpen,

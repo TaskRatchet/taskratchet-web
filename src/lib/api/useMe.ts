@@ -1,8 +1,8 @@
 import { QueryObserverResult, useQuery } from 'react-query';
-import { getMe } from './getMe';
 import { UseQueryOptions } from 'react-query';
 import { H } from 'highlight.run';
 import { useEffect } from 'react';
+import { User, getMe } from '@taskratchet/sdk';
 
 export function useMe(
 	queryOptions: UseQueryOptions<User> | undefined = {}

@@ -3,21 +3,20 @@ import React from 'react';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';
-import { updateTask } from '../../lib/api/updateTask';
 import { waitFor } from '@testing-library/react';
 import * as browser from '../../lib/browser';
-import { editTask } from '../../lib/api/editTask';
 import { screen } from '@testing-library/react';
-import { vi, Mock, expect, it, describe, beforeEach } from 'vitest';
+import { vi, expect, it, describe, beforeEach } from 'vitest';
 import { queryTaskCheckbox } from '../../lib/test/queries';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { editTask, updateTask } from '@taskratchet/sdk';
 
 vi.mock('../../lib/api/updateTask');
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/addTask');
 vi.mock('../../lib/api/editTask');
 
-const mockEditTask = editTask as Mock;
+const mockEditTask = vi.mocked(editTask);
 
 function renderTask(task: Partial<TaskType> = {}) {
 	const t: TaskType = {

@@ -1,6 +1,6 @@
 function compareDate(a: TaskType, b: TaskType): number {
-	const aDate = new Date(a.due),
-		bDate = new Date(b.due);
+	const aDate = new Date(a.due);
+	const bDate = new Date(b.due);
 
 	if (aDate < bDate) return -1;
 	if (aDate > bDate) return 1;

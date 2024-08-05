@@ -3,11 +3,9 @@ import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider'
 import PasswordSettings from './PasswordSettings';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import { vi, expect, it, describe } from 'vitest';
-import { updatePassword } from '../../lib/api/updatePassword';
+import { expect, it, describe } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
-
-vi.mock('../../lib/api/updatePassword');
+import { updatePassword } from '@taskratchet/sdk';
 
 describe('password settings', () => {
 	it('requires passwords to match', async () => {

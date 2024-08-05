@@ -9,11 +9,11 @@ import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
 import { __listRef } from 'react-list';
 import { waitFor, screen } from '@testing-library/react';
-import { addTask } from './lib/api/addTask';
 import getQueryClient from './lib/getQueryClient';
 import { QueryClient } from 'react-query';
 import loadControlledPromise from './lib/test/loadControlledPromise';
 import { describe, it, expect, beforeEach, vi, Mock } from 'vitest';
+import { addTask } from '@taskratchet/sdk';
 
 vi.mock('./lib/api/getTasks');
 vi.mock('./lib/api/getMe');

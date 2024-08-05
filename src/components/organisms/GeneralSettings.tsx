@@ -1,9 +1,9 @@
 import React, { FormEvent, useEffect, useState } from 'react';
-import { getMe } from '../../lib/api/getMe';
 import { useTimezones } from '../../lib/api/useTimezones';
 import { Stack, TextField, Autocomplete } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import useUpdateMe from '../../lib/api/useUpdateMe';
+import { getMe } from '@taskratchet/sdk';
 
 export default function GeneralSettings(): JSX.Element {
 	const updateMe = useUpdateMe();

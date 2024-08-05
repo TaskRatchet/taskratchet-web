@@ -7,12 +7,9 @@ import { loadUrlParams } from '../../lib/test/loadUrlParams';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';
 import { vi, expect, it, describe, beforeEach } from 'vitest';
-import { updateMe } from '../../lib/api/updateMe';
-import { getMe } from '../../lib/api/getMe';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { getMe, updateMe } from '@taskratchet/sdk';
 
-vi.mock('../../lib/api/getMe');
-vi.mock('../../lib/api/updateMe');
 vi.mock('../../lib/LegacyApi');
 vi.mock('react-toastify');
 
