@@ -23,7 +23,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          cache: "pnpm"
+          cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run build
       - uses: actions/upload-artifact@v4
@@ -46,7 +46,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
-          cache: "pnpm"
+          cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run build
       - uses: actions/upload-artifact@v4
