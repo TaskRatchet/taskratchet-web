@@ -7,7 +7,7 @@ export default defineConfig(({ mode }) => {
 	const env = loadEnv(mode, process.cwd());
 
 	const config: UserConfig = {
-		plugins: [react(), visualizer()],
+		plugins: [react(), visualizer({template: 'raw-data'})],
 		test: {
 			environment: 'jsdom',
 			setupFiles: ['./global-setup.ts'],
