@@ -22,7 +22,7 @@ module.exports = async () => {
 };
 
 vi.mock('@mui/x-date-pickers');
-vi.mock('taskratchet-sdk');
+vi.mock('@taskratchet/sdk');
 vi.mock('./src/lib/stripe');
 vi.mock('./src/lib/saveFeedback');
 vi.mock('firebase/auth');
