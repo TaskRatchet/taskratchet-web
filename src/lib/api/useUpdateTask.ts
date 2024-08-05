@@ -48,7 +48,7 @@ export function useUpdateTask(): (id: string, data: TaskInput) => void {
 			onSettled: async () => {
 				await queryClient.invalidateQueries('tasks');
 			},
-		}
+		},
 	);
 
 	return (id: string, data: TaskInput): void => {

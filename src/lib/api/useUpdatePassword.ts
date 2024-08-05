@@ -7,7 +7,7 @@ export function useUpdatePassword(): {
 } {
 	const { mutate, isLoading } = useMutation(
 		(variables: { oldPass: string; newPass: string }) =>
-			updatePassword(variables.oldPass, variables.newPass)
+			updatePassword(variables.oldPass, variables.newPass),
 	);
 
 	return {

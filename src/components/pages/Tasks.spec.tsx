@@ -147,7 +147,7 @@ describe('tasks page', () => {
 		await clickCheckbox();
 
 		await waitFor(() =>
-			expect(updateTask).toBeCalledWith('3', { complete: true })
+			expect(updateTask).toBeCalledWith('3', { complete: true }),
 		);
 	});
 
@@ -182,7 +182,7 @@ describe('tasks page', () => {
 			await userEvent.click(getAddButton());
 
 			await waitFor(() =>
-				expect(toast).toBeCalledWith('Error: Failed to add task')
+				expect(toast).toBeCalledWith('Error: Failed to add task'),
 			);
 		});
 	});
@@ -471,7 +471,7 @@ describe('tasks page', () => {
 		renderTasksPage();
 
 		expect(
-			await screen.findByText((s) => s.indexOf('May') !== -1)
+			await screen.findByText((s) => s.indexOf('May') !== -1),
 		).toBeInTheDocument();
 	});
 
@@ -647,7 +647,7 @@ describe('tasks page', () => {
 			expect(addTask).toBeCalledWith(
 				expect.objectContaining({
 					task: 'task1',
-				})
+				}),
 			);
 		});
 	});

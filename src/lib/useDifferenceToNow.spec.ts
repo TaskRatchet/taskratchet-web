@@ -9,7 +9,7 @@ describe('useDifferenceToNow', () => {
 		const result = useDifferenceToNow(
 			makeTask({
 				due_timestamp: 1623873540,
-			})
+			}),
 		);
 
 		expect(result).toEqual('in 1h');
@@ -21,7 +21,7 @@ describe('useDifferenceToNow', () => {
 		const result = useDifferenceToNow(
 			makeTask({
 				due_timestamp: 1623869940,
-			})
+			}),
 		);
 
 		expect(result).toEqual('1h ago');
@@ -33,7 +33,7 @@ describe('useDifferenceToNow', () => {
 		const result = useDifferenceToNow(
 			makeTask({
 				due_timestamp: 1623873540 * 2,
-			})
+			}),
 		);
 
 		expect(result).toEqual('in 51y 5mo');
@@ -45,7 +45,7 @@ describe('useDifferenceToNow', () => {
 		const result = useDifferenceToNow(
 			makeTask({
 				due_timestamp: 1623873540,
-			})
+			}),
 		);
 
 		expect(result).toEqual('in 1h');

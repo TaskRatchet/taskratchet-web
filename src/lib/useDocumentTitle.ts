@@ -14,7 +14,7 @@ function useDocumentTitle(title: string, prevailOnUnmount = false) {
 				document.title = defaultTitle.current;
 			}
 		},
-		[prevailOnUnmount]
+		[prevailOnUnmount],
 	);
 }
 

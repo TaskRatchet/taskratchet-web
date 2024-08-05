@@ -54,7 +54,7 @@ const Register = (): JSX.Element => {
 			email,
 			password,
 			timezone,
-			checkoutSession.id
+			checkoutSession.id,
 		);
 
 		if (response.ok) {

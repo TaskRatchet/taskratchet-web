@@ -45,7 +45,7 @@ const TaskEdit = ({
 				onSuccess: () => {
 					setIsOpen(false);
 				},
-			}
+			},
 		);
 	}
 

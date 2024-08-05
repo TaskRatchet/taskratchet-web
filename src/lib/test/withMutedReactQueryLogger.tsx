@@ -1,7 +1,7 @@
 import { setLogger } from 'react-query';
 
 export async function withMutedReactQueryLogger(
-	callback: () => Promise<void>
+	callback: () => Promise<void>,
 ): Promise<void> {
 	setLogger({
 		log: () => {

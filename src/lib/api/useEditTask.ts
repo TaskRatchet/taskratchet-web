@@ -20,6 +20,6 @@ export default function useEditTask(): UseMutationResult<
 			onSettled: async () => {
 				await queryClient.refetchQueries('tasks');
 			},
-		}
+		},
 	);
 }

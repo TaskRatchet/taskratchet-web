@@ -9,7 +9,7 @@ interface Input {
 }
 
 export function useAddTask(
-	onSave: (t: TaskType) => void
+	onSave: (t: TaskType) => void,
 ): UseMutationResult<Response, Error, Input> {
 	const queryClient = useQueryClient();
 

@@ -39,7 +39,7 @@ describe('account page', () => {
 		renderWithQueryProvider(<Account />);
 
 		expect(
-			await screen.findByText('Enable Beeminder integration')
+			await screen.findByText('Enable Beeminder integration'),
 		).toBeInTheDocument();
 	});
 

@@ -25,11 +25,11 @@ async function fillForm() {
 	await userEvent.type(await screen.findByLabelText(/Email/), 'the_email');
 	await userEvent.type(
 		await screen.findByLabelText(/^Password/),
-		'the_password'
+		'the_password',
 	);
 	await userEvent.type(
 		await screen.findByLabelText(/Retype Password/),
-		'the_password'
+		'the_password',
 	);
 
 	await waitFor(() => {
@@ -44,8 +44,8 @@ async function fillForm() {
 
 	await userEvent.click(
 		await screen.findByLabelText(
-			"I have read and agree to TaskRatchet's privacy policy and terms of service."
-		)
+			"I have read and agree to TaskRatchet's privacy policy and terms of service.",
+		),
 	);
 
 	await waitFor(() => {
@@ -92,7 +92,7 @@ describe('registration page', () => {
 			'the_email',
 			'the_password',
 			'the_timezone',
-			'session'
+			'session',
 		);
 	});
 
@@ -115,7 +115,7 @@ describe('registration page', () => {
 
 		await userEvent.type(
 			await screen.findByLabelText('How did you hear about us?'),
-			'the_referral'
+			'the_referral',
 		);
 
 		await userEvent.click(await screen.findByText('Add payment method'));
@@ -187,8 +187,8 @@ describe('registration page', () => {
 
 		await userEvent.click(
 			await screen.findByLabelText(
-				"I have read and agree to TaskRatchet's privacy policy and terms of service."
-			)
+				"I have read and agree to TaskRatchet's privacy policy and terms of service.",
+			),
 		);
 
 		await userEvent.click(await screen.findByText('Add payment method'));

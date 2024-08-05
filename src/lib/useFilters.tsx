@@ -40,7 +40,7 @@ export default function useFilters(): {
 
 	const { pref: filters, setPref: setFilters } = usePref(
 		'filters',
-		defaultFilters
+		defaultFilters,
 	);
 
 	const toggleFilter = useCallback(
@@ -50,7 +50,7 @@ export default function useFilters(): {
 				[filter]: !filters[filter],
 			});
 		},
-		[filters, setFilters]
+		[filters, setFilters],
 	);
 
 	return {

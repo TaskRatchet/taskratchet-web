@@ -13,8 +13,8 @@ const getScrollableParent = function (el: Element | null): Element {
 	return !el || el === document.body
 		? document.body
 		: isScrollable(el)
-		? el
-		: getScrollableParent(el.parentElement);
+			? el
+			: getScrollableParent(el.parentElement);
 };
 
 export function getLanguages(): string[] {
@@ -76,7 +76,7 @@ export function getUrlParams(): ParsedQuery {
 
 export function scrollIntoView(
 	el: Element,
-	options: { offset?: number } = {}
+	options: { offset?: number } = {},
 ): void {
 	const { offset = 0 } = options;
 	const pos = el.getBoundingClientRect().top;

@@ -1,7 +1,7 @@
 export const setCookie = (
 	key: string,
 	value: unknown,
-	numberOfDays: number
+	numberOfDays: number,
 ): void => {
 	const now = new Date();
 	now.setTime(now.getTime() + numberOfDays * 60 * 60 * 24 * 1000);

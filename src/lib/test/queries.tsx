@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 
 export async function findTaskCheckbox(
-	task = 'the_task'
+	task = 'the_task',
 ): Promise<HTMLInputElement> {
 	const desc = await screen.findByText(task);
 	let checkbox;
