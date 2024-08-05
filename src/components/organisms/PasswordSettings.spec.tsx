@@ -15,13 +15,13 @@ describe('password settings', () => {
 		await userEvent.type(await screen.findByLabelText('New Password *'), 'two');
 		await userEvent.type(
 			await screen.findByLabelText('Retype Password *'),
-			'three'
+			'three',
 		);
 
 		await userEvent.click(await screen.findByText('Save'));
 
 		expect(
-			await screen.findByText("Passwords don't match")
+			await screen.findByText("Passwords don't match"),
 		).toBeInTheDocument();
 	});
 
@@ -34,7 +34,7 @@ describe('password settings', () => {
 		await userEvent.type(await screen.findByLabelText('New Password *'), 'two');
 		await userEvent.type(
 			await screen.findByLabelText('Retype Password *'),
-			'two'
+			'two',
 		);
 
 		await userEvent.click(await screen.findByText('Save'));

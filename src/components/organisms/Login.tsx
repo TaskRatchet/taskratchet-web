@@ -21,7 +21,7 @@ const Login = (): JSX.Element => {
 			onError: () => {
 				setMessage('Login failed');
 			},
-		}
+		},
 	);
 	const reset = useMutation(
 		() => {
@@ -35,7 +35,7 @@ const Login = (): JSX.Element => {
 			onSuccess: () => {
 				setMessage(`Instructions sent to ${email}`);
 			},
-		}
+		},
 	);
 	const [emailError, setEmailError] = useState('');
 	const [passwordError, setPasswordError] = useState('');

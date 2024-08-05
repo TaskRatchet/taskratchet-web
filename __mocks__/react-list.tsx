@@ -20,7 +20,7 @@ const ReactList = forwardRef(function ReactList(
 		itemRenderer,
 		length,
 	}: { itemRenderer: (i: number) => JSX.Element; length: number },
-	ref
+	ref,
 ) {
 	if (ref) {
 		if (typeof ref === 'object') {

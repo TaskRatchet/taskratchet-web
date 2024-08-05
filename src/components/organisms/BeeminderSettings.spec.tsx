@@ -49,7 +49,7 @@ describe('BeeminderSettings component', () => {
 			expect(updateMe).toBeCalledWith({
 				beeminder_token: 'the_token',
 				beeminder_user: 'the_user',
-			})
+			}),
 		);
 	});
 
@@ -135,8 +135,8 @@ describe('BeeminderSettings component', () => {
 
 		expect(
 			await screen.findByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		);
 	});
 
@@ -151,8 +151,8 @@ describe('BeeminderSettings component', () => {
 
 		expect(
 			screen.queryByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		).not.toBeInTheDocument();
 	});
 
@@ -166,14 +166,14 @@ describe('BeeminderSettings component', () => {
 		await userEvent.click(await screen.findByText('Save'));
 		await userEvent.type(
 			await screen.findByRole('textbox'),
-			'{backspace}new_name'
+			'{backspace}new_name',
 		);
 		await userEvent.click(await screen.findByText('Save'));
 
 		expect(
 			screen.queryByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		).not.toBeInTheDocument();
 	});
 
@@ -186,8 +186,8 @@ describe('BeeminderSettings component', () => {
 
 		expect(
 			await screen.findByText(
-				'Goal names can only contain letters, numbers, underscores, and hyphens.'
-			)
+				'Goal names can only contain letters, numbers, underscores, and hyphens.',
+			),
 		);
 	});
 

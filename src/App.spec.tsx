@@ -38,7 +38,7 @@ function renderPage() {
 	return renderWithQueryProvider(
 		<MemoryRouter initialEntries={['/']}>
 			<App />
-		</MemoryRouter>
+		</MemoryRouter>,
 	);
 }
 
@@ -54,7 +54,7 @@ describe('App', () => {
 						retry: false,
 					},
 				},
-			})
+			}),
 		);
 	});
 
@@ -80,13 +80,13 @@ describe('App', () => {
 		await userEvent.click(await screen.findByLabelText('filters'));
 
 		expect(
-			await screen.findByLabelText('toggle filter pending')
+			await screen.findByLabelText('toggle filter pending'),
 		).toBeInTheDocument();
 		expect(
-			await screen.findByLabelText('toggle filter complete')
+			await screen.findByLabelText('toggle filter complete'),
 		).toBeInTheDocument();
 		expect(
-			await screen.findByLabelText('toggle filter expired')
+			await screen.findByLabelText('toggle filter expired'),
 		).toBeInTheDocument();
 	});
 
@@ -155,7 +155,7 @@ describe('App', () => {
 
 		await userEvent.click(await screen.findByLabelText('filters'));
 		await userEvent.click(
-			await screen.findByLabelText('toggle filter pending')
+			await screen.findByLabelText('toggle filter pending'),
 		);
 
 		await waitFor(() => {
@@ -214,11 +214,11 @@ describe('App', () => {
 
 		await userEvent.type(
 			await screen.findByLabelText('Due Date *'),
-			'{backspace}0'
+			'{backspace}0',
 		);
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
-			'01/08/2020'
+			'01/08/2020',
 		);
 
 		await userEvent.click(screen.getByText('Add'));
@@ -283,7 +283,7 @@ describe('App', () => {
 		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
-			'01/01/2020'
+			'01/01/2020',
 		);
 	});
 
@@ -319,7 +319,7 @@ describe('App', () => {
 		await userEvent.click(screen.getByText('Copy'));
 
 		expect(await screen.findByLabelText('Due Date *')).toHaveValue(
-			'02/08/2020'
+			'02/08/2020',
 		);
 	});
 
@@ -347,7 +347,7 @@ describe('App', () => {
 
 		await userEvent.click(await screen.findByLabelText('filters'));
 		await userEvent.click(
-			await screen.findByLabelText('toggle filter pending')
+			await screen.findByLabelText('toggle filter pending'),
 		);
 
 		await waitFor(() => {
@@ -361,11 +361,11 @@ describe('App', () => {
 		await userEvent.click(await screen.findByLabelText('filters'));
 
 		await userEvent.click(
-			await screen.findByLabelText('toggle filter pending')
+			await screen.findByLabelText('toggle filter pending'),
 		);
 		await screen.findByText('1'); // TODO Resolve race condition to remove this line
 		await userEvent.click(
-			await screen.findByLabelText('toggle filter complete')
+			await screen.findByLabelText('toggle filter complete'),
 		);
 
 		expect(await screen.findByText('2')).toBeInTheDocument();

@@ -81,7 +81,7 @@ describe('Task component', () => {
 		await waitFor(() =>
 			expect(updateTask).toBeCalledWith('the_id', {
 				uncle: true,
-			})
+			}),
 		);
 	});
 
@@ -105,7 +105,7 @@ describe('Task component', () => {
 		await userEvent.click(menuButton);
 
 		expect(screen.getByText('Charge immediately')).toHaveAttribute(
-			'aria-disabled'
+			'aria-disabled',
 		);
 	});
 
@@ -138,7 +138,7 @@ describe('Task component', () => {
 
 		await userEvent.type(
 			screen.getByLabelText('Due Date *'),
-			'{backspace}1{enter}'
+			'{backspace}1{enter}',
 		);
 
 		await userEvent.click(screen.getByText('Save'));
@@ -187,8 +187,8 @@ describe('Task component', () => {
 					'If you confirm, you will immediately be charged $1.',
 					{
 						exact: false,
-					}
-				)
+					},
+				),
 			).toBeInTheDocument();
 		});
 	});
@@ -203,7 +203,7 @@ describe('Task component', () => {
 
 			await userEvent.type(
 				screen.getByLabelText('Due Date *'),
-				'{backspace}1{enter}'
+				'{backspace}1{enter}',
 			);
 
 			await userEvent.click(screen.getByText('Save'));
@@ -248,7 +248,7 @@ describe('Task component', () => {
 
 		await userEvent.type(
 			screen.getByLabelText('Due Date *'),
-			'{backspace}5{enter}'
+			'{backspace}5{enter}',
 		);
 
 		await userEvent.click(screen.getByText('Save'));
@@ -265,7 +265,7 @@ describe('Task component', () => {
 
 		await userEvent.type(
 			screen.getByLabelText('Due Date *'),
-			'{backspace}1{enter}'
+			'{backspace}1{enter}',
 		);
 
 		await userEvent.click(screen.getByText('Save'));
@@ -284,7 +284,7 @@ describe('Task component', () => {
 
 		await userEvent.type(
 			screen.getByLabelText('Due Date *'),
-			'{backspace}1{enter}'
+			'{backspace}1{enter}',
 		);
 
 		await userEvent.click(screen.getByText('Save'));

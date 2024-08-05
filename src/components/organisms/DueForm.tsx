@@ -80,7 +80,7 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 						d.setFullYear(
 							dueDate.getFullYear(),
 							dueDate.getMonth(),
-							dueDate.getDate()
+							dueDate.getDate(),
 						);
 					onChange({ due: formatDue(d) });
 				}}

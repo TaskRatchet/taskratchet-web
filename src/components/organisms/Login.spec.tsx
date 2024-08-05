@@ -120,7 +120,7 @@ describe('login form', () => {
 		await userEvent.click(screen.getByText('Reset Password'));
 
 		expect(
-			await screen.findByText('Instructions sent to the_email')
+			await screen.findByText('Instructions sent to the_email'),
 		).toBeInTheDocument();
 	});
 });
