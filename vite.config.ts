@@ -37,6 +37,8 @@ export default defineConfig(({ mode }) => {
 				env.VITE_FIREBASE_MESSAGING_SENDER_ID,
 			),
 			__FIREBASE_APP_ID__: JSON.stringify(env.VITE_FIREBASE_APP_ID),
+			__API1_URL__: JSON.stringify(env.VITE_API1_URL),
+      		__API2_URL__: JSON.stringify(env.VITE_API2_URL),
 		},
 	};
 
