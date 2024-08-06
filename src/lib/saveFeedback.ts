@@ -6,7 +6,7 @@ type Options = {
 };
 
 export default function saveFeedback(options: Options): void {
-	fetch('https://api.web3forms.com/submit', {
+	void fetch('https://api.web3forms.com/submit', {
 		method: 'POST',
 		headers: {
 			'Content-Type': 'application/json',

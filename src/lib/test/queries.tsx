@@ -6,11 +6,9 @@ export async function findTaskCheckbox(
 	const desc = await screen.findByText(task);
 	let checkbox;
 	await waitFor(() => {
-		/* eslint-disable testing-library/no-node-access */
 		const c = desc
 			.closest('.molecule-task')
 			?.querySelector('[type="checkbox"]');
-		/* eslint-enable testing-library/no-node-access */
 		if (!c) {
 			throw new Error();
 		}
@@ -22,7 +20,6 @@ export async function findTaskCheckbox(
 export function queryTaskCheckbox(task = 'the_task'): HTMLInputElement | null {
 	const desc = screen.getByText(task);
 
-	// eslint-disable-next-line testing-library/no-node-access
 	const c = desc.closest('.molecule-task')?.querySelector('[type="checkbox"]');
 
 	return c ? (c as unknown as HTMLInputElement) : null;

@@ -26,7 +26,7 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 	const [isOpen, setIsOpen] = useState<boolean>(false);
 	const toggleMenu = () => setIsOpen(!isOpen);
 	const handleTodayClick = () => {
-		onTodayClick && onTodayClick();
+		onTodayClick?.();
 		navigate('/');
 	};
 
