@@ -30,8 +30,8 @@ importers:
         specifier: ^5.0.18
         version: 5.0.20(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@mui/material@5.16.6(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mui/system@5.16.6(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.0(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(react@18.3.1))(@types/react@18.3.3)(dayjs@1.11.12)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@taskratchet/sdk':
-        specifier: ^0.0.3
-        version: 0.0.3
+        specifier: ^0.0.5
+        version: 0.0.5
       dayjs:
         specifier: ^1.11.7
         version: 1.11.12
@@ -1155,8 +1155,8 @@ packages:
   '@sinclair/typebox@0.27.8':
     resolution: {integrity: sha512-+Fj43pSMwJs4KRrH/938Uf+uAELIgVBmQzg/q1YG10djyfA3TnrU8N8XzqCh/okZdszqBQTZf96idMfE5lnwTA==}
 
-  '@taskratchet/sdk@0.0.3':
-    resolution: {integrity: sha512-puZADbWU/8eJ23YlGUGTxA9HfYA2L8dmiL/mAjOxQV1v4yabF8D283eUsc5i7mmuK11SjA8Bn33utaBTbe3bUA==}
+  '@taskratchet/sdk@0.0.5':
+    resolution: {integrity: sha512-0Qnn0hZ7FhkC9FsYLIRV8xn5+Y6lg/wuSZ8ssF3iYQX5zzlNZ3iVduDoQQEYjhVn44M42gplROTzeWn3he3Daw==}
 
   '@testing-library/dom@8.20.1':
     resolution: {integrity: sha512-/DiOQ5xBxgdYRC8LNk7U+RWat0S3qRLeIw3ZIkMQ9kkVlRmwD/Eg8k8CqIpD6GW7u20JIUOfMKbxtiLutpjQ4g==}
@@ -4409,7 +4409,7 @@ snapshots:
 
   '@sinclair/typebox@0.27.8': {}
 
-  '@taskratchet/sdk@0.0.3':
+  '@taskratchet/sdk@0.0.5':
     dependencies:
       firebase: 10.12.5
     transitivePeerDependencies:
