@@ -25,7 +25,7 @@ export default function UncleButton({
 				/* TODO: Disable if task id not set */
 				disabled={task.status !== 'pending'}
 				onClick={() => {
-					onClick && onClick();
+					onClick?.();
 					setOpen(true);
 				}}
 			>

@@ -1,9 +1,14 @@
 import React, { useMemo } from 'react';
-import { TextField } from '@mui/material';
 import formatDue from '../../lib/formatDue';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs, { Dayjs } from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+import objectSupport from 'dayjs/plugin/objectSupport';
+
+dayjs.extend(customParseFormat);
+dayjs.extend(objectSupport);
 
 type DueFormProps = {
 	due: string;
@@ -12,22 +17,12 @@ type DueFormProps = {
 	onChange: (due: Record<string, string>) => void;
 };
 
-function isDayjsObject(value: unknown): value is { $d: Date } {
-	if (typeof value !== 'object' || value === null) {
-		return false;
-	}
-
-	const d = (value as { $d?: unknown }).$d;
-	// WORKAROUND: https://stackoverflow.com/a/643827/937377
-	const isDate = Object.prototype.toString.call(d) === '[object Date]';
-
-	return isDate;
-}
-
 export default function DueForm(props: DueFormProps): JSX.Element {
 	const { due, minDue, maxDue, onChange } = props;
+
 	const dueDate = useMemo(() => {
-		return new Date(due);
+		const d = dayjs(due, 'M/D/YYYY, h:mm A');
+		return d.isValid() ? d : null;
 	}, [due]);
 
 	return (
@@ -35,61 +30,60 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 			<DatePicker
 				label="Due Date"
 				value={dueDate}
-				onChange={(value: unknown) => {
-					if (!isDayjsObject(value)) return;
+				onChange={(value: Dayjs | null) => {
+					if (!value?.isValid()) return;
 
-					const d = value.$d;
+					const d = dayjs({
+						year: value.year(),
+						month: value.month(),
+						date: value.date(),
+						hour: dueDate?.hour(),
+						minute: dueDate?.minute(),
+					});
 
-					if (isNaN(d.getTime())) return;
-
-					if (due) {
-						d.setHours(dueDate?.getHours(), dueDate?.getMinutes());
-					}
-
-					onChange({ due: formatDue(d) });
+					onChange({ due: formatDue(d.toDate()) });
 				}}
-				OpenPickerButtonProps={{
-					'aria-label': 'change date',
+				slotProps={{
+					openPickerButton: {
+						'aria-label': 'change date',
+					},
+					textField: {
+						required: true,
+						InputLabelProps: {
+							'aria-label': 'due date',
+						},
+						variant: 'standard',
+					},
 				}}
 				disablePast
-				renderInput={(params) => (
-					<TextField
-						required
-						InputLabelProps={{
-							'aria-label': 'due date',
-						}}
-						variant="standard"
-						{...params}
-					/>
-				)}
-				maxDate={maxDue}
-				minDate={minDue}
+				maxDate={maxDue && dayjs(maxDue)}
+				minDate={minDue && dayjs(minDue)}
 			/>
 			<TimePicker
 				label="Due Time"
 				value={dueDate}
-				onChange={(value: unknown) => {
-					if (!isDayjsObject(value)) {
-						return;
-					}
+				onChange={(value: Dayjs | null) => {
+					if (!value?.isValid()) return;
 
-					const d = value.$d;
+					const d = dayjs({
+						year: dueDate?.year(),
+						month: dueDate?.month(),
+						date: dueDate?.date(),
+						hour: value.hour(),
+						minute: value.minute(),
+					});
 
-					if (isNaN(d.getTime())) return;
-					if (due)
-						d.setFullYear(
-							dueDate.getFullYear(),
-							dueDate.getMonth(),
-							dueDate.getDate(),
-						);
-					onChange({ due: formatDue(d) });
+					onChange({ due: formatDue(d.toDate()) });
 				}}
-				OpenPickerButtonProps={{
-					'aria-label': 'change time',
+				slotProps={{
+					openPickerButton: {
+						'aria-label': 'change time',
+					},
+					textField: {
+						required: true,
+						variant: 'standard',
+					},
 				}}
-				renderInput={(params) => (
-					<TextField required variant="standard" {...params} />
-				)}
 			/>
 		</LocalizationProvider>
 	);

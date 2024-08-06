@@ -53,7 +53,7 @@ const TaskEdit = ({
 		<>
 			<MenuItem
 				onClick={() => {
-					onOpen && onOpen();
+					onOpen?.();
 					setIsOpen(true);
 				}}
 				disabled={!task.id || task.status !== 'pending'}

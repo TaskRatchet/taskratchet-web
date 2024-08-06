@@ -1,6 +1,7 @@
 .alert {
 	padding: 0.5em;
 	margin-bottom: 1em;
+
 	&.info {
 		background-color: #e1effd;
 		border-radius: 4px;
@@ -10,6 +11,7 @@
 // legacy
 .loading {
 	position: relative;
+
 	&:before {
 		content: '';
 		display: block;
@@ -21,6 +23,7 @@
 		background-color: rgba(255, 255, 255, 0.8);
 		z-index: 100;
 	}
+
 	&:after {
 		content: 'loading ...';
 		text-align: center;
@@ -32,8 +35,4 @@
 		height: 1em;
 		z-index: 150;
 	}
-}
-
-#highlight-feedback-launcher-button {
-	display: none;
 }

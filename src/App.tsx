@@ -9,28 +9,16 @@ import {
 } from 'react-router-dom';
 import Authenticated from './components/pages/Authenticated';
 import ResetPassword from './components/pages/ResetPassword';
-import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { IS_PRODUCTION } from './tr_constants';
 import { QueryClientProvider } from 'react-query';
 import NavBar from './components/organisms/NavBar';
 import * as browser from './lib/browser';
 import { Box, Container, Stack, Alert, Link } from '@mui/material';
-import { H } from 'highlight.run';
 import getQueryClient from './lib/getQueryClient';
-import { ErrorBoundary } from '@highlight-run/react';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
 import AndTheme from './components/HOCs/AndTheme';
-
-toast.configure();
-
-H.init('qe9174g1', {
-	environment: process.env.NODE_ENV,
-	feedbackWidget: {
-		enabled: true,
-	},
-});
 
 window.stripe_key = IS_PRODUCTION
 	? 'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd'
@@ -132,10 +120,8 @@ export function App(): JSX.Element {
 
 export default function AppWithRouter(): JSX.Element {
 	return (
-		<ErrorBoundary>
-			<Router>
-				<App />
-			</Router>
-		</ErrorBoundary>
+		<Router>
+			<App />
+		</Router>
 	);
 }

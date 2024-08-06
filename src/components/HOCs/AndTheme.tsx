@@ -8,8 +8,10 @@ import React from 'react';
 import {
 	Link as RouterLink,
 	LinkProps as RouterLinkProps,
+	To,
 } from 'react-router-dom';
 import { LinkProps } from '@mui/material/Link';
+import { ToastContainer } from 'react-toastify';
 
 const colors = {
 	warm: {
@@ -28,18 +30,19 @@ const colors = {
 	},
 };
 
-const LinkBehavior = React.forwardRef<
-	HTMLAnchorElement,
-	Omit<RouterLinkProps, 'to'> & { href: RouterLinkProps['to'] }
->(function LinkBehavior(props, ref) {
-	const { href, ...other } = props;
+type Props = Omit<RouterLinkProps, 'to'> & { href: To };
 
-	if (props.href.toString().match(/^https?:\/\//)) {
-		return <a ref={ref} href={href.toString()} {...other} />;
-	}
+const LinkBehavior = React.forwardRef<HTMLAnchorElement, Props>(
+	function LinkBehavior(props: Props, ref) {
+		const { href, ...other } = props;
 
-	return <RouterLink ref={ref} to={href} {...other} />;
-});
+		if (String(href).match(/^https?:\/\//)) {
+			return <a ref={ref} href={String(href)} {...other} />;
+		}
+
+		return <RouterLink ref={ref} to={href} {...other} />;
+	},
+);
 
 export default function AndTheme({
 	children,
@@ -47,6 +50,7 @@ export default function AndTheme({
 	children: React.ReactNode;
 }): JSX.Element {
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
 	const theme = React.useMemo(
 		() =>
 			createTheme({
@@ -75,6 +79,7 @@ export default function AndTheme({
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			{children}
+			<ToastContainer theme={prefersDarkMode ? 'dark' : 'light'} />
 		</ThemeProvider>
 	);
 }
