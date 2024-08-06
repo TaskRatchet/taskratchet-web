@@ -39,6 +39,7 @@ export default defineConfig(({ mode }) => {
 			__FIREBASE_APP_ID__: JSON.stringify(env.VITE_FIREBASE_APP_ID),
 			__API1_URL__: JSON.stringify(env.VITE_API1_URL),
 			__API2_URL__: JSON.stringify(env.VITE_API2_URL),
+			__WEB3FORMS_ACCESS_KEY__: JSON.stringify(env.VITE_WEB3FORMS_ACCESS_KEY),
 		},
 	};
 

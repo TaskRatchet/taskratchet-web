@@ -1,8 +1,6 @@
 import createFetchMock from 'vitest-fetch-mock';
 import { vi, beforeEach, expect, afterEach } from 'vitest';
-import matchers, {
-	TestingLibraryMatchers,
-} from '@testing-library/jest-dom/matchers';
+import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
 import { redirectToCheckout } from './src/lib/stripe';
 import { signOut } from 'firebase/auth';
@@ -12,9 +10,7 @@ afterEach(() => {
 	cleanup();
 });
 
-const m: TestingLibraryMatchers<string, void> = matchers;
-
-expect.extend(m);
+expect.extend(matchers);
 
 // eslint-disable-next-line @typescript-eslint/require-await
 module.exports = async () => {

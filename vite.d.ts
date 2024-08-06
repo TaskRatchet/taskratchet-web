@@ -7,3 +7,4 @@ declare const __FIREBASE_MESSAGING_SENDER_ID__: string;
 declare const __FIREBASE_APP_ID__: string;
 declare const __API1_URL__: string;
 declare const __API2_URL__: string;
+declare const __WEB3FORMS_ACCESS_KEY__: string;

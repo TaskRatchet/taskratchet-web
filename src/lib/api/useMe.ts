@@ -1,6 +1,5 @@
 import { QueryObserverResult, useQuery } from 'react-query';
 import { UseQueryOptions } from 'react-query';
-import { H } from 'highlight.run';
 import { useEffect } from 'react';
 import { User, getMe } from '@taskratchet/sdk';
 
@@ -28,8 +27,6 @@ export function useMe(
 			},
 			{} as Record<string, string>,
 		);
-
-		H.identify(data.id, metadata);
 	}, [data]);
 
 	return result;

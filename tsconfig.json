@@ -24,6 +24,5 @@
 		"global-setup.ts",
 		"__mocks__",
 		"vite.d.ts"
-	],
-	"references": [{ "path": "./tsconfig.node.json" }]
+	]
 }

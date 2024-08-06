@@ -10,6 +10,7 @@ import {
 	LinkProps as RouterLinkProps,
 } from 'react-router-dom';
 import { LinkProps } from '@mui/material/Link';
+import { ToastContainer } from 'react-toastify';
 
 const colors = {
 	warm: {
@@ -47,6 +48,9 @@ export default function AndTheme({
 	children: React.ReactNode;
 }): JSX.Element {
 	const prefersDarkMode = useMediaQuery('(prefers-color-scheme: dark)');
+
+	console.log({ prefersDarkMode });
+
 	const theme = React.useMemo(
 		() =>
 			createTheme({
@@ -75,6 +79,7 @@ export default function AndTheme({
 		<ThemeProvider theme={theme}>
 			<CssBaseline />
 			{children}
+			<ToastContainer theme={prefersDarkMode ? 'dark' : 'light'} />
 		</ThemeProvider>
 	);
 }

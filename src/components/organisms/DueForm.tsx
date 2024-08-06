@@ -1,9 +1,9 @@
 import React, { useMemo } from 'react';
-import { TextField } from '@mui/material';
 import formatDue from '../../lib/formatDue';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import dayjs from 'dayjs';
 
 type DueFormProps = {
 	due: string;
@@ -27,7 +27,7 @@ function isDayjsObject(value: unknown): value is { $d: Date } {
 export default function DueForm(props: DueFormProps): JSX.Element {
 	const { due, minDue, maxDue, onChange } = props;
 	const dueDate = useMemo(() => {
-		return new Date(due);
+		return dayjs(due);
 	}, [due]);
 
 	return (
@@ -43,27 +43,26 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 					if (isNaN(d.getTime())) return;
 
 					if (due) {
-						d.setHours(dueDate?.getHours(), dueDate?.getMinutes());
+						d.setHours(dueDate?.hour(), dueDate?.minute());
 					}
 
 					onChange({ due: formatDue(d) });
 				}}
-				OpenPickerButtonProps={{
-					'aria-label': 'change date',
+				slotProps={{
+					openPickerButton: {
+						'aria-label': 'change date',
+					},
+					textField: {
+						required: true,
+						InputLabelProps: {
+							'aria-label': 'due date',
+						},
+						variant: 'standard',
+					},
 				}}
 				disablePast
-				renderInput={(params) => (
-					<TextField
-						required
-						InputLabelProps={{
-							'aria-label': 'due date',
-						}}
-						variant="standard"
-						{...params}
-					/>
-				)}
-				maxDate={maxDue}
-				minDate={minDue}
+				maxDate={maxDue && dayjs(maxDue)}
+				minDate={minDue && dayjs(minDue)}
 			/>
 			<TimePicker
 				label="Due Time"
@@ -77,19 +76,18 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 
 					if (isNaN(d.getTime())) return;
 					if (due)
-						d.setFullYear(
-							dueDate.getFullYear(),
-							dueDate.getMonth(),
-							dueDate.getDate(),
-						);
+						d.setFullYear(dueDate.year(), dueDate.month(), dueDate.date());
 					onChange({ due: formatDue(d) });
 				}}
-				OpenPickerButtonProps={{
-					'aria-label': 'change time',
+				slotProps={{
+					openPickerButton: {
+						'aria-label': 'change time',
+					},
+					textField: {
+						required: true,
+						variant: 'standard',
+					},
 				}}
-				renderInput={(params) => (
-					<TextField required variant="standard" {...params} />
-				)}
 			/>
 		</LocalizationProvider>
 	);

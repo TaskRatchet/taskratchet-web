@@ -1,5 +1,3 @@
-import { H } from 'highlight.run';
-
 type Options = {
 	userName?: string;
 	userEmail?: string;
@@ -7,10 +5,16 @@ type Options = {
 	response: string;
 };
 
-export default function saveFeedback({ prompt, response }: Options): void {
-	const verbatim = `${prompt ? `${prompt}: ` : ''}${response}`;
-
-	H.addSessionFeedback({
-		verbatim,
+export default function saveFeedback(options: Options): void {
+	fetch('https://api.web3forms.com/submit', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			Accept: 'application/json',
+		},
+		body: JSON.stringify({
+			...options,
+			access_key: __WEB3FORMS_ACCESS_KEY__,
+		}),
 	});
 }
