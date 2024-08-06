@@ -5,3 +5,4 @@ dist
 node_modules
 pnpm-lock.yaml
 stats.html
+.depcheckrc
