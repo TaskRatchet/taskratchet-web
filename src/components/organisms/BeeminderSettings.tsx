@@ -2,7 +2,7 @@ import React, { FormEvent, useEffect, useState } from 'react';
 import { IS_PRODUCTION } from '../../tr_constants';
 import { useMe } from '../../lib/api/useMe';
 import * as browser from '../../lib/browser';
-import { Stack, TextField, Alert } from '@mui/material';
+import { Stack, TextField, Alert, Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import useUpdateMe from '../../lib/api/useUpdateMe';
 import { User } from '@taskratchet/sdk';
@@ -94,7 +94,7 @@ const BeeminderSettings = (): JSX.Element => {
 					</Stack>
 				</form>
 			) : (
-				<a href={beeminderAuthUrl}>Enable Beeminder integration</a>
+				<Button href={beeminderAuthUrl}>Enable Beeminder integration</Button>
 			)}
 		</>
 	);
