@@ -8,16 +8,6 @@ import { describe, it, expect } from 'vitest';
 vi.mock('../../lib/Browser');
 vi.mock('@mui/x-date-pickers');
 
-// global.document.createRange = () =>
-// 	({
-// 		setStart: () => undefined,
-// 		setEnd: () => undefined,
-// 		commonAncestorContainer: {
-// 			nodeName: 'BODY',
-// 			ownerDocument: document,
-// 		},
-// 	} as unknown as Range);
-
 interface RenderComponentProps {
 	task?: string;
 	due?: string;
