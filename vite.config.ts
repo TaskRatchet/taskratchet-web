@@ -17,6 +17,8 @@ export default defineConfig(({ mode }) => {
 		build: {
 			rollupOptions: {
 				output: {
+					chunkFileNames: 'assets/[name].[hash].chunk.js',
+					entryFileNames: 'assets/[name].[hash].js',
 					manualChunks: {
 						dom: ['react-dom'],
 						material: ['@mui/material'],
