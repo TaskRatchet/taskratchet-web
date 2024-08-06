@@ -39,8 +39,8 @@ importers:
         specifier: ^9.17.1
         version: 9.23.0
       highlight.run:
-        specifier: 5.1.5
-        version: 5.1.5
+        specifier: 6.0.0
+        version: 6.0.0
       humanize-duration:
         specifier: ^3.28.0
         version: 3.32.1
@@ -2003,8 +2003,8 @@ packages:
     resolution: {integrity: sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==}
     engines: {node: '>= 0.4'}
 
-  highlight.run@5.1.5:
-    resolution: {integrity: sha512-LKMa17NZ/Amfo6pdemiIpHAud/Gw6ZDt37jwBJcHfdmeR5PKYUojnTWiisqC+letK9+nSoAXeqvcXmXAzaCMqw==}
+  highlight.run@6.0.0:
+    resolution: {integrity: sha512-DVrYRJ9pvPBjcpNiKLaOtM3QN8Nm2dDhhJjRbJZU+WP4i8f50gGbYWHz7pqNAtqotyr0chMCPZMeOFgKXDyc8A==}
 
   hoist-non-react-statics@3.3.2:
     resolution: {integrity: sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==}
@@ -5576,7 +5576,7 @@ snapshots:
     dependencies:
       function-bind: 1.1.2
 
-  highlight.run@5.1.5: {}
+  highlight.run@6.0.0: {}
 
   hoist-non-react-statics@3.3.2:
     dependencies:
