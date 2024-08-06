@@ -5,3 +5,5 @@ services:
     buildCommand: npm run build
     staticPublishPath: ./dist
     pullRequestPreviewsEnabled: true
+    domains:
+      - app.taskratchet.com
