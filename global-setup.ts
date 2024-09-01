@@ -2,7 +2,7 @@ import createFetchMock from 'vitest-fetch-mock';
 import { vi, beforeEach, expect, afterEach } from 'vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
-import { redirectToCheckout } from './src/lib/stripe';
+import { redirectToCheckout } from './src/react/lib/stripe';
 import { signOut } from 'firebase/auth';
 import { getCheckoutSession } from '@taskratchet/sdk';
 
@@ -17,12 +17,12 @@ module.exports = async () => {
 	process.env.TZ = 'America/Chicago';
 };
 
+vi.mock('./src/react/lib/saveFeedback');
+vi.mock('./src/react/lib/stripe');
 vi.mock('@mui/x-date-pickers');
 vi.mock('@taskratchet/sdk');
-vi.mock('./src/lib/stripe');
-vi.mock('./src/lib/saveFeedback');
-vi.mock('firebase/auth');
 vi.mock('firebase/app');
+vi.mock('firebase/auth');
 
 global.scrollTo = vi.fn() as any;
 
@@ -40,7 +40,8 @@ function deleteAllCookies() {
 const fetchMock = createFetchMock(vi);
 fetchMock.enableMocks();
 
-window.FreshworksWidget = vi.fn() as any;
+// window.FreshworksWidget = vi.fn() as any;
+vi.stubGlobal('FreshworksWidget', vi.fn());
 
 beforeEach(() => {
 	fetchMock.resetMocks();
