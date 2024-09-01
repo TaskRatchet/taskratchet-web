@@ -6,7 +6,7 @@ type Options = {
 };
 
 export default function saveFeedback(options: Options): void {
-	const access_key = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY as unknown;
+	const access_key = import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY;
 
 	if (typeof access_key !== 'string') {
 		throw new Error('Missing access key');
