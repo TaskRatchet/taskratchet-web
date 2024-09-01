@@ -26,6 +26,7 @@ export default [
 			'src/react/serviceWorker.js',
 			'**/eslint.config.mjs',
 			'dist',
+			'src/env.d.ts',
 		],
 	},
 	...fixupConfigRules(

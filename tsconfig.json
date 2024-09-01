@@ -4,5 +4,6 @@
 		"jsx": "react-jsx",
 		"jsxImportSource": "react",
 		"types": ["@testing-library/jest-dom"]
-	}
+	},
+	"exclude": ["dist"]
 }

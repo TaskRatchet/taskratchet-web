@@ -1,1 +1,1 @@
-ignores: ["@types/node", "@types/react-dom", "eslint-config-prettier", "eslint-plugin-react-hooks"]
+ignores: ["@astrojs/check", "@types/node", "@types/react-dom", "eslint-config-prettier", "eslint-plugin-react-hooks"]
