@@ -12,6 +12,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run test
@@ -24,6 +25,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm audit
@@ -36,6 +38,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm install
       - id: outdated
@@ -65,6 +68,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm dlx depcheck
@@ -77,6 +81,7 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run lint
@@ -89,5 +94,6 @@ jobs:
           version: ${{ env.PNPM_VERSION }}
       - uses: actions/setup-node@v4
         with:
+          node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm dlx prettier --check .
