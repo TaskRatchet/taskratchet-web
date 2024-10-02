@@ -7,3 +7,7 @@ services:
     pullRequestPreviewsEnabled: true
     domains:
       - app.taskratchet.com
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /
