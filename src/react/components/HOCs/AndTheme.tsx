@@ -12,23 +12,7 @@ import {
 } from 'react-router-dom';
 import type { LinkProps } from '@mui/material/Link';
 import { ToastContainer } from 'react-toastify';
-
-const colors = {
-	warm: {
-		lighter: '#ff6427',
-		light: '#ff5527',
-		main: '#fa4627',
-		dark: '#c6371f',
-		darker: '#ad301b',
-	},
-	cool: {
-		lighter: '#00e1f0',
-		light: '#00bdca',
-		main: '#009aa4',
-		dark: '#006a71',
-		darker: '#005257',
-	},
-};
+import { COLORS } from '../../../constants';
 
 type Props = Omit<RouterLinkProps, 'to'> & { href: To };
 
@@ -56,8 +40,8 @@ export default function AndTheme({
 			createTheme({
 				palette: {
 					mode: prefersDarkMode ? 'dark' : 'light',
-					primary: prefersDarkMode ? colors.warm : colors.cool,
-					secondary: prefersDarkMode ? colors.cool : colors.warm,
+					primary: prefersDarkMode ? COLORS.warm : COLORS.cool,
+					secondary: prefersDarkMode ? COLORS.cool : COLORS.warm,
 				},
 				components: {
 					MuiLink: {

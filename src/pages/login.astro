@@ -1,0 +1,77 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Login">
+	<form id="login-form">
+		<p>
+			Please login or <a href="/register">register</a> to view this page.
+		</p>
+		<label for="email">Email</label>
+		<input type="email" id="email" name="email" required />
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password" required />
+		<button type="submit">Login</button>
+		<button id="reset">Reset Password</button>
+	</form>
+</Layout>
+
+<script>
+	import { login, requestResetEmail } from '@taskratchet/sdk';
+
+	async function handleSubmit(event: Event) {
+		event.preventDefault();
+		const form = event.target as HTMLFormElement;
+		const email = form.email.value;
+		const password = form.password.value;
+		const success = await login(email, password);
+
+		if (success) {
+			const prev = new URLSearchParams(window.location.search).get('prev');
+			window.location.href = prev || '/';
+		} else {
+			alert('Login failed');
+		}
+	}
+
+	async function handleReset(event: Event) {
+		event.preventDefault();
+		const form = document.querySelector('#login-form') as HTMLFormElement;
+		const email = form.email.value;
+
+		if (!email) {
+			alert('Please enter your email address');
+			return;
+		}
+
+		try {
+			await requestResetEmail(email);
+			alert('Password reset email sent');
+		} catch (error) {
+			if (error instanceof Error) {
+				alert(error.message);
+			} else {
+				alert('An error occurred');
+			}
+		}
+	}
+
+	document
+		.querySelector('#login-form')
+		?.addEventListener('submit', handleSubmit);
+	document.querySelector('#reset')?.addEventListener('click', handleReset);
+</script>
+
+<style>
+	body {
+		height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	input {
+		display: block;
+		margin-bottom: 1rem;
+	}
+</style>
