@@ -1,9 +1,16 @@
 ---
+import { COLORS } from '../constants.js';
+
 interface Props {
 	title: string;
 }
 
 const { title } = Astro.props;
+
+const primaryDark = COLORS.warm.lighter,
+	primaryLight = COLORS.cool.main,
+	secondaryDark = COLORS.cool.main,
+	secondaryLight = COLORS.warm.main;
 ---
 
 <!doctype html>
@@ -50,22 +57,42 @@ const { title } = Astro.props;
 		<slot />
 	</body>
 </html>
-<style is:global>
+
+<style
+	is:global
+	define:vars={{
+		primaryDark,
+		primaryLight,
+		secondaryDark,
+		secondaryLight,
+	}}
+>
 	:root {
-		--accent: 136, 58, 234;
-		--accent-light: 224, 204, 250;
-		--accent-dark: 49, 10, 101;
-		--accent-gradient: linear-gradient(
-			45deg,
-			rgb(var(--accent)),
-			rgb(var(--accent-light)) 30%,
-			white 60%
-		);
+		--primary: var(--primaryLight);
+		--secondary: var(--secondaryLight);
+		--color: #333;
+		--background: #eaeaea;
 	}
+
+	@media (prefers-color-scheme: dark) {
+		:root {
+			--primary: var(--primaryDark);
+			--secondary: var(--secondaryDark);
+			--color: #fff;
+			--background: #13151a;
+		}
+	}
+
 	html {
 		font-family: system-ui, sans-serif;
-		background: #13151a;
+		color: var(--color);
+		background: var(--background);
 	}
+
+	a {
+		color: var(--primary);
+	}
+
 	code {
 		font-family:
 			Menlo,
