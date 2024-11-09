@@ -9,5 +9,11 @@ services:
       - app.taskratchet.com
     routes:
       - type: rewrite
+        source: /login
+        destination: /login/index.html
+      - type: rewrite
+        source: /register
+        destination: /register/index.html
+      - type: rewrite
         source: /*
         destination: /
