@@ -3,7 +3,6 @@ import { vi, beforeEach, expect, afterEach } from 'vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
 import { redirectToCheckout } from './src/react/lib/stripe';
-import { signOut } from 'firebase/auth';
 import { getCheckoutSession } from '@taskratchet/sdk';
 
 afterEach(() => {
@@ -21,8 +20,6 @@ vi.mock('./src/react/lib/saveFeedback');
 vi.mock('./src/react/lib/stripe');
 vi.mock('@mui/x-date-pickers');
 vi.mock('@taskratchet/sdk');
-vi.mock('firebase/app');
-vi.mock('firebase/auth');
 
 global.scrollTo = vi.fn() as any;
 
@@ -51,5 +48,4 @@ beforeEach(() => {
 		id: 'session',
 	});
 	vi.mocked(redirectToCheckout).mockResolvedValue();
-	vi.mocked(signOut).mockResolvedValue();
 });
