@@ -1,6 +1,5 @@
 ---
 import Layout from '../layouts/Layout.astro';
-
 ---
 
 <Layout title="Register">
@@ -56,8 +55,6 @@ import Layout from '../layouts/Layout.astro';
 	import { register, getTimezones, getCheckoutSession } from '@taskratchet/sdk';
 	import { redirectToCheckout } from '../react/lib/stripe';
 	import saveFeedback from '../react/lib/saveFeedback';
-
-	console.log('env', import.meta.env);
 
 	const form = document.querySelector('#register-form') as HTMLFormElement;
 	const timezoneSelect = document.querySelector(
