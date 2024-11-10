@@ -1,0 +1,181 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout title="Register">
+	<form id="register-form">
+		<h1>Register</h1>
+		<label for="name">Name</label>
+		<input type="text" id="name" name="nameInput" required />
+
+		<label for="email">Email</label>
+		<input type="email" id="email" name="email" required />
+
+		<label for="password">Password</label>
+		<input type="password" id="password" name="password" required />
+
+		<label for="password2">Retype Password</label>
+		<input type="password" id="password2" name="password2" required />
+
+		<label for="timezone">Timezone</label>
+		<select id="timezone" name="timezone" required>
+			<option value="" disabled selected>Choose your timezone...</option>
+		</select>
+
+		<label for="referral">How did you hear about us?</label>
+		<input type="text" id="referral" name="referral" />
+
+		<div class="terms">
+			<input type="checkbox" id="agreed" name="agreed" required />
+			<label for="agreed">
+				I have read and agree to TaskRatchet's <a
+					href="https://taskratchet.com/privacy.html"
+					target="_blank"
+					rel="noopener noreferrer">privacy policy</a
+				> and <a
+					href="https://taskratchet.com/terms.html"
+					target="_blank"
+					rel="noopener noreferrer">terms of service</a
+				>.
+			</label>
+		</div>
+
+		<p>
+			Press the button below to be redirected to our payments provider to add
+			your payment method.
+		</p>
+
+		<div id="error-message" class="error" style="display: none;"></div>
+
+		<button type="submit">Add payment method</button>
+	</form>
+</Layout>
+
+<script>
+	import { register, getTimezones, getCheckoutSession } from '@taskratchet/sdk';
+	import { redirectToCheckout } from '../react/lib/stripe';
+	import saveFeedback from '../react/lib/saveFeedback';
+
+	const form = document.querySelector('#register-form') as HTMLFormElement;
+	const timezoneSelect = document.querySelector(
+		'#timezone'
+	) as HTMLSelectElement;
+	const errorMessage = document.querySelector(
+		'#error-message'
+	) as HTMLDivElement;
+
+	// Load timezones
+	getTimezones().then((timezones) => {
+		timezones.forEach((tz) => {
+			const option = document.createElement('option');
+			option.value = tz;
+			option.textContent = tz;
+			timezoneSelect.appendChild(option);
+		});
+	});
+
+	async function handleSubmit(event: Event) {
+		event.preventDefault();
+		const submitButton = form.querySelector(
+			'button[type="submit"]'
+		) as HTMLButtonElement;
+		submitButton.disabled = true;
+		submitButton.disabled = true;
+		errorMessage.style.display = 'none';
+
+		try {
+			const checkoutSession = await getCheckoutSession();
+			if (!checkoutSession?.id)
+				throw new Error('Failed to get checkout session');
+
+			const name = form.nameInput.value;
+			const email = form.email.value;
+			const password = form.password.value;
+			const password2 = form.password2.value;
+			const timezone = form.timezone.value;
+			const referral = form.referral.value;
+			const agreed = form.agreed.checked;
+
+			if (password !== password2) {
+				throw new Error('Passwords do not match');
+			}
+
+			if (!agreed) {
+				throw new Error('You must agree to the terms');
+			}
+
+			if (referral) {
+				saveFeedback({
+					userName: name,
+					userEmail: email,
+					prompt: 'How did you hear about us?',
+					response: referral,
+				});
+			}
+
+			const response = await register(
+				name,
+				email,
+				password,
+				timezone,
+				checkoutSession.id
+			);
+
+			if (response.ok) {
+				redirectToCheckout(checkoutSession.id);
+			} else {
+				const error = await response.text();
+				throw new Error(
+					`${response.status}: ${response.statusText} - ${error}`
+				);
+			}
+		} catch (error) {
+			errorMessage.textContent =
+				error instanceof Error ? error.message : 'An error occurred';
+			errorMessage.style.display = 'block';
+			submitButton.disabled = false;
+			submitButton.disabled = false;
+		}
+	}
+
+	form.addEventListener('submit', handleSubmit);
+</script>
+
+<style>
+	form {
+		max-width: 500px;
+		margin: 2rem auto;
+		padding: 1rem;
+	}
+
+	label {
+		display: block;
+		margin-top: 1rem;
+	}
+
+	input,
+	select {
+		display: block;
+		width: 100%;
+		margin-bottom: 1rem;
+	}
+
+	.terms {
+		margin: 1rem 0;
+	}
+
+	.terms input {
+		display: inline;
+		width: auto;
+		margin-right: 0.5rem;
+	}
+
+	.terms label {
+		display: inline;
+	}
+
+	.error {
+		color: red;
+		margin: 1rem 0;
+	}
+</style>

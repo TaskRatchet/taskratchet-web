@@ -16,7 +16,6 @@ export default defineConfig({
 					manualChunks: {
 						dom: ['react-dom'],
 						material: ['@mui/material'],
-						firebase: ['firebase/auth'],
 					},
 				},
 			},

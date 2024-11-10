@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import './App.scss';
-import RegisterForm from './components/pages/Register';
 import {
 	BrowserRouter as Router,
 	Routes,
@@ -58,8 +57,6 @@ export function App(): JSX.Element {
 							}}
 						>
 							<Routes>
-								<Route path={'/register'} element={<RegisterForm />} />
-
 								<Route
 									path={'/success'}
 									element={

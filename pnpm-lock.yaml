@@ -41,9 +41,6 @@ importers:
       dayjs:
         specifier: ^1.11.12
         version: 1.11.13
-      firebase:
-        specifier: ^10.12.5
-        version: 10.13.1
       humanize-duration:
         specifier: ^3.32.1
         version: 3.32.1

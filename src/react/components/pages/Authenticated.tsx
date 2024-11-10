@@ -9,7 +9,7 @@ const Authenticated = ({
 	if (session) return <>{children}</>;
 
 	const prev = window.location.pathname + window.location.search;
-	window.location.href = `/login/index.html?prev=${encodeURIComponent(prev)}`;
+	window.location.href = `/login?prev=${encodeURIComponent(prev)}`;
 
 	return <>Redirecting...</>;
 };

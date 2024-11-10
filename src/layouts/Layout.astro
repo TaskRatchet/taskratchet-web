@@ -23,6 +23,9 @@ const primaryDark = COLORS.warm.lighter,
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 
+		<script>
+			window.stripe_key = import.meta.env.PUBLIC_STRIPE_KEY;
+		</script>
 		<script src="https://js.stripe.com/v3/" type="module"></script>
 
 		<script is:inline>
