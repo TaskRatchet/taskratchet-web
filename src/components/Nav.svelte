@@ -29,17 +29,13 @@
 		<a href="/archive">Archive</a>
 	</div>
 
-	<div>
-		{#if session}
+	{#if session}
+		<div>
 			<span class="email">{email}</span>
-			<a
-				href="#"
-				on:click={() => {
-					logout();
-					window.location.href = '/login';
-				}}><IconLogout /></a
-			>
-		{/if}
+		</div>
+	{/if}
+
+	<div>
 		<a href="https://taskratchet.com/help" title="Help"><IconHelp /></a>
 		<a
 			href="#"
@@ -49,6 +45,15 @@
 			rel="noopener"
 			title="Feedback"><IconFeedback /></a
 		>
+		{#if session}
+			<a
+				href="#"
+				on:click={() => {
+					logout();
+					window.location.href = '/login';
+				}}><IconLogout /></a
+			>
+		{/if}
 	</div>
 </nav>
 
