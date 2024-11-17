@@ -35,9 +35,6 @@ importers:
       '@mui/x-date-pickers':
         specifier: ^7.12.0
         version: 7.15.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@mui/material@5.16.7(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mui/system@5.16.7(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@tanstack/svelte-query':
-        specifier: ^5.60.5
-        version: 5.60.5(svelte@5.2.2)
       '@taskratchet/sdk':
         specifier: ^0.0.7
         version: 0.0.7
@@ -1248,14 +1245,6 @@ packages:
     peerDependencies:
       svelte: ^5.0.0-next.96 || ^5.0.0
       vite: ^5.0.0
-
-  '@tanstack/query-core@5.60.5':
-    resolution: {integrity: sha512-jiS1aC3XI3BJp83ZiTuDLerTmn9P3U95r6p+6/SNauLJaYxfIC4dMuWygwnBHIZxjn2zJqEpj3nysmPieoxfPQ==}
-
-  '@tanstack/svelte-query@5.60.5':
-    resolution: {integrity: sha512-4aVM0iF/10fcOlQUO/P+oaod4Kr1GhYdPhxw4ValEG+JodHJSSiwV7PMlMuhm7EdLsH2oczfHn7oVvWMqzfQSg==}
-    peerDependencies:
-      svelte: ^3.54.0 || ^4.0.0 || ^5.0.0-next.0
 
   '@taskratchet/sdk@0.0.7':
     resolution: {integrity: sha512-FUbwTuBwl/+/c5dKN154TG+tNbRJ7SRUsrpLEJJU/EHjEGi3N8vDez45/Y0AYhNNsEtic0gF9ffnPZVxsIIojA==}
@@ -5355,13 +5344,6 @@ snapshots:
       vitefu: 1.0.3(vite@5.4.2(@types/node@22.5.2)(sass@1.77.8))
     transitivePeerDependencies:
       - supports-color
-
-  '@tanstack/query-core@5.60.5': {}
-
-  '@tanstack/svelte-query@5.60.5(svelte@5.2.2)':
-    dependencies:
-      '@tanstack/query-core': 5.60.5
-      svelte: 5.2.2
 
   '@taskratchet/sdk@0.0.7':
     dependencies:
