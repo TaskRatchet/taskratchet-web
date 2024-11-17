@@ -1,6 +1,9 @@
 <script lang="ts">
 	import { updateTask } from '@taskratchet/sdk';
 	import ConfirmModal from './ConfirmModal.svelte';
+	import IconCopy from '~icons/material-symbols/content-copy-outline';
+	import IconEdit from '~icons/material-symbols/edit-outline';
+	import IconCharge from '~icons/material-symbols/payments-outline';
 
 	let showUncleConfirm = false;
 	export let task: TaskType;
@@ -23,15 +26,17 @@
 <li>
 	<div class="task-container">
 		<div class="menu">
-			<button on:click={() => onCopy(task)}>Copy</button>
+			<button on:click={() => onCopy(task)} title="Copy"><IconCopy /></button>
 			<button 
 				on:click={() => onEdit(task)}
-				disabled={!task.id || task.status !== 'pending'}>Edit</button>
+				disabled={!task.id || task.status !== 'pending'}
+				title="Edit"><IconEdit /></button>
 			<button
 				on:click={() => {
 					showUncleConfirm = true;
 				}}
-				disabled={task.status !== 'pending'}>Charge immediately</button>
+				disabled={task.status !== 'pending'}
+				title="Charge immediately"><IconCharge /></button>
 		</div>
 		<input
 			type="checkbox"
