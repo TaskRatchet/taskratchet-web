@@ -19,6 +19,7 @@
 <nav>
 	<a href="/">Next</a>
 	<a href="/archive">Archive</a>
+	<a href="https://taskratchet.com/help">Help</a>
 	<a
 		href="#"
 		on:click={() => {
