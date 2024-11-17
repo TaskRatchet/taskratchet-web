@@ -20,22 +20,24 @@
 				name: data?.name,
 				email: data?.email,
 			});
-		pathname = window.location.pathname;
+			pathname = window.location.pathname;
 		});
-
-
 	});
 </script>
 
 <nav>
 	<div>
 		<a href="/" class={pathname === '/' ? 'active' : ''}>Next</a>
-		<a href="/archive" class={pathname === '/archive' ? 'active' : ''}>Archive</a>
+		<a href="/archive" class={pathname === '/archive' ? 'active' : ''}
+			>Archive</a
+		>
 	</div>
 
 	{#if session}
 		<div>
-			<a href="/account" class={pathname === '/account' ? 'active' : ''}>{email}</a>
+			<a href="/account" class={pathname === '/account' ? 'active' : ''}
+				>{email}</a
+			>
 		</div>
 	{/if}
 
@@ -68,6 +70,7 @@
 		gap: 1rem;
 		align-items: center;
 		justify-content: space-between;
+		flex-wrap: wrap;
 	}
 
 	nav div {
