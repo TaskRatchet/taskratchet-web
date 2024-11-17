@@ -102,10 +102,12 @@
 		align-items: flex-start;
 		gap: 1rem;
 		position: relative;
+		padding-right: 8rem;  /* Make room for menu buttons */
 	}
 
 	.task-content {
 		flex: 1;
+		word-break: break-word;  /* Allow text to wrap */
 	}
 
 	.task-details {
