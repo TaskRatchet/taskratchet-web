@@ -55,6 +55,7 @@ let isEditing = false;
 		) as task}
 			<Task
 				{task}
+				{page}
 				onCopy={(sourceTask) => {
 					taskToCopy = sourceTask;
 					isAddOpen = true;

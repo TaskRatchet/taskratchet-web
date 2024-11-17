@@ -7,6 +7,7 @@
 
 	let showUncleConfirm = false;
 	export let task: TaskType;
+	export let page: 'next' | 'archive';
 	export let onCopy: (task: TaskType) => void;
 	export let onEdit: (task: TaskType) => void;
 	export let onUncle: (task: TaskType) => void;
@@ -27,16 +28,18 @@
 	<div class="task-container">
 		<div class="menu">
 			<button on:click={() => onCopy(task)} title="Copy"><IconCopy /></button>
-			<button 
-				on:click={() => onEdit(task)}
-				disabled={!task.id || task.status !== 'pending'}
-				title="Edit"><IconEdit /></button>
-			<button
-				on:click={() => {
-					showUncleConfirm = true;
-				}}
-				disabled={task.status !== 'pending'}
-				title="Charge immediately"><IconCharge /></button>
+			{#if page === 'next'}
+				<button 
+					on:click={() => onEdit(task)}
+					disabled={!task.id || task.status !== 'pending'}
+					title="Edit"><IconEdit /></button>
+				<button
+					on:click={() => {
+						showUncleConfirm = true;
+					}}
+					disabled={task.status !== 'pending'}
+					title="Charge immediately"><IconCharge /></button>
+			{/if}
 		</div>
 		<input
 			type="checkbox"
