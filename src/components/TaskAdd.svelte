@@ -6,6 +6,7 @@ const dispatch = createEventDispatcher();
 	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
+export let isEditing = false;
 	export let task = '';
 	export let cents = 500;
 
@@ -68,7 +69,7 @@ const dispatch = createEventDispatcher();
 {#if isOpen}
 	<div class="modal">
 		<div class="modal-content">
-			<h2>Add Task</h2>
+			<h2>{isEditing ? 'Edit Task' : 'Add Task'}</h2>
 
 			{#if error}
 				<div class="error">{error}</div>

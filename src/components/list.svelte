@@ -9,6 +9,7 @@
 	let tasks: TaskType[] = [];
 	let isAddOpen = false;
 	let taskToCopy: TaskType | undefined;
+let isEditing = false;
 	let loading = true;
 
 	onMount(async () => {
@@ -51,6 +52,7 @@
 				}}
 				onEdit={(sourceTask) => {
 					taskToCopy = sourceTask;
+					isEditing = true;
 					isAddOpen = true;
 				}}
 			/>
@@ -64,6 +66,7 @@
 	bind:isOpen={isAddOpen}
 	task={taskToCopy?.task}
 	cents={taskToCopy?.cents}
+	isEditing={isEditing}
 	on:tasksAdded={async () => {
 		const allTasks = (await getTasks()) as TaskType[];
 		const now = new Date();
