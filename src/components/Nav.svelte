@@ -1,21 +1,38 @@
 <script lang="ts">
-	import { logout, getSession } from '@taskratchet/sdk';
+	import { logout, getSession, getMe } from '@taskratchet/sdk';
 	import { onMount } from 'svelte';
 
 	let session = null;
 
 	onMount(() => {
 		session = getSession();
+
+		getMe().then((data) => {
+			window.FreshworksWidget('identify', 'ticketForm', {
+				name: data?.name,
+				email: data?.email,
+			});
+		});
 	});
 </script>
 
 <nav>
 	<a href="/">Next</a>
-	<a href="/archive">Archive</a>	{#if session}
+	<a href="/archive">Archive</a>
+	<a
+		href="#"
+		on:click={() => {
+			window.FreshworksWidget('open');
+		}}
+		rel="noopener">Help</a
+	>
+	{#if session}
 		<a
 			href="#"
-			on:click={() => { logout(); window.location.href = '/login'; }}
-			>Logout</a
+			on:click={() => {
+				logout();
+				window.location.href = '/login';
+			}}>Logout</a
 		>
 	{/if}
 </nav>
