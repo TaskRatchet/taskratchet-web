@@ -1,4 +1,5 @@
 import { defineConfig } from 'astro/config';
+import Icons from 'unplugin-icons/vite';
 
 import react from '@astrojs/react';
 import { visualizer } from 'rollup-plugin-visualizer';
@@ -13,7 +14,12 @@ export default defineConfig({
 		}),
 	],
 	vite: {
-		plugins: [visualizer({ template: 'raw-data' })],
+		plugins: [
+			visualizer({ template: 'raw-data' }),
+			Icons({
+				compiler: 'svelte',
+			}),
+		],
 		build: {
 			rollupOptions: {
 				output: {
