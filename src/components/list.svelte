@@ -43,7 +43,7 @@ let isEditing = false;
 	<div class="header">
 		<h1>{page === 'next' ? 'Next' : 'Archived'} Tasks</h1>
 		<button class="icon-button" on:click={async () => {
-			loading = true;
+			document.body.classList.add('loading');
 			const allTasks = (await getTasks()) as TaskType[];
 			const now = new Date();
 			const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -58,7 +58,7 @@ let isEditing = false;
 						? new Date(a.due).getTime() - new Date(b.due).getTime()
 						: new Date(b.due).getTime() - new Date(a.due).getTime(),
 				);
-			loading = false;
+			document.body.classList.remove('loading');
 		}} title="Refresh">
 			<IconRefresh />
 		</button>
@@ -167,33 +167,7 @@ let isEditing = false;
 		align-items: center;
 		justify-content: center;
 	}
-	.loading-bar {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 2px;
-		background: var(--primary);
-		transform: scaleX(0);
-		transform-origin: left;
-	}
 
-	.loading-bar.active {
-		animation: loading 1s infinite ease-in-out;
-	}
-
-	@keyframes loading {
-		0% {
-			transform: scaleX(0);
-		}
-		50% {
-			transform: scaleX(1);
-		}
-		100% {
-			transform: scaleX(0);
-			transform-origin: right;
-		}
-	}
 	.search-input {
 		width: 100%;
 		padding: 0.5rem;

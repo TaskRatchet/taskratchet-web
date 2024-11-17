@@ -126,4 +126,34 @@ const primaryDark = COLORS.warm.lighter,
 			Courier New,
 			monospace;
 	}
+
+	.loading-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 2px;
+		background: var(--primary);
+		transform: scaleX(0);
+		transform-origin: left;
+	}
+
+	body.loading .loading-bar {
+		animation: loading 1s infinite ease-in-out;
+	}
+
+	@keyframes loading {
+		0% {
+			transform: scaleX(0);
+		}
+		50% {
+			transform: scaleX(1);
+		}
+		100% {
+			transform: scaleX(0);
+			transform-origin: right;
+		}
+	}
 </style>
+
+<div class="loading-bar"></div>
