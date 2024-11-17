@@ -60,8 +60,16 @@ const primaryDark = COLORS.warm.lighter,
 			window.FreshworksWidget('hide', 'launcher');
 		</script>
 	</head>
+	<script is:inline>
+		// Initialize theme
+		const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		const override = localStorage.getItem('theme');
+		if (override === 'dark' || (!override && isDark)) {
+			document.documentElement.classList.add('dark');
+		}
+	</script>
 	<body>
-		<Nav client:load />
+		<Nav client:only />
 		<slot />
 	</body>
 </html>

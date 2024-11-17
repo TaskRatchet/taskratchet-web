@@ -3,6 +3,8 @@
 	import IconHelp from '~icons/material-symbols/help-outline';
 	import IconFeedback from '~icons/material-symbols/feedback-outline';
 	import IconLogout from '~icons/material-symbols/logout';
+	import IconLight from '~icons/material-symbols/light-mode';
+	import IconDark from '~icons/material-symbols/dark-mode';
 	import { logout, getSession, getMe } from '@taskratchet/sdk';
 
 	let session = null;
@@ -42,6 +44,23 @@
 	{/if}
 
 	<div>
+		<button
+			class="icon-button"
+			on:click={() => {
+				const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const override = localStorage.getItem('theme');
+				const newTheme = override === 'dark' || (!override && isDark) ? 'light' : 'dark';
+				localStorage.setItem('theme', newTheme);
+				document.documentElement.classList.toggle('dark', newTheme === 'dark');
+			}}
+			title="Toggle theme"
+		>
+			{#if document.documentElement.classList.contains('dark')}
+				<IconLight />
+			{:else}
+				<IconDark />
+			{/if}
+		</button>
 		<a href="https://taskratchet.com/help" title="Help"><IconHelp /></a>
 		<a
 			href="#"
@@ -96,5 +115,17 @@
 	.email {
 		color: var(--color);
 		opacity: 0.7;
+	}
+	.icon-button {
+		background: none;
+		border: none;
+		padding: 0;
+		color: var(--color);
+		opacity: 0.7;
+		cursor: pointer;
+	}
+
+	.icon-button:hover {
+		opacity: 1;
 	}
 </style>
