@@ -2,6 +2,7 @@
 	import { updateTask } from '@taskratchet/sdk';
 
 	export let task: TaskType;
+	export let onCopy: (task: TaskType) => void;
 
 	function formatDue(date: Date): string {
 		return date.toLocaleString();
@@ -17,6 +18,9 @@
 
 <li>
 	<div class="task-container">
+		<div class="menu">
+			<button on:click={() => onCopy(task)}>Copy</button>
+		</div>
 		<input
 			type="checkbox"
 			checked={task.complete}
@@ -51,5 +55,27 @@
 		color: #666;
 		font-size: 0.9em;
 		margin-top: 0.25rem;
+	}
+	.menu {
+		position: absolute;
+		right: 1rem;
+		top: 50%;
+		transform: translateY(-50%);
+	}
+
+	.menu button {
+		background: none;
+		border: none;
+		color: var(--color);
+		opacity: 0.7;
+		cursor: pointer;
+	}
+
+	.menu button:hover {
+		opacity: 1;
+	}
+
+	.task-container {
+		position: relative;
 	}
 </style>

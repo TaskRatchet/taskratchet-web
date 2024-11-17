@@ -6,9 +6,16 @@ const dispatch = createEventDispatcher();
 	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
+	export let task = '';
+	export let cents = 500;
 
-	let task = '';
-	let cents = 500;
+	$: if (isOpen) {
+	    // Only reset values if not copying a task
+	    if (!task) {
+	        task = '';
+	        cents = 500;
+	    }
+	}
 	let due = getDefaultDue();
 	let error = '';
 	let success = '';
