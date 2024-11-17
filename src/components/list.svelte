@@ -11,6 +11,7 @@
 	let taskToCopy: TaskType | undefined;
 let isEditing = false;
 	let loading = true;
+	let searchQuery = '';
 
 	onMount(async () => {
 		const session = getSession();
@@ -39,11 +40,19 @@ let isEditing = false;
 
 <div class="container">
 	<h1>{page === 'next' ? 'Next' : 'Archived'} Tasks</h1>
+	<input
+		type="search"
+		placeholder="Search tasks..."
+		bind:value={searchQuery}
+		class="search-input"
+	/>
 	{#if loading}
 		<div class="loading">Loading tasks...</div>
 	{/if}
 	<ul>
-		{#each tasks as task}
+		{#each tasks.filter(task => 
+			task.task.toLowerCase().includes(searchQuery.toLowerCase())
+		) as task}
 			<Task
 				{task}
 				onCopy={(sourceTask) => {
@@ -139,6 +148,15 @@ let isEditing = false;
 	.loading {
 		text-align: center;
 		padding: 2rem;
+		color: var(--color);
+	}
+	.search-input {
+		width: 100%;
+		padding: 0.5rem;
+		margin: 1rem 0;
+		border: 1px solid var(--color);
+		border-radius: 4px;
+		background: var(--background);
 		color: var(--color);
 	}
 </style>
