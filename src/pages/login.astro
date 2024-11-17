@@ -3,17 +3,19 @@ import Layout from '../layouts/Layout.astro';
 ---
 
 <Layout title="Login">
-	<form id="login-form">
-		<p>
-			Please login or <a href="/register">register</a> to view this page.
-		</p>
-		<label for="email">Email</label>
-		<input type="email" id="email" name="email" required />
-		<label for="password">Password</label>
-		<input type="password" id="password" name="password" required />
-		<button type="submit">Login</button>
-		<button id="reset">Reset Password</button>
-	</form>
+	<div>
+		<form id="login-form">
+			<p>
+				Please login or <a href="/register">register</a> to view this page.
+			</p>
+			<label for="email">Email</label>
+			<input type="email" id="email" name="email" required />
+			<label for="password">Password</label>
+			<input type="password" id="password" name="password" required />
+			<button type="submit">Login</button>
+			<button id="reset">Reset Password</button>
+		</form>
+	</div>
 </Layout>
 
 <script>
@@ -63,9 +65,10 @@ import Layout from '../layouts/Layout.astro';
 </script>
 
 <style>
-	body {
-		height: 100vh;
+	div {
+		height: calc(100vh - 4rem);
 		display: flex;
+		flex-direction: column;
 		justify-content: center;
 		align-items: center;
 	}
