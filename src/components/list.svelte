@@ -49,6 +49,10 @@
 					taskToCopy = sourceTask;
 					isAddOpen = true;
 				}}
+				onEdit={(sourceTask) => {
+					taskToCopy = sourceTask;
+					isAddOpen = true;
+				}}
 			/>
 		{/each}
 	</ul>

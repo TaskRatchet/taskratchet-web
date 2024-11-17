@@ -3,6 +3,7 @@
 
 	export let task: TaskType;
 	export let onCopy: (task: TaskType) => void;
+	export let onEdit: (task: TaskType) => void;
 
 	function formatDue(date: Date): string {
 		return date.toLocaleString();
@@ -20,6 +21,9 @@
 	<div class="task-container">
 		<div class="menu">
 			<button on:click={() => onCopy(task)}>Copy</button>
+			<button 
+				on:click={() => onEdit(task)}
+				disabled={!task.id || task.status !== 'pending'}>Edit</button>
 		</div>
 		<input
 			type="checkbox"
