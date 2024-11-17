@@ -1,5 +1,6 @@
 ---
 import { COLORS } from '../constants.js';
+import Nav from '../components/Nav.svelte';
 
 interface Props {
 	title: string;
@@ -57,11 +58,8 @@ const primaryDark = COLORS.warm.lighter,
 		/>
 	</head>
 	<body>
-			<nav>
-				<a href="/">Next</a>
-				<a href="/archive">Archive</a>
-			</nav>
-			<slot />
+		<Nav client:load />
+		<slot />
 	</body>
 </html>
 
@@ -112,18 +110,4 @@ const primaryDark = COLORS.warm.lighter,
 			monospace;
 	}
 
-	nav {
-		padding: 1rem;
-		display: flex;
-		gap: 1rem;
-		justify-content: center;
-	}
-
-	nav a {
-		text-decoration: none;
-	}
-
-	nav a:hover {
-		text-decoration: underline;
-	}
 </style>
