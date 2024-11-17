@@ -35,6 +35,12 @@ import ApiSettings from '../components/ApiSettings.svelte';
 		padding: 2rem;
 		color: var(--color);
 	}
+
+	.error {
+		color: red;
+		text-align: center;
+		padding: 2rem;
+	}
 </style>
 
 <script>
@@ -44,5 +50,11 @@ import ApiSettings from '../components/ApiSettings.svelte';
 	getMe().then(() => {
 		document.getElementById('loading')?.style.setProperty('display', 'none');
 		document.getElementById('content')?.style.setProperty('display', 'block');
+	}).catch(e => {
+		document.getElementById('loading')?.style.setProperty('display', 'none');
+		const error = e instanceof Error ? e.message : 'Failed to load account';
+		document.getElementById('loading')?.insertAdjacentHTML('afterend', 
+			`<div class="error">Error: ${error}</div>`
+		);
 	});
 </script>
