@@ -17,11 +17,16 @@
 	});
 
 	function getDefaultDue() {
+		// Default due date is 7 days from now at 11:59 PM
 		const due = new Date();
 		due.setDate(due.getDate() + 7);
 		due.setHours(23);
 		due.setMinutes(59);
-		return formatDue(due);
+		due.setSeconds(0);
+		due.setMilliseconds(0);
+		const offset = due.getTimezoneOffset();
+		due.setMinutes(due.getMinutes() - offset);
+		return due.toISOString().slice(0, 16); // Format as YYYY-MM-DDThh:mm
 	}
 
 	async function onSubmit() {
