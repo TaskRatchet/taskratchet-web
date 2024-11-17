@@ -57,7 +57,11 @@ const primaryDark = COLORS.warm.lighter,
 		/>
 	</head>
 	<body>
-		<slot />
+			<nav>
+				<a href="/">Next</a>
+				<a href="/archive">Archive</a>
+			</nav>
+			<slot />
 	</body>
 </html>
 
@@ -106,5 +110,20 @@ const primaryDark = COLORS.warm.lighter,
 			Bitstream Vera Sans Mono,
 			Courier New,
 			monospace;
+	}
+
+	nav {
+		padding: 1rem;
+		display: flex;
+		gap: 1rem;
+		justify-content: center;
+	}
+
+	nav a {
+		text-decoration: none;
+	}
+
+	nav a:hover {
+		text-decoration: underline;
 	}
 </style>
