@@ -69,9 +69,7 @@ let isEditing = false;
 		bind:value={searchQuery}
 		class="search-input"
 	/>
-	{#if loading}
-		<div class="loading">Loading tasks...</div>
-	{/if}
+	<div class="loading-bar" class:active={loading}></div>
 	<ul>
 		{#each tasks.filter(task => 
 			task.task.toLowerCase().includes(searchQuery.toLowerCase())
@@ -169,10 +167,32 @@ let isEditing = false;
 		align-items: center;
 		justify-content: center;
 	}
-	.loading {
-		text-align: center;
-		padding: 2rem;
-		color: var(--color);
+	.loading-bar {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 2px;
+		background: var(--primary);
+		transform: scaleX(0);
+		transform-origin: left;
+	}
+
+	.loading-bar.active {
+		animation: loading 1s infinite ease-in-out;
+	}
+
+	@keyframes loading {
+		0% {
+			transform: scaleX(0);
+		}
+		50% {
+			transform: scaleX(1);
+		}
+		100% {
+			transform: scaleX(0);
+			transform-origin: right;
+		}
 	}
 	.search-input {
 		width: 100%;
