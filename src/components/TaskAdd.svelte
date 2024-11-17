@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { addTask } from '@taskratchet/sdk';
+	import { addTask, getMe } from '@taskratchet/sdk';
+	import { onMount } from 'svelte';
 	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
@@ -8,6 +9,12 @@
 	let cents = 500;
 	let due = getDefaultDue();
 	let error = '';
+	let timezone = '';
+
+	onMount(async () => {
+		const me = await getMe();
+		timezone = me?.timezone;
+	});
 
 	function getDefaultDue() {
 		const due = new Date();
@@ -70,7 +77,7 @@
 				</label>
 
 				<div class="timezone">
-					Timezone: {Intl.DateTimeFormat().resolvedOptions().timeZone}
+					Timezone: {timezone}
 				</div>
 
 				<div class="buttons">
