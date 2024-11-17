@@ -3,9 +3,13 @@
 	import { onMount } from 'svelte';
 
 	let session = null;
+	let email = '';
 
 	onMount(() => {
 		session = getSession();
+		if (session) {
+			email = session.email;
+		}
 
 		getMe().then((data) => {
 			window.FreshworksWidget('identify', 'ticketForm', {
@@ -28,6 +32,7 @@
 		rel="noopener">Feedback</a
 	>
 	{#if session}
+		<span class="email">{email}</span>
 		<a
 			href="#"
 			on:click={() => {
@@ -52,5 +57,9 @@
 
 	nav a:hover {
 		text-decoration: underline;
+	}
+	.email {
+		color: var(--color);
+		opacity: 0.7;
 	}
 </style>
