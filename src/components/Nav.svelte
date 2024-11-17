@@ -1,12 +1,13 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import IconHelp from '~icons/material-symbols/help-outline';
 	import IconFeedback from '~icons/material-symbols/feedback-outline';
 	import IconLogout from '~icons/material-symbols/logout';
 	import { logout, getSession, getMe } from '@taskratchet/sdk';
-	import { onMount } from 'svelte';
 
 	let session = null;
 	let email = '';
+	let pathname = '';
 
 	onMount(() => {
 		session = getSession();
@@ -19,14 +20,17 @@
 				name: data?.name,
 				email: data?.email,
 			});
+		pathname = window.location.pathname;
 		});
+
+
 	});
 </script>
 
 <nav>
 	<div>
-		<a href="/">Next</a>
-		<a href="/archive">Archive</a>
+		<a href="/" class={pathname === '/' ? 'active' : ''}>Next</a>
+		<a href="/archive" class={pathname === '/archive' ? 'active' : ''}>Archive</a>
 	</div>
 
 	{#if session}
@@ -74,10 +78,17 @@
 
 	nav a {
 		text-decoration: none;
+		opacity: 0.7;
 	}
 
 	nav a:hover {
 		text-decoration: underline;
+		opacity: 1;
+	}
+
+	nav a.active {
+		opacity: 1;
+		color: var(--primary);
 	}
 	.email {
 		color: var(--color);
