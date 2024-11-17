@@ -10,6 +10,7 @@
 	let session = null;
 	let email = '';
 	let pathname = '';
+	let isDark = false;
 
 	onMount(() => {
 		session = getSession();
@@ -22,8 +23,9 @@
 				name: data?.name,
 				email: data?.email,
 			});
-			pathname = window.location.pathname;
 		});
+		pathname = window.location.pathname;
+		isDark = document.documentElement.classList.contains('dark');
 	});
 </script>
 
@@ -55,7 +57,7 @@
 			}}
 			title="Toggle theme"
 		>
-			{#if document.documentElement.classList.contains('dark')}
+			{#if isDark}
 				<IconLight />
 			{:else}
 				<IconDark />
