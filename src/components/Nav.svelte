@@ -13,6 +13,19 @@
 	let isDark = false;
 
 	onMount(() => {
+		isDark = document.documentElement.classList.contains('dark');
+		// Set up a mutation observer to watch for class changes
+		const observer = new MutationObserver((mutations) => {
+			mutations.forEach((mutation) => {
+				if (mutation.attributeName === 'class') {
+					isDark = document.documentElement.classList.contains('dark');
+				}
+			});
+		});
+		observer.observe(document.documentElement, { attributes: true });
+	});
+
+	onMount(() => {
 		session = getSession();
 		if (session) {
 			email = session.email;
@@ -49,9 +62,12 @@
 		<button
 			class="icon-button"
 			on:click={() => {
-				const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+				const isDark = window.matchMedia(
+					'(prefers-color-scheme: dark)',
+				).matches;
 				const override = localStorage.getItem('theme');
-				const newTheme = override === 'dark' || (!override && isDark) ? 'light' : 'dark';
+				const newTheme =
+					override === 'dark' || (!override && isDark) ? 'light' : 'dark';
 				localStorage.setItem('theme', newTheme);
 				document.documentElement.classList.toggle('dark', newTheme === 'dark');
 			}}
