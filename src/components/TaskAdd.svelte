@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { addTask, getMe } from '@taskratchet/sdk';
-	import { onMount } from 'svelte';
+	import { onMount, createEventDispatcher } from 'svelte';
+
+const dispatch = createEventDispatcher();
 	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
@@ -9,6 +11,7 @@
 	let cents = 500;
 	let due = getDefaultDue();
 	let error = '';
+	let success = '';
 	let timezone = '';
 
 	onMount(async () => {
@@ -38,13 +41,17 @@
 		const lines = task.split(/\r?\n/);
 		try {
 			for (const line of lines) {
-				const response = await addTask({ task: line, due, cents });
+				const dueDate = new Date(due);
+				const formattedDue = formatDue(dueDate);
+				const response = await addTask({ task: line, due: formattedDue, cents });
 				if (!response.ok) {
 					error = await response.text();
 					return;
 				}
 			}
 			error = '';
+			success = 'Tasks added successfully';
+			dispatch('tasksAdded');
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to add task';
 		}
@@ -58,6 +65,9 @@
 
 			{#if error}
 				<div class="error">{error}</div>
+			{/if}
+			{#if success}
+				<div class="success">{success}</div>
 			{/if}
 
 			<div class="form">
@@ -155,6 +165,11 @@
 
 	.error {
 		color: red;
+		margin-bottom: 1rem;
+	}
+
+	.success {
+		color: green;
 		margin-bottom: 1rem;
 	}
 
