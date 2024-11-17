@@ -8,6 +8,7 @@ export let page: 'next' | 'archive';
 
 let tasks: TaskType[] = [];
 let isAddOpen = false;
+let loading = true;
 
 onMount(async () => {
     const session = getSession();
@@ -24,13 +25,18 @@ onMount(async () => {
             page === 'next' 
                 ? new Date(task.due) > cutoff 
                 : new Date(task.due) <= cutoff
-        )
-        .sort((a, b) => new Date(a.due).getTime() - new Date(b.due).getTime());
+        )		.sort((a, b) => page === 'next' 
+			? new Date(a.due).getTime() - new Date(b.due).getTime()
+			: new Date(b.due).getTime() - new Date(a.due).getTime());
+	loading = false;
 });
 </script>
 
 <div class="container">
     <h1>{page === 'next' ? 'Next' : 'Archived'} Tasks</h1>
+	{#if loading}
+		<div class="loading">Loading tasks...</div>
+	{/if}
     <ul>
         {#each tasks as task}
             <Task {task} />
@@ -89,4 +95,9 @@ onMount(async () => {
         align-items: center;
         justify-content: center;
     }
+	.loading {
+		text-align: center;
+		padding: 2rem;
+		color: var(--color);
+	}
 </style>
