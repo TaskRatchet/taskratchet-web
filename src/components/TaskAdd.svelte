@@ -36,8 +36,17 @@
 		}
 
 		const lines = task.split(/\r?\n/);
-		for (const line of lines) {
-			await addTask({ task: line, due, cents });
+		try {
+			for (const line of lines) {
+				const response = await addTask({ task: line, due, cents });
+				if (!response.ok) {
+					error = await response.text();
+					return;
+				}
+			}
+			error = '';
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Failed to add task';
 		}
 	}
 </script>
