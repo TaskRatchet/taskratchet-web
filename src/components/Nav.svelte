@@ -81,7 +81,11 @@
 		</button>
 		<a href="https://taskratchet.com/help" title="Help"><IconHelp /></a>
 		<a
-			href="/feedback"
+			href="#"
+			on:click={() => {
+				window.FreshworksWidget('open');
+			}}
+			rel="noopener"
 			title="Feedback"><IconFeedback /></a
 		>
 		{#if session}
