@@ -1,28 +1,32 @@
 ---
 import Layout from '../layouts/Layout.astro';
-import GeneralSettings from '../components/GeneralSettings.svelte';
 import PasswordSettings from '../components/PasswordSettings.svelte';
-import GeneralSettings from '../components/GeneralSettings.svelte';
 import PaymentSettings from '../components/PaymentSettings.svelte';
 import ApiSettings from '../components/ApiSettings.svelte';
+import GeneralSettings from '../components/GeneralSettings.svelte';
 ---
 
 <Layout title="Account | TaskRatchet">
 	<div class="container">
 		<h1>Account</h1>
 
-		<div id="loading" class="loading">Loading account...</div>
-		<div id="content" style="display: none;">
-			<h2>General Settings</h2>
+		<div class="tabs">
+			<button class="tab active" data-tab="general">General</button>
+			<button class="tab" data-tab="password">Password</button>
+			<button class="tab" data-tab="payment">Payment</button>
+			<button class="tab" data-tab="api">API</button>
+		</div>
+
+		<div class="tab-content" id="general">
 			<GeneralSettings client:load />
-
-			<h2>Reset Password</h2>
+		</div>
+		<div class="tab-content" id="password" style="display: none;">
 			<PasswordSettings client:load />
-
-			<h2>Update Payment Details</h2>
+		</div>
+		<div class="tab-content" id="payment" style="display: none;">
 			<PaymentSettings client:load />
-
-			<h2>API</h2>
+		</div>
+		<div class="tab-content" id="api" style="display: none;">
 			<ApiSettings client:load />
 		</div>
 	</div>
@@ -35,31 +39,49 @@ import ApiSettings from '../components/ApiSettings.svelte';
 		padding: 1rem;
 	}
 
-	.loading {
-		text-align: center;
-		padding: 2rem;
-		color: var(--color);
+	.tabs {
+		display: flex;
+		gap: 1rem;
+		margin-bottom: 2rem;
 	}
 
-	.error {
-		color: red;
-		text-align: center;
-		padding: 2rem;
+	.tab {
+		background: var(--background);
+		color: var(--color);
+		border: 1px solid var(--color);
+		padding: 0.5rem 1rem;
+		border-radius: 4px;
+		cursor: pointer;
+		opacity: 0.7;
+	}
+
+	.tab:hover {
+		opacity: 1;
+	}
+
+	.tab.active {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: white;
+		opacity: 1;
 	}
 </style>
 
 <script>
-	import { getMe } from '@taskratchet/sdk';
+	const tabs = document.querySelectorAll('.tab');
+	const contents = document.querySelectorAll('.tab-content');
 
-	// Hide loading and show content once we confirm the user is logged in
-	getMe().then(() => {
-		document.getElementById('loading')?.style.setProperty('display', 'none');
-		document.getElementById('content')?.style.setProperty('display', 'block');
-	}).catch(e => {
-		document.getElementById('loading')?.style.setProperty('display', 'none');
-		const error = e instanceof Error ? e.message : 'Failed to load account';
-		document.getElementById('loading')?.insertAdjacentHTML('afterend', 
-			`<div class="error">Error: ${error}</div>`
-		);
+	tabs.forEach(tab => {
+		tab.addEventListener('click', () => {
+			const target = tab.getAttribute('data-tab');
+			
+			tabs.forEach(t => t.classList.remove('active'));
+			tab.classList.add('active');
+
+			contents.forEach(content => {
+				content.style.display = content.id === target ? 'block' : 'none';
+			});
+		});
 	});
 </script>
+</Layout>
