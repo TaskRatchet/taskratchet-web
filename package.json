@@ -19,6 +19,7 @@
   "dependencies": {
     "@astrojs/check": "^0.9.3",
     "@astrojs/react": "^3.6.2",
+    "@astrojs/svelte": "^6.0.1",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.6",
@@ -37,7 +38,8 @@
     "react-query": "3.39.3",
     "react-router-dom": "^6.26.0",
     "react-toastify": "^10.0.5",
-    "typescript": "^5.5.4"
+    "svelte": "^5.2.2",
+    "typescript": "^5.6.3"
   },
   "devDependencies": {
     "@eslint/compat": "^1.1.1",
