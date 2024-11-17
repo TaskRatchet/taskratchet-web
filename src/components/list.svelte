@@ -2,10 +2,12 @@
 import { getTasks, getSession } from '@taskratchet/sdk';
 import { onMount } from 'svelte';
 import Task from './task.svelte';
+import TaskAdd from './TaskAdd.svelte';
 
 export let page: 'next' | 'archive';
 
 let tasks: TaskType[] = [];
+let isAddOpen = false;
 
 onMount(async () => {
     const session = getSession();
@@ -36,6 +38,15 @@ onMount(async () => {
     </ul>
 </div>
 
+<button 
+    class="add-button"
+    on:click={() => isAddOpen = true}
+>
+    +
+</button>
+
+<TaskAdd bind:isOpen={isAddOpen} />
+
 <style>
     .container {
         max-width: 800px;
@@ -46,5 +57,22 @@ onMount(async () => {
     ul {
         list-style: none;
         padding: 0;
+    }
+
+    .add-button {
+        position: fixed;
+        bottom: 2rem;
+        right: 2rem;
+        width: 4rem;
+        height: 4rem;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        border: none;
+        font-size: 2rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }
 </style>
