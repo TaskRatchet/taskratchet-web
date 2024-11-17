@@ -6,6 +6,7 @@
 	let token = '';
 	let loading = false;
 	let error = '';
+	let success = '';
 
 	onMount(async () => {
 		me = await getMe();
@@ -15,6 +16,8 @@
 		loading = true;
 		try {
 			token = await getApiToken();
+			error = '';
+			success = 'Token generated successfully';
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to get token';
 		}
@@ -23,6 +26,13 @@
 </script>
 
 <div class="stack">
+	{#if error}
+		<div class="error">{error}</div>
+	{/if}
+	{#if success}
+		<div class="success">{success}</div>
+	{/if}
+
 	<div class="alert warning">
 		<h3>Warning</h3>
 
@@ -115,5 +125,14 @@
 	button:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+	}
+	.error {
+		color: red;
+		margin-bottom: 1rem;
+	}
+
+	.success {
+		color: green;
+		margin-bottom: 1rem;
 	}
 </style>
