@@ -2,7 +2,11 @@
 	import { logout, getSession } from '@taskratchet/sdk';
 	import { onMount } from 'svelte';
 
-	let session = getSession();
+	let session = null;
+
+	onMount(() => {
+		session = getSession();
+	});
 </script>
 
 <nav>
