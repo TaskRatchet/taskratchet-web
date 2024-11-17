@@ -7,6 +7,7 @@
 	let shouldShowMismatch = false;
 	let loading = false;
 	let error = '';
+	let success = '';
 
 	const savePassword = async (event: Event) => {
 		event.preventDefault();
@@ -17,6 +18,7 @@
 		try {
 			await updatePassword(oldPassword, password);
 			error = '';
+			success = 'Password updated successfully';
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to update password';
 		}
@@ -33,6 +35,9 @@
 	<div class="stack">
 		{#if error}
 			<div class="error">{error}</div>
+		{/if}
+		{#if success}
+			<div class="success">{success}</div>
 		{/if}
 
 		<label>
@@ -100,6 +105,11 @@
 
 	.error {
 		color: red;
+		margin-bottom: 1rem;
+	}
+
+	.success {
+		color: green;
 		margin-bottom: 1rem;
 	}
 
