@@ -24,7 +24,7 @@
 		on:click={() => {
 			window.FreshworksWidget('open');
 		}}
-		rel="noopener">Help</a
+		rel="noopener">Feedback</a
 	>
 	{#if session}
 		<a
