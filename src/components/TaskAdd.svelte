@@ -7,6 +7,7 @@ const dispatch = createEventDispatcher();
 
 	export let isOpen = false;
 export let isEditing = false;
+export let taskToCopy: TaskType;
 	export let task = '';
 	export let cents = 500;
 
@@ -46,12 +47,34 @@ export let isEditing = false;
 			return;
 		}
 
-		const lines = task.split(/\r?\n/);
-		try {
-			for (const line of lines) {
+		if (isEditing) {
+			if (cents < taskToCopy.cents) {
+				error = 'Stakes cannot be less than the original task';
+				return;
+			}
+			if (new Date(due) > new Date(taskToCopy.due)) {
+				error = 'Cannot postpone due date';
+				return;
+			}
+			try {
 				const dueDate = new Date(due);
 				const formattedDue = formatDue(dueDate);
-				const response = await addTask({ task: line, due: formattedDue, cents });
+				const response = await editTask(taskToCopy.id, formattedDue, cents);
+				if (!response.ok) {
+					error = await response.text();
+					return;
+				}
+				success = 'Task updated successfully';
+			} catch (e) {
+				error = e instanceof Error ? e.message : 'Failed to update task';
+			}
+		} else {
+			const lines = task.split(/\r?\n/);
+			try {
+				for (const line of lines) {
+					const dueDate = new Date(due);
+					const formattedDue = formatDue(dueDate);
+					const response = await addTask({ task: line, due: formattedDue, cents });
 				if (!response.ok) {
 					error = await response.text();
 					return;

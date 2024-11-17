@@ -67,6 +67,7 @@ let isEditing = false;
 	task={taskToCopy?.task}
 	cents={taskToCopy?.cents}
 	isEditing={isEditing}
+	{taskToCopy}
 	on:tasksAdded={async () => {
 		const allTasks = (await getTasks()) as TaskType[];
 		const now = new Date();
