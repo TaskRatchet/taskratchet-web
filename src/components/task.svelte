@@ -3,6 +3,7 @@ export let task: TaskType;
 </script>
 
 <li>
+	<input type="checkbox" checked={task.complete} disabled />
 	<h3>{task.task}</h3>
 	<p>Due: {new Date(task.due).toLocaleString()}</p>
 	<p>Amount: ${task.cents / 100}</p>
