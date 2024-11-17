@@ -6,12 +6,17 @@
 
 	let hasStripeCustomer = false;
 	let loading = false;
+	let error = '';
 
 	onMount(async () => {
 		const me = await getMe();
 		hasStripeCustomer = me?.has_stripe_customer || false;
 	});
 </script>
+
+{#if error}
+	<div class="error">{error}</div>
+{/if}
 
 {#if hasStripeCustomer}
 	<a
@@ -28,12 +33,17 @@
 		on:click={() => {
 			void (async () => {
 				loading = true;
-				const { id } = await getCheckoutSession();
-				await updateMe({
-					checkout_session_id: id,
-				});
-				await redirectToCheckout(id);
-				loading = false;
+				try {
+					const { id } = await getCheckoutSession();
+					await updateMe({
+						checkout_session_id: id,
+					});
+					await redirectToCheckout(id);
+					loading = false;
+				} catch (e) {
+					error = e instanceof Error ? e.message : 'Failed to update payment method';
+					loading = false;
+				}
 			})();
 		}}
 	>
@@ -62,5 +72,9 @@
 	button:disabled {
 		opacity: 0.5;
 		cursor: not-allowed;
+	}
+	.error {
+		color: red;
+		margin-bottom: 1rem;
 	}
 </style>
