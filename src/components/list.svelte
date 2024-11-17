@@ -17,11 +17,13 @@ onMount(async () => {
     const allTasks = (await getTasks()) as TaskType[];
     const now = new Date();
     const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-    tasks = allTasks.filter((task) => 
-        page === 'next' 
-            ? new Date(task.due) > cutoff 
-            : new Date(task.due) <= cutoff
-    );
+    tasks = allTasks
+        .filter((task) => 
+            page === 'next' 
+                ? new Date(task.due) > cutoff 
+                : new Date(task.due) <= cutoff
+        )
+        .sort((a, b) => new Date(a.due).getTime() - new Date(b.due).getTime());
 });
 </script>
 
