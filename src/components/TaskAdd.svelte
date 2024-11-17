@@ -1,22 +1,22 @@
 <script lang="ts">
-	import { addTask, getMe } from '@taskratchet/sdk';
+	import { addTask, getMe, editTask } from '@taskratchet/sdk';
 	import { onMount, createEventDispatcher } from 'svelte';
 
-const dispatch = createEventDispatcher();
+	const dispatch = createEventDispatcher();
 	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
-export let isEditing = false;
-export let taskToCopy: TaskType;
+	export let isEditing = false;
+	export let taskToCopy: TaskType;
 	export let task = '';
 	export let cents = 500;
 
 	$: if (isOpen) {
-	    // Only reset values if not copying a task
-	    if (!task) {
-	        task = '';
-	        cents = 500;
-	    }
+		// Only reset values if not copying a task
+		if (!task) {
+			task = '';
+			cents = 500;
+		}
 	}
 	let due = getDefaultDue();
 	let error = '';
@@ -74,17 +74,22 @@ export let taskToCopy: TaskType;
 				for (const line of lines) {
 					const dueDate = new Date(due);
 					const formattedDue = formatDue(dueDate);
-					const response = await addTask({ task: line, due: formattedDue, cents });
-				if (!response.ok) {
-					error = await response.text();
-					return;
+					const response = await addTask({
+						task: line,
+						due: formattedDue,
+						cents,
+					});
+					if (!response.ok) {
+						error = await response.text();
+						return;
+					}
 				}
+				error = '';
+				success = 'Tasks added successfully';
+				dispatch('tasksAdded');
+			} catch (e) {
+				error = e instanceof Error ? e.message : 'Failed to add task';
 			}
-			error = '';
-			success = 'Tasks added successfully';
-			dispatch('tasksAdded');
-		} catch (e) {
-			error = e instanceof Error ? e.message : 'Failed to add task';
 		}
 	}
 </script>
@@ -137,7 +142,7 @@ export let taskToCopy: TaskType;
 
 				<div class="buttons">
 					<button on:click={() => (isOpen = false)}>Cancel</button>
-					<button on:click={onSubmit}>Add</button>
+					<button on:click={onSubmit}>{isEditing ? 'Save' : 'Add'}</button>
 				</div>
 			</div>
 		</div>
