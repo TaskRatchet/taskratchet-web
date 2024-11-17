@@ -90,13 +90,18 @@ const primaryDark = COLORS.warm.lighter,
 		--background: #eaeaea;
 	}
 
-	@media (prefers-color-scheme: dark) {
-		:root {
-			--primary: var(--primaryDark);
-			--secondary: var(--secondaryDark);
-			--color: #fff;
-			--background: #13151a;
-		}
+	:root {
+		--primary: var(--primaryLight);
+		--secondary: var(--secondaryLight);
+		--color: #333;
+		--background: #eaeaea;
+	}
+
+	:root.dark {
+		--primary: var(--primaryDark);
+		--secondary: var(--secondaryDark);
+		--color: #fff;
+		--background: #13151a;
 	}
 
 	html {
