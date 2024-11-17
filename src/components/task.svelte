@@ -29,9 +29,7 @@
 				disabled={!task.id || task.status !== 'pending'}>Edit</button>
 			<button
 				on:click={() => {
-					if (confirm(`Are you sure you want to charge this task immediately?\n\nIf you confirm, you will immediately be charged ${task.cents / 100}.`)) {
-						onUncle(task);
-					}
+					showUncleConfirm = true;
 				}}
 				disabled={task.status !== 'pending'}>Charge immediately</button>
 		</div>
@@ -111,6 +109,16 @@
 		margin-top: 0.25rem;
 	}
 </style>
+
+<ConfirmModal 
+	isOpen={showUncleConfirm}
+	amount={task.cents / 100}
+	onConfirm={() => {
+		onUncle(task);
+		showUncleConfirm = false;
+	}}
+	onCancel={() => showUncleConfirm = false}
+/>
 
 <ConfirmModal 
 	isOpen={showUncleConfirm}
