@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getTasks, getSession } from '@taskratchet/sdk';
+	import { getTasks, getSession, updateTask } from '@taskratchet/sdk';
 	import { onMount } from 'svelte';
 	import Task from './task.svelte';
 	import TaskModal from './TaskModal.svelte';
@@ -54,6 +54,27 @@ let isEditing = false;
 					taskToCopy = sourceTask;
 					isEditing = true;
 					isAddOpen = true;
+				}}
+				onUncle={async (task) => {
+					if (!task.id) return;
+					const response = await updateTask(task.id, { uncle: true });
+					if (response.ok) {
+						// Refresh task list
+						const allTasks = (await getTasks()) as TaskType[];
+						const now = new Date();
+						const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+						tasks = allTasks
+							.filter((task) =>
+								page === 'next'
+									? new Date(task.due) > cutoff
+									: new Date(task.due) <= cutoff,
+							)
+							.sort((a, b) =>
+								page === 'next'
+									? new Date(a.due).getTime() - new Date(b.due).getTime()
+									: new Date(b.due).getTime() - new Date(a.due).getTime(),
+							);
+					}
 				}}
 			/>
 		{/each}

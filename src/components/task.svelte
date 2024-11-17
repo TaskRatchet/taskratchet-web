@@ -1,9 +1,12 @@
 <script lang="ts">
 	import { updateTask } from '@taskratchet/sdk';
+	import ConfirmModal from './ConfirmModal.svelte';
 
+	let showUncleConfirm = false;
 	export let task: TaskType;
 	export let onCopy: (task: TaskType) => void;
 	export let onEdit: (task: TaskType) => void;
+	export let onUncle: (task: TaskType) => void;
 
 	function formatDue(date: Date): string {
 		return date.toLocaleString();
@@ -24,6 +27,13 @@
 			<button 
 				on:click={() => onEdit(task)}
 				disabled={!task.id || task.status !== 'pending'}>Edit</button>
+			<button
+				on:click={() => {
+					if (confirm(`Are you sure you want to charge this task immediately?\n\nIf you confirm, you will immediately be charged ${task.cents / 100}.`)) {
+						onUncle(task);
+					}
+				}}
+				disabled={task.status !== 'pending'}>Charge immediately</button>
 		</div>
 		<input
 			type="checkbox"
@@ -85,6 +95,29 @@
 	}
 
 	.task-container {
+		display: flex;
+		align-items: flex-start;
+		gap: 1rem;
 		position: relative;
 	}
+
+	.task-content {
+		flex: 1;
+	}
+
+	.task-details {
+		color: #666;
+		font-size: 0.9em;
+		margin-top: 0.25rem;
+	}
 </style>
+
+<ConfirmModal 
+	isOpen={showUncleConfirm}
+	amount={task.cents / 100}
+	onConfirm={() => {
+		onUncle(task);
+		showUncleConfirm = false;
+	}}
+	onCancel={() => showUncleConfirm = false}
+/>
