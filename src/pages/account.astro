@@ -1,0 +1,29 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PasswordSettings from '../components/PasswordSettings.svelte';
+import PaymentSettings from '../components/PaymentSettings.svelte';
+import ApiSettings from '../components/ApiSettings.svelte';
+---
+
+<Layout title="Account | TaskRatchet">
+	<div class="container">
+		<h1>Account</h1>
+
+		<h2>Reset Password</h2>
+		<PasswordSettings client:load />
+
+		<h2>Update Payment Details</h2>
+		<PaymentSettings client:load />
+
+		<h2>API</h2>
+		<ApiSettings client:load />
+	</div>
+</Layout>
+
+<style>
+	.container {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 1rem;
+	}
+</style>

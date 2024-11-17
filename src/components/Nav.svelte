@@ -35,7 +35,7 @@
 
 	{#if session}
 		<div>
-			<span class="email">{email}</span>
+			<a href="/account" class={pathname === '/account' ? 'active' : ''}>{email}</a>
 		</div>
 	{/if}
 
