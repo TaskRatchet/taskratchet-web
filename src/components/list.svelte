@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { getTasks, getSession, updateTask } from '@taskratchet/sdk';
+import IconRefresh from '~icons/material-symbols/refresh';
 	import { onMount } from 'svelte';
 	import Task from './task.svelte';
 	import TaskModal from './TaskModal.svelte';
@@ -39,7 +40,29 @@ let isEditing = false;
 </script>
 
 <div class="container">
-	<h1>{page === 'next' ? 'Next' : 'Archived'} Tasks</h1>
+	<div class="header">
+		<h1>{page === 'next' ? 'Next' : 'Archived'} Tasks</h1>
+		<button class="icon-button" on:click={async () => {
+			loading = true;
+			const allTasks = (await getTasks()) as TaskType[];
+			const now = new Date();
+			const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+			tasks = allTasks
+				.filter((task) =>
+					page === 'next'
+						? new Date(task.due) > cutoff
+						: new Date(task.due) <= cutoff,
+				)
+				.sort((a, b) =>
+					page === 'next'
+						? new Date(a.due).getTime() - new Date(b.due).getTime()
+						: new Date(b.due).getTime() - new Date(a.due).getTime(),
+				);
+			loading = false;
+		}} title="Refresh">
+			<IconRefresh />
+		</button>
+	</div>
 	<input
 		type="search"
 		placeholder="Search tasks..."
@@ -159,5 +182,23 @@ let isEditing = false;
 		border-radius: 4px;
 		background: var(--background);
 		color: var(--color);
+	}
+	.header {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+	}
+
+	.icon-button {
+		background: none;
+		border: none;
+		color: var(--color);
+		opacity: 0.7;
+		cursor: pointer;
+		padding: 0;
+	}
+
+	.icon-button:hover {
+		opacity: 1;
 	}
 </style>
