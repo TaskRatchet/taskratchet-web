@@ -9,14 +9,17 @@ import ApiSettings from '../components/ApiSettings.svelte';
 	<div class="container">
 		<h1>Account</h1>
 
-		<h2>Reset Password</h2>
-		<PasswordSettings client:load />
+		<div id="loading" class="loading">Loading account...</div>
+		<div id="content" style="display: none;">
+			<h2>Reset Password</h2>
+			<PasswordSettings client:load />
 
-		<h2>Update Payment Details</h2>
-		<PaymentSettings client:load />
+			<h2>Update Payment Details</h2>
+			<PaymentSettings client:load />
 
-		<h2>API</h2>
-		<ApiSettings client:load />
+			<h2>API</h2>
+			<ApiSettings client:load />
+		</div>
 	</div>
 </Layout>
 
@@ -26,4 +29,20 @@ import ApiSettings from '../components/ApiSettings.svelte';
 		margin: 0 auto;
 		padding: 1rem;
 	}
+
+	.loading {
+		text-align: center;
+		padding: 2rem;
+		color: var(--color);
+	}
 </style>
+
+<script>
+	import { getMe } from '@taskratchet/sdk';
+
+	// Hide loading and show content once we confirm the user is logged in
+	getMe().then(() => {
+		document.getElementById('loading')?.style.setProperty('display', 'none');
+		document.getElementById('content')?.style.setProperty('display', 'block');
+	});
+</script>
