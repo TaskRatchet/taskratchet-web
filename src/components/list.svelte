@@ -2,7 +2,7 @@
 	import { getTasks, getSession } from '@taskratchet/sdk';
 	import { onMount } from 'svelte';
 	import Task from './task.svelte';
-	import TaskAdd from './TaskAdd.svelte';
+	import TaskModal from './TaskModal.svelte';
 
 	export let page: 'next' | 'archive';
 
@@ -60,14 +60,19 @@ let isEditing = false;
 	</ul>
 </div>
 
-<button class="add-button" on:click={() => (isAddOpen = true)}> + </button>
+<button 
+    class="add-button" 
+    on:click={() => {
+        taskToCopy = undefined;
+        isEditing = false;
+        isAddOpen = true;
+    }}
+> + </button>
 
-<TaskAdd
+<TaskModal
 	bind:isOpen={isAddOpen}
-	task={taskToCopy?.task}
-	cents={taskToCopy?.cents}
-	isEditing={isEditing}
-	{taskToCopy}
+	mode={isEditing ? 'edit' : 'add'}
+	sourceTask={taskToCopy}
 	on:tasksAdded={async () => {
 		const allTasks = (await getTasks()) as TaskType[];
 		const now = new Date();

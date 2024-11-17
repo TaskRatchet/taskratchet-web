@@ -75,8 +75,13 @@
 		cursor: pointer;
 	}
 
-	.menu button:hover {
+	.menu button:hover:not(:disabled) {
 		opacity: 1;
+	}
+
+	.menu button:disabled {
+		opacity: 0.3;
+		cursor: not-allowed;
 	}
 
 	.task-container {

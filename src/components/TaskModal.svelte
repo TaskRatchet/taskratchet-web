@@ -6,28 +6,27 @@
 	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
-	export let isEditing = false;
-	export let taskToCopy: TaskType;
-	export let task = '';
-	export let cents = 500;
+	export let mode: 'add' | 'edit' = 'add';
+	export let sourceTask: TaskType | undefined = undefined;
 
-	$: {
-		if (!isOpen) {
-			// Reset state when modal closes
-			task = '';
-			cents = 500;
-			error = '';
-			success = '';
-		} else if (isEditing && taskToCopy) {
-			// Populate form with task data when editing
-			task = taskToCopy.task;
-			cents = taskToCopy.cents;
-		}
-	}
+	let task = '';
+	let cents = 500;
 	let due = getDefaultDue();
 	let error = '';
 	let success = '';
 	let timezone = '';
+
+	$: {
+		if (!isOpen) {
+			task = '';
+			cents = 500;
+			error = '';
+			success = '';
+		} else if (mode === 'edit' && sourceTask) {
+			task = sourceTask.task;
+			cents = sourceTask.cents;
+		}
+	}
 
 	onMount(async () => {
 		const me = await getMe();
@@ -53,24 +52,26 @@
 			return;
 		}
 
-		if (isEditing) {
-			if (cents < taskToCopy.cents) {
+		if (mode === 'edit') {
+			if (!sourceTask) return;
+			if (cents < sourceTask.cents) {
 				error = 'Stakes cannot be less than the original task';
 				return;
 			}
-			if (new Date(due) > new Date(taskToCopy.due)) {
+			if (new Date(due) > new Date(sourceTask.due)) {
 				error = 'Cannot postpone due date';
 				return;
 			}
 			try {
 				const dueDate = new Date(due);
 				const formattedDue = formatDue(dueDate);
-				const response = await editTask(taskToCopy.id, formattedDue, cents);
+				const response = await editTask(sourceTask.id, formattedDue, cents);
 				if (!response.ok) {
 					error = await response.text();
 					return;
 				}
 				success = 'Task updated successfully';
+				dispatch('tasksAdded');
 			} catch (e) {
 				error = e instanceof Error ? e.message : 'Failed to update task';
 			}
@@ -103,7 +104,7 @@
 {#if isOpen}
 	<div class="modal">
 		<div class="modal-content">
-			<h2>{isEditing ? 'Edit Task' : 'Add Task'}</h2>
+			<h2>{mode === 'edit' ? 'Edit Task' : 'Add Task'}</h2>
 
 			{#if error}
 				<div class="error">{error}</div>
@@ -148,7 +149,7 @@
 
 				<div class="buttons">
 					<button on:click={() => (isOpen = false)}>Cancel</button>
-					<button on:click={onSubmit}>{isEditing ? 'Save' : 'Add'}</button>
+					<button on:click={onSubmit}>{mode === 'edit' ? 'Save' : 'Add'}</button>
 				</div>
 			</div>
 		</div>
