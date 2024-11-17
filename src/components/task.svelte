@@ -35,9 +35,6 @@
 <style>
 	li {
 		margin: 1rem 0;
-		padding: 1rem;
-		border: 1px solid #ccc;
-		border-radius: 4px;
 	}
 
 	.task-container {
