@@ -174,11 +174,23 @@ const dispatch = createEventDispatcher();
 	}
 
 	input,
-	textarea {
+	textarea,
+	button {
 		background: var(--background);
 		color: var(--color);
 		border: 1px solid var(--color);
 		padding: 0.5rem;
 		border-radius: 4px;
+	}
+
+	button {
+		cursor: pointer;
+		min-width: 80px;
+	}
+
+	button:hover {
+		background: var(--primary);
+		border-color: var(--primary);
+		color: white;
 	}
 </style>
