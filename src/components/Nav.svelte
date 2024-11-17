@@ -1,17 +1,19 @@
 <script lang="ts">
-	import { logout } from '@taskratchet/sdk';
+	import { logout, getSession } from '@taskratchet/sdk';
+	import { onMount } from 'svelte';
+
+	let session = getSession();
 </script>
 
 <nav>
 	<a href="/">Next</a>
-	<a href="/archive">Archive</a>
-	<a
-		href="#"
-		on:click={() => {
-			logout();
-			window.location.href = '/login';
-		}}>Logout</a
-	>
+	<a href="/archive">Archive</a>	{#if session}
+		<a
+			href="#"
+			on:click={() => { logout(); window.location.href = '/login'; }}
+			>Logout</a
+		>
+	{/if}
 </nav>
 
 <style>
