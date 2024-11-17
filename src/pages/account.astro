@@ -1,6 +1,8 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import GeneralSettings from '../components/GeneralSettings.svelte';
 import PasswordSettings from '../components/PasswordSettings.svelte';
+import GeneralSettings from '../components/GeneralSettings.svelte';
 import PaymentSettings from '../components/PaymentSettings.svelte';
 import ApiSettings from '../components/ApiSettings.svelte';
 ---
@@ -11,6 +13,9 @@ import ApiSettings from '../components/ApiSettings.svelte';
 
 		<div id="loading" class="loading">Loading account...</div>
 		<div id="content" style="display: none;">
+			<h2>General Settings</h2>
+			<GeneralSettings client:load />
+
 			<h2>Reset Password</h2>
 			<PasswordSettings client:load />
 
