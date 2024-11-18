@@ -181,7 +181,7 @@
 	.header {
 		display: flex;
 		align-items: center;
-		gap: 1rem;
+		gap: 0.5rem;
 	}
 
 	.icon-button {
@@ -190,7 +190,7 @@
 		color: var(--color);
 		opacity: 0.7;
 		cursor: pointer;
-		padding: 0;
+		padding: 0.5rem;
 	}
 
 	.icon-button:hover {
