@@ -61,14 +61,19 @@ const primaryDark = COLORS.warm.lighter,
 		</script>
 	</head>
 	<script>
-		import { subscribeToApiActivity, unsubscribeFromApiActivity } from '@taskratchet/sdk';
+		import {
+			subscribeToApiActivity,
+			unsubscribeFromApiActivity,
+		} from '@taskratchet/sdk';
 
 		const updateLoading = (isActive: boolean) => {
 			document.body.classList.toggle('loading', isActive);
 		};
 
 		subscribeToApiActivity(updateLoading);
-		addEventListener('beforeunload', () => unsubscribeFromApiActivity(updateLoading));
+		addEventListener('beforeunload', () =>
+			unsubscribeFromApiActivity(updateLoading)
+		);
 	</script>
 	<script is:inline>
 		// Initialize theme
@@ -156,8 +161,13 @@ const primaryDark = COLORS.warm.lighter,
 		0% {
 			transform: scaleX(0);
 		}
-		50% {
+		40% {
 			transform: scaleX(1);
+			transform-origin: left;
+		}
+		60% {
+			transform: scaleX(1);
+			transform-origin: right;
 		}
 		100% {
 			transform: scaleX(0);
