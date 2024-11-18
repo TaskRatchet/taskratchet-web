@@ -132,7 +132,7 @@
 	.link-button {
 		background: none;
 		border: none;
-		color: var(--color);
+		color: var(--primary);
 		opacity: 0.7;
 		cursor: pointer;
 		padding: 0;
