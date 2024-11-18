@@ -11,7 +11,6 @@
 	let isAddOpen = false;
 	let taskToCopy: TaskType | undefined;
 	let isEditing = false;
-	let loading = true;
 	let searchQuery = '';
 
 	onMount(async () => {
@@ -35,7 +34,6 @@
 					? new Date(a.due).getTime() - new Date(b.due).getTime()
 					: new Date(b.due).getTime() - new Date(a.due).getTime(),
 			);
-		loading = false;
 	});
 </script>
 
@@ -45,7 +43,6 @@
 		<button
 			class="icon-button"
 			on:click={async () => {
-				document.body.classList.add('loading');
 				const allTasks = (await getTasks()) as TaskType[];
 				const now = new Date();
 				const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
@@ -60,7 +57,6 @@
 							? new Date(a.due).getTime() - new Date(b.due).getTime()
 							: new Date(b.due).getTime() - new Date(a.due).getTime(),
 					);
-				document.body.classList.remove('loading');
 			}}
 			title="Refresh"
 		>
@@ -73,7 +69,6 @@
 		bind:value={searchQuery}
 		class="search-input"
 	/>
-	<div class="loading-bar" class:active={loading}></div>
 	<ul>
 		{#each tasks.filter((task) => task.task
 				.toLowerCase()
