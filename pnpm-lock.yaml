@@ -36,8 +36,8 @@ importers:
         specifier: ^7.12.0
         version: 7.15.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@mui/material@5.16.7(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mui/system@5.16.7(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@taskratchet/sdk':
-        specifier: ^0.0.7
-        version: 0.0.7
+        specifier: ^0.1.1
+        version: 0.1.1
       astro:
         specifier: ^4.15.1
         version: 4.15.1(@types/node@22.5.2)(rollup@4.21.2)(sass@1.77.8)(typescript@5.6.3)
@@ -1267,8 +1267,8 @@ packages:
       svelte: ^5.0.0-next.96 || ^5.0.0
       vite: ^5.0.0
 
-  '@taskratchet/sdk@0.0.7':
-    resolution: {integrity: sha512-FUbwTuBwl/+/c5dKN154TG+tNbRJ7SRUsrpLEJJU/EHjEGi3N8vDez45/Y0AYhNNsEtic0gF9ffnPZVxsIIojA==}
+  '@taskratchet/sdk@0.1.1':
+    resolution: {integrity: sha512-tU5GDgPYhfIdfKL7f0JXoeqJoP4HqSZhd3i7/l45I4tBG/x/hCXEo+2JFLoBexRfWEvF+mCGWWfbcecZMwRzNw==}
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -5449,7 +5449,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@taskratchet/sdk@0.0.7':
+  '@taskratchet/sdk@0.1.1':
     dependencies:
       firebase: 10.13.1
     transitivePeerDependencies:
