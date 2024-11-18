@@ -29,16 +29,18 @@
 		<div class="menu">
 			<button on:click={() => onCopy(task)} title="Copy"><IconCopy /></button>
 			{#if page === 'next'}
-				<button 
+				<button
 					on:click={() => onEdit(task)}
 					disabled={!task.id || task.status !== 'pending'}
-					title="Edit"><IconEdit /></button>
+					title="Edit"><IconEdit /></button
+				>
 				<button
 					on:click={() => {
 						showUncleConfirm = true;
 					}}
 					disabled={task.status !== 'pending'}
-					title="Charge immediately"><IconCharge /></button>
+					title="Charge immediately"><IconCharge /></button
+				>
 			{/if}
 		</div>
 		<input
@@ -55,6 +57,16 @@
 		</div>
 	</div>
 </li>
+
+<ConfirmModal
+	isOpen={showUncleConfirm}
+	amount={task.cents / 100}
+	onConfirm={() => {
+		onUncle(task);
+		showUncleConfirm = false;
+	}}
+	onCancel={() => (showUncleConfirm = false)}
+/>
 
 <style>
 	li {
@@ -105,12 +117,12 @@
 		align-items: flex-start;
 		gap: 1rem;
 		position: relative;
-		padding-right: 8rem;  /* Make room for menu buttons */
+		padding-right: 8rem; /* Make room for menu buttons */
 	}
 
 	.task-content {
 		flex: 1;
-		word-break: break-word;  /* Allow text to wrap */
+		word-break: break-word; /* Allow text to wrap */
 	}
 
 	.task-details {
@@ -119,23 +131,3 @@
 		margin-top: 0.25rem;
 	}
 </style>
-
-<ConfirmModal 
-	isOpen={showUncleConfirm}
-	amount={task.cents / 100}
-	onConfirm={() => {
-		onUncle(task);
-		showUncleConfirm = false;
-	}}
-	onCancel={() => showUncleConfirm = false}
-/>
-
-<ConfirmModal 
-	isOpen={showUncleConfirm}
-	amount={task.cents / 100}
-	onConfirm={() => {
-		onUncle(task);
-		showUncleConfirm = false;
-	}}
-	onCancel={() => showUncleConfirm = false}
-/>

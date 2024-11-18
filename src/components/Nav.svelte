@@ -80,21 +80,20 @@
 			{/if}
 		</button>
 		<a href="https://taskratchet.com/help" title="Help"><IconHelp /></a>
-		<a
-			href="#"
+		<button
+			class="link-button"
 			on:click={() => {
 				window.FreshworksWidget('open');
 			}}
-			rel="noopener"
-			title="Feedback"><IconFeedback /></a
+			title="Feedback"><IconFeedback /></button
 		>
 		{#if session}
-			<a
-				href="#"
+			<button
+				class="link-button"
 				on:click={() => {
 					logout();
 					window.location.href = '/login';
-				}}><IconLogout /></a
+				}}><IconLogout /></button
 			>
 		{/if}
 	</div>
@@ -130,10 +129,20 @@
 		opacity: 1;
 		color: var(--primary);
 	}
-	.email {
+	.link-button {
+		background: none;
+		border: none;
 		color: var(--color);
 		opacity: 0.7;
+		cursor: pointer;
+		padding: 0;
+		font: inherit;
 	}
+
+	.link-button:hover {
+		opacity: 1;
+	}
+
 	.icon-button {
 		background: none;
 		border: none;

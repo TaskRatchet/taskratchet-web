@@ -119,7 +119,7 @@
 						bind:value={task}
 						placeholder="Enter one or more tasks, one per line"
 						rows="3"
-					/>
+					></textarea>
 				</label>
 
 				<label>
@@ -221,7 +221,7 @@
 		background: var(--background);
 		color: var(--color);
 		border: 1px solid var(--color);
-		padding: 0.5rem;
+		padding: 0.3rem;
 		border-radius: 4px;
 	}
 

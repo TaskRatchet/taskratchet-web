@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getTasks, getSession, updateTask } from '@taskratchet/sdk';
-import IconRefresh from '~icons/material-symbols/refresh';
+	import IconRefresh from '~icons/material-symbols/refresh';
 	import { onMount } from 'svelte';
 	import Task from './task.svelte';
 	import TaskModal from './TaskModal.svelte';
@@ -10,7 +10,7 @@ import IconRefresh from '~icons/material-symbols/refresh';
 	let tasks: TaskType[] = [];
 	let isAddOpen = false;
 	let taskToCopy: TaskType | undefined;
-let isEditing = false;
+	let isEditing = false;
 	let loading = true;
 	let searchQuery = '';
 
@@ -42,24 +42,28 @@ let isEditing = false;
 <div class="container">
 	<div class="header">
 		<h1>{page === 'next' ? 'Next' : 'Archived'} Tasks</h1>
-		<button class="icon-button" on:click={async () => {
-			document.body.classList.add('loading');
-			const allTasks = (await getTasks()) as TaskType[];
-			const now = new Date();
-			const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-			tasks = allTasks
-				.filter((task) =>
-					page === 'next'
-						? new Date(task.due) > cutoff
-						: new Date(task.due) <= cutoff,
-				)
-				.sort((a, b) =>
-					page === 'next'
-						? new Date(a.due).getTime() - new Date(b.due).getTime()
-						: new Date(b.due).getTime() - new Date(a.due).getTime(),
-				);
-			document.body.classList.remove('loading');
-		}} title="Refresh">
+		<button
+			class="icon-button"
+			on:click={async () => {
+				document.body.classList.add('loading');
+				const allTasks = (await getTasks()) as TaskType[];
+				const now = new Date();
+				const cutoff = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+				tasks = allTasks
+					.filter((task) =>
+						page === 'next'
+							? new Date(task.due) > cutoff
+							: new Date(task.due) <= cutoff,
+					)
+					.sort((a, b) =>
+						page === 'next'
+							? new Date(a.due).getTime() - new Date(b.due).getTime()
+							: new Date(b.due).getTime() - new Date(a.due).getTime(),
+					);
+				document.body.classList.remove('loading');
+			}}
+			title="Refresh"
+		>
 			<IconRefresh />
 		</button>
 	</div>
@@ -71,9 +75,9 @@ let isEditing = false;
 	/>
 	<div class="loading-bar" class:active={loading}></div>
 	<ul>
-		{#each tasks.filter(task => 
-			task.task.toLowerCase().includes(searchQuery.toLowerCase())
-		) as task}
+		{#each tasks.filter((task) => task.task
+				.toLowerCase()
+				.includes(searchQuery.toLowerCase())) as task}
 			<Task
 				{task}
 				{page}
@@ -112,14 +116,16 @@ let isEditing = false;
 	</ul>
 </div>
 
-<button 
-    class="add-button" 
-    on:click={() => {
-        taskToCopy = undefined;
-        isEditing = false;
-        isAddOpen = true;
-    }}
-> + </button>
+<button
+	class="add-button"
+	on:click={() => {
+		taskToCopy = undefined;
+		isEditing = false;
+		isAddOpen = true;
+	}}
+>
+	+
+</button>
 
 <TaskModal
 	bind:isOpen={isAddOpen}
@@ -153,10 +159,10 @@ let isEditing = false;
 
 	.add-button {
 		position: fixed;
-		bottom: 2rem;
+		bottom: 1.5rem;
 		right: 2rem;
-		width: 4rem;
-		height: 4rem;
+		width: 3rem;
+		height: 3rem;
 		border-radius: 50%;
 		background: var(--primary);
 		color: white;
