@@ -9,12 +9,13 @@
     "preview": "astro preview",
     "astro": "astro",
     "preinstall": "npx only-allow pnpm",
-    "checkTs": "tsc --noEmit",
     "format": "prettier --write .",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --max-warnings 0 --fix .",
     "test": "vitest",
-    "unused": "pnpm dlx depcheck"
+    "unused": "pnpm dlx depcheck",
+    "check": "svelte-check",
+    "checkTs": "npm run check"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.3",
@@ -70,6 +71,7 @@
     "jsdom": "^24.1.1",
     "prettier": "3.3.3",
     "rollup-plugin-visualizer": "^5.12.0",
+    "svelte-check": "^4.0.9",
     "type-fest": "^4.23.0",
     "typescript": "^5.5.4",
     "unplugin-icons": "^0.20.1",
