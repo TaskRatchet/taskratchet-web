@@ -8,7 +8,9 @@
 	export let isOpen = false;
 	export let mode: 'add' | 'edit' = 'add';
 	export let sourceTask: TaskType | undefined = undefined;
-	export let onSave: (task: TaskType) => Promise<Response> | string | void;
+	export let onSave: (
+		task: TaskType,
+	) => Promise<Response | string | void> | string | void;
 
 	let task = '';
 	let cents = 500;
@@ -56,9 +58,9 @@
 			const dueDate = new Date(due);
 			const formattedDue = formatDue(dueDate);
 			const taskData = { task, due: formattedDue, cents } as TaskType;
-			
+
 			const result = await onSave(taskData);
-			
+
 			if (typeof result === 'string') {
 				error = result;
 				return;
@@ -69,7 +71,10 @@
 				return;
 			}
 
-			success = mode === 'edit' ? 'Task updated successfully' : 'Tasks added successfully';
+			success =
+				mode === 'edit'
+					? 'Task updated successfully'
+					: 'Tasks added successfully';
 			dispatch('close');
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to save task';
@@ -126,7 +131,8 @@
 
 				<div class="buttons">
 					<button on:click={() => dispatch('close')}>Cancel</button>
-					<button on:click={onSubmit}>{mode === 'edit' ? 'Save' : 'Add'}</button>
+					<button on:click={onSubmit}>{mode === 'edit' ? 'Save' : 'Add'}</button
+					>
 				</div>
 			</div>
 		</div>
