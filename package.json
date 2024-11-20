@@ -15,7 +15,8 @@
     "test": "vitest",
     "unused": "pnpm dlx depcheck",
     "check": "svelte-check",
-    "checkTs": "npm run check"
+    "checkTs": "npm run check",
+    "verify": "npm run build && npm run check && npm run lint && npm run test -- --run"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.3",

@@ -1,5 +1,9 @@
 # TaskRatchet Web App
 
+## Verifying changes
+
+Use `pnpm verify` to check that code changes are valid.
+
 ## Task Status Behavior
 
 - Pending tasks should have enabled controls (edit button, checkbox)

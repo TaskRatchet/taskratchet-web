@@ -102,7 +102,7 @@
 						placeholder="Enter one or more tasks, one per line"
 						rows="3"
 						disabled={mode === 'edit'}
-					/>
+					></textarea>
 				</label>
 
 				<label>
