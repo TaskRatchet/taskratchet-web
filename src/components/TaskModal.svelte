@@ -1,13 +1,14 @@
 <script lang="ts">
-	import { addTask, getMe, editTask } from '@taskratchet/sdk';
+	import { addTask, getMe } from '@taskratchet/sdk';
 	import { onMount, createEventDispatcher } from 'svelte';
+	import { formatDue } from '../lib/formatDue';
 
 	const dispatch = createEventDispatcher();
-	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
 	export let mode: 'add' | 'edit' = 'add';
 	export let sourceTask: TaskType | undefined = undefined;
+	export let onSave: (task: TaskType) => Promise<Response> | string | void;
 
 	let task = '';
 	let cents = 500;
@@ -34,7 +35,6 @@
 	});
 
 	function getDefaultDue() {
-		// Default due date is 7 days from now at 11:59 PM
 		const due = new Date();
 		due.setDate(due.getDate() + 7);
 		due.setHours(23);
@@ -43,7 +43,7 @@
 		due.setMilliseconds(0);
 		const offset = due.getTimezoneOffset();
 		due.setMinutes(due.getMinutes() - offset);
-		return due.toISOString().slice(0, 16); // Format as YYYY-MM-DDThh:mm
+		return due.toISOString().slice(0, 16);
 	}
 
 	async function onSubmit() {
@@ -52,51 +52,27 @@
 			return;
 		}
 
-		if (mode === 'edit') {
-			if (!sourceTask) return;
-			if (cents < sourceTask.cents) {
-				error = 'Stakes cannot be less than the original task';
+		try {
+			const dueDate = new Date(due);
+			const formattedDue = formatDue(dueDate);
+			const taskData = { task, due: formattedDue, cents } as TaskType;
+			
+			const result = await onSave(taskData);
+			
+			if (typeof result === 'string') {
+				error = result;
 				return;
 			}
-			if (new Date(due) > new Date(sourceTask.due)) {
-				error = 'Cannot postpone due date';
+
+			if (result && !result.ok) {
+				error = await result.text();
 				return;
 			}
-			try {
-				const dueDate = new Date(due);
-				const formattedDue = formatDue(dueDate);
-				const response = await editTask(sourceTask.id, formattedDue, cents);
-				if (!response.ok) {
-					error = await response.text();
-					return;
-				}
-				success = 'Task updated successfully';
-				dispatch('tasksAdded');
-			} catch (e) {
-				error = e instanceof Error ? e.message : 'Failed to update task';
-			}
-		} else {
-			const lines = task.split(/\r?\n/);
-			try {
-				for (const line of lines) {
-					const dueDate = new Date(due);
-					const formattedDue = formatDue(dueDate);
-					const response = await addTask({
-						task: line,
-						due: formattedDue,
-						cents,
-					});
-					if (!response.ok) {
-						error = await response.text();
-						return;
-					}
-				}
-				error = '';
-				success = 'Tasks added successfully';
-				dispatch('tasksAdded');
-			} catch (e) {
-				error = e instanceof Error ? e.message : 'Failed to add task';
-			}
+
+			success = mode === 'edit' ? 'Task updated successfully' : 'Tasks added successfully';
+			dispatch('close');
+		} catch (e) {
+			error = e instanceof Error ? e.message : 'Failed to save task';
 		}
 	}
 </script>
@@ -120,6 +96,7 @@
 						bind:value={task}
 						placeholder="Enter one or more tasks, one per line"
 						rows="3"
+						disabled={mode === 'edit'}
 					/>
 				</label>
 
@@ -148,7 +125,7 @@
 				</div>
 
 				<div class="buttons">
-					<button on:click={() => (isOpen = false)}>Cancel</button>
+					<button on:click={() => dispatch('close')}>Cancel</button>
 					<button on:click={onSubmit}>{mode === 'edit' ? 'Save' : 'Add'}</button>
 				</div>
 			</div>
@@ -167,6 +144,7 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		z-index: 1000;
 	}
 
 	.modal-content {

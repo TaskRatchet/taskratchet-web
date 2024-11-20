@@ -1,238 +1,31 @@
 <script lang="ts">
-	import { addTask, getMe, editTask } from '@taskratchet/sdk';
-	import { onMount, createEventDispatcher } from 'svelte';
+	import { addTask } from '@taskratchet/sdk';
+	import TaskModal from './TaskModal.svelte';
+	import { createEventDispatcher } from 'svelte';
 
 	const dispatch = createEventDispatcher();
-	import { formatDue } from '../lib/formatDue';
 
 	export let isOpen = false;
-	export let isEditing = false;
-	export let taskToCopy: TaskType;
-	export let task = '';
-	export let cents = 500;
 
-	$: {
-		if (!isOpen) {
-			// Reset state when modal closes
-			task = '';
-			cents = 500;
-			error = '';
-			success = '';
-		} else if (isEditing && taskToCopy) {
-			// Populate form with task data when editing
-			task = taskToCopy.task;
-			cents = taskToCopy.cents;
-		}
-	}
-	let due = getDefaultDue();
-	let error = '';
-	let success = '';
-	let timezone = '';
-
-	onMount(async () => {
-		const me = await getMe();
-		timezone = me?.timezone;
-	});
-
-	function getDefaultDue() {
-		// Default due date is 7 days from now at 11:59 PM
-		const due = new Date();
-		due.setDate(due.getDate() + 7);
-		due.setHours(23);
-		due.setMinutes(59);
-		due.setSeconds(0);
-		due.setMilliseconds(0);
-		const offset = due.getTimezoneOffset();
-		due.setMinutes(due.getMinutes() - offset);
-		return due.toISOString().slice(0, 16); // Format as YYYY-MM-DDThh:mm
-	}
-
-	async function onSubmit() {
-		if (!task) {
-			error = 'Task is required';
-			return;
-		}
-
-		if (isEditing) {
-			if (cents < taskToCopy.cents) {
-				error = 'Stakes cannot be less than the original task';
-				return;
-			}
-			if (new Date(due) > new Date(taskToCopy.due)) {
-				error = 'Cannot postpone due date';
-				return;
-			}
-			try {
-				const dueDate = new Date(due);
-				const formattedDue = formatDue(dueDate);
-				const response = await editTask(taskToCopy.id, formattedDue, cents);
-				if (!response.ok) {
-					error = await response.text();
-					return;
-				}
-				success = 'Task updated successfully';
-			} catch (e) {
-				error = e instanceof Error ? e.message : 'Failed to update task';
-			}
-		} else {
-			const lines = task.split(/\r?\n/);
-			try {
-				for (const line of lines) {
-					const dueDate = new Date(due);
-					const formattedDue = formatDue(dueDate);
-					const response = await addTask({
-						task: line,
-						due: formattedDue,
-						cents,
-					});
-					if (!response.ok) {
-						error = await response.text();
-						return;
-					}
-				}
-				error = '';
-				success = 'Tasks added successfully';
-				dispatch('tasksAdded');
-			} catch (e) {
-				error = e instanceof Error ? e.message : 'Failed to add task';
+	async function onSave(taskData: TaskType) {
+		const lines = taskData.task.split(/\r?\n/);
+		for (const line of lines) {
+			const response = await addTask({
+				task: line,
+				due: taskData.due,
+				cents: taskData.cents,
+			});
+			if (!response.ok) {
+				return response;
 			}
 		}
+		dispatch('tasksAdded');
 	}
 </script>
 
-{#if isOpen}
-	<div class="modal">
-		<div class="modal-content">
-			<h2>{isEditing ? 'Edit Task' : 'Add Task'}</h2>
-
-			{#if error}
-				<div class="error">{error}</div>
-			{/if}
-			{#if success}
-				<div class="success">{success}</div>
-			{/if}
-
-			<div class="form">
-				<label>
-					Task
-					<textarea
-						bind:value={task}
-						placeholder="Enter one or more tasks, one per line"
-						rows="3"
-					></textarea>
-				</label>
-
-				<label>
-					Stakes
-					<div class="stakes-input">
-						<span>$</span>
-						<input
-							type="number"
-							on:input={(e) => (cents = e.currentTarget.valueAsNumber * 100)}
-							value={cents / 100}
-							min="1"
-							step="1"
-						/>
-						<span>USD</span>
-					</div>
-				</label>
-
-				<label>
-					Due Date/Time
-					<input type="datetime-local" bind:value={due} />
-				</label>
-
-				<div class="timezone">
-					Timezone: {timezone}
-				</div>
-
-				<div class="buttons">
-					<button on:click={() => (isOpen = false)}>Cancel</button>
-					<button on:click={onSubmit}>{isEditing ? 'Save' : 'Add'}</button>
-				</div>
-			</div>
-		</div>
-	</div>
-{/if}
-
-<style>
-	.modal {
-		position: fixed;
-		top: 0;
-		left: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, 0.5);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.modal-content {
-		background: var(--background);
-		color: var(--color);
-		padding: 2rem;
-		border-radius: 4px;
-		width: 90%;
-		max-width: 500px;
-	}
-
-	.form {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
-	label {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-	}
-
-	.stakes-input {
-		display: flex;
-		align-items: center;
-		gap: 0.5rem;
-	}
-
-	.stakes-input input {
-		width: 100px;
-	}
-
-	.buttons {
-		display: flex;
-		justify-content: flex-end;
-		gap: 1rem;
-	}
-
-	.error {
-		color: red;
-		margin-bottom: 1rem;
-	}
-
-	.success {
-		color: green;
-		margin-bottom: 1rem;
-	}
-
-	input,
-	textarea,
-	button {
-		background: var(--background);
-		color: var(--color);
-		border: 1px solid var(--color);
-		padding: 0.5rem;
-		border-radius: 4px;
-	}
-
-	button {
-		cursor: pointer;
-		min-width: 80px;
-	}
-
-	button:hover {
-		background: var(--primary);
-		border-color: var(--primary);
-		color: white;
-	}
-</style>
+<TaskModal
+	{isOpen}
+	mode="add"
+	on:close
+	{onSave}
+/>

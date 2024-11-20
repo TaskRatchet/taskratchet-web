@@ -4,8 +4,11 @@
 	import IconCopy from '~icons/material-symbols/content-copy-outline';
 	import IconEdit from '~icons/material-symbols/edit-outline';
 	import IconCharge from '~icons/material-symbols/payments-outline';
+	import TaskEdit from './TaskEdit.svelte';
 
 	let showUncleConfirm = false;
+	let showEditModal = false;
+
 	export let task: TaskType;
 	export let page: 'next' | 'archive';
 	export let onCopy: (task: TaskType) => void;
@@ -30,7 +33,7 @@
 			<button on:click={() => onCopy(task)} title="Copy"><IconCopy /></button>
 			{#if page === 'next'}
 				<button
-					on:click={() => onEdit(task)}
+					on:click={() => (showEditModal = true)}
 					disabled={!task.id || task.status !== 'pending'}
 					title="Edit"><IconEdit /></button
 				>
@@ -66,6 +69,15 @@
 		showUncleConfirm = false;
 	}}
 	onCancel={() => (showUncleConfirm = false)}
+/>
+
+<TaskEdit
+	{task}
+	isOpen={showEditModal}
+	on:close={() => {
+		showEditModal = false;
+		onEdit(task);
+	}}
 />
 
 <style>
