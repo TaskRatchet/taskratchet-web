@@ -126,6 +126,7 @@
 	bind:isOpen={isAddOpen}
 	mode={isEditing ? 'edit' : 'add'}
 	sourceTask={taskToCopy}
+	onSave={() => undefined}
 	on:tasksAdded={async () => {
 		const allTasks = (await getTasks()) as TaskType[];
 		const now = new Date();
