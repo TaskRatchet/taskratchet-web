@@ -5,9 +5,9 @@
 	import IconLogout from '~icons/material-symbols/logout';
 	import IconLight from '~icons/material-symbols/light-mode';
 	import IconDark from '~icons/material-symbols/dark-mode';
-	import { logout, getSession, getMe } from '@taskratchet/sdk';
+	import { logout, getSession, getMe, type Session } from '@taskratchet/sdk';
 
-	let session = null;
+	let session: Session | undefined;
 	let email = '';
 	let pathname = '';
 	let isDark = false;
