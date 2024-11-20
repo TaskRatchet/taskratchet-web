@@ -59,3 +59,12 @@ Use `pnpm verify` to check that code changes are valid.
 - State management should be simple and local when possible
 - Modal state should be managed by the modal component
 - API calls should be centralized
+
+### Migration Strategy
+
+- Migrating from React to Svelte
+- New features should be built in Svelte
+- Keep React and Svelte code separate:
+  - React code lives in src/react/
+  - React tests excluded from main test suite
+  - New tests should be written for Svelte components

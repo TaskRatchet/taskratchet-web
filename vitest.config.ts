@@ -6,5 +6,6 @@ export default defineConfig({
 		setupFiles: ['./global-setup.ts'],
 		clearMocks: true,
 		reporters: 'dot',
+		exclude: ['**/src/react/**'],
 	},
 });
