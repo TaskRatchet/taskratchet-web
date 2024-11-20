@@ -221,7 +221,7 @@
 		background: var(--background);
 		color: var(--color);
 		border: 1px solid var(--color);
-		padding: 0.3rem;
+		padding: 0.5rem;
 		border-radius: 4px;
 	}
 
