@@ -5,5 +5,5 @@
 		"jsxImportSource": "react",
 		"types": ["@testing-library/jest-dom", "unplugin-icons/types/astro"]
 	},
-	"exclude": ["dist"]
+	"exclude": ["dist", "src/react"]
 }
