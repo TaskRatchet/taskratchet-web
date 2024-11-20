@@ -75,7 +75,9 @@ import GeneralSettings from '../components/GeneralSettings.svelte';
 
 <script>
 	const tabs = document.querySelectorAll('.tab');
-	const contents = document.querySelectorAll('.tab-content');
+	const contents = document.querySelectorAll(
+		'.tab-content'
+	) as NodeListOf<HTMLElement>;
 
 	tabs.forEach((tab) => {
 		tab.addEventListener('click', () => {
