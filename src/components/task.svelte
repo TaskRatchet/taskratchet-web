@@ -26,9 +26,9 @@
 		const now = new Date();
 		const isPastDue = taskDue < now;
 
-		if (isPastDue && !task.complete) {
+		if (isPastDue && task.complete) {
 			const confirmed = confirm(
-				'This task is past due. Marking it complete will require contacting support to undo. Continue?'
+				'This task is past due. Marking it incomplete will require contacting support to undo. Continue?',
 			);
 			if (!confirmed) return;
 		}
