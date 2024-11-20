@@ -21,6 +21,18 @@
 
 	async function toggleComplete() {
 		if (!task.id) return;
+
+		const taskDue = new Date(task.due);
+		const now = new Date();
+		const isPastDue = taskDue < now;
+
+		if (isPastDue && !task.complete) {
+			const confirmed = confirm(
+				'This task is past due. Marking it complete will require contacting support to undo. Continue?'
+			);
+			if (!confirmed) return;
+		}
+
 		await updateTask(task.id, { complete: !task.complete });
 		task.complete = !task.complete;
 		task.status = task.complete ? 'complete' : 'pending';

@@ -13,6 +13,10 @@ Use `pnpm verify` to check that code changes are valid.
   - Pending: Can edit, complete, uncle, copy
   - Complete: Can mark incomplete, copy
   - Expired: Can copy
+- Completing tasks requires careful handling:
+  - Marking tasks complete is a critical action
+  - Reversing completed tasks requires support intervention
+  - UI should prevent accidental completion
 
 ## Future Improvements
 
