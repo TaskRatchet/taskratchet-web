@@ -9,7 +9,10 @@
 	let showUncleConfirm = false;
 	let showEditModal = false;
 
-	export let task: TaskType;
+	export let task: TaskType = {
+		...task,
+		status: task?.complete ? 'complete' : (task?.status || 'pending')
+	};
 	export let page: 'next' | 'archive';
 	export let onCopy: (task: TaskType) => void;
 	export let onEdit: (task: TaskType) => void;
