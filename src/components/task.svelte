@@ -19,23 +19,34 @@
 		return date.toLocaleString();
 	}
 
-	async function toggleComplete() {
+	let isConfirming = false;
+
+	async function toggleComplete(event?: Event) {
 		if (!task.id) return;
 
+		const newComplete = event?.target ? (event.target as HTMLInputElement).checked : !task.complete;
 		const taskDue = new Date(task.due);
 		const now = new Date();
 		const isPastDue = taskDue < now;
 
-		if (isPastDue && task.complete) {
+		if (isPastDue && task.complete && !isConfirming) {
+			// Prevent checkbox from changing
+			if (event?.target) {
+				(event.target as HTMLInputElement).checked = true;
+			}
+			
 			const confirmed = confirm(
 				'This task is past due. Marking it incomplete will require contacting support to undo. Continue?',
 			);
 			if (!confirmed) return;
+			
+			isConfirming = true;
 		}
 
-		await updateTask(task.id, { complete: !task.complete });
-		task.complete = !task.complete;
+		await updateTask(task.id, { complete: newComplete });
+		task.complete = newComplete;
 		task.status = task.complete ? 'complete' : 'pending';
+		isConfirming = false;
 	}
 </script>
 
@@ -62,7 +73,7 @@
 			type="checkbox"
 			checked={task.complete}
 			disabled={!task.id || task.status === 'expired'}
-			on:change={toggleComplete}
+			on:change={(e) => toggleComplete(e)}
 		/>
 		<div class="task-content">
 			<div class="task-text">{task.task}</div>

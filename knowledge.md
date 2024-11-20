@@ -14,8 +14,8 @@ Use `pnpm verify` to check that code changes are valid.
   - Complete: Can mark incomplete, copy
   - Expired: Can copy
 - Completing tasks requires careful handling:
-  - Marking tasks complete is a critical action
-  - Reversing completed tasks requires support intervention
+  - Marking past-due tasks incomplete is a critical action
+  - Reversing incompleted past-due tasks requires support intervention
   - UI should prevent accidental completion
 
 ## Future Improvements
