@@ -68,3 +68,7 @@ Use `pnpm verify` to check that code changes are valid.
   - React code lives in src/react/
   - React tests excluded from main test suite
   - New tests should be written for Svelte components
+- Test configuration:
+  - Exclude React tests while preserving Vitest defaults
+  - React tests remain in src/react/ but aren't run by default
+  - Maintain separate test suites for React and Svelte
