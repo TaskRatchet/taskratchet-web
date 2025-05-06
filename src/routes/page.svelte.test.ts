@@ -250,4 +250,72 @@ describe('Home page', () => {
 
 		consoleSpy.mockRestore();
 	});
+
+	test('sorts tasks by due date descending', async () => {
+		const mockTasks = [
+			{
+				id: '1',
+				task: 'Oldest task',
+				due: '2024-12-01T12:00:00Z',
+				due_timestamp: 1733059200, // 2024-12-01
+				cents: 500,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			},
+			{
+				id: '2',
+				task: 'Latest task',
+				due: '2025-02-01T12:00:00Z',
+				due_timestamp: 1738425600, // 2025-02-01
+				cents: 300,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			},
+			{
+				id: '3',
+				task: 'Middle task',
+				due: '2025-01-01T12:00:00Z',
+				due_timestamp: 1735833600, // 2025-01-01
+				cents: 400,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			},
+			{
+				id: '4',
+				task: 'No due date task',
+				due: null,
+				due_timestamp: 0,
+				cents: 200,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			}
+		];
+
+		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		// Deliberately provide tasks in unsorted order
+		mockGetTasks.mockResolvedValueOnce(mockTasks);
+
+		user.set({ email: 'test@example.com' });
+		render(Page);
+		await tick();
+
+		// In Next view, should show tasks due today or later, sorted latest first
+		const nextTaskElements = screen.getAllByRole('listitem');
+		expect(nextTaskElements).toHaveLength(2); // Latest and Middle tasks
+		expect(nextTaskElements[0]).toHaveTextContent('Latest task');
+		expect(nextTaskElements[1]).toHaveTextContent('Middle task');
+
+		// Switch to Archive view
+		await fireEvent.click(screen.getByText('Archive'));
+
+		// In Archive view, should show tasks due before today, sorted latest first
+		const archiveTaskElements = screen.getAllByRole('listitem');
+		expect(archiveTaskElements).toHaveLength(2); // Oldest and No due date tasks
+		expect(archiveTaskElements[0]).toHaveTextContent('Oldest task');
+		expect(archiveTaskElements[1]).toHaveTextContent('No due date task');
+	});
 });
