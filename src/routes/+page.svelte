@@ -97,17 +97,27 @@
 			<ul class="space-y-4">
 				{#each displayedTasks as task (task.id)}
 					<li class="rounded-lg bg-white p-4 shadow">
-						<h3 class="font-medium">{task.task}</h3>
-						{#if task.due}
-							<p class="text-sm text-gray-600">
-								Due: {new Date(task.due).toLocaleString()}
-							</p>
-						{/if}
-						{#if task.cents}
-							<p class="text-sm text-gray-600">
-								Penalty: ${task.cents / 100}
-							</p>
-						{/if}
+						<div class="flex items-start gap-4">
+							<input
+								type="checkbox"
+								checked={task.complete}
+								disabled
+								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600"
+							/>
+							<div>
+								<h3 class="font-medium">{task.task}</h3>
+								{#if task.due}
+									<p class="text-sm text-gray-600">
+										Due: {new Date(task.due).toLocaleString()}
+									</p>
+								{/if}
+								{#if task.cents}
+									<p class="text-sm text-gray-600">
+										Penalty: ${task.cents / 100}
+									</p>
+								{/if}
+							</div>
+						</div>
 					</li>
 				{/each}
 			</ul>

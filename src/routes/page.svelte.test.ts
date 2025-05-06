@@ -85,7 +85,7 @@ describe('Home page', () => {
 				due: '2025-02-01T12:00:00Z',
 				due_timestamp: 1738425600, // 2025-02-01 in seconds
 				cents: 500,
-				complete: false,
+				complete: true, // This task is complete
 				status: 'pending',
 				timezone: 'UTC'
 			},
@@ -95,7 +95,7 @@ describe('Home page', () => {
 				due: '2024-12-01T12:00:00Z',
 				due_timestamp: 1733059200, // 2024-12-01 in seconds
 				cents: 300,
-				complete: false,
+				complete: false, // This task is incomplete
 				status: 'pending',
 				timezone: 'UTC'
 			}
@@ -108,14 +108,20 @@ describe('Home page', () => {
 		render(Page);
 		await tick();
 
-		// Initially in Next view
+		// Initially in Next view - check Future task and its checkbox
 		expect(screen.getByText('Future task')).toBeInTheDocument();
+		const futureTaskCheckbox = screen.getByRole('checkbox', { name: '' });
+		expect(futureTaskCheckbox).toBeChecked();
+		expect(futureTaskCheckbox).toBeDisabled();
 		expect(screen.queryByText('Past task')).not.toBeInTheDocument();
 
-		// Switch to Archive view
+		// Switch to Archive view - check Past task and its checkbox
 		await fireEvent.click(screen.getByText('Archive'));
 		expect(screen.queryByText('Future task')).not.toBeInTheDocument();
 		expect(screen.getByText('Past task')).toBeInTheDocument();
+		const pastTaskCheckbox = screen.getByRole('checkbox', { name: '' });
+		expect(pastTaskCheckbox).not.toBeChecked();
+		expect(pastTaskCheckbox).toBeDisabled();
 
 		// Switch back to Next view
 		await fireEvent.click(screen.getByText('Next'));
@@ -131,7 +137,7 @@ describe('Home page', () => {
 				due: null,
 				due_timestamp: 0,
 				cents: 500,
-				complete: false,
+				complete: true, // This task is complete
 				status: 'pending',
 				timezone: 'UTC'
 			}
@@ -149,5 +155,8 @@ describe('Home page', () => {
 
 		await fireEvent.click(screen.getByText('Archive'));
 		expect(screen.getByText('Task without due date')).toBeInTheDocument();
+		const checkbox = screen.getByRole('checkbox', { name: '' });
+		expect(checkbox).toBeChecked();
+		expect(checkbox).toBeDisabled();
 	});
 });
