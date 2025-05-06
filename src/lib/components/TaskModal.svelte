@@ -6,7 +6,7 @@
 	export let onTaskAdded = () => {};
 
 	let task = '';
-	let cents = 0;
+	let penaltyDollars = 0;
 	let due = '';
 	let loading = false;
 	let error: string | null = null;
@@ -14,7 +14,7 @@
 	function handleClose() {
 		// Reset form state
 		task = '';
-		cents = 0;
+		penaltyDollars = 0;
 		due = '';
 		error = null;
 		onClose();
@@ -28,7 +28,7 @@
 		try {
 			await addTask({
 				task,
-				cents,
+				cents: penaltyDollars * 100,
 				due: new Date(due).toISOString()
 			});
 			handleClose();
@@ -67,16 +67,16 @@
 					</div>
 
 					<div>
-						<label for="cents" class="block text-sm font-medium text-gray-700">Penalty Amount ($)</label>
+						<label for="penaltyDollars" class="block text-sm font-medium text-gray-700">Penalty Amount (whole $)</label>
 						<input
 							type="number"
-							id="cents"
-							bind:value={cents}
+							id="penaltyDollars"
+							bind:value={penaltyDollars}
 							min="0"
-							step="0.01"
+							step="1"
 							required
 							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
-							placeholder="5.00"
+							placeholder="5"
 						/>
 					</div>
 

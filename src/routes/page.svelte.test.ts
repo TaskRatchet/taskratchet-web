@@ -16,9 +16,9 @@ describe('Home page', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		user.set(null);
-		
+
 		// Reset Date to a fixed point for consistent testing
-		const mockDate = new Date('2025-01-01T12:00:00Z');
+		const mockDate = new Date('2025-01-01T12:00:00.000Z');
 		vi.setSystemTime(mockDate);
 	});
 
@@ -84,7 +84,7 @@ describe('Home page', () => {
 			{
 				id: '1',
 				task: 'Future task',
-				due: '2025-02-01T12:00:00Z',
+				due: '2025-02-01T12:00:00.000Z',
 				due_timestamp: 1738425600, // 2025-02-01 in seconds
 				cents: 500,
 				complete: true, // This task is complete
@@ -94,7 +94,7 @@ describe('Home page', () => {
 			{
 				id: '2',
 				task: 'Past task',
-				due: '2024-12-01T12:00:00Z',
+				due: '2024-12-01T12:00:00.000Z',
 				due_timestamp: 1733059200, // 2024-12-01 in seconds
 				cents: 300,
 				complete: false, // This task is incomplete
@@ -169,7 +169,7 @@ describe('Home page', () => {
 			{
 				id: '1',
 				task: 'Test task',
-				due: '2025-02-01T12:00:00Z',
+				due: '2025-02-01T12:00:00.000Z',
 				due_timestamp: 1738425600,
 				cents: 500,
 				complete: false,
@@ -207,7 +207,7 @@ describe('Home page', () => {
 			{
 				id: '1',
 				task: 'Test task',
-				due: '2025-02-01T12:00:00Z',
+				due: '2025-02-01T12:00:00.000Z',
 				due_timestamp: 1738425600,
 				cents: 500,
 				complete: false,
@@ -262,7 +262,7 @@ describe('Home page', () => {
 			{
 				id: '1',
 				task: 'Oldest task',
-				due: '2024-12-01T12:00:00Z',
+				due: '2024-12-01T12:00:00.000Z',
 				due_timestamp: 1733059200, // 2024-12-01
 				cents: 500,
 				complete: false,
@@ -272,7 +272,7 @@ describe('Home page', () => {
 			{
 				id: '2',
 				task: 'Latest task',
-				due: '2025-02-01T12:00:00Z',
+				due: '2025-02-01T12:00:00.000Z',
 				due_timestamp: 1738425600, // 2025-02-01
 				cents: 300,
 				complete: false,
@@ -282,7 +282,7 @@ describe('Home page', () => {
 			{
 				id: '3',
 				task: 'Middle task',
-				due: '2025-01-01T12:00:00Z',
+				due: '2025-01-01T12:00:00.000Z',
 				due_timestamp: 1735833600, // 2025-01-01
 				cents: 400,
 				complete: false,
@@ -316,7 +316,7 @@ describe('Home page', () => {
 		expect(nextTaskElements[1]).toHaveTextContent('Middle task');
 		// Next view checkboxes should be enabled
 		const nextCheckboxes = screen.getAllByRole('checkbox', { name: '' });
-		nextCheckboxes.forEach(checkbox => {
+		nextCheckboxes.forEach((checkbox) => {
 			expect(checkbox).not.toBeDisabled();
 		});
 
@@ -330,7 +330,7 @@ describe('Home page', () => {
 		expect(archiveTaskElements[1]).toHaveTextContent('No due date task');
 		// Archive view checkboxes should be disabled
 		const archiveCheckboxes = screen.getAllByRole('checkbox', { name: '' });
-		archiveCheckboxes.forEach(checkbox => {
+		archiveCheckboxes.forEach((checkbox) => {
 			expect(checkbox).toBeDisabled();
 		});
 	});
@@ -366,7 +366,7 @@ describe('Home page', () => {
 			{
 				id: '1',
 				task: 'Existing task',
-				due: '2025-02-01T12:00:00Z',
+				due: '2025-02-01T12:00:00.000Z',
 				due_timestamp: 1738425600,
 				cents: 500,
 				complete: false,
@@ -379,7 +379,7 @@ describe('Home page', () => {
 			{
 				id: '2',
 				task: 'New task',
-				due: '2025-03-01T12:00:00Z',
+				due: '2025-03-01T12:00:00.000Z',
 				due_timestamp: 1740844800,
 				cents: 300,
 				complete: false,
@@ -390,12 +390,12 @@ describe('Home page', () => {
 
 		// Create a promise that we can resolve when we want getTasks to return
 		let resolveFirstGetTasks: (value: any) => void;
-		const firstGetTasksPromise = new Promise(resolve => {
+		const firstGetTasksPromise = new Promise((resolve) => {
 			resolveFirstGetTasks = resolve;
 		});
 
 		let resolveSecondGetTasks: (value: any) => void;
-		const secondGetTasksPromise = new Promise(resolve => {
+		const secondGetTasksPromise = new Promise((resolve) => {
 			resolveSecondGetTasks = resolve;
 		});
 
@@ -428,14 +428,14 @@ describe('Home page', () => {
 		await fireEvent.input(screen.getByLabelText('Task'), {
 			target: { value: 'New task' }
 		});
-		await fireEvent.input(screen.getByLabelText('Penalty Amount ($)'), {
+		await fireEvent.input(screen.getByLabelText('Penalty Amount (whole $)'), {
 			target: { value: '3' }
 		});
 		await fireEvent.input(screen.getByLabelText('Due Date'), {
 			target: { value: '2025-03-01T12:00' }
 		});
 		await fireEvent.click(screen.getByText('Create Task'));
-		
+
 		// Wait for all the async operations and re-renders
 		await tick(); // For handleSubmit in modal to complete
 		await tick(); // For Page's onTaskAdded handler
@@ -444,5 +444,41 @@ describe('Home page', () => {
 		// After task is added, both tasks should be visible
 		expect(screen.getByText('Existing task')).toBeInTheDocument();
 		expect(screen.getByText('New task')).toBeInTheDocument();
+	});
+
+	test('calls addTask with correct parameters when creating new task', async () => {
+		const mockAddTask = addTask as ReturnType<typeof vi.fn>;
+		mockAddTask.mockResolvedValue(undefined); // Mock successful task addition
+
+		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		mockGetTasks.mockResolvedValue([]); // Empty task list is fine for this test
+
+		user.set({ email: 'test@example.com' });
+		render(Page);
+		await tick();
+
+		// Open modal and create new task
+		await fireEvent.click(screen.getByText('New Task'));
+		await fireEvent.input(screen.getByLabelText('Task'), {
+			target: { value: 'Test task description' }
+		});
+		await fireEvent.input(screen.getByLabelText('Penalty Amount (whole $)'), {
+			target: { value: '5' }
+		});
+		await fireEvent.input(screen.getByLabelText('Due Date'), {
+			target: { value: '2025-03-01T12:00' }
+		});
+		await fireEvent.click(screen.getByText('Create Task'));
+
+		await tick(); // For handleSubmit in modal to complete
+
+		// Verify addTask was called with correct parameters
+		// The test environment is in UTC-5, so when we input 12:00 local time,
+		// it becomes 17:00 UTC. Let's adjust our expectation accordingly.
+		expect(mockAddTask).toHaveBeenCalledWith({
+			task: 'Test task description',
+			cents: 500, // $5.00 = 500 cents
+			due: '2025-03-01T17:00:00.000Z'
+		});
 	});
 });

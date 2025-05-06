@@ -39,13 +39,13 @@ describe('TaskModal component', () => {
 
 		expect(screen.getByText('Create New Task')).toBeInTheDocument();
 		expect(screen.getByLabelText('Task')).toBeInTheDocument();
-		expect(screen.getByLabelText('Penalty Amount ($)')).toBeInTheDocument();
+		expect(screen.getByLabelText('Penalty Amount (whole $)')).toBeInTheDocument();
 		expect(screen.getByLabelText('Due Date')).toBeInTheDocument();
 		expect(screen.getByText('Create Task')).toBeInTheDocument();
 		expect(screen.getByText('Cancel')).toBeInTheDocument();
 	});
 
-	test('handles successful task creation', async () => {
+	test('handles successful task creation with whole dollar amount', async () => {
 		const mockAddTask = addTask as ReturnType<typeof vi.fn>;
 		mockAddTask.mockResolvedValueOnce(undefined);
 
@@ -60,7 +60,7 @@ describe('TaskModal component', () => {
 		await fireEvent.input(screen.getByLabelText('Task'), {
 			target: { value: 'Test task' }
 		});
-		await fireEvent.input(screen.getByLabelText('Penalty Amount ($)'), {
+		await fireEvent.input(screen.getByLabelText('Penalty Amount (whole $)'), {
 			target: { value: '5' }
 		});
 		await fireEvent.input(screen.getByLabelText('Due Date'), {
@@ -73,7 +73,7 @@ describe('TaskModal component', () => {
 		// it becomes 17:00 UTC. Let's adjust our expectation accordingly.
 		expect(mockAddTask).toHaveBeenCalledWith({
 			task: 'Test task',
-			cents: 5,
+			cents: 500, // 5 dollars * 100 cents
 			due: '2025-01-01T17:00:00.000Z'
 		});
 		expect(mockOnClose).toHaveBeenCalled();
@@ -95,7 +95,7 @@ describe('TaskModal component', () => {
 		await fireEvent.input(screen.getByLabelText('Task'), {
 			target: { value: 'Test task' }
 		});
-		await fireEvent.input(screen.getByLabelText('Penalty Amount ($)'), {
+		await fireEvent.input(screen.getByLabelText('Penalty Amount (whole $)'), {
 			target: { value: '5' }
 		});
 		await fireEvent.input(screen.getByLabelText('Due Date'), {
