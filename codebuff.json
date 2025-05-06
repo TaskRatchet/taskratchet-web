@@ -1,10 +1,15 @@
 {
-  "description": "Template configuration for this project. See https://www.codebuff.com/config for all options.",
-  "startupProcesses": [
-    {
-      "name": "dev",
-      "command": "pnpm dev",
-      "stdoutFile": "logs/dev.log"
-    }
-  ]
+	"description": "Template configuration for this project. See https://www.codebuff.com/config for all options.",
+	"startupProcesses": [
+		{
+			"name": "dev",
+			"command": "pnpm dev",
+			"stdoutFile": "logs/dev.log"
+		},
+		{
+			"name": "test",
+			"command": "pnpm test:unit",
+			"stdoutFile": "logs/test.log"
+		}
+	]
 }
