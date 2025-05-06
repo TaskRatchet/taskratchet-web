@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getTasks } from '@taskratchet/sdk';
+	import { getTasks, updateTask } from '@taskratchet/sdk';
 	import { user } from '$lib/authStore';
 
 	type Task = {
@@ -41,6 +41,25 @@
 			tasks = [];
 		} finally {
 			loading = false;
+		}
+	}
+
+	async function handleToggleComplete(task: Task) {
+		const originalComplete = task.complete;
+		const taskIndex = tasks.findIndex(t => t.id === task.id);
+		if (taskIndex === -1) return;
+
+		// Optimistically update the UI
+		tasks[taskIndex] = { ...task, complete: !task.complete };
+		tasks = tasks; // Trigger reactivity
+
+		try {
+			await updateTask(task.id, { complete: !originalComplete });
+		} catch (e) {
+			console.error('Failed to update task:', e);
+			// Revert the optimistic update on error
+			tasks[taskIndex] = { ...task, complete: originalComplete };
+			tasks = tasks; // Trigger reactivity
 		}
 	}
 
@@ -101,7 +120,7 @@
 							<input
 								type="checkbox"
 								checked={task.complete}
-								disabled
+								on:change={() => handleToggleComplete(task)}
 								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600"
 							/>
 							<div>

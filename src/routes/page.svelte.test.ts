@@ -1,13 +1,14 @@
 import { describe, test, expect, vi, beforeEach, afterAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
-import { getTasks } from '@taskratchet/sdk';
+import { getTasks, updateTask } from '@taskratchet/sdk';
 import { user } from '$lib/authStore';
 import { tick } from 'svelte';
 import Page from './+page.svelte';
 
 vi.mock('@taskratchet/sdk', () => ({
-	getTasks: vi.fn()
+	getTasks: vi.fn(),
+	updateTask: vi.fn()
 }));
 
 describe('Home page', () => {
@@ -112,7 +113,6 @@ describe('Home page', () => {
 		expect(screen.getByText('Future task')).toBeInTheDocument();
 		const futureTaskCheckbox = screen.getByRole('checkbox', { name: '' });
 		expect(futureTaskCheckbox).toBeChecked();
-		expect(futureTaskCheckbox).toBeDisabled();
 		expect(screen.queryByText('Past task')).not.toBeInTheDocument();
 
 		// Switch to Archive view - check Past task and its checkbox
@@ -121,7 +121,6 @@ describe('Home page', () => {
 		expect(screen.getByText('Past task')).toBeInTheDocument();
 		const pastTaskCheckbox = screen.getByRole('checkbox', { name: '' });
 		expect(pastTaskCheckbox).not.toBeChecked();
-		expect(pastTaskCheckbox).toBeDisabled();
 
 		// Switch back to Next view
 		await fireEvent.click(screen.getByText('Next'));
@@ -157,6 +156,98 @@ describe('Home page', () => {
 		expect(screen.getByText('Task without due date')).toBeInTheDocument();
 		const checkbox = screen.getByRole('checkbox', { name: '' });
 		expect(checkbox).toBeChecked();
-		expect(checkbox).toBeDisabled();
+	});
+
+	test('handles task completion toggle', async () => {
+		const mockTasks = [
+			{
+				id: '1',
+				task: 'Test task',
+				due: '2025-02-01T12:00:00Z',
+				due_timestamp: 1738425600,
+				cents: 500,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			}
+		];
+
+		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		mockGetTasks.mockResolvedValueOnce(mockTasks);
+
+		const mockUpdateTask = updateTask as ReturnType<typeof vi.fn>;
+		mockUpdateTask.mockResolvedValueOnce(undefined);
+
+		user.set({ email: 'test@example.com' });
+		render(Page);
+		await tick();
+
+		// Initially unchecked
+		const checkbox = screen.getByRole('checkbox', { name: '' });
+		expect(checkbox).not.toBeChecked();
+
+		// Click checkbox
+		await fireEvent.click(checkbox);
+
+		// Should be checked (optimistic update)
+		expect(checkbox).toBeChecked();
+
+		// Should have called updateTask
+		expect(mockUpdateTask).toHaveBeenCalledWith('1', { complete: true });
+	});
+
+	test('handles task completion toggle error', async () => {
+		const mockTasks = [
+			{
+				id: '1',
+				task: 'Test task',
+				due: '2025-02-01T12:00:00Z',
+				due_timestamp: 1738425600,
+				cents: 500,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			}
+		];
+
+		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		mockGetTasks.mockResolvedValueOnce(JSON.parse(JSON.stringify(mockTasks)));
+
+		const mockUpdateTask = updateTask as ReturnType<typeof vi.fn>;
+		let rejectUpdateTaskPromise: (reason?: any) => void;
+		const updateTaskPromise = new Promise((_, reject) => {
+			rejectUpdateTaskPromise = reject;
+		});
+		mockUpdateTask.mockReturnValueOnce(updateTaskPromise);
+
+		const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+		user.set({ email: 'test@example.com' });
+		render(Page);
+		await tick();
+
+		// Initially unchecked
+		const checkbox = screen.getByRole('checkbox', { name: '' });
+		expect(checkbox).not.toBeChecked();
+
+		// Click checkbox and let optimistic update render
+		await fireEvent.click(checkbox);
+		await tick();
+
+		// Should be checked (optimistic update)
+		expect(checkbox).toBeChecked();
+
+		// Make updateTask fail and let reversion render
+		rejectUpdateTaskPromise!(new Error('Update failed'));
+		await tick();
+
+		// Should revert to unchecked
+		expect(checkbox).not.toBeChecked();
+
+		// Should have logged error and called updateTask
+		expect(mockUpdateTask).toHaveBeenCalledWith('1', { complete: true });
+		expect(consoleSpy).toHaveBeenCalledWith('Failed to update task:', expect.any(Error));
+
+		consoleSpy.mockRestore();
 	});
 });
