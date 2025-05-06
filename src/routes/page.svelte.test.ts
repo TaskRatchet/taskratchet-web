@@ -1,14 +1,15 @@
 import { describe, test, expect, vi, beforeEach, afterAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
-import { getTasks, updateTask } from '@taskratchet/sdk';
+import { getTasks, updateTask, addTask } from '@taskratchet/sdk';
 import { user } from '$lib/authStore';
 import { tick } from 'svelte';
 import Page from './+page.svelte';
 
 vi.mock('@taskratchet/sdk', () => ({
 	getTasks: vi.fn(),
-	updateTask: vi.fn()
+	updateTask: vi.fn(),
+	addTask: vi.fn()
 }));
 
 describe('Home page', () => {
@@ -332,5 +333,116 @@ describe('Home page', () => {
 		archiveCheckboxes.forEach(checkbox => {
 			expect(checkbox).toBeDisabled();
 		});
+	});
+
+	test('shows new task button when logged in', async () => {
+		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		mockGetTasks.mockResolvedValueOnce([]);
+
+		user.set({ email: 'test@example.com' });
+		render(Page);
+		await tick();
+
+		expect(screen.getByText('New Task')).toBeInTheDocument();
+	});
+
+	test('opens task modal when new task button is clicked', async () => {
+		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		mockGetTasks.mockResolvedValueOnce([]);
+
+		user.set({ email: 'test@example.com' });
+		render(Page);
+		await tick();
+
+		await fireEvent.click(screen.getByText('New Task'));
+		expect(screen.getByText('Create New Task')).toBeInTheDocument();
+	});
+
+	test('refreshes tasks after new task is added', async () => {
+		const mockAddTask = addTask as ReturnType<typeof vi.fn>;
+		mockAddTask.mockResolvedValue(undefined); // Mock successful task addition
+
+		const initialTasks = [
+			{
+				id: '1',
+				task: 'Existing task',
+				due: '2025-02-01T12:00:00Z',
+				due_timestamp: 1738425600,
+				cents: 500,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			}
+		];
+		const updatedTasks = [
+			...initialTasks,
+			{
+				id: '2',
+				task: 'New task',
+				due: '2025-03-01T12:00:00Z',
+				due_timestamp: 1740844800,
+				cents: 300,
+				complete: false,
+				status: 'pending',
+				timezone: 'UTC'
+			}
+		];
+
+		// Create a promise that we can resolve when we want getTasks to return
+		let resolveFirstGetTasks: (value: any) => void;
+		const firstGetTasksPromise = new Promise(resolve => {
+			resolveFirstGetTasks = resolve;
+		});
+
+		let resolveSecondGetTasks: (value: any) => void;
+		const secondGetTasksPromise = new Promise(resolve => {
+			resolveSecondGetTasks = resolve;
+		});
+
+		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		mockGetTasks
+			.mockReturnValueOnce(firstGetTasksPromise)
+			.mockReturnValueOnce(secondGetTasksPromise)
+			.mockResolvedValueOnce(updatedTasks);
+
+		user.set({ email: 'test@example.com' });
+		render(Page);
+
+		// Resolve the first getTasks call with initialTasks
+		resolveFirstGetTasks(initialTasks);
+		await tick();
+
+		// Initial render should show existing task
+		expect(screen.getByText('Existing task')).toBeInTheDocument();
+		expect(screen.queryByText('New task')).not.toBeInTheDocument();
+
+		// Resolve the second getTasks call (from onMount) with initialTasks
+		resolveSecondGetTasks(initialTasks);
+		await tick();
+
+		// Still should not show new task
+		expect(screen.queryByText('New task')).not.toBeInTheDocument();
+
+		// Open modal and create new task
+		await fireEvent.click(screen.getByText('New Task'));
+		await fireEvent.input(screen.getByLabelText('Task'), {
+			target: { value: 'New task' }
+		});
+		await fireEvent.input(screen.getByLabelText('Penalty Amount ($)'), {
+			target: { value: '3' }
+		});
+		await fireEvent.input(screen.getByLabelText('Due Date'), {
+			target: { value: '2025-03-01T12:00' }
+		});
+		await fireEvent.click(screen.getByText('Create Task'));
+		
+		// Wait for all the async operations and re-renders
+		await tick(); // For handleSubmit in modal to complete
+		await tick(); // For Page's onTaskAdded handler
+		await tick(); // For loadTasks and re-render
+
+		// After task is added, both tasks should be visible
+		expect(screen.getByText('Existing task')).toBeInTheDocument();
+		expect(screen.getByText('New task')).toBeInTheDocument();
 	});
 });

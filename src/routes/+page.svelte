@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { getTasks, updateTask } from '@taskratchet/sdk';
 	import { user } from '$lib/authStore';
+	import TaskModal from '$lib/components/TaskModal.svelte';
 
 	type Task = {
 		id: string;
@@ -18,6 +19,7 @@
 	let loading = true;
 	let error: string | null = null;
 	let currentView: 'next' | 'archive' = 'next';
+	let isTaskModalOpen = false;
 
 	// Get start of today (midnight) for date comparisons
 	$: today = new Date();
@@ -79,7 +81,15 @@
 <div class="container mx-auto px-4 py-8">
 	{#if $user}
 		<div class="mb-6">
-			<h1 class="text-2xl font-bold mb-4">Your Tasks</h1>
+			<div class="flex justify-between items-center mb-4">
+				<h1 class="text-2xl font-bold">Your Tasks</h1>
+				<button
+					on:click={() => (isTaskModalOpen = true)}
+					class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+				>
+					New Task
+				</button>
+			</div>
 			<div class="flex space-x-4 border-b border-gray-200">
 				<button
 					class="py-2 px-4 {currentView === 'next'
@@ -144,6 +154,12 @@
 				{/each}
 			</ul>
 		{/if}
+
+		<TaskModal
+			isOpen={isTaskModalOpen}
+			onClose={() => (isTaskModalOpen = false)}
+			onTaskAdded={loadTasks}
+		/>
 	{:else}
 		<div class="text-center">
 			<h1 class="mb-4 text-3xl font-bold">Welcome to TaskRatchet</h1>
