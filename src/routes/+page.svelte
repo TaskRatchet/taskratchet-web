@@ -123,7 +123,7 @@
 								type="checkbox"
 								checked={task.complete}
 								on:change={() => handleToggleComplete(task)}
-								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600"
+								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
 								disabled={currentView === 'archive'}
 							/>
 							<div>
