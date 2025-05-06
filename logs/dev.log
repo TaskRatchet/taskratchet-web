@@ -1,0 +1,10 @@
+
+> taskratchet-web@0.0.1 dev /mnt/backup/ProgrammingProjects/taskratchet-web
+> vite dev
+
+2:47:03 PM [vite] (client) Forced re-optimization of dependencies
+
+  VITE v6.3.5  ready in 1468 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
