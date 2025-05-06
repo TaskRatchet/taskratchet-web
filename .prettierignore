@@ -1,8 +1,0 @@
-package.json
-package-lock.json
-build
-dist
-node_modules
-pnpm-lock.yaml
-stats.html
-.depcheckrc
