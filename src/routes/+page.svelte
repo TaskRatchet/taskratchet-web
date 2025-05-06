@@ -17,6 +17,18 @@
 	let tasks: Task[] = [];
 	let loading = true;
 	let error: string | null = null;
+	let currentView: 'next' | 'archive' = 'next';
+
+	// Get start of today (midnight) for date comparisons
+	$: today = new Date();
+	$: {
+		today.setHours(0, 0, 0, 0);
+	}
+
+	// Filter tasks into Next (due today or later) and Archive (due before today)
+	$: nextTasks = tasks.filter(task => task.due_timestamp * 1000 >= today.getTime());
+	$: archiveTasks = tasks.filter(task => task.due_timestamp * 1000 < today.getTime());
+	$: displayedTasks = currentView === 'next' ? nextTasks : archiveTasks;
 
 	async function loadTasks() {
 		try {
@@ -45,7 +57,27 @@
 
 <div class="container mx-auto px-4 py-8">
 	{#if $user}
-		<h1 class="mb-6 text-2xl font-bold">Your Tasks</h1>
+		<div class="mb-6">
+			<h1 class="text-2xl font-bold mb-4">Your Tasks</h1>
+			<div class="flex space-x-4 border-b border-gray-200">
+				<button
+					class="py-2 px-4 {currentView === 'next'
+						? 'border-b-2 border-blue-500 text-blue-600'
+						: 'text-gray-500 hover:text-gray-700'}"
+					on:click={() => (currentView = 'next')}
+				>
+					Next
+				</button>
+				<button
+					class="py-2 px-4 {currentView === 'archive'
+						? 'border-b-2 border-blue-500 text-blue-600'
+						: 'text-gray-500 hover:text-gray-700'}"
+					on:click={() => (currentView = 'archive')}
+				>
+					Archive
+				</button>
+			</div>
+		</div>
 
 		{#if loading}
 			<div class="text-gray-600">Loading tasks...</div>
@@ -53,11 +85,17 @@
 			<div class="rounded-md bg-red-100 p-4 text-red-600">
 				{error}
 			</div>
-		{:else if tasks.length === 0}
-			<div class="text-gray-600">No tasks yet. Create one to get started!</div>
+		{:else if displayedTasks.length === 0}
+			<div class="text-gray-600">
+				{#if currentView === 'next'}
+					No upcoming tasks. Create one to get started!
+				{:else}
+					No archived tasks.
+				{/if}
+			</div>
 		{:else}
 			<ul class="space-y-4">
-				{#each tasks as task (task.id)}
+				{#each displayedTasks as task (task.id)}
 					<li class="rounded-lg bg-white p-4 shadow">
 						<h3 class="font-medium">{task.task}</h3>
 						{#if task.due}
