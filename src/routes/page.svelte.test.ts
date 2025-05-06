@@ -113,6 +113,7 @@ describe('Home page', () => {
 		expect(screen.getByText('Future task')).toBeInTheDocument();
 		const futureTaskCheckbox = screen.getByRole('checkbox', { name: '' });
 		expect(futureTaskCheckbox).toBeChecked();
+		expect(futureTaskCheckbox).not.toBeDisabled(); // Next view checkboxes are enabled
 		expect(screen.queryByText('Past task')).not.toBeInTheDocument();
 
 		// Switch to Archive view - check Past task and its checkbox
@@ -121,11 +122,14 @@ describe('Home page', () => {
 		expect(screen.getByText('Past task')).toBeInTheDocument();
 		const pastTaskCheckbox = screen.getByRole('checkbox', { name: '' });
 		expect(pastTaskCheckbox).not.toBeChecked();
+		expect(pastTaskCheckbox).toBeDisabled(); // Archive view checkboxes are disabled
 
 		// Switch back to Next view
 		await fireEvent.click(screen.getByText('Next'));
 		expect(screen.getByText('Future task')).toBeInTheDocument();
 		expect(screen.queryByText('Past task')).not.toBeInTheDocument();
+		const nextViewCheckbox = screen.getByRole('checkbox', { name: '' });
+		expect(nextViewCheckbox).not.toBeDisabled(); // Next view checkboxes are enabled
 	});
 
 	test('handles tasks without due dates', async () => {
@@ -156,6 +160,7 @@ describe('Home page', () => {
 		expect(screen.getByText('Task without due date')).toBeInTheDocument();
 		const checkbox = screen.getByRole('checkbox', { name: '' });
 		expect(checkbox).toBeChecked();
+		expect(checkbox).toBeDisabled(); // Archive view checkboxes are disabled
 	});
 
 	test('handles task completion toggle', async () => {
@@ -308,6 +313,11 @@ describe('Home page', () => {
 		expect(nextTaskElements).toHaveLength(2); // Latest and Middle tasks
 		expect(nextTaskElements[0]).toHaveTextContent('Latest task');
 		expect(nextTaskElements[1]).toHaveTextContent('Middle task');
+		// Next view checkboxes should be enabled
+		const nextCheckboxes = screen.getAllByRole('checkbox', { name: '' });
+		nextCheckboxes.forEach(checkbox => {
+			expect(checkbox).not.toBeDisabled();
+		});
 
 		// Switch to Archive view
 		await fireEvent.click(screen.getByText('Archive'));
@@ -317,5 +327,10 @@ describe('Home page', () => {
 		expect(archiveTaskElements).toHaveLength(2); // Oldest and No due date tasks
 		expect(archiveTaskElements[0]).toHaveTextContent('Oldest task');
 		expect(archiveTaskElements[1]).toHaveTextContent('No due date task');
+		// Archive view checkboxes should be disabled
+		const archiveCheckboxes = screen.getAllByRole('checkbox', { name: '' });
+		archiveCheckboxes.forEach(checkbox => {
+			expect(checkbox).toBeDisabled();
+		});
 	});
 });

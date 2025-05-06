@@ -124,6 +124,7 @@
 								checked={task.complete}
 								on:change={() => handleToggleComplete(task)}
 								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600"
+								disabled={currentView === 'archive'}
 							/>
 							<div>
 								<h3 class="font-medium">{task.task}</h3>
