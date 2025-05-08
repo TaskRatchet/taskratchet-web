@@ -28,8 +28,8 @@
 	}
 
 	// Filter tasks into Next (due today or later) and Archive (due before today)
-	$: nextTasks = tasks.filter(task => task.due_timestamp * 1000 >= today.getTime());
-	$: archiveTasks = tasks.filter(task => task.due_timestamp * 1000 < today.getTime());
+	$: nextTasks = tasks.filter((task) => task.due_timestamp * 1000 >= today.getTime());
+	$: archiveTasks = tasks.filter((task) => task.due_timestamp * 1000 < today.getTime());
 	$: displayedTasks = currentView === 'next' ? nextTasks : archiveTasks;
 
 	async function loadTasks() {
@@ -50,7 +50,7 @@
 
 	async function handleToggleComplete(task: Task) {
 		const originalComplete = task.complete;
-		const taskIndex = tasks.findIndex(t => t.id === task.id);
+		const taskIndex = tasks.findIndex((t) => t.id === task.id);
 		if (taskIndex === -1) return;
 
 		// Optimistically update the UI
@@ -81,28 +81,28 @@
 <div class="container mx-auto px-4 py-8">
 	{#if $user}
 		<div class="mb-6">
-			<div class="flex justify-between items-center mb-4">
-				<h1 class="text-2xl font-bold">Your Tasks</h1>
+			<div class="mb-4 flex items-center justify-between">
+				<h1 class="text-2xl font-bold text-white">Your Tasks</h1>
 				<button
 					on:click={() => (isTaskModalOpen = true)}
-					class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+					class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 				>
 					New Task
 				</button>
 			</div>
 			<div class="flex space-x-4 border-b border-gray-200">
 				<button
-					class="py-2 px-4 {currentView === 'next'
-						? 'border-b-2 border-blue-500 text-blue-600'
-						: 'text-gray-500 hover:text-gray-700'}"
+					class="px-4 py-2 {currentView === 'next'
+						? 'border-b-2 border-blue-500 text-blue-300'
+						: 'text-gray-400 hover:text-gray-300'}"
 					on:click={() => (currentView = 'next')}
 				>
 					Next
 				</button>
 				<button
-					class="py-2 px-4 {currentView === 'archive'
-						? 'border-b-2 border-blue-500 text-blue-600'
-						: 'text-gray-500 hover:text-gray-700'}"
+					class="px-4 py-2 {currentView === 'archive'
+						? 'border-b-2 border-blue-500 text-blue-300'
+						: 'text-gray-400 hover:text-gray-300'}"
 					on:click={() => (currentView = 'archive')}
 				>
 					Archive
@@ -127,24 +127,24 @@
 		{:else}
 			<ul class="space-y-4">
 				{#each displayedTasks as task (task.id)}
-					<li class="rounded-lg bg-white p-4 shadow">
+					<li class="overflow-hidden rounded-lg bg-gray-800 p-4 text-white shadow">
 						<div class="flex items-start gap-4">
 							<input
 								type="checkbox"
 								checked={task.complete}
 								on:change={() => handleToggleComplete(task)}
-								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
 								disabled={currentView === 'archive'}
 							/>
 							<div>
 								<h3 class="font-medium">{task.task}</h3>
 								{#if task.due}
-									<p class="text-sm text-gray-600">
+									<p class="text-sm text-gray-300">
 										Due: {new Date(task.due).toLocaleString()}
 									</p>
 								{/if}
 								{#if task.cents}
-									<p class="text-sm text-gray-600">
+									<p class="text-sm text-gray-300">
 										Penalty: ${task.cents / 100}
 									</p>
 								{/if}
