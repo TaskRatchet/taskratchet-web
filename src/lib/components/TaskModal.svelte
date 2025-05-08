@@ -42,7 +42,13 @@
 </script>
 
 {#if isOpen}
-	<div class="bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black/80 p-4">
+	<!-- backdrop is mouse-only, not focusable -->
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<div
+		class="modal-backdrop bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black/80 p-4"
+		onclick={(e) => e.target === e.currentTarget && handleClose()}
+		onkeydown={(e) => e.key === 'Escape' && handleClose()}
+	>
 		<div class="w-full max-w-md rounded-lg bg-gray-800 shadow-xl">
 			<div class="p-6">
 				<h2 class="mb-4 text-xl font-semibold text-white">Create New Task</h2>
@@ -53,7 +59,7 @@
 					</div>
 				{/if}
 
-				<form on:submit={handleSubmit} class="space-y-4">
+				<form onsubmit={handleSubmit} class="space-y-4">
 					<div>
 						<label for="task" class="block text-sm font-medium text-gray-300">Task</label>
 						<input
@@ -96,7 +102,7 @@
 					<div class="mt-6 flex justify-end space-x-3">
 						<button
 							type="button"
-							on:click={handleClose}
+							onclick={handleClose}
 							class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-gray-100"
 						>
 							Cancel

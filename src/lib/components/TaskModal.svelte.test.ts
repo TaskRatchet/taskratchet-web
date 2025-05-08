@@ -122,4 +122,19 @@ describe('TaskModal component', () => {
 
 		expect(mockOnClose).toHaveBeenCalled();
 	});
+
+	test('closes modal on backdrop click', async () => {
+		render(TaskModal, {
+			props: {
+				isOpen: true,
+				onClose: mockOnClose,
+				onTaskAdded: mockOnTaskAdded
+			}
+		});
+
+		const modalBackdrop = document.querySelector('.modal-backdrop');
+		await fireEvent.click(modalBackdrop as HTMLElement);
+
+		expect(mockOnClose).toHaveBeenCalled();
+	});
 });
