@@ -83,7 +83,7 @@
 			<div class="mb-4 flex items-center justify-between">
 				<h1 class="text-2xl font-bold text-white">Your Tasks</h1>
 				<button
-					on:click={() => (isTaskModalOpen = true)}
+					onclick={() => (isTaskModalOpen = true)}
 					class="rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none"
 				>
 					New Task
@@ -94,7 +94,7 @@
 					class="px-4 py-2 {currentView === 'next'
 						? 'border-b-2 border-blue-500 text-blue-300'
 						: 'text-gray-400 hover:text-gray-300'}"
-					on:click={() => (currentView = 'next')}
+					onclick={() => (currentView = 'next')}
 				>
 					Next
 				</button>
@@ -102,7 +102,7 @@
 					class="px-4 py-2 {currentView === 'archive'
 						? 'border-b-2 border-blue-500 text-blue-300'
 						: 'text-gray-400 hover:text-gray-300'}"
-					on:click={() => (currentView = 'archive')}
+					onclick={() => (currentView = 'archive')}
 				>
 					Archive
 				</button>
@@ -131,7 +131,7 @@
 							<input
 								type="checkbox"
 								checked={task.complete}
-								on:change={() => handleToggleComplete(task)}
+								onchange={() => handleToggleComplete(task)}
 								class="mt-1 h-4 w-4 rounded border-gray-300 text-blue-600 disabled:cursor-not-allowed disabled:opacity-50"
 								disabled={currentView === 'archive'}
 							/>
