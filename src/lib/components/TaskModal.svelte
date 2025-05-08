@@ -42,32 +42,34 @@
 </script>
 
 {#if isOpen}
-	<div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
-		<div class="bg-white rounded-lg shadow-xl w-full max-w-md">
+	<div class="bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black/80 p-4">
+		<div class="w-full max-w-md rounded-lg bg-gray-800 shadow-xl">
 			<div class="p-6">
-				<h2 class="text-xl font-semibold mb-4">Create New Task</h2>
+				<h2 class="mb-4 text-xl font-semibold text-white">Create New Task</h2>
 
 				{#if error}
-					<div class="mb-4 p-4 text-red-700 bg-red-100 rounded-md">
+					<div class="mb-4 rounded-md bg-red-100 p-4 text-red-700">
 						{error}
 					</div>
 				{/if}
 
 				<form on:submit={handleSubmit} class="space-y-4">
 					<div>
-						<label for="task" class="block text-sm font-medium text-gray-700">Task</label>
+						<label for="task" class="block text-sm font-medium text-gray-300">Task</label>
 						<input
 							type="text"
 							id="task"
 							bind:value={task}
 							required
-							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+							class="mt-1 block w-full rounded-md border-gray-900 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
 							placeholder="What do you want to accomplish?"
 						/>
 					</div>
 
 					<div>
-						<label for="penaltyDollars" class="block text-sm font-medium text-gray-700">Penalty Amount (whole $)</label>
+						<label for="penaltyDollars" class="block text-sm font-medium text-gray-300"
+							>Penalty Amount (whole $)</label
+						>
 						<input
 							type="number"
 							id="penaltyDollars"
@@ -75,34 +77,34 @@
 							min="0"
 							step="1"
 							required
-							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+							class="mt-1 block w-full rounded-md border-gray-900 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
 							placeholder="5"
 						/>
 					</div>
 
 					<div>
-						<label for="due" class="block text-sm font-medium text-gray-700">Due Date</label>
+						<label for="due" class="block text-sm font-medium text-gray-300">Due Date</label>
 						<input
 							type="datetime-local"
 							id="due"
 							bind:value={due}
 							required
-							class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+							class="mt-1 block w-full rounded-md border-gray-900 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
 						/>
 					</div>
 
-					<div class="flex justify-end space-x-3 mt-6">
+					<div class="mt-6 flex justify-end space-x-3">
 						<button
 							type="button"
 							on:click={handleClose}
-							class="px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-500"
+							class="px-4 py-2 text-sm font-medium text-gray-300 hover:text-gray-100"
 						>
 							Cancel
 						</button>
 						<button
 							type="submit"
 							disabled={loading}
-							class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+							class="rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
 						>
 							{loading ? 'Creating...' : 'Create Task'}
 						</button>
