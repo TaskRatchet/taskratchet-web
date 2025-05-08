@@ -22,10 +22,8 @@
 	let isTaskModalOpen = false;
 
 	// Get start of today (midnight) for date comparisons
-	$: today = new Date();
-	$: {
-		today.setHours(0, 0, 0, 0);
-	}
+	let today = new Date();
+	today.setHours(0, 0, 0, 0);
 
 	// Filter tasks into Next (due today or later) and Archive (due before today)
 	$: nextTasks = tasks.filter((task) => task.due_timestamp * 1000 >= today.getTime());
@@ -68,12 +66,12 @@
 
 	onMount(() => {
 		if ($user) {
-			loadTasks();
+			void loadTasks();
 		}
 	});
 
 	$: if ($user) {
-		loadTasks();
+		void loadTasks();
 	}
 </script>
 
