@@ -11,7 +11,7 @@ export async function refreshUser() {
 	try {
 		const userData = await getMe();
 		user.set(userData);
-	} catch (e) {
+	} catch {
 		user.set(null);
 	}
 }
