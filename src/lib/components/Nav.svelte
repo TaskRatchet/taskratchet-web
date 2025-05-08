@@ -4,7 +4,7 @@
 	import { user, refreshUser } from '$lib/authStore';
 
 	onMount(() => {
-		refreshUser();
+		void refreshUser();
 	});
 
 	async function handleLogout() {
