@@ -39,7 +39,6 @@
 			tasks = (await getTasks()) as Task[];
 			// Sort tasks by due date descending (latest first)
 			tasks.sort((a, b) => b.due_timestamp - a.due_timestamp);
-			console.log({ tasks });
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Failed to load tasks';
 			tasks = [];
