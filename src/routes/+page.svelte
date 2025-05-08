@@ -111,13 +111,13 @@
 		</div>
 
 		{#if loading}
-			<div class="text-gray-600">Loading tasks...</div>
+			<div class="text-gray-300">Loading tasks...</div>
 		{:else if error}
 			<div class="rounded-md bg-red-100 p-4 text-red-600">
 				{error}
 			</div>
 		{:else if displayedTasks.length === 0}
-			<div class="text-gray-600">
+			<div class="text-gray-300">
 				{#if currentView === 'next'}
 					No upcoming tasks. Create one to get started!
 				{:else}
@@ -162,8 +162,8 @@
 		/>
 	{:else}
 		<div class="text-center">
-			<h1 class="mb-4 text-3xl font-bold">Welcome to TaskRatchet</h1>
-			<p class="mb-8 text-gray-600">
+			<h1 class="mb-4 text-3xl font-bold text-white">Welcome to TaskRatchet</h1>
+			<p class="mb-8 text-gray-300">
 				Please <a href="/login" class="text-blue-600 hover:underline">log in</a> to see your tasks.
 			</p>
 		</div>
