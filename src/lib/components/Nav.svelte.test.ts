@@ -16,7 +16,7 @@ describe('Nav component', () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		user.set(null);
-		
+
 		// Mock window.location.href
 		const oldLocation = window.location;
 		delete (window as any).location;
@@ -54,8 +54,8 @@ describe('Nav component', () => {
 	test('handles logout', async () => {
 		const mockGetMe = getMe as ReturnType<typeof vi.fn>;
 		mockGetMe
-			.mockResolvedValueOnce({ email: 'test@example.com' })  // Initial mount
-			.mockResolvedValueOnce(null);  // After logout
+			.mockResolvedValueOnce({ email: 'test@example.com' }) // Initial mount
+			.mockResolvedValueOnce(null); // After logout
 
 		const mockLogout = logout as ReturnType<typeof vi.fn>;
 		mockLogout.mockResolvedValueOnce(undefined);
@@ -76,7 +76,9 @@ describe('Nav component', () => {
 
 		const mockLogout = logout as ReturnType<typeof vi.fn>;
 		const error = new Error('Logout failed');
-		mockLogout.mockRejectedValueOnce(error);
+		mockLogout.mockImplementation(() => {
+			throw error;
+		});
 
 		const consoleSpy = vi.spyOn(console, 'error');
 
