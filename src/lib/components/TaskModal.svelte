@@ -61,7 +61,7 @@
 							id="task"
 							bind:value={task}
 							required
-							class="mt-1 block w-full rounded-md border-gray-900 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+							class="mt-1 block w-full rounded-md border-gray-500 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
 							placeholder="What do you want to accomplish?"
 						/>
 					</div>
@@ -77,7 +77,7 @@
 							min="0"
 							step="1"
 							required
-							class="mt-1 block w-full rounded-md border-gray-900 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+							class="mt-1 block w-full rounded-md border-gray-500 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
 							placeholder="5"
 						/>
 					</div>
@@ -89,7 +89,7 @@
 							id="due"
 							bind:value={due}
 							required
-							class="mt-1 block w-full rounded-md border-gray-900 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+							class="mt-1 block w-full rounded-md border-gray-500 bg-gray-700 text-white shadow-sm placeholder:text-gray-500 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
 						/>
 					</div>
 
