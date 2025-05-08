@@ -9,7 +9,7 @@
 
 	async function handleLogout() {
 		try {
-			await logout();
+			logout();
 			await refreshUser();
 			window.location.href = '/login';
 		} catch (e) {
@@ -18,15 +18,15 @@
 	}
 </script>
 
-<nav class="bg-gray-800 text-white p-4">
-	<div class="container mx-auto flex justify-between items-center">
+<nav class="bg-gray-800 p-4 text-white">
+	<div class="container mx-auto flex flex-wrap items-center justify-between">
 		<a href="/" class="text-xl font-bold">TaskRatchet</a>
 		<div class="space-x-4">
 			{#if $user}
 				<span class="text-gray-300">{$user.email}</span>
 				<button
 					on:click={handleLogout}
-					class="hover:text-gray-300 bg-transparent border-none p-0 cursor-pointer"
+					class="cursor-pointer border-none bg-transparent p-0 hover:text-gray-300"
 				>
 					Logout
 				</button>
