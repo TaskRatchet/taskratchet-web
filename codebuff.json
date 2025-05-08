@@ -10,6 +10,11 @@
 			"name": "test",
 			"command": "pnpm test:unit",
 			"stdoutFile": "logs/test.log"
+		},
+		{
+			"name": "check",
+			"command": "pnpm check:watch",
+			"stdoutFile": "logs/check.log"
 		}
 	]
 }
