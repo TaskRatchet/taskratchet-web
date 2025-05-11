@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { login } from '@taskratchet/sdk';
 
 	let email = '';
@@ -10,11 +11,10 @@
 		event.preventDefault();
 		loading = true;
 		error = '';
-		
+
 		try {
 			await login(email, password);
-			// Redirect to home page after successful login
-			window.location.href = '/';
+			await goto('/');
 		} catch (e) {
 			error = e instanceof Error ? e.message : 'Login failed';
 		} finally {
@@ -23,12 +23,12 @@
 	}
 </script>
 
-<div class="min-h-screen bg-gray-100 flex items-center justify-center">
-	<div class="bg-white p-8 rounded-lg shadow-md w-96">
-		<h1 class="text-2xl font-bold mb-6">Login to TaskRatchet</h1>
-		
+<div class="flex min-h-screen items-center justify-center bg-gray-100">
+	<div class="w-96 rounded-lg bg-white p-8 shadow-md">
+		<h1 class="mb-6 text-2xl font-bold">Login to TaskRatchet</h1>
+
 		{#if error}
-			<div class="mb-4 p-4 text-red-700 bg-red-100 rounded-md">
+			<div class="mb-4 rounded-md bg-red-100 p-4 text-red-700">
 				{error}
 			</div>
 		{/if}
@@ -58,7 +58,7 @@
 
 			<button
 				type="submit"
-				class="w-full bg-blue-600 text-white rounded-md py-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+				class="w-full rounded-md bg-blue-600 py-2 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:outline-none disabled:opacity-50"
 				disabled={loading}
 			>
 				{loading ? 'Logging in...' : 'Login'}
