@@ -389,12 +389,16 @@ describe('Home page', () => {
 		];
 
 		// Create a promise that we can resolve when we want getTasks to return
-		let resolveFirstGetTasks: (value: any) => void;
+		let resolveFirstGetTasks: (value: any) => void = () => {
+			throw new Error('Unexpected call to getTasks');
+		};
 		const firstGetTasksPromise = new Promise((resolve) => {
 			resolveFirstGetTasks = resolve;
 		});
 
-		let resolveSecondGetTasks: (value: any) => void;
+		let resolveSecondGetTasks: (value: any) => void = () => {
+			throw new Error('Unexpected call to getTasks');
+		};
 		const secondGetTasksPromise = new Promise((resolve) => {
 			resolveSecondGetTasks = resolve;
 		});
