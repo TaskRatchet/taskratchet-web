@@ -1,7 +1,7 @@
 import { writable } from 'svelte/store';
 import { getMe } from '@taskratchet/sdk';
 
-export type User = {
+type User = {
 	email: string;
 };
 
