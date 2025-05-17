@@ -3,7 +3,6 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent } from '@testing-library/svelte';
 import { getMe, logout } from '@taskratchet/sdk';
 import { user } from '$lib/authStore';
-import { tick } from 'svelte';
 import Nav from './Nav.svelte';
 
 // Mock SDK before importing Nav which imports authStore
@@ -33,7 +32,6 @@ describe('Nav component', () => {
 		mockGetMe.mockRejectedValueOnce(new Error('Not logged in'));
 
 		render(Nav);
-		await tick();
 
 		expect(screen.getByText('Login')).toBeInTheDocument();
 		expect(screen.queryByText('Logout')).not.toBeInTheDocument();
@@ -44,9 +42,8 @@ describe('Nav component', () => {
 		mockGetMe.mockResolvedValueOnce({ email: 'test@example.com' });
 
 		render(Nav);
-		await tick();
 
-		expect(screen.getByText('test@example.com')).toBeInTheDocument();
+		expect(await screen.findByText('test@example.com')).toBeInTheDocument();
 		expect(screen.getByText('Logout')).toBeInTheDocument();
 		expect(screen.queryByText('Login')).not.toBeInTheDocument();
 	});
@@ -61,9 +58,8 @@ describe('Nav component', () => {
 		mockLogout.mockResolvedValueOnce(undefined);
 
 		render(Nav);
-		await tick();
 
-		const logoutButton = screen.getByText('Logout');
+		const logoutButton = await screen.findByText('Logout');
 		await fireEvent.click(logoutButton);
 
 		expect(mockLogout).toHaveBeenCalled();
@@ -83,9 +79,8 @@ describe('Nav component', () => {
 		const consoleSpy = vi.spyOn(console, 'error');
 
 		render(Nav);
-		await tick();
 
-		const logoutButton = screen.getByText('Logout');
+		const logoutButton = await screen.findByText('Logout');
 		await fireEvent.click(logoutButton);
 
 		expect(mockLogout).toHaveBeenCalled();

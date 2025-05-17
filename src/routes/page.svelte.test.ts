@@ -3,7 +3,6 @@ import '@testing-library/jest-dom/vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/svelte';
 import { getTasks, updateTask, addTask } from '@taskratchet/sdk';
 import { user } from '$lib/authStore';
-import { tick } from 'svelte';
 import Page from './+page.svelte';
 
 vi.mock('@taskratchet/sdk', () => ({
@@ -38,7 +37,6 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		expect(screen.getByText('Loading tasks...')).toBeInTheDocument();
 	});
@@ -49,9 +47,8 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
-		expect(screen.getByText('Failed to fetch tasks')).toBeInTheDocument();
+		expect(await screen.findByText('Failed to fetch tasks')).toBeInTheDocument();
 	});
 
 	test('shows empty state for Next tasks', async () => {
@@ -60,9 +57,10 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
-		expect(screen.getByText('No upcoming tasks. Create one to get started!')).toBeInTheDocument();
+		expect(
+			await screen.findByText('No upcoming tasks. Create one to get started!')
+		).toBeInTheDocument();
 	});
 
 	test('shows empty state for Archive tasks', async () => {
@@ -71,7 +69,6 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		// Click Archive tab
 		await fireEvent.click(screen.getByText('Archive'));
@@ -108,10 +105,9 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		// Initially in Next view - check Future task and its checkbox
-		expect(screen.getByText('Future task')).toBeInTheDocument();
+		expect(await screen.findByText('Future task')).toBeInTheDocument();
 		const futureTaskCheckbox = screen.getByRole('checkbox', { name: '' });
 		expect(futureTaskCheckbox).toBeChecked();
 		expect(futureTaskCheckbox).not.toBeDisabled(); // Next view checkboxes are enabled
@@ -152,7 +148,6 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		// Task without due date should be in Archive (due_timestamp of 0 is in the past)
 		expect(screen.queryByText('Task without due date')).not.toBeInTheDocument();
@@ -186,10 +181,9 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		// Initially unchecked
-		const checkbox = screen.getByRole('checkbox', { name: '' });
+		const checkbox = await screen.findByRole('checkbox', { name: '' });
 		expect(checkbox).not.toBeChecked();
 
 		// Click checkbox
@@ -230,25 +224,24 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		// Initially unchecked
-		const checkbox = screen.getByRole('checkbox', { name: '' });
+		const checkbox = await screen.findByRole('checkbox', { name: '' });
 		expect(checkbox).not.toBeChecked();
 
 		// Click checkbox and let optimistic update render
 		await fireEvent.click(checkbox);
-		await tick();
 
 		// Should be checked (optimistic update)
 		expect(checkbox).toBeChecked();
 
 		// Make updateTask fail and let reversion render
 		rejectUpdateTaskPromise!(new Error('Update failed'));
-		await tick();
 
 		// Should revert to unchecked
-		expect(checkbox).not.toBeChecked();
+		await waitFor(() => {
+			expect(checkbox).not.toBeChecked();
+		});
 
 		// Should have logged error and called updateTask
 		expect(mockUpdateTask).toHaveBeenCalledWith('1', { complete: true });
@@ -307,10 +300,9 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		// In Next view, should show tasks due today or later, sorted latest first
-		const nextTaskElements = screen.getAllByRole('listitem');
+		const nextTaskElements = await screen.findAllByRole('listitem');
 		expect(nextTaskElements).toHaveLength(2); // Latest and Middle tasks
 		expect(nextTaskElements[0]).toHaveTextContent('Latest task');
 		expect(nextTaskElements[1]).toHaveTextContent('Middle task');
@@ -341,7 +333,6 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		expect(screen.getByText('New Task')).toBeInTheDocument();
 	});
@@ -352,7 +343,6 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		await fireEvent.click(screen.getByText('New Task'));
 		expect(screen.getByText('Create New Task')).toBeInTheDocument();
@@ -428,7 +418,6 @@ describe('Home page', () => {
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
-		await tick();
 
 		// Open modal and create new task
 		await fireEvent.click(screen.getByText('New Task'));
@@ -442,8 +431,6 @@ describe('Home page', () => {
 			target: { value: '2025-03-01T12:00' }
 		});
 		await fireEvent.click(screen.getByText('Create Task'));
-
-		await tick(); // For handleSubmit in modal to complete
 
 		// Verify addTask was called with correct parameters
 		// The test environment is in UTC-5, so when we input 12:00 local time,
