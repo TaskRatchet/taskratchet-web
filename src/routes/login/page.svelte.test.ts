@@ -18,8 +18,8 @@ describe('Login page', () => {
 	});
 
 	test('handles successful login', async () => {
-		const mockLogin = login as unknown as ReturnType<typeof vi.fn>;
-		mockLogin.mockResolvedValueOnce(undefined);
+		const mockLogin = vi.mocked(login);
+		mockLogin.mockResolvedValueOnce(undefined as any);
 
 		const { container } = render(Page);
 
@@ -39,7 +39,7 @@ describe('Login page', () => {
 	});
 
 	test('handles login error', async () => {
-		const mockLogin = login as unknown as ReturnType<typeof vi.fn>;
+		const mockLogin = vi.mocked(login);
 		mockLogin.mockRejectedValueOnce(new Error('Invalid credentials'));
 
 		const { container } = render(Page);

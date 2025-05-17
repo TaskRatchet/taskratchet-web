@@ -46,8 +46,8 @@ describe('TaskModal component', () => {
 	});
 
 	test('handles successful task creation with whole dollar amount', async () => {
-		const mockAddTask = addTask as ReturnType<typeof vi.fn>;
-		mockAddTask.mockResolvedValueOnce(undefined);
+		const mockAddTask = vi.mocked(addTask);
+		mockAddTask.mockResolvedValueOnce(undefined as any);
 
 		render(TaskModal, {
 			props: {
@@ -81,7 +81,7 @@ describe('TaskModal component', () => {
 	});
 
 	test('handles task creation error', async () => {
-		const mockAddTask = addTask as ReturnType<typeof vi.fn>;
+		const mockAddTask = vi.mocked(addTask);
 		mockAddTask.mockRejectedValueOnce(new Error('Failed to create task'));
 
 		render(TaskModal, {

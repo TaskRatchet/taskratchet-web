@@ -32,7 +32,7 @@ describe('Home page', () => {
 	});
 
 	test('shows loading state', async () => {
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockImplementation(() => new Promise(() => {})); // Never resolves
 
 		user.set({ email: 'test@example.com' });
@@ -42,7 +42,7 @@ describe('Home page', () => {
 	});
 
 	test('shows error state', async () => {
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockRejectedValueOnce(new Error('Failed to fetch tasks'));
 
 		user.set({ email: 'test@example.com' });
@@ -52,7 +52,7 @@ describe('Home page', () => {
 	});
 
 	test('shows empty state for Next tasks', async () => {
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce([]);
 
 		user.set({ email: 'test@example.com' });
@@ -64,7 +64,7 @@ describe('Home page', () => {
 	});
 
 	test('shows empty state for Archive tasks', async () => {
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce([]);
 
 		user.set({ email: 'test@example.com' });
@@ -100,7 +100,7 @@ describe('Home page', () => {
 			}
 		];
 
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce(mockTasks);
 
 		user.set({ email: 'test@example.com' });
@@ -143,7 +143,7 @@ describe('Home page', () => {
 			}
 		];
 
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce(mockTasks);
 
 		user.set({ email: 'test@example.com' });
@@ -173,11 +173,11 @@ describe('Home page', () => {
 			}
 		];
 
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce(mockTasks);
 
-		const mockUpdateTask = updateTask as ReturnType<typeof vi.fn>;
-		mockUpdateTask.mockResolvedValueOnce(undefined);
+		const mockUpdateTask = vi.mocked(updateTask);
+		mockUpdateTask.mockResolvedValueOnce(undefined as any);
 
 		user.set({ email: 'test@example.com' });
 		render(Page);
@@ -210,15 +210,15 @@ describe('Home page', () => {
 			}
 		];
 
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce(JSON.parse(JSON.stringify(mockTasks)));
 
-		const mockUpdateTask = updateTask as ReturnType<typeof vi.fn>;
+		const mockUpdateTask = vi.mocked(updateTask);
 		let rejectUpdateTaskPromise: (reason?: any) => void;
 		const updateTaskPromise = new Promise((_, reject) => {
 			rejectUpdateTaskPromise = reject;
 		});
-		mockUpdateTask.mockReturnValueOnce(updateTaskPromise);
+		mockUpdateTask.mockReturnValueOnce(updateTaskPromise as any);
 
 		const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
@@ -294,7 +294,7 @@ describe('Home page', () => {
 			}
 		];
 
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		// Deliberately provide tasks in unsorted order
 		mockGetTasks.mockResolvedValueOnce(mockTasks);
 
@@ -328,7 +328,7 @@ describe('Home page', () => {
 	});
 
 	test('shows new task button when logged in', async () => {
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce([]);
 
 		user.set({ email: 'test@example.com' });
@@ -338,7 +338,7 @@ describe('Home page', () => {
 	});
 
 	test('opens task modal when new task button is clicked', async () => {
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValueOnce([]);
 
 		user.set({ email: 'test@example.com' });
@@ -410,10 +410,10 @@ describe('Home page', () => {
 	});
 
 	test('calls addTask with correct parameters when creating new task', async () => {
-		const mockAddTask = addTask as ReturnType<typeof vi.fn>;
-		mockAddTask.mockResolvedValue(undefined); // Mock successful task addition
+		const mockAddTask = vi.mocked(addTask);
+		mockAddTask.mockResolvedValue(undefined as any); // Mock successful task addition
 
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
+		const mockGetTasks = vi.mocked(getTasks);
 		mockGetTasks.mockResolvedValue([]); // Empty task list is fine for this test
 
 		user.set({ email: 'test@example.com' });

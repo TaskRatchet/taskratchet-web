@@ -19,7 +19,7 @@ describe('Nav component', () => {
 		// Mock window.location.href
 		const oldLocation = window.location;
 		delete (window as any).location;
-		window.location = { ...oldLocation };
+		window.location = { ...oldLocation } as any;
 		Object.defineProperty(window.location, 'href', {
 			configurable: true,
 			value: oldLocation.href,
@@ -28,7 +28,7 @@ describe('Nav component', () => {
 	});
 
 	test('shows login link when not logged in', async () => {
-		const mockGetMe = getMe as ReturnType<typeof vi.fn>;
+		const mockGetMe = vi.mocked(getMe);
 		mockGetMe.mockRejectedValueOnce(new Error('Not logged in'));
 
 		render(Nav);
@@ -38,8 +38,8 @@ describe('Nav component', () => {
 	});
 
 	test('shows email and logout button when logged in', async () => {
-		const mockGetMe = getMe as ReturnType<typeof vi.fn>;
-		mockGetMe.mockResolvedValueOnce({ email: 'test@example.com' });
+		const mockGetMe = vi.mocked(getMe);
+		mockGetMe.mockResolvedValueOnce({ email: 'test@example.com' } as any);
 
 		render(Nav);
 
@@ -49,12 +49,12 @@ describe('Nav component', () => {
 	});
 
 	test('handles logout', async () => {
-		const mockGetMe = getMe as ReturnType<typeof vi.fn>;
+		const mockGetMe = vi.mocked(getMe);
 		mockGetMe
-			.mockResolvedValueOnce({ email: 'test@example.com' }) // Initial mount
-			.mockResolvedValueOnce(null); // After logout
+			.mockResolvedValueOnce({ email: 'test@example.com' } as any) // Initial mount
+			.mockResolvedValueOnce(null as any); // After logout
 
-		const mockLogout = logout as ReturnType<typeof vi.fn>;
+		const mockLogout = vi.mocked(logout);
 		mockLogout.mockResolvedValueOnce(undefined);
 
 		render(Nav);
@@ -67,10 +67,10 @@ describe('Nav component', () => {
 	});
 
 	test('handles logout error', async () => {
-		const mockGetMe = getMe as ReturnType<typeof vi.fn>;
-		mockGetMe.mockResolvedValueOnce({ email: 'test@example.com' });
+		const mockGetMe = vi.mocked(getMe);
+		mockGetMe.mockResolvedValueOnce({ email: 'test@example.com' } as any);
 
-		const mockLogout = logout as ReturnType<typeof vi.fn>;
+		const mockLogout = vi.mocked(logout);
 		const error = new Error('Logout failed');
 		mockLogout.mockImplementation(() => {
 			throw error;
