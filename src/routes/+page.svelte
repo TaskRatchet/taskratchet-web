@@ -15,20 +15,20 @@
 		timezone: string;
 	};
 
-	let tasks: Task[] = [];
-	let loading = true;
-	let error: string | null = null;
-	let currentView: 'next' | 'archive' = 'next';
-	let isTaskModalOpen = false;
+	let tasks: Task[] = $state([]);
+	let loading = $state(true);
+	let error: string | null = $state(null);
+	let currentView: 'next' | 'archive' = $state('next');
+	let isTaskModalOpen = $state(false);
 
 	// Get start of today (midnight) for date comparisons
 	let today = new Date();
 	today.setHours(0, 0, 0, 0);
 
 	// Filter tasks into Next (due today or later) and Archive (due before today)
-	$: nextTasks = tasks.filter((task) => task.due_timestamp * 1000 >= today.getTime());
-	$: archiveTasks = tasks.filter((task) => task.due_timestamp * 1000 < today.getTime());
-	$: displayedTasks = currentView === 'next' ? nextTasks : archiveTasks;
+	let nextTasks = $derived(tasks.filter((task) => task.due_timestamp * 1000 >= today.getTime()));
+	let archiveTasks = $derived(tasks.filter((task) => task.due_timestamp * 1000 < today.getTime()));
+	let displayedTasks = $derived(currentView === 'next' ? nextTasks : archiveTasks);
 
 	async function loadTasks() {
 		try {
@@ -65,14 +65,12 @@
 	}
 
 	onMount(() => {
-		if ($user) {
-			void loadTasks();
-		}
-	});
+		const unsubscribe = user.subscribe((currentUser) => {
+			if (currentUser) void loadTasks();
+		});
 
-	$: if ($user) {
-		void loadTasks();
-	}
+		return unsubscribe;
+	});
 </script>
 
 <div class="container mx-auto px-4 py-8">
