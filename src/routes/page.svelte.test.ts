@@ -1,6 +1,6 @@
 import { describe, test, expect, vi, beforeEach, afterAll } from 'vitest';
 import '@testing-library/jest-dom/vitest';
-import { render, screen, fireEvent } from '@testing-library/svelte';
+import { render, screen, fireEvent, waitFor } from '@testing-library/svelte';
 import { getTasks, updateTask, addTask } from '@taskratchet/sdk';
 import { user } from '$lib/authStore';
 import { tick } from 'svelte';
@@ -359,13 +359,10 @@ describe('Home page', () => {
 	});
 
 	test('refreshes tasks after new task is added', async () => {
-		const mockAddTask = addTask as ReturnType<typeof vi.fn>;
-		mockAddTask.mockResolvedValue(undefined); // Mock successful task addition
-
 		const initialTasks = [
 			{
 				id: '1',
-				task: 'Existing task',
+				task: 'the_existing_task',
 				due: '2025-02-01T12:00:00.000Z',
 				due_timestamp: 1738425600,
 				cents: 500,
@@ -378,7 +375,7 @@ describe('Home page', () => {
 			...initialTasks,
 			{
 				id: '2',
-				task: 'New task',
+				task: 'the_new_task',
 				due: '2025-03-01T12:00:00.000Z',
 				due_timestamp: 1740844800,
 				cents: 300,
@@ -388,49 +385,21 @@ describe('Home page', () => {
 			}
 		];
 
-		// Create a promise that we can resolve when we want getTasks to return
-		let resolveFirstGetTasks: (value: any) => void = () => {
-			throw new Error('Unexpected call to getTasks');
-		};
-		const firstGetTasksPromise = new Promise((resolve) => {
-			resolveFirstGetTasks = resolve;
-		});
-
-		let resolveSecondGetTasks: (value: any) => void = () => {
-			throw new Error('Unexpected call to getTasks');
-		};
-		const secondGetTasksPromise = new Promise((resolve) => {
-			resolveSecondGetTasks = resolve;
-		});
-
-		const mockGetTasks = getTasks as ReturnType<typeof vi.fn>;
-		mockGetTasks
-			.mockReturnValueOnce(firstGetTasksPromise)
-			.mockReturnValueOnce(secondGetTasksPromise)
-			.mockResolvedValueOnce(updatedTasks);
+		vi.mocked(getTasks).mockResolvedValue(initialTasks);
 
 		user.set({ email: 'test@example.com' });
+
 		render(Page);
 
-		// Resolve the first getTasks call with initialTasks
-		resolveFirstGetTasks(initialTasks);
-		await tick();
-
-		// Initial render should show existing task
-		expect(screen.getByText('Existing task')).toBeInTheDocument();
-		expect(screen.queryByText('New task')).not.toBeInTheDocument();
-
-		// Resolve the second getTasks call (from onMount) with initialTasks
-		resolveSecondGetTasks(initialTasks);
-		await tick();
-
-		// Still should not show new task
-		expect(screen.queryByText('New task')).not.toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByText('the_existing_task')).toBeInTheDocument();
+			expect(screen.queryByText('the_new_task')).not.toBeInTheDocument();
+		});
 
 		// Open modal and create new task
 		await fireEvent.click(screen.getByText('New Task'));
 		await fireEvent.input(screen.getByLabelText('Task'), {
-			target: { value: 'New task' }
+			target: { value: 'the_new_task' }
 		});
 		await fireEvent.input(screen.getByLabelText('Penalty Amount (whole $)'), {
 			target: { value: '3' }
@@ -438,16 +407,16 @@ describe('Home page', () => {
 		await fireEvent.input(screen.getByLabelText('Due Date'), {
 			target: { value: '2025-03-01T12:00' }
 		});
+
+		vi.mocked(getTasks).mockResolvedValue(updatedTasks);
+
 		await fireEvent.click(screen.getByText('Create Task'));
 
-		// Wait for all the async operations and re-renders
-		await tick(); // For handleSubmit in modal to complete
-		await tick(); // For Page's onTaskAdded handler
-		await tick(); // For loadTasks and re-render
-
 		// After task is added, both tasks should be visible
-		expect(screen.getByText('Existing task')).toBeInTheDocument();
-		expect(screen.getByText('New task')).toBeInTheDocument();
+		await waitFor(() => {
+			expect(screen.getByText('the_existing_task')).toBeInTheDocument();
+			expect(screen.getByText('the_new_task')).toBeInTheDocument();
+		});
 	});
 
 	test('calls addTask with correct parameters when creating new task', async () => {

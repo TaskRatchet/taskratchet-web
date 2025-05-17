@@ -1,15 +1,21 @@
 <script lang="ts">
 	import { addTask } from '@taskratchet/sdk';
 
-	export let isOpen = false;
-	export let onClose = () => {};
-	export let onTaskAdded = () => {};
+	let {
+		isOpen = false,
+		onClose = () => {},
+		onTaskAdded = () => {}
+	}: {
+		isOpen: boolean;
+		onClose: () => void;
+		onTaskAdded: () => void;
+	} = $props();
 
-	let task = '';
-	let penaltyDollars = 0;
-	let due = '';
-	let loading = false;
-	let error: string | null = null;
+	let task = $state('');
+	let penaltyDollars = $state(0);
+	let due = $state('');
+	let loading = $state(false);
+	let error = $state<string | null>(null);
 
 	function handleClose() {
 		// Reset form state
@@ -43,7 +49,7 @@
 
 {#if isOpen}
 	<!-- backdrop is mouse-only, not focusable -->
-	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<!-- svelte-ignore a11y_no_static_element_interactions -->
 	<div
 		class="modal-backdrop bg-opacity-50 fixed inset-0 flex items-center justify-center bg-black/80 p-4"
 		onclick={(e) => {
