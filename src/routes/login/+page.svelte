@@ -2,10 +2,10 @@
 	import { goto } from '$app/navigation';
 	import { login } from '@taskratchet/sdk';
 
-	let email = '';
-	let password = '';
-	let error = '';
-	let loading = false;
+	let email = $state('');
+	let password = $state('');
+	let error = $state('');
+	let loading = $state(false);
 
 	async function handleSubmit(event: SubmitEvent) {
 		event.preventDefault();
@@ -33,7 +33,7 @@
 			</div>
 		{/if}
 
-		<form class="space-y-4" on:submit={handleSubmit}>
+		<form class="space-y-4" onsubmit={handleSubmit}>
 			<div>
 				<label for="email" class="block text-sm font-medium text-gray-700">Email</label>
 				<input
