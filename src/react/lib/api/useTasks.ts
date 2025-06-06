@@ -7,8 +7,8 @@ export function useTasks(): UseInfiniteQueryResult<TaskType[]> {
 	// pageParam is the page number, starting from 0
 	return useInfiniteQuery(
 		'tasks',
-		({ pageParam = 0 }: { pageParam?: number }) =>
-			getTasks({ page: pageParam }),
+		({ pageParam }: { pageParam?: number | null }) =>
+			getTasks({ page: pageParam ?? 0 }),
 		{
 			getNextPageParam: (lastPage, allPages) => {
 				if (lastPage?.length < PAGE_SIZE) return undefined;

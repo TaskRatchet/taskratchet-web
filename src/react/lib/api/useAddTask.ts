@@ -17,42 +17,49 @@ export function useAddTask(
 ): UseMutationResult<TaskType, Error, Input> {
 	const queryClient = useQueryClient();
 
-	return useMutation(addTask, {
-		onMutate: async (newTask: Input) => {
-			await queryClient.cancelQueries('tasks');
+	return useMutation(
+		(input: Input) =>
+			addTask({
+				...input,
+				due: Math.round(input.due),
+			}),
+		{
+			onMutate: async (newTask: Input) => {
+				await queryClient.cancelQueries('tasks');
 
-			const snapshot:
-				| {
-						pages: TaskType[][];
-						pageParams?: number[];
-				  }
-				| undefined = queryClient.getQueryData('tasks');
+				const snapshot:
+					| {
+							pages: TaskType[][];
+							pageParams?: number[];
+					  }
+					| undefined = queryClient.getQueryData('tasks');
 
-			if (!snapshot) return { snapshot: undefined };
+				if (!snapshot) return { snapshot: undefined };
 
-			const t = {
-				status: 'pending',
-				isNew: true,
-				...newTask,
-			} as TaskType;
+				const t = {
+					status: 'pending',
+					isNew: true,
+					...newTask,
+				} as TaskType;
 
-			onSave(t);
-			queryClient.setQueryData('tasks', {
-				...snapshot,
-				pages: [...snapshot.pages, [t]],
-			});
+				onSave(t);
+				queryClient.setQueryData('tasks', {
+					...snapshot,
+					pages: [...snapshot.pages, [t]],
+				});
 
-			return { snapshot };
+				return { snapshot };
+			},
+			onError: (error: Error, newTask: Input, context) => {
+				const { snapshot = null } = context || {};
+				if (snapshot !== null) {
+					queryClient.setQueryData('tasks', snapshot);
+				}
+				toast(error.toString());
+			},
+			onSettled: async () => {
+				await queryClient.invalidateQueries('tasks');
+			},
 		},
-		onError: (error: Error, newTask: Input, context) => {
-			const { snapshot = null } = context || {};
-			if (snapshot !== null) {
-				queryClient.setQueryData('tasks', snapshot);
-			}
-			toast(error.toString());
-		},
-		onSettled: async () => {
-			await queryClient.invalidateQueries('tasks');
-		},
-	});
+	);
 }

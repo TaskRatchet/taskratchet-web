@@ -1,16 +1,29 @@
 import { getUnloadMessage } from './getUnloadMessage';
 import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
-import { renderWithQueryProvider } from './test/renderWithQueryProvider';
 import { vi, expect, it, describe } from 'vitest';
 import loadControlledPromise from './test/loadControlledPromise';
 import { updateTask } from '@taskratchet/sdk';
+import { render } from '@testing-library/react';
+import { QueryClient, QueryClientProvider } from 'react-query';
 
 vi.mock('./api/updateTask');
 
+const queryClient = new QueryClient({
+	defaultOptions: {
+		queries: {
+			retry: false,
+		},
+	},
+});
+
 describe('getUnloadMessage', () => {
 	it('does not return message if no pending mutations', () => {
-		const { queryClient } = renderWithQueryProvider(<div>Hello World</div>);
+		render(
+			<QueryClientProvider client={queryClient}>
+				hello world
+			</QueryClientProvider>,
+		);
 
 		expect(getUnloadMessage(queryClient)).toBeFalsy();
 	});
@@ -26,7 +39,11 @@ describe('getUnloadMessage', () => {
 			return <div>Component</div>;
 		};
 
-		const { queryClient } = renderWithQueryProvider(<Component />);
+		render(
+			<QueryClientProvider client={queryClient}>
+				<Component />
+			</QueryClientProvider>,
+		);
 
 		const expected =
 			'There are changes that may be lost if you continue exiting.';
