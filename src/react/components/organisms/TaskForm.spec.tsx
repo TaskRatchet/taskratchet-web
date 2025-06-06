@@ -10,7 +10,7 @@ vi.mock('@mui/x-date-pickers');
 
 interface RenderComponentProps {
 	task?: string;
-	due?: string;
+	due?: number;
 	cents?: number;
 	timezone?: string;
 	error?: string;
@@ -23,7 +23,7 @@ interface RenderComponentProps {
 const renderComponent = (props: RenderComponentProps = {}) => {
 	const {
 		task = '',
-		due = '1/1/2022, 11:59 PM',
+		due = new Date('1/1/2022, 11:59 PM').getTime() / 1000,
 		cents = 500,
 		timezone = '',
 		error = '',
@@ -64,7 +64,7 @@ describe('TaskForm', () => {
 
 	it('calls onChange when task modified', async () => {
 		const onChange = vi.fn();
-		const due = 'the_due';
+		const due = 0;
 
 		renderComponent({ onChange, due });
 
@@ -104,7 +104,7 @@ describe('TaskForm', () => {
 		const onChange = vi.fn();
 
 		renderComponent({
-			due: '1/1/2021, 11:59 PM',
+			due: new Date('1/1/2021, 11:59 PM').getTime() / 1000,
 			cents: 500,
 			onChange,
 		});
@@ -115,7 +115,7 @@ describe('TaskForm', () => {
 		);
 
 		expect(onChange).toBeCalledWith({
-			due: '1/1/2022, 11:59 PM',
+			due: new Date('1/1/2022, 11:59 PM').getTime() / 1000,
 		});
 	});
 
@@ -124,7 +124,7 @@ describe('TaskForm', () => {
 
 		renderComponent({
 			task: 'the_task',
-			due: '1/1/2020, 11:59 PM',
+			due: new Date('1/1/2020, 11:59 PM').getTime() / 1000,
 			cents: 500,
 			onChange,
 		});
@@ -136,7 +136,7 @@ describe('TaskForm', () => {
 
 		expect(onChange).toBeCalledWith(
 			expect.objectContaining({
-				due: '1/1/2020, 11:59 PM',
+				due: new Date('1/1/2020, 11:59 PM').getTime() / 1000,
 			}),
 		);
 	});

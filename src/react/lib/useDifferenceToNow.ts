@@ -17,14 +17,10 @@ const shortEnglishHumanizer = humanizeDuration.humanizer({
 	},
 });
 
-export default function useDifferenceToNow({
-	due_timestamp,
-}: TaskType): string {
-	if (due_timestamp === undefined) return '';
-
-	const due = due_timestamp * 1000;
+export default function useDifferenceToNow({ due }: TaskType): string {
+	const d = due * 1000;
 	const now = browser.getNowTime();
-	const diff = due - now;
+	const diff = d - now;
 	const s1 = shortEnglishHumanizer(diff, {
 		largest: 2,
 		round: true,

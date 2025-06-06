@@ -1,7 +1,7 @@
 import * as browser from './browser';
 
 function makeTitle(task: TaskType) {
-	return browser.getString(new Date(task.due));
+	return browser.getString(new Date(task.due * 1000));
 }
 
 const isNewTask = (t: TaskType, n: TaskType | undefined): boolean => {

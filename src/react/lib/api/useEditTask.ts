@@ -5,10 +5,10 @@ import {
 } from 'react-query';
 import { editTask } from '@taskratchet/sdk';
 
-type EditParams = { id: string; due: string; cents: number };
+type EditParams = { id: string; due: number; cents: number };
 
 export default function useEditTask(): UseMutationResult<
-	Response,
+	TaskType,
 	Error,
 	EditParams
 > {
@@ -18,7 +18,7 @@ export default function useEditTask(): UseMutationResult<
 	return useMutation(
 		['edit', 'task_id'],
 		(data: EditParams) => {
-			return editTask(data.id, data.due, data.cents);
+			return editTask(data.id, Math.round(data.due), data.cents);
 		},
 		{
 			onSettled: async () => {

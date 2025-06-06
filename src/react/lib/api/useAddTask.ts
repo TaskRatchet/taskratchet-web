@@ -8,42 +8,58 @@ import { addTask } from '@taskratchet/sdk';
 
 interface Input {
 	task: string;
-	due: string;
+	due: number;
 	cents: number;
 }
 
 export function useAddTask(
 	onSave: (t: TaskType) => void,
-): UseMutationResult<Response, Error, Input> {
+): UseMutationResult<TaskType, Error, Input> {
 	const queryClient = useQueryClient();
 
-	return useMutation(addTask, {
-		onMutate: async (newTask: Input) => {
-			await queryClient.cancelQueries('tasks');
+	return useMutation(
+		(input: Input) =>
+			addTask({
+				...input,
+				due: Math.round(input.due),
+			}),
+		{
+			onMutate: async (newTask: Input) => {
+				await queryClient.cancelQueries('tasks');
 
-			const snapshot: TaskType[] | undefined =
-				queryClient.getQueryData('tasks') || [];
+				const snapshot:
+					| {
+							pages: TaskType[][];
+							pageParams?: number[];
+					  }
+					| undefined = queryClient.getQueryData('tasks');
 
-			const t = {
-				status: 'pending',
-				isNew: true,
-				...newTask,
-			} as TaskType;
+				if (!snapshot) return { snapshot: undefined };
 
-			onSave(t);
-			queryClient.setQueryData('tasks', [...snapshot, t]);
+				const t = {
+					status: 'pending',
+					isNew: true,
+					...newTask,
+				} as TaskType;
 
-			return { snapshot };
+				onSave(t);
+				queryClient.setQueryData('tasks', {
+					...snapshot,
+					pages: [...snapshot.pages, [t]],
+				});
+
+				return { snapshot };
+			},
+			onError: (error: Error, newTask: Input, context) => {
+				const { snapshot = null } = context || {};
+				if (snapshot !== null) {
+					queryClient.setQueryData('tasks', snapshot);
+				}
+				toast(error.toString());
+			},
+			onSettled: async () => {
+				await queryClient.invalidateQueries('tasks');
+			},
 		},
-		onError: (error: Error, newTask: Input, context) => {
-			const { snapshot = null } = context || {};
-			if (snapshot !== null) {
-				queryClient.setQueryData('tasks', snapshot);
-			}
-			toast(error.toString());
-		},
-		onSettled: async () => {
-			await queryClient.invalidateQueries('tasks');
-		},
-	});
+	);
 }

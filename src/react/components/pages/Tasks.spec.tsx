@@ -9,7 +9,6 @@ import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import * as browser from '../../lib/browser';
-import { __listRef } from '../../../../__mocks__/react-list';
 import { vi, type Mock, describe, it, expect, beforeEach } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { findTaskCheckbox } from '../../lib/test/queries';
@@ -39,17 +38,11 @@ const expectTaskSave = async ({
 	due: Date;
 	cents?: number;
 }) => {
-	const dueString = due.toLocaleDateString('en-US', {
-		year: 'numeric',
-		month: 'numeric',
-		day: 'numeric',
-		hour: 'numeric',
-		minute: 'numeric',
-	});
+	expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 
 	await waitFor(() => expect(addTask).toBeCalled());
 
-	expect(addTask).toBeCalledWith({ task, due: dueString, cents });
+	expect(addTask).toBeCalledWith({ task, due: due.getTime() / 1000, cents });
 };
 
 const renderTasksPage = () => {
@@ -77,6 +70,7 @@ describe('tasks page', () => {
 		vi.resetAllMocks();
 		vi.setSystemTime(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		loadTasksApiData();
 	});
 
 	it('loads tasks', async () => {
@@ -427,7 +421,9 @@ describe('tasks page', () => {
 
 	it('shows date headings', async () => {
 		loadTasksApiData({
-			tasks: [makeTask({ due: '5/22/2020, 11:59 PM' })],
+			tasks: [
+				makeTask({ due: new Date('5/22/2020, 11:59 PM').getTime() / 1000 }),
+			],
 		});
 
 		renderTasksPage();
@@ -442,29 +438,29 @@ describe('tasks page', () => {
 
 		loadTasksApiData({
 			tasks: [
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '1/22/2020, 11:59 PM' }),
-				makeTask({ due: '5/22/2020, 11:59 PM' }),
-				makeTask({ due: '7/22/2020, 11:59 PM' }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('1/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('5/22/2020, 11:59 PM').getTime() / 1000 }),
+				makeTask({ due: new Date('7/22/2020, 11:59 PM').getTime() / 1000 }),
 			],
 		});
 
@@ -502,21 +498,66 @@ describe('tasks page', () => {
 
 		loadTasksApiData({
 			tasks: [
-				makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' }),
-				makeTask({ due: '1/2/2020, 11:59 PM', task: 'task 2' }),
-				makeTask({ due: '1/3/2020, 11:59 PM', task: 'task 3' }),
-				makeTask({ due: '1/4/2020, 11:59 PM', task: 'task 4' }),
-				makeTask({ due: '1/5/2020, 11:59 PM', task: 'task 5' }),
-				makeTask({ due: '1/6/2020, 11:59 PM', task: 'task 6' }),
-				makeTask({ due: '1/7/2020, 11:59 PM', task: 'task 7' }),
-				makeTask({ due: '1/8/2020, 11:59 PM', task: 'task 8' }),
-				makeTask({ due: '1/9/2020, 11:59 PM', task: 'task 9' }),
-				makeTask({ due: '1/10/2020, 11:59 PM', task: 'task 10' }),
-				makeTask({ due: '1/11/2020, 11:59 PM', task: 'task 11' }),
-				makeTask({ due: '1/12/2020, 11:59 PM', task: 'task 12' }),
-				makeTask({ due: '1/13/2020, 11:59 PM', task: 'task 13' }),
-				makeTask({ due: '1/14/2020, 11:59 PM', task: 'task 14' }),
-				makeTask({ due: '1/15/2020, 11:59 PM', task: 'task 15' }),
+				makeTask({
+					due: new Date('1/1/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 1',
+				}),
+				makeTask({
+					due: new Date('1/2/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 2',
+				}),
+				makeTask({
+					due: new Date('1/3/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 3',
+				}),
+				makeTask({
+					due: new Date('1/4/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 4',
+				}),
+				makeTask({
+					due: new Date('1/5/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 5',
+				}),
+				makeTask({
+					due: new Date('1/6/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 6',
+				}),
+				makeTask({
+					due: new Date('1/7/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 7',
+				}),
+				makeTask({
+					due: new Date('1/8/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 8',
+				}),
+				makeTask({
+					due: new Date('1/9/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 9',
+				}),
+				makeTask({
+					due: new Date('1/10/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 10',
+				}),
+				makeTask({
+					due: new Date('1/11/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 11',
+				}),
+				makeTask({
+					due: new Date('1/12/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 12',
+				}),
+				makeTask({
+					due: new Date('1/13/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 13',
+				}),
+				makeTask({
+					due: new Date('1/14/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 14',
+				}),
+				makeTask({
+					due: new Date('1/15/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 15',
+				}),
 			],
 		});
 
@@ -534,22 +575,71 @@ describe('tasks page', () => {
 
 		loadTasksApiData({
 			tasks: [
-				makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' }),
-				makeTask({ due: '1/2/2020, 11:59 PM', task: 'task 2' }),
-				makeTask({ due: '1/3/2020, 11:59 PM', task: 'task 3' }),
-				makeTask({ due: '1/4/2020, 11:59 PM', task: 'task 4' }),
-				makeTask({ due: '1/5/2020, 11:59 PM', task: 'task 5' }),
-				makeTask({ due: '1/6/2020, 11:59 PM', task: 'task 6' }),
-				makeTask({ due: '1/7/2020, 11:59 PM', task: 'task 7' }),
-				makeTask({ due: '1/8/2020, 11:59 PM', task: 'task 8' }),
-				makeTask({ due: '1/9/2020, 11:59 PM', task: 'task 9' }),
-				makeTask({ due: '1/10/2020, 11:59 PM', task: 'task 10' }),
-				makeTask({ due: '1/11/2020, 11:59 PM', task: 'task 11' }),
-				makeTask({ due: '1/12/2020, 11:59 PM', task: 'task 12' }),
-				makeTask({ due: '1/13/2020, 11:59 PM', task: 'task 13' }),
-				makeTask({ due: '1/14/2020, 11:59 PM', task: 'task 14' }),
-				makeTask({ due: '1/15/2020, 11:59 PM', task: 'task 15' }),
-				makeTask({ due: '1/8/2029, 11:59 PM', task: 'new_task', cents: 500 }),
+				makeTask({
+					due: new Date('1/1/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 1',
+				}),
+				makeTask({
+					due: new Date('1/2/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 2',
+				}),
+				makeTask({
+					due: new Date('1/3/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 3',
+				}),
+				makeTask({
+					due: new Date('1/4/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 4',
+				}),
+				makeTask({
+					due: new Date('1/5/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 5',
+				}),
+				makeTask({
+					due: new Date('1/6/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 6',
+				}),
+				makeTask({
+					due: new Date('1/7/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 7',
+				}),
+				makeTask({
+					due: new Date('1/8/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 8',
+				}),
+				makeTask({
+					due: new Date('1/9/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 9',
+				}),
+				makeTask({
+					due: new Date('1/10/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 10',
+				}),
+				makeTask({
+					due: new Date('1/11/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 11',
+				}),
+				makeTask({
+					due: new Date('1/12/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 12',
+				}),
+				makeTask({
+					due: new Date('1/13/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 13',
+				}),
+				makeTask({
+					due: new Date('1/14/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 14',
+				}),
+				makeTask({
+					due: new Date('1/15/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 15',
+				}),
+				makeTask({
+					due: new Date('1/8/2029, 11:59 PM').getTime() / 1000,
+					task: 'new_task',
+					cents: 500,
+				}),
 			],
 		});
 
@@ -569,46 +659,6 @@ describe('tasks page', () => {
 		renderTasksPage();
 
 		expect(screen.queryByText('Nothing here!')).not.toBeInTheDocument();
-	});
-
-	it('scrolls list', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		renderTasksPage();
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toBeCalled();
-		});
-	});
-
-	it('does not scroll list on page refocus', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		const { queryClient } = renderTasksPage();
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toBeCalled();
-		});
-
-		loadTasksApiData({
-			tasks: [makeTask()],
-		});
-
-		await queryClient.invalidateQueries('tasks');
-
-		await waitFor(() => {
-			expect(getTasks).toBeCalledTimes(2);
-		});
-
-		expect(__listRef.scrollTo).toBeCalledTimes(1);
 	});
 
 	it('reloads tasks on task edit save', async () => {

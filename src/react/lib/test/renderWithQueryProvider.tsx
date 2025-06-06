@@ -3,9 +3,7 @@ import React, { type ReactElement } from 'react';
 import { render, type RenderResult } from '@testing-library/react';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-export function renderWithQueryProvider(
-	ui: ReactElement,
-): RenderResult & { queryClient: QueryClient } {
+export function TestWrapper({ children }: { children: React.ReactNode }) {
 	const queryClient = new QueryClient({
 		defaultOptions: {
 			queries: {
@@ -26,14 +24,13 @@ export function renderWithQueryProvider(
 		},
 	});
 
-	const view = render(
+	return (
 		<ThemeProvider theme={theme}>
-			<QueryClientProvider client={queryClient}>{ui}</QueryClientProvider>
-		</ThemeProvider>,
+			<QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+		</ThemeProvider>
 	);
+}
 
-	return {
-		...view,
-		queryClient,
-	};
+export function renderWithQueryProvider(ui: ReactElement): RenderResult {
+	return render(<TestWrapper>{ui}</TestWrapper>);
 }

@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import formatDue from '../../lib/formatDue';
 import { DatePicker, TimePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -11,17 +10,20 @@ dayjs.extend(customParseFormat);
 dayjs.extend(objectSupport);
 
 type DueFormProps = {
-	due: string;
+	due: number;
 	maxDue?: Date;
 	minDue?: Date;
-	onChange: (due: Record<string, string>) => void;
+	onChange: (updates: { due: number }) => void;
 };
 
 export default function DueForm(props: DueFormProps): JSX.Element {
 	const { due, minDue, maxDue, onChange } = props;
 
 	const dueDate = useMemo(() => {
-		const d = dayjs(due, 'M/D/YYYY, h:mm A');
+		if (typeof due !== 'number') {
+			throw new Error(`Due must be a number. Received: ${JSON.stringify(due)}`);
+		}
+		const d = dayjs(due * 1000);
 		return d.isValid() ? d : null;
 	}, [due]);
 
@@ -41,7 +43,7 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 						minute: dueDate?.minute(),
 					});
 
-					onChange({ due: formatDue(d.toDate()) });
+					onChange({ due: d.toDate().getTime() / 1000 });
 				}}
 				slotProps={{
 					openPickerButton: {
@@ -73,7 +75,7 @@ export default function DueForm(props: DueFormProps): JSX.Element {
 						minute: value.minute(),
 					});
 
-					onChange({ due: formatDue(d.toDate()) });
+					onChange({ due: d.toDate().getTime() / 1000 });
 				}}
 				slotProps={{
 					openPickerButton: {

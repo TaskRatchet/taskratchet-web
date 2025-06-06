@@ -33,8 +33,8 @@ importers:
         specifier: ^7.12.0
         version: 7.15.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@mui/material@5.16.7(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@mui/system@5.16.7(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@emotion/styled@11.13.0(@emotion/react@11.13.3(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(react@18.3.1))(@types/react@18.3.5)(dayjs@1.11.13)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@taskratchet/sdk':
-        specifier: ^0.0.7
-        version: 0.0.7
+        specifier: ^3.0.0
+        version: 3.0.0
       astro:
         specifier: ^4.15.1
         version: 4.15.1(@types/node@22.5.2)(rollup@4.21.2)(sass@1.77.8)(typescript@5.5.4)
@@ -161,7 +161,7 @@ importers:
         version: 2.0.5(@types/node@22.5.2)(@vitest/ui@2.0.5)(jsdom@24.1.3)(sass@1.77.8)
       vitest-fetch-mock:
         specifier: ^0.3.0
-        version: 0.3.0(vitest@2.0.5(@types/node@22.5.2)(@vitest/ui@2.0.5)(jsdom@24.1.3)(sass@1.77.8))
+        version: 0.3.0(vitest@2.0.5)
 
 packages:
 
@@ -1217,8 +1217,8 @@ packages:
   '@shikijs/core@1.15.2':
     resolution: {integrity: sha512-hi6XZuwHYn6bU4wtXZxST8ynM55aiU2+rVU9aPIrSxqKmEKl4d65puwGsggwcZWTET+7zGXKe7AUj46iQ8Aq8w==}
 
-  '@taskratchet/sdk@0.0.7':
-    resolution: {integrity: sha512-FUbwTuBwl/+/c5dKN154TG+tNbRJ7SRUsrpLEJJU/EHjEGi3N8vDez45/Y0AYhNNsEtic0gF9ffnPZVxsIIojA==}
+  '@taskratchet/sdk@3.0.0':
+    resolution: {integrity: sha512-g98qwJDxA0FRAkcsyb2//cECcpoIemFK0jxqt9EZS4lSCjYrv9XntUNx4vD5ckQEj+4leoKeijW/ScgXExIX5w==}
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -5207,7 +5207,7 @@ snapshots:
     dependencies:
       '@types/hast': 3.0.4
 
-  '@taskratchet/sdk@0.0.7':
+  '@taskratchet/sdk@3.0.0':
     dependencies:
       firebase: 10.13.1
     transitivePeerDependencies:
@@ -8388,7 +8388,7 @@ snapshots:
     optionalDependencies:
       vite: 5.4.2(@types/node@22.5.2)(sass@1.77.8)
 
-  vitest-fetch-mock@0.3.0(vitest@2.0.5(@types/node@22.5.2)(@vitest/ui@2.0.5)(jsdom@24.1.3)(sass@1.77.8)):
+  vitest-fetch-mock@0.3.0(vitest@2.0.5):
     dependencies:
       cross-fetch: 4.0.0
       vitest: 2.0.5(@types/node@22.5.2)(@vitest/ui@2.0.5)(jsdom@24.1.3)(sass@1.77.8)
