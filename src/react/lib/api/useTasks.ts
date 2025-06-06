@@ -1,6 +1,8 @@
 import { useInfiniteQuery, type UseInfiniteQueryResult } from 'react-query';
 import { getTasks } from '@taskratchet/sdk';
 
+const PAGE_SIZE = 20;
+
 export function useTasks(): UseInfiniteQueryResult<TaskType[]> {
 	// pageParam is the page number, starting from 0
 	return useInfiniteQuery(
@@ -9,7 +11,7 @@ export function useTasks(): UseInfiniteQueryResult<TaskType[]> {
 			getTasks({ page: pageParam }),
 		{
 			getNextPageParam: (lastPage, allPages) => {
-				if (lastPage.length < 20) return undefined;
+				if (lastPage.length < PAGE_SIZE) return undefined;
 				return allPages.length;
 			},
 			getPreviousPageParam: (_firstPage, allPages) => {
