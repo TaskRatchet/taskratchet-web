@@ -11,7 +11,7 @@ export function useTasks(): UseInfiniteQueryResult<TaskType[]> {
 			getTasks({ page: pageParam }),
 		{
 			getNextPageParam: (lastPage, allPages) => {
-				if (lastPage.length < PAGE_SIZE) return undefined;
+				if (lastPage?.length < PAGE_SIZE) return undefined;
 				return allPages.length;
 			},
 			getPreviousPageParam: (_firstPage, allPages) => {

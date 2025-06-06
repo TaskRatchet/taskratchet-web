@@ -28,7 +28,8 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
 	const tasks = useMemo((): TaskType[] => {
-		return data?.pages?.flat() || [];
+		const pages = data?.pages || [];
+		return pages.flat();
 	}, [data]);
 
 	useEffect(() => {
@@ -66,7 +67,7 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 
 	return (
 		<>
-			{isFetched && !(tasks || []).length && (
+			{isFetched && !tasks.length && (
 				<Alert severity="info">
 					<AlertTitle>Nothing here!</AlertTitle>
 					Maybe add a task?

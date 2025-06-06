@@ -3,7 +3,12 @@ import { toast } from 'react-toastify';
 import { updateTask, type TaskInput } from '@taskratchet/sdk';
 
 interface Context {
-	previousTasks: TaskType[] | undefined;
+	snapshot:
+		| {
+				pages: TaskType[][];
+				pageParams?: number[];
+		  }
+		| undefined;
 }
 
 export function useUpdateTask(): (id: string, data: TaskInput) => void {
@@ -20,29 +25,36 @@ export function useUpdateTask(): (id: string, data: TaskInput) => void {
 				await queryClient.cancelQueries('tasks');
 
 				const { id, data } = variables;
-				const previousTasks: TaskType[] | undefined =
-					queryClient.getQueryData('tasks');
+				const snapshot:
+					| {
+							pages: TaskType[][];
+							pageParams?: number[];
+					  }
+					| undefined = queryClient.getQueryData('tasks');
 
-				if (!previousTasks) return { previousTasks };
+				if (!snapshot) return { snapshot: undefined };
 
-				const newTasks = previousTasks.map((t: TaskType) => {
-					if (t.id !== id) return t;
+				queryClient.setQueryData('tasks', () => ({
+					...snapshot,
+					pages: snapshot.pages.map((page) =>
+						page.map((t) => {
+							if (t.id !== id) return t;
 
-					const newTask = { ...t, ...data };
+							const newTask = { ...t, ...data };
 
-					if ('complete' in data) {
-						newTask['status'] = data['complete'] ? 'complete' : 'pending';
-					}
+							if ('complete' in data) {
+								newTask['status'] = data['complete'] ? 'complete' : 'pending';
+							}
 
-					return newTask;
-				});
+							return newTask;
+						}),
+					),
+				}));
 
-				queryClient.setQueryData('tasks', () => newTasks);
-
-				return { previousTasks };
+				return { snapshot };
 			},
-			onError: (error: Error, variables, context) => {
-				queryClient.setQueryData('tasks', (context as Context).previousTasks);
+			onError: (error: Error, _variables, context) => {
+				queryClient.setQueryData('tasks', (context as Context).snapshot);
 				toast(error.toString());
 			},
 			onSettled: async () => {

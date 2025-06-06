@@ -11,7 +11,7 @@ import { waitFor, screen } from '@testing-library/react';
 import getQueryClient from './lib/getQueryClient';
 import { QueryClient } from 'react-query';
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
-import { addTask } from '@taskratchet/sdk';
+import { addTask, getTasks } from '@taskratchet/sdk';
 
 vi.mock('./lib/api/getTasks');
 vi.mock('./lib/api/getMe');
@@ -42,6 +42,7 @@ function renderPage() {
 
 describe('App', () => {
 	beforeEach(() => {
+		vi.mocked(getTasks).mockResolvedValue([]);
 		vi.setSystemTime(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 		window.localStorage.clear();

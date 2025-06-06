@@ -21,8 +21,14 @@ export function useAddTask(
 		onMutate: async (newTask: Input) => {
 			await queryClient.cancelQueries('tasks');
 
-			const snapshot: TaskType[] | undefined =
-				queryClient.getQueryData('tasks') || [];
+			const snapshot:
+				| {
+						pages: TaskType[][];
+						pageParams?: number[];
+				  }
+				| undefined = queryClient.getQueryData('tasks');
+
+			if (!snapshot) return { snapshot: undefined };
 
 			const t = {
 				status: 'pending',
@@ -31,7 +37,10 @@ export function useAddTask(
 			} as TaskType;
 
 			onSave(t);
-			queryClient.setQueryData('tasks', [...snapshot, t]);
+			queryClient.setQueryData('tasks', {
+				...snapshot,
+				pages: [...snapshot.pages, [t]],
+			});
 
 			return { snapshot };
 		},

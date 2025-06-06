@@ -55,7 +55,12 @@ export default function TaskAdd({
 			setError('Task is required');
 			return;
 		}
-		if (!due || !cents) {
+		if (!due) {
+			setError('Deadline is required');
+			return;
+		}
+		if (cents < 100) {
+			setError('Minimum stakes is $1.00');
 			return;
 		}
 		if (new Date(due * 1000) < minDue) {

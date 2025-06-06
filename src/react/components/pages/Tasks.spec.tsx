@@ -9,7 +9,6 @@ import { makeTask } from '../../lib/test/makeTask';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import * as browser from '../../lib/browser';
-import { __listRef } from '../../../../__mocks__/react-list';
 import { vi, type Mock, describe, it, expect, beforeEach } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { findTaskCheckbox } from '../../lib/test/queries';
@@ -39,6 +38,8 @@ const expectTaskSave = async ({
 	due: Date;
 	cents?: number;
 }) => {
+	expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+
 	await waitFor(() => expect(addTask).toBeCalled());
 
 	expect(addTask).toBeCalledWith({ task, due: due.getTime() / 1000, cents });
@@ -69,6 +70,7 @@ describe('tasks page', () => {
 		vi.resetAllMocks();
 		vi.setSystemTime(new Date('10/29/2020'));
 		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
+		loadTasksApiData();
 	});
 
 	it('loads tasks', async () => {
