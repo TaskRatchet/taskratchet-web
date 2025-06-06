@@ -45,7 +45,7 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 		setNextHeadingIndex(headingIndexUpdate);
 		setEntries(newEntries);
 		setNewTaskIndex(taskIndexUpdate);
-	}, [tasks, newTask, filters, nextHeadingIndex]);
+	}, [tasks, newTask, filters]);
 
 	useEffect(() => {
 		if (nextHeadingIndex === undefined) return;
