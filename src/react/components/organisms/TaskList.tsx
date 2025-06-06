@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api/useTasks';
 import createListItems from '../../lib/createListItems';
 import ReactList from 'react-list';
-import { Alert, AlertTitle, ListSubheader } from '@mui/material';
+import { Alert, AlertTitle, Box, ListSubheader, Button } from '@mui/material';
 import Task from '../molecules/Task';
 import useFilters from '../../lib/useFilters';
 
@@ -17,7 +17,8 @@ function isTask(value: unknown): value is TaskType {
 }
 
 const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
-	const { data: tasks, isFetched } = useTasks();
+	const { data, isFetched, fetchNextPage, hasNextPage, isFetching } =
+		useTasks();
 	const { filters } = useFilters();
 	const listRef = useRef<ReactList>(null);
 	const [entries, setEntries] = useState<(TaskType | string)[]>([]);
@@ -26,8 +27,12 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 	const [index, setIndex] = useState<number>(0);
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
+	const tasks = useMemo((): TaskType[] => {
+		return data?.pages?.flat() || [];
+	}, [data]);
+
 	useEffect(() => {
-		const sorted = sortTasks(tasks || []);
+		const sorted = sortTasks(tasks);
 		const filtered = filters ? sorted.filter((t) => filters[t.status]) : sorted;
 
 		const {
@@ -89,6 +94,28 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 				type={'variable'}
 				ref={listRef}
 			/>
+			{hasNextPage ? (
+				isFetched && (
+					<Box
+						className="organism-taskList__loadMore"
+						sx={{ textAlign: 'center', marginTop: 2 }}
+					>
+						<Button
+							onClick={() => {
+								void fetchNextPage();
+							}}
+							disabled={isFetching}
+							variant="contained"
+						>
+							Load more tasks
+						</Button>
+					</Box>
+				)
+			) : (
+				<div className="organism-taskList__noMore">
+					<p>No more tasks to load</p>
+				</div>
+			)}
 		</>
 	);
 };
