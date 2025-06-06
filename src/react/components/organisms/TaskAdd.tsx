@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import { useTimezone } from '../../lib/api/useTimezone';
 import { useAddTask } from '../../lib/api/useAddTask';
 import * as browser from '../../lib/browser';
-import formatDue from '../../lib/formatDue';
 
 const getDefaultDue = () => {
 	const due = browser.getNowDate();
@@ -13,7 +12,7 @@ const getDefaultDue = () => {
 	due.setHours(23);
 	due.setMinutes(59);
 
-	return formatDue(due);
+	return due.getTime() / 1000;
 };
 
 export default function TaskAdd({
@@ -30,12 +29,12 @@ export default function TaskAdd({
 	const timezone = useTimezone() || '';
 	const addTask = useAddTask(onSave);
 	const [task, setTask] = useState<string>(baseTask?.task || '');
-	const [due, setDue] = useState<string>(() => {
+	const [due, setDue] = useState<number>(() => {
 		if (!baseTask) {
 			return getDefaultDue();
 		}
 
-		if (new Date(baseTask.due) < browser.getNowDate()) {
+		if (new Date(baseTask.due * 1000) < browser.getNowDate()) {
 			return getDefaultDue();
 		}
 
@@ -59,7 +58,7 @@ export default function TaskAdd({
 		if (!due || !cents) {
 			return;
 		}
-		if (new Date(due) < minDue) {
+		if (new Date(due * 1000) < minDue) {
 			setError('Due date must be in the future');
 			return;
 		}

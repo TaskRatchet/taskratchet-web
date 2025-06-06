@@ -7,6 +7,7 @@ import {
 	getTasks,
 	updateTask,
 } from '@taskratchet/sdk';
+import { makeTask } from './makeTask';
 
 export const loadTasksApiData = ({
 	tasks = [],
@@ -15,5 +16,5 @@ export const loadTasksApiData = ({
 	vi.mocked(getTasks).mockResolvedValue(tasks);
 	vi.mocked(getMe).mockResolvedValue(me as User);
 	vi.mocked(updateTask).mockResolvedValue(makeResponse() as Response);
-	vi.mocked(addTask).mockResolvedValue(makeResponse() as Response);
+	vi.mocked(addTask).mockResolvedValue(makeTask());
 };

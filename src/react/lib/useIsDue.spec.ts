@@ -8,7 +8,7 @@ describe('useIsDue', () => {
 
 		const result = useIsDue(
 			makeTask({
-				due_timestamp: 1623869940,
+				due: 1623869940,
 			}),
 		);
 
@@ -20,7 +20,7 @@ describe('useIsDue', () => {
 
 		const result = useIsDue(
 			makeTask({
-				due_timestamp: 1623869940 + 24 * 60 * 60,
+				due: 1623869940 + 24 * 60 * 60,
 			}),
 		);
 
@@ -32,7 +32,7 @@ describe('useIsDue', () => {
 
 		const result = useIsDue(
 			makeTask({
-				due_timestamp: 1623869940 - 1,
+				due: 1623869940 - 1,
 			}),
 		);
 
@@ -44,7 +44,7 @@ describe('useIsDue', () => {
 
 		const result = useIsDue(
 			makeTask({
-				due_timestamp: 1623869940,
+				due: 1623869940,
 				complete: true,
 			}),
 		);
@@ -57,7 +57,7 @@ describe('useIsDue', () => {
 
 		const result = useIsDue(
 			makeTask({
-				due_timestamp: 1623869940,
+				due: 1623869940,
 				status: 'expired',
 			}),
 		);

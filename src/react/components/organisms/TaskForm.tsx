@@ -15,7 +15,7 @@ const LazyDueForm = React.lazy(() => import('./DueForm'));
 
 interface TaskFormProps {
 	task: string;
-	due?: string;
+	due?: number;
 	cents: number;
 	timezone: string;
 	error: string;

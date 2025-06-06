@@ -20,13 +20,12 @@ const mockEditTask = vi.mocked(editTask);
 
 function renderTask(task: Partial<TaskType> = {}) {
 	const t: TaskType = {
-		due: '2/1/2022, 11:59 PM',
+		due: new Date('2/1/2022, 11:59 PM').getTime() / 1000,
 		cents: 100,
 		task: 'the_task',
 		id: 'the_id',
 		status: 'pending',
 		complete: false,
-		timezone: 'Est/GMT',
 		...task,
 	};
 	return renderWithQueryProvider(<Task task={t} />);
@@ -118,7 +117,11 @@ describe('Task component', () => {
 		await userEvent.click(screen.getByText('Save'));
 
 		await waitFor(() => {
-			expect(editTask).toBeCalledWith('the_id', '2/1/2022, 11:59 PM', 1500);
+			expect(editTask).toBeCalledWith(
+				'the_id',
+				new Date('2/1/2022, 11:59 PM').getTime() / 1000,
+				1500,
+			);
 		});
 	});
 
@@ -132,7 +135,7 @@ describe('Task component', () => {
 	});
 
 	it('allows date edit', async () => {
-		renderTask({ due: '2/1/2022, 11:59 PM' });
+		renderTask({ due: new Date('2/1/2022, 11:59 PM').getTime() / 1000 });
 
 		await openEditDialog();
 
@@ -144,7 +147,11 @@ describe('Task component', () => {
 		await userEvent.click(screen.getByText('Save'));
 
 		await waitFor(() => {
-			expect(editTask).toBeCalledWith('the_id', '2/1/2021, 11:59 PM', 100);
+			expect(editTask).toBeCalledWith(
+				'the_id',
+				new Date('2/1/2021, 11:59 PM').getTime() / 1000,
+				100,
+			);
 		});
 	});
 
@@ -158,8 +165,8 @@ describe('Task component', () => {
 
 	it('asks for confirmation before uncling', async () => {
 		/*
-		When user clicks "Charge Immediately" link in task context menu, user 
-		should be shown confirmation step before the task is charged. 
+		When user clicks "Charge Immediately" link in task context menu, user
+		should be shown confirmation step before the task is charged.
 		 */
 
 		renderTask();
@@ -209,7 +216,11 @@ describe('Task component', () => {
 			await userEvent.click(screen.getByText('Save'));
 
 			await waitFor(() => {
-				expect(editTask).toBeCalledWith('the_id', '2/1/2021, 11:59 PM', 100);
+				expect(editTask).toBeCalledWith(
+					'the_id',
+					new Date('2/1/2021, 11:59 PM').getTime() / 1000,
+					100,
+				);
 			});
 
 			expect(screen.getByText('the_error')).toBeInTheDocument();
@@ -242,7 +253,7 @@ describe('Task component', () => {
 			throw new Error('Should not have been called (enforces maximum due)');
 		});
 
-		renderTask({ due: '2/1/2022, 11:59 PM' });
+		renderTask({ due: new Date('2/1/2022, 11:59 PM').getTime() / 1000 });
 
 		await openEditDialog();
 

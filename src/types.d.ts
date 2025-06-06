@@ -2,19 +2,19 @@ type Status = 'pending' | 'complete' | 'expired';
 type Filters = Record<Status, boolean>;
 
 type TaskType = {
-	id?: string;
+	id: string;
 	isNew?: boolean;
-	due_timestamp?: number;
-	due: string;
-	cents: number;
 	task: string;
+	due: number;
+	cents: number;
 	complete: boolean;
-	status: Status;
-	timezone: string;
+	status: 'pending' | 'complete' | 'expired';
+	chargeStatus?: 'notified' | 'authorized' | 'captured';
+	contested?: boolean;
 };
 
 type TaskInput = {
 	task: string;
-	due: string;
+	due: number;
 	cents: number;
 };

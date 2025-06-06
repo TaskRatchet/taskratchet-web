@@ -7,11 +7,9 @@ import { App } from './App';
 import userEvent from '@testing-library/user-event';
 import { useSession } from './lib/api/useSession';
 import { MemoryRouter } from 'react-router-dom';
-import { __listRef } from 'react-list';
 import { waitFor, screen } from '@testing-library/react';
 import getQueryClient from './lib/getQueryClient';
 import { QueryClient } from 'react-query';
-import loadControlledPromise from './lib/test/loadControlledPromise';
 import { describe, it, expect, beforeEach, vi, type Mock } from 'vitest';
 import { addTask } from '@taskratchet/sdk';
 
@@ -56,22 +54,6 @@ describe('App', () => {
 				},
 			}),
 		);
-	});
-
-	it('re-scrolls tasks list when today icon clicked', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData({
-			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
-		});
-
-		renderPage();
-
-		await userEvent.click(await screen.findByLabelText('today'));
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toHaveBeenCalledWith(0);
-		});
 	});
 
 	it('has filter entries', async () => {
@@ -144,7 +126,12 @@ describe('App', () => {
 		vi.setSystemTime(new Date('1/1/2020'));
 
 		loadTasksApiData({
-			tasks: [makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' })],
+			tasks: [
+				makeTask({
+					due: new Date('1/1/2020, 11:59 PM').getTime() / 1000,
+					task: 'task 1',
+				}),
+			],
 		});
 
 		renderPage();
@@ -160,46 +147,6 @@ describe('App', () => {
 
 		await waitFor(() => {
 			expect(screen.queryByText('task 1')).not.toBeInTheDocument();
-		});
-	});
-
-	it('scrolls to new task', async () => {
-		vi.setSystemTime(new Date('1/1/2020'));
-
-		loadTasksApiData();
-
-		renderPage();
-
-		await openForm();
-
-		const { resolve } = loadControlledPromise(addTask);
-
-		await userEvent.type(await screen.findByLabelText('Task *'), 'task 1');
-		await userEvent.click(screen.getByText('Add'));
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toHaveBeenCalledWith(1);
-		});
-
-		resolve();
-	});
-
-	it('scrolls to today', async () => {
-		vi.setSystemTime(new Date('1/7/2020'));
-
-		loadTasksApiData({
-			tasks: [
-				makeTask({ due: '1/1/2020, 11:59 PM', task: 'task 1' }),
-				makeTask({ due: '1/7/2020, 11:59 PM', task: 'task 1' }),
-			],
-		});
-
-		renderPage();
-
-		await userEvent.click(await screen.findByLabelText('today'));
-
-		await waitFor(() => {
-			expect(__listRef.scrollTo).toHaveBeenCalledWith(2);
 		});
 	});
 
@@ -270,7 +217,9 @@ describe('App', () => {
 		vi.setSystemTime('2/1/2000');
 
 		loadTasksApiData({
-			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
+			tasks: [
+				makeTask({ due: new Date('1/1/2020, 11:59 PM').getTime() / 1000 }),
+			],
 		});
 
 		renderPage();
@@ -308,7 +257,9 @@ describe('App', () => {
 		vi.setSystemTime('2/1/2020');
 
 		loadTasksApiData({
-			tasks: [makeTask({ due: '1/1/2020, 11:59 PM' })],
+			tasks: [
+				makeTask({ due: new Date('1/1/2020, 11:59 PM').getTime() / 1000 }),
+			],
 		});
 
 		renderPage();

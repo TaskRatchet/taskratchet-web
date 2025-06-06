@@ -8,7 +8,7 @@ describe('useDifferenceToNow', () => {
 
 		const result = useDifferenceToNow(
 			makeTask({
-				due_timestamp: 1623873540,
+				due: 1623873540,
 			}),
 		);
 
@@ -20,7 +20,7 @@ describe('useDifferenceToNow', () => {
 
 		const result = useDifferenceToNow(
 			makeTask({
-				due_timestamp: 1623869940,
+				due: 1623869940,
 			}),
 		);
 
@@ -32,7 +32,7 @@ describe('useDifferenceToNow', () => {
 
 		const result = useDifferenceToNow(
 			makeTask({
-				due_timestamp: 1623873540 * 2,
+				due: 1623873540 * 2,
 			}),
 		);
 
@@ -44,7 +44,7 @@ describe('useDifferenceToNow', () => {
 
 		const result = useDifferenceToNow(
 			makeTask({
-				due_timestamp: 1623873540,
+				due: 1623873540,
 			}),
 		);
 

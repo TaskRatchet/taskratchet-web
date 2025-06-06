@@ -13,7 +13,7 @@
     "format": "prettier --write .",
     "lint": "eslint --max-warnings 0 .",
     "lint:fix": "eslint --max-warnings 0 --fix .",
-    "test": "vitest",
+    "test": "vitest --bail 1",
     "unused": "pnpm dlx depcheck"
   },
   "dependencies": {
@@ -25,7 +25,7 @@
     "@mui/lab": "5.0.0-alpha.173",
     "@mui/material": "^5.16.6",
     "@mui/x-date-pickers": "^7.12.0",
-    "@taskratchet/sdk": "^1.0.0",
+    "@taskratchet/sdk": "^3.0.0",
     "astro": "^4.15.1",
     "dayjs": "^1.11.12",
     "humanize-duration": "^3.32.1",

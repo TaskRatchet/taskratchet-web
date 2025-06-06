@@ -5,10 +5,10 @@ import {
 } from 'react-query';
 import { editTask } from '@taskratchet/sdk';
 
-type EditParams = { id: string; due: string; cents: number };
+type EditParams = { id: string; due: number; cents: number };
 
 export default function useEditTask(): UseMutationResult<
-	Response,
+	TaskType,
 	Error,
 	EditParams
 > {

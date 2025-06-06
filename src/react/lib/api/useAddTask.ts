@@ -8,13 +8,13 @@ import { addTask } from '@taskratchet/sdk';
 
 interface Input {
 	task: string;
-	due: string;
+	due: number;
 	cents: number;
 }
 
 export function useAddTask(
 	onSave: (t: TaskType) => void,
-): UseMutationResult<Response, Error, Input> {
+): UseMutationResult<TaskType, Error, Input> {
 	const queryClient = useQueryClient();
 
 	return useMutation(addTask, {
