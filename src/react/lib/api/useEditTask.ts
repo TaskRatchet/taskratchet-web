@@ -18,7 +18,7 @@ export default function useEditTask(): UseMutationResult<
 	return useMutation(
 		['edit', 'task_id'],
 		(data: EditParams) => {
-			return editTask(data.id, data.due, data.cents);
+			return editTask(data.id, Math.round(data.due), data.cents);
 		},
 		{
 			onSettled: async () => {
