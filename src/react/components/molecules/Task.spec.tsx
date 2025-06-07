@@ -305,6 +305,11 @@ describe('Task component', () => {
 		});
 	});
 
-	// TODO
-	// allow reducing pledge, extending deadline in first n minutes
+	it('displays correct due date', () => {
+		vi.setSystemTime('2/1/2020, 11:59 PM');
+
+		renderTask({ due: new Date('2/1/2022, 11:59 PM').getTime() / 1000 });
+
+		expect(screen.getByText(/2\/1\/2022/)).toBeInTheDocument();
+	});
 });

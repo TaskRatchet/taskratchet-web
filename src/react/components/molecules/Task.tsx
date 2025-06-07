@@ -25,7 +25,7 @@ export interface TaskProps {
 const Task = ({ task }: TaskProps): JSX.Element => {
 	const setComplete = useSetComplete();
 	const isDue = useIsDue(task);
-	const dueDate = new Date(task.due);
+	const dueDate = new Date(task.due * 1000);
 	const dateString = browser.getDateString(dueDate);
 	const timeString = browser.getTimeString(dueDate);
 	const disabled = !task.id || task.status === 'expired';
