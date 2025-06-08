@@ -1,5 +1,6 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import ButtonLoading from '../components/ButtonLoading.astro';
 ---
 
 <Layout title="Login">
@@ -11,8 +12,8 @@ import Layout from '../layouts/Layout.astro';
 		<input type="email" id="email" name="email" required />
 		<label for="password">Password</label>
 		<input type="password" id="password" name="password" required />
-		<button type="submit">Login</button>
-		<button id="reset">Reset Password</button>
+		<ButtonLoading type="submit">Login</ButtonLoading>
+		<ButtonLoading id="reset">Reset Password</ButtonLoading>
 	</form>
 </Layout>
 
@@ -21,7 +22,13 @@ import Layout from '../layouts/Layout.astro';
 
 	async function handleSubmit(event: Event) {
 		event.preventDefault();
-		const form = event.target as HTMLFormElement;
+		const form = document.querySelector('#login-form') as HTMLFormElement;
+		const submitButton = form.querySelector(
+			'button[type="submit"]'
+		) as HTMLButtonElement;
+		submitButton.dataset.loading = 'true';
+		submitButton.disabled = true;
+
 		const email = form.email.value;
 		const password = form.password.value;
 		const success = await login(email, password);
@@ -31,12 +38,17 @@ import Layout from '../layouts/Layout.astro';
 			window.location.href = prev || '/';
 		} else {
 			alert('Login failed');
+			submitButton.dataset.loading = 'false';
+			submitButton.disabled = false;
 		}
 	}
 
 	async function handleReset(event: Event) {
 		event.preventDefault();
 		const form = document.querySelector('#login-form') as HTMLFormElement;
+		const resetButton = form.querySelector('#reset') as HTMLButtonElement;
+		resetButton.dataset.loading = 'true';
+		resetButton.disabled = true;
 		const email = form.email.value;
 
 		if (!email) {
@@ -47,12 +59,16 @@ import Layout from '../layouts/Layout.astro';
 		try {
 			await requestResetEmail(email);
 			alert('Password reset email sent');
+			resetButton.dataset.loading = 'false';
+			resetButton.disabled = false;
 		} catch (error) {
 			if (error instanceof Error) {
 				alert(error.message);
 			} else {
 				alert('An error occurred');
 			}
+			resetButton.dataset.loading = 'false';
+			resetButton.disabled = false;
 		}
 	}
 
