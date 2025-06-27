@@ -1,32 +1,19 @@
 import { IconButton, Tooltip } from '@mui/material';
-import React, { useEffect } from 'react';
+import React from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
-import { useMe } from '../../lib/api/useMe';
 
 export default function FeedbackButton() {
-	useMe({
-		onSuccess: (data) => {
-			window.FreshworksWidget('identify', 'ticketForm', {
-				name: data?.name,
-				email: data?.email,
-			});
-		},
-	});
-
-	useEffect(() => {
-		window.FreshworksWidget('hide', 'launcher');
-	}, []);
-
 	return (
 		<>
-			<Tooltip title={'Feedback'}>
+			<Tooltip title={'Contact'}>
 				<IconButton
-					onClick={() => {
-						window.FreshworksWidget('open');
-					}}
+					component="a"
+					href="https://docs.taskratchet.com/contact.html"
+					target="_blank"
+					rel="noopener noreferrer"
 					edge="start"
 					color="inherit"
-					aria-label="feedback"
+					aria-label="contact"
 					sx={{ m: 0.1 }}
 				>
 					<FeedbackIcon />
