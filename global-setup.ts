@@ -37,9 +37,6 @@ function deleteAllCookies() {
 const fetchMock = createFetchMock(vi);
 fetchMock.enableMocks();
 
-// window.FreshworksWidget = vi.fn() as any;
-vi.stubGlobal('FreshworksWidget', vi.fn());
-
 beforeEach(() => {
 	fetchMock.resetMocks();
 	deleteAllCookies();
