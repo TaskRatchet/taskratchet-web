@@ -20,7 +20,10 @@ import {
 	SignInButton,
 	SignedIn,
 	UserButton,
+	useUser,
+	useClerk,
 } from '@clerk/clerk-react';
+import { setAuthToken } from '@taskratchet/sdk';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
@@ -35,8 +38,21 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 		onTodayClick?.();
 		navigate('/');
 	};
+	const { isSignedIn, user } = useUser();
+	const clerk = useClerk();
 
 	useEffect(() => setIsOpen(false), [location]);
+
+	useEffect(() => {
+		if (!isSignedIn || !user) {
+			setAuthToken(null);
+			return;
+		}
+
+		void clerk.session?.getToken().then((t) => {
+			setAuthToken(t ?? null);
+		});
+	}, [isSignedIn, user, clerk]);
 
 	return (
 		<AppBar className={'organism-navBar'} position="relative">
@@ -72,9 +88,6 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 
 				<FeedbackButton />
 
-				<SignedOut>
-					<SignInButton />
-				</SignedOut>
 				<SignedIn>
 					<UserButton />
 				</SignedIn>

@@ -1,17 +1,10 @@
 import React from 'react';
-import { useSession } from '../../lib/api/useSession';
+import { Protect, RedirectToSignIn } from '@clerk/clerk-react';
 
 const Authenticated = ({
 	children,
 }: React.PropsWithChildren<unknown>): JSX.Element => {
-	const session = useSession();
-
-	if (session) return <>{children}</>;
-
-	const prev = window.location.pathname + window.location.search;
-	window.location.href = `/login?prev=${encodeURIComponent(prev)}`;
-
-	return <>Redirecting...</>;
+	return <Protect fallback={<RedirectToSignIn />}>{children}</Protect>;
 };
 
 export default Authenticated;
