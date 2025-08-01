@@ -18,6 +18,16 @@ import getQueryClient from './lib/getQueryClient';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
 import AndTheme from './components/HOCs/AndTheme';
+import { ClerkProvider } from '@clerk/clerk-react';
+import { dark } from '@clerk/themes';
+
+const PUBLISHABLE_KEY = import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+console.log(import.meta.env);
+
+if (!PUBLISHABLE_KEY) {
+	throw new Error('Missing Publishable Key');
+}
 
 window.stripe_key = IS_PRODUCTION
 	? 'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd'
@@ -43,75 +53,86 @@ export function App(): JSX.Element {
 		ref.current.scrollTo(0, 0);
 	}, [location]);
 
+	const prefersDarkMode = window.matchMedia(
+		'(prefers-color-scheme: dark)',
+	).matches;
+
 	return (
-		<QueryClientProvider client={queryClient}>
-			<AndTheme>
-				<Stack sx={{ height: '100vh' }}>
-					<NavBar onTodayClick={handleTodayClick} />
-					<Box ref={ref} overflow={'scroll'} flexGrow={1}>
-						<Container
-							maxWidth={'sm'}
-							disableGutters
-							sx={{
-								minHeight: 1,
-							}}
-						>
-							<Routes>
-								<Route
-									path={'/success'}
-									element={
-										<Box sx={{ p: 2 }}>
-											<Alert severity="success">
-												Your payment method has been saved successfully.
-											</Alert>
-										</Box>
-									}
-								/>
+		<ClerkProvider
+			publishableKey={PUBLISHABLE_KEY}
+			appearance={{
+				theme: prefersDarkMode ? dark : undefined,
+			}}
+		>
+			<QueryClientProvider client={queryClient}>
+				<AndTheme>
+					<Stack sx={{ height: '100vh' }}>
+						<NavBar onTodayClick={handleTodayClick} />
+						<Box ref={ref} overflow={'scroll'} flexGrow={1}>
+							<Container
+								maxWidth={'sm'}
+								disableGutters
+								sx={{
+									minHeight: 1,
+								}}
+							>
+								<Routes>
+									<Route
+										path={'/success'}
+										element={
+											<Box sx={{ p: 2 }}>
+												<Alert severity="success">
+													Your payment method has been saved successfully.
+												</Alert>
+											</Box>
+										}
+									/>
 
-								<Route
-									path={'/cancel'}
-									element={
-										<Box sx={{ p: 2 }}>
-											<Alert severity="error">
-												Your payment method could not be saved. Please contact{' '}
-												<Link
-													href="mailto:support@taskratchet.com"
-													target={'_blank'}
-													rel="noopener noreferrer"
-												>
-													support@taskratchet.com
-												</Link>{' '}
-												for assistance.
-											</Alert>
-										</Box>
-									}
-								/>
+									<Route
+										path={'/cancel'}
+										element={
+											<Box sx={{ p: 2 }}>
+												<Alert severity="error">
+													Your payment method could not be saved. Please contact{' '}
+													<Link
+														href="mailto:support@taskratchet.com"
+														target={'_blank'}
+														rel="noopener noreferrer"
+													>
+														support@taskratchet.com
+													</Link>{' '}
+													for assistance.
+												</Alert>
+											</Box>
+										}
+									/>
 
-								<Route
-									path={'/account'}
-									element={
-										<Authenticated>
-											<Account />
-										</Authenticated>
-									}
-								/>
+									<Route
+										path={'/account'}
+										element={
+											<Authenticated>
+												<Account />
+											</Authenticated>
+										}
+									/>
 
-								<Route path={'/reset'} element={<ResetPassword />} />
+									<Route path={'/reset'} element={<ResetPassword />} />
 
-								<Route
-									path={'/'}
-									element={
-										<Authenticated>
-											<Tasks lastToday={lastToday} />
-										</Authenticated>
-									}
-								/>
-							</Routes>
-						</Container>
-					</Box>
-				</Stack>
-			</AndTheme>
-		</QueryClientProvider>
+									<Route
+										path={'/'}
+										element={
+											<Authenticated>
+												<Tasks lastToday={lastToday} />
+											</Authenticated>
+										}
+									/>
+								</Routes>
+							</Container>
+						</Box>
+					</Stack>
+				</AndTheme>
+			</QueryClientProvider>
+		</ClerkProvider>
 	);
 }
 

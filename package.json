@@ -19,6 +19,8 @@
   "dependencies": {
     "@astrojs/check": "^0.9.3",
     "@astrojs/react": "^3.6.2",
+    "@clerk/clerk-react": "^5.38.1",
+    "@clerk/themes": "^2.4.4",
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
     "@mui/icons-material": "^5.16.6",

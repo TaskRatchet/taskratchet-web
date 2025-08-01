@@ -15,6 +15,12 @@ import {
 import { Today, Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
 import FeedbackButton from './FeedbackButton';
+import {
+	SignedOut,
+	SignInButton,
+	SignedIn,
+	UserButton,
+} from '@clerk/clerk-react';
 
 interface NavBarProps {
 	onTodayClick?: () => void;
@@ -65,6 +71,13 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 				</Tooltip>
 
 				<FeedbackButton />
+
+				<SignedOut>
+					<SignInButton />
+				</SignedOut>
+				<SignedIn>
+					<UserButton />
+				</SignedIn>
 
 				<Tooltip title={'Menu'}>
 					<IconButton
