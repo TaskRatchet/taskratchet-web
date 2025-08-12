@@ -33,9 +33,13 @@ function Register(): JSX.Element {
 	const submit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
 
-		if (!timezone || !checkoutSession) {
-			throw new Error('unreachable');
-		}
+ if (!timezone || !checkoutSession) {
+   console.error('Registration form submitted without required data:', {
+     timezone: !!timezone,
+     checkoutSession: !!checkoutSession
+   });
+   return; // Early return instead of throwing
+ }
 
 		updateMe.mutate(
 			{
