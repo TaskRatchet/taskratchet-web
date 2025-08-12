@@ -1,8 +1,8 @@
 import { addTask, editTask, getTasks, updateTask } from '@taskratchet/sdk';
-import { fireEvent, screen,waitFor } from '@testing-library/react';
+import { fireEvent, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { toast } from 'react-toastify';
-import { beforeEach,describe, expect, it, type Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import * as browser from '../../lib/browser';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
@@ -69,7 +69,6 @@ describe('tasks page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		vi.setSystemTime(new Date('10/29/2020'));
-		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 		loadTasksApiData();
 	});
 

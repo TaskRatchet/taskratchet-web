@@ -3,7 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 
 import { ClerkProvider } from '@clerk/clerk-react';
 import { dark } from '@clerk/themes';
-import { Alert, Box, Container, Link,Stack } from '@mui/material';
+import { Alert, Box, Container, Link, Stack } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import {
@@ -25,8 +25,6 @@ import getQueryClient from './lib/getQueryClient';
 import { IS_PRODUCTION } from './tr_constants';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
-
-console.log(import.meta.env);
 
 if (!PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
@@ -56,15 +54,11 @@ export function App(): JSX.Element {
 		ref.current.scrollTo(0, 0);
 	}, [location]);
 
-	const prefersDarkMode = window.matchMedia(
-		'(prefers-color-scheme: dark)',
-	).matches;
-
 	return (
 		<ClerkProvider
 			publishableKey={PUBLISHABLE_KEY}
 			appearance={{
-				theme: prefersDarkMode ? dark : undefined,
+				theme: browser.prefersDarkMode() ? dark : undefined,
 			}}
 		>
 			<QueryClientProvider client={queryClient}>

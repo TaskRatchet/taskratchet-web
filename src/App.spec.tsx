@@ -1,13 +1,12 @@
 import { addTask, getTasks } from '@taskratchet/sdk';
-import { screen,waitFor } from '@testing-library/react';
+import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, type Mock,vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
 import { App } from './App';
 import { useSession } from './lib/api/useSession';
-import * as browser from './lib/browser';
 import getQueryClient from './lib/getQueryClient';
 import { loadTasksApiData } from './lib/test/loadTasksApiData';
 import { makeTask } from './lib/test/makeTask';
@@ -44,7 +43,6 @@ describe('App', () => {
 	beforeEach(() => {
 		vi.mocked(getTasks).mockResolvedValue([]);
 		vi.setSystemTime(new Date('10/29/2020'));
-		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
 		window.localStorage.clear();
 		vi.mocked(getQueryClient).mockReturnValue(
 			new QueryClient({
@@ -137,9 +135,7 @@ describe('App', () => {
 
 		renderPage();
 
-		await waitFor(() => {
-			expect(screen.getByText('task 1')).toBeInTheDocument();
-		});
+		expect(await screen.findByText('task 1')).toBeInTheDocument();
 
 		await userEvent.click(await screen.findByLabelText('filters'));
 		await userEvent.click(

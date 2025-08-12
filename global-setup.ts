@@ -1,8 +1,9 @@
 import { getCheckoutSession } from '@taskratchet/sdk';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
-import { afterEach,beforeEach, expect, vi } from 'vitest';
+import { afterEach, beforeEach, expect, vi } from 'vitest';
 import createFetchMock from 'vitest-fetch-mock';
+import * as browser from './src/lib/browser';
 
 import { redirectToCheckout } from './src/lib/stripe';
 
@@ -17,10 +18,11 @@ module.exports = async () => {
 	process.env.TZ = 'America/Chicago';
 };
 
-vi.mock('./src/react/lib/saveFeedback');
-vi.mock('./src/react/lib/stripe');
+vi.mock('./src/lib/saveFeedback');
+vi.mock('./src/lib/stripe');
 vi.mock('@mui/x-date-pickers');
 vi.mock('@taskratchet/sdk');
+vi.mock('@clerk/clerk-react');
 
 global.scrollTo = vi.fn() as any;
 
@@ -45,4 +47,5 @@ beforeEach(() => {
 		id: 'session',
 	});
 	vi.mocked(redirectToCheckout).mockResolvedValue();
+	vi.spyOn(browser, 'prefersDarkMode').mockReturnValue(false);
 });

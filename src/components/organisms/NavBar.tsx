@@ -1,5 +1,5 @@
-import { SignedIn, useClerk,UserButton, useUser } from '@clerk/clerk-react';
-import { Menu,Today } from '@mui/icons-material';
+import { SignedIn, useClerk, UserButton, useUser } from '@clerk/clerk-react';
+import { Menu, Today } from '@mui/icons-material';
 import {
 	AppBar,
 	Box,

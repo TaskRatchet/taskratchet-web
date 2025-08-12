@@ -34,3 +34,7 @@ export function getNowTime(): number {
 export function getUrlParams(): ParsedQuery {
 	return queryString.parse(window.location.search);
 }
+
+export function prefersDarkMode(): boolean {
+	return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}

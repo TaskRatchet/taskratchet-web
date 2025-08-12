@@ -1,4 +1,4 @@
-import { Alert, AlertTitle, Box, Button,ListSubheader } from '@mui/material';
+import { Alert, AlertTitle, Box, Button, ListSubheader } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import ReactList from 'react-list';
 
@@ -29,8 +29,8 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 	const [shouldScroll, setShouldScroll] = useState<boolean>(false);
 
 	const tasks = useMemo((): TaskType[] => {
-		const pages = data?.pages || [];
-		return pages.flat();
+		const pages = data?.pages ?? [];
+		return pages.filter((p) => !!p).flat();
 	}, [data]);
 
 	useEffect(() => {

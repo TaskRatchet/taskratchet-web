@@ -2,7 +2,7 @@ import { editTask, updateTask } from '@taskratchet/sdk';
 import { waitFor } from '@testing-library/react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach,describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import * as browser from '../../lib/browser';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
@@ -41,10 +41,6 @@ async function openEditDialog() {
 }
 
 describe('Task component', () => {
-	beforeEach(() => {
-		vi.spyOn(browser, 'scrollIntoView').mockImplementation(() => undefined);
-	});
-
 	it('disables checkbox for tasks without id', () => {
 		renderTask({ id: undefined });
 
