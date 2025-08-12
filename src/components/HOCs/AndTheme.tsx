@@ -20,8 +20,8 @@ const LinkBehavior = React.forwardRef<HTMLAnchorElement, Props>(
 	function LinkBehavior(props: Props, ref) {
 		const { href, ...other } = props;
 
-		if (String(href).match(/^https?:\/\//)) {
-			return <a ref={ref} href={String(href)} {...other} />;
+		if (typeof href === 'string' && href.match(/^https?:\/\//)) {
+			return <a ref={ref} href={href} {...other} />;
 		}
 
 		return <RouterLink ref={ref} to={href} {...other} />;
