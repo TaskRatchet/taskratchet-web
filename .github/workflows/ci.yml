@@ -2,6 +2,7 @@ name: CI
 on: pull_request
 env:
   PNPM_VERSION: 9
+  VITE_CLERK_PUBLISHABLE_KEY: 'the_vite_clerk_publishable_key'
 jobs:
   test:
     runs-on: ubuntu-latest
