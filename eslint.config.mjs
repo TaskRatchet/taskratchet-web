@@ -35,7 +35,6 @@ export default [
 		plugins: {
 			react: fixupPluginRules(react),
 			'@typescript-eslint': fixupPluginRules(typescriptEslint),
-			lodash,
 			'testing-library': fixupPluginRules({
 				rules: testingLibrary.rules,
 			}),
@@ -66,7 +65,6 @@ export default [
 		},
 
 		rules: {
-			'lodash/import-scope': 'error',
 			'react/react-in-jsx-scope': 'off',
 		},
 	},
