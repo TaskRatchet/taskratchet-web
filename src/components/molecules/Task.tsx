@@ -17,7 +17,7 @@ import useIsDue from '../../lib/useIsDue';
 
 const LazyDiffToNow = React.lazy(() => import('../atoms/diffToNow'));
 
-export interface TaskProps {
+interface TaskProps {
 	task: TaskType;
 	ref_?: Ref<HTMLDivElement>;
 }

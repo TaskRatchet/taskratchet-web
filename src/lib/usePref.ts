@@ -58,14 +58,13 @@ function getPrefFromLocalStorage<T>(id: string) {
 	return prefEnvelope.pref;
 }
 
-export interface PrefEnvelope<T> {
+interface PrefEnvelope<T> {
 	pref: T;
 	version: string;
 }
 
 const PREF_ENVELOPE_VERSION = '1.0.0';
 
-// exported for testing only
-export function makePrefEnvelope<T>(pref: T): PrefEnvelope<T> {
+function makePrefEnvelope<T>(pref: T): PrefEnvelope<T> {
 	return { pref, version: PREF_ENVELOPE_VERSION };
 }

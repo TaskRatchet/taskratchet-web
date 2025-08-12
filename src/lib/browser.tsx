@@ -17,36 +17,8 @@ const getScrollableParent = function (el: Element | null): Element {
 			: getScrollableParent(el.parentElement);
 };
 
-export function getLanguages(): string[] {
+function getLanguages(): string[] {
 	return navigator.languages.slice();
-}
-
-export function getDateTimeString(date: Date): string {
-	const day = getDayName(date);
-	const dateString = getDateString(date);
-	const timeString = getTimeString(date);
-
-	return `${day}, ${dateString}, ${timeString}`;
-}
-
-export function getDayName(date: Date): string {
-	const days = [
-		'Sunday',
-		'Monday',
-		'Tuesday',
-		'Wednesday',
-		'Thursday',
-		'Friday',
-		'Saturday',
-	];
-
-	const s = days[date.getDay()];
-
-	if (!s) {
-		throw new Error('Invalid day');
-	}
-
-	return s;
 }
 
 export function getString(date: Date): string {
@@ -78,21 +50,4 @@ export function getNowTime(): number {
 
 export function getUrlParams(): ParsedQuery {
 	return queryString.parse(window.location.search);
-}
-
-export function scrollIntoView(
-	el: Element,
-	options: { offset?: number } = {},
-): void {
-	const { offset = 0 } = options;
-	const pos = el.getBoundingClientRect().top;
-	const scrollableParent = getScrollableParent(el);
-
-	scrollableParent.scrollTo({
-		top: pos - offset,
-	});
-}
-
-export function getScrollPercentage(el: Element): number {
-	return el.scrollTop / (el.scrollHeight - el.clientHeight);
 }
