@@ -54,7 +54,7 @@
     "@typescript-eslint/parser": "^8.39.1",
     "@vitest/ui": "^2.1.9",
     "eslint": "^9.33.0",
-    "eslint-config-prettier": "^9.1.2",
+    "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^4.6.2",
     "eslint-plugin-testing-library": "^6.5.0",
