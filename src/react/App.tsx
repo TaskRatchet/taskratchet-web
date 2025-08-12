@@ -17,11 +17,12 @@ import { Box, Container, Stack, Alert, Link } from '@mui/material';
 import getQueryClient from './lib/getQueryClient';
 import Account from './components/pages/Account';
 import Tasks from './components/pages/Tasks';
+import Register from './components/pages/Register';
 import AndTheme from './components/HOCs/AndTheme';
 import { ClerkProvider } from '@clerk/clerk-react';
 import { dark } from '@clerk/themes';
 
-const PUBLISHABLE_KEY = import.meta.env.PUBLIC_CLERK_PUBLISHABLE_KEY;
+const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 console.log(import.meta.env);
 
@@ -117,6 +118,11 @@ export function App(): JSX.Element {
 									/>
 
 									<Route path={'/reset'} element={<ResetPassword />} />
+
+									<Route
+										path={'/complete-registration'}
+										element={<Register />}
+									/>
 
 									<Route
 										path={'/'}

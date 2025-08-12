@@ -3,11 +3,8 @@
   "type": "module",
   "version": "0.2.0",
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "astro check && astro build",
-    "preview": "astro preview",
-    "astro": "astro",
+    "dev": "vite",
+    "start": "vite",
     "preinstall": "npx only-allow pnpm",
     "checkTs": "tsc --noEmit",
     "format": "prettier --write .",
