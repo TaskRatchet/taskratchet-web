@@ -16,6 +16,7 @@ expect.extend(matchers);
 // eslint-disable-next-line @typescript-eslint/require-await
 module.exports = async () => {
 	process.env.TZ = 'America/Chicago';
+	process.env.VITE_PUBLISHABLE_KEY = 'vite_publishable_key';
 };
 
 vi.mock('./src/lib/saveFeedback');
