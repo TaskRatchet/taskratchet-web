@@ -50,7 +50,7 @@ export function useAddTask(
 
 				return { snapshot };
 			},
-			onError: (error: Error, newTask: Input, context) => {
+			onError: (error: Error, _newTask: Input, context) => {
 				const { snapshot = null } = context || {};
 				if (snapshot !== null) {
 					queryClient.setQueryData('tasks', snapshot);

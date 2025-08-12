@@ -1,6 +1,5 @@
 import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
-import React from 'react';
 import GeneralSettings from './GeneralSettings';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';

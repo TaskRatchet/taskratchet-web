@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { sortTasks } from '../../lib/sortTasks';
 import { useTasks } from '../../lib/api/useTasks';
 import createListItems from '../../lib/createListItems';

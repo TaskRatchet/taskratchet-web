@@ -3,7 +3,6 @@ import { describe, it, expect, vi } from 'vitest';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import PaymentSettings from './PaymentSettings';
-import React from 'react';
 import { loadMe } from '../../lib/test/loadMe';
 import { redirectToCheckout } from '../../lib/stripe';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';

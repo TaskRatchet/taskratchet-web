@@ -1,7 +1,6 @@
 import { toast } from 'react-toastify';
 import { fireEvent, waitFor, screen } from '@testing-library/react';
 import Tasks from './Tasks';
-import React from 'react';
 import userEvent from '@testing-library/user-event';
 import { loadTasksApiData } from '../../lib/test/loadTasksApiData';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';

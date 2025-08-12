@@ -1,5 +1,4 @@
 import { getUnloadMessage } from './getUnloadMessage';
-import React from 'react';
 import { useUpdateTask } from './api/useUpdateTask';
 import { vi, expect, it, describe } from 'vitest';
 import loadControlledPromise from './test/loadControlledPromise';

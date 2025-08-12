@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import { Suspense } from 'react';
 import {
 	Alert,
 	Box,
@@ -10,8 +10,9 @@ import {
 } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
 import type { SetOptional } from 'type-fest';
+import { lazy } from 'react';
 
-const LazyDueForm = React.lazy(() => import('./DueForm'));
+const LazyDueForm = lazy(() => import('./DueForm'));
 
 interface TaskFormProps {
 	task: string;

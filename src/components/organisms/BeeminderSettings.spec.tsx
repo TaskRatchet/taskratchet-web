@@ -1,5 +1,4 @@
 import { type RenderResult, waitFor, screen } from '@testing-library/react';
-import React from 'react';
 import BeeminderSettings from './BeeminderSettings';
 import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';

@@ -1,4 +1,4 @@
-import React, { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { IS_PRODUCTION } from '../../tr_constants';
 import { useMe } from '../../lib/api/useMe';
 import * as browser from '../../lib/browser';

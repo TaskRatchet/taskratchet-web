@@ -1,6 +1,6 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import TaskForm from './TaskForm';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTimezone } from '../../lib/api/useTimezone';
 import { useAddTask } from '../../lib/api/useAddTask';
 import * as browser from '../../lib/browser';

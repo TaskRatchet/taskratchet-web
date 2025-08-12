@@ -1,4 +1,3 @@
-import React from 'react';
 import { Protect, RedirectToSignIn } from '@clerk/clerk-react';
 
 const Authenticated = ({

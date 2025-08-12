@@ -1,4 +1,3 @@
-import React from 'react';
 import BeeminderSettings from '../organisms/BeeminderSettings';
 import ApiSettings from '../organisms/ApiSettings';
 import GeneralSettings from '../organisms/GeneralSettings';

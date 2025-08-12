@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button } from '@mui/material';
 import { useMe } from '../../lib/api/useMe';
 import { redirectToCheckout } from '../../lib/stripe';

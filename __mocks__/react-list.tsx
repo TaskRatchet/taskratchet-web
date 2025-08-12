@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import { forwardRef } from 'react';
 import { vi, beforeEach } from 'vitest';
 
 declare module 'react-list' {
@@ -30,7 +30,7 @@ const ReactList = forwardRef(function ReactList(
 			ref(__listRef);
 		}
 	}
-	return <div>{Array.from({ length }, (v, i) => itemRenderer(i))}</div>;
+	return <div>{Array.from({ length }, (_v, i) => itemRenderer(i))}</div>;
 });
 
 export default ReactList;

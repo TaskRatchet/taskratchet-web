@@ -2,7 +2,7 @@ import createFetchMock from 'vitest-fetch-mock';
 import { vi, beforeEach, expect, afterEach } from 'vitest';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
-import { redirectToCheckout } from './src/react/lib/stripe';
+import { redirectToCheckout } from './src/lib/stripe';
 import { getCheckoutSession } from '@taskratchet/sdk';
 
 afterEach(() => {
@@ -26,8 +26,7 @@ global.scrollTo = vi.fn() as any;
 function deleteAllCookies() {
 	const cookies = document.cookie.split(';');
 
-	for (let i = 0; i < cookies.length; i++) {
-		const cookie = cookies[i];
+	for (const cookie of cookies) {
 		const eqPos = cookie.indexOf('=');
 		const name = eqPos > -1 ? cookie.substr(0, eqPos) : cookie;
 		document.cookie = name + '=;expires=Thu, 01 Jan 1970 00:00:00 GMT';

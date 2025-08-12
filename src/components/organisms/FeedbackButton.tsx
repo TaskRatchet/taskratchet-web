@@ -1,5 +1,4 @@
 import { IconButton, Tooltip } from '@mui/material';
-import React from 'react';
 import FeedbackIcon from '@mui/icons-material/Feedback';
 
 export default function FeedbackButton() {

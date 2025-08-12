@@ -1,4 +1,4 @@
-import React, { type FormEvent, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Box, Input, Button, Stack } from '@mui/material';
 import useDocumentTitle from '../../lib/useDocumentTitle';

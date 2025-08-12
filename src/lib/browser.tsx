@@ -40,7 +40,13 @@ export function getDayName(date: Date): string {
 		'Saturday',
 	];
 
-	return days[date.getDay()];
+	const s = days[date.getDay()];
+
+	if (!s) {
+		throw new Error('Invalid day');
+	}
+
+	return s;
 }
 
 export function getString(date: Date): string {

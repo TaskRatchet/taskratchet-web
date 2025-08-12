@@ -2,7 +2,6 @@ import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import userEvent from '@testing-library/user-event';
 import { screen } from '@testing-library/react';
-import React from 'react';
 import ApiSettings from './ApiSettings';
 import { describe, it, expect } from 'vitest';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';

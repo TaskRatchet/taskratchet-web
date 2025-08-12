@@ -1,4 +1,3 @@
-import React from 'react';
 import NavBar from './NavBar';
 import { useSession } from '../../lib/api/useSession';
 import userEvent from '@testing-library/user-event';

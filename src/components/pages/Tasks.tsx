@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import PlusFab from '../organisms/PlusFab';
 import TaskList from '../organisms/TaskList';
 import { useCloseWarning } from '../../lib/useCloseWarning';

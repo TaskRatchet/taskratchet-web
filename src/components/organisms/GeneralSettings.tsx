@@ -1,4 +1,4 @@
-import React, { type FormEvent, useEffect, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { useTimezones } from '../../lib/api/useTimezones';
 import { Stack, TextField, Autocomplete } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
@@ -55,7 +55,7 @@ export default function GeneralSettings(): JSX.Element {
 				<Autocomplete
 					options={timezones || []}
 					value={timezone || null}
-					onChange={(e, v) => v && setTimezone(v)}
+					onChange={(_e, v) => v && setTimezone(v)}
 					sx={{ width: 300 }}
 					renderInput={(p) => <TextField {...p} label={'Timezone'} />}
 				/>

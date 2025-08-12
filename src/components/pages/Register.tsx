@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import { LoadingButton } from '@mui/lab';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTimezones } from '../../lib/api/useTimezones';
 import useUpdateMe from '../../lib/api/useUpdateMe';
 import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
@@ -58,7 +58,7 @@ function Register(): JSX.Element {
 					<Autocomplete
 						options={timezones || []}
 						value={timezone || null}
-						onChange={(e, v) => v && setTimezone(v)}
+						onChange={(_e, v) => v && setTimezone(v)}
 						sx={{ width: 300 }}
 						renderInput={(p) => (
 							<TextField {...p} label={'Timezone'} required />

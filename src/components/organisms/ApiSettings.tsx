@@ -1,4 +1,3 @@
-import React from 'react';
 import { useGetApiToken } from '../../lib/api/useGetApiToken';
 import { useMe } from '../../lib/api/useMe';
 import { LoadingButton } from '@mui/lab';

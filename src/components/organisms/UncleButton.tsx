@@ -6,8 +6,8 @@ import {
 	DialogTitle,
 	MenuItem,
 } from '@mui/material';
-import React from 'react';
 import { useSetUncle } from '../../lib/api/useSetUncle';
+import { useState } from 'react';
 
 export default function UncleButton({
 	task,
@@ -17,7 +17,7 @@ export default function UncleButton({
 	onClick?: () => void;
 }): JSX.Element {
 	const setUncle = useSetUncle();
-	const [open, setOpen] = React.useState(false);
+	const [open, setOpen] = useState(false);
 
 	return (
 		<>

@@ -1,5 +1,4 @@
 import Task from './Task';
-import React from 'react';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
 import userEvent from '@testing-library/user-event';

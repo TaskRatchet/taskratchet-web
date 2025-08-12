@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import TaskForm from './TaskForm';
 import { useTimezone } from '../../lib/api/useTimezone';
 import { Dialog, DialogContent, DialogTitle, MenuItem } from '@mui/material';
