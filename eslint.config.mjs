@@ -70,7 +70,7 @@ export default [
 
 		rules: {
 			'lodash/import-scope': 'error',
-
+			'react/react-in-jsx-scope': 'off',
 			'regex/required': [
 				'error',
 				[
