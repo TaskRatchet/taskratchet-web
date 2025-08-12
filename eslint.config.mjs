@@ -21,13 +21,7 @@ const compat = new FlatCompat({
 
 export default [
 	{
-		ignores: [
-			'public',
-			'src/react/serviceWorker.js',
-			'**/eslint.config.mjs',
-			'dist',
-			'src/env.d.ts',
-		],
+		ignores: ['public', '**/eslint.config.mjs', 'dist', 'src/env.d.ts'],
 	},
 	...fixupConfigRules(
 		compat.extends(
@@ -115,7 +109,7 @@ export default [
 			'**/__mocks__/**/*',
 			'**/__tests__/**/*',
 			'**/global-setup.ts',
-			'src/react/lib/test/**/*',
+			'src/lib/test/**/*',
 		],
 
 		rules: {

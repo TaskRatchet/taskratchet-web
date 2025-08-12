@@ -12,7 +12,7 @@ import {
 } from 'react-router-dom';
 import type { LinkProps } from '@mui/material/Link';
 import { ToastContainer } from 'react-toastify';
-import { COLORS } from '../../../constants';
+import { COLORS } from '../../constants';
 
 type Props = Omit<RouterLinkProps, 'to'> & { href: To };
 
