@@ -1,6 +1,6 @@
 import { addTask } from '@taskratchet/sdk';
 import { renderHook, waitFor } from '@testing-library/react';
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { TestWrapper } from '../test/renderWithQueryProvider';
 import { useAddTask } from './useAddTask';

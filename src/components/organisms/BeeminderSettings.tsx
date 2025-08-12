@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Alert, Button,Stack, TextField } from '@mui/material';
+import { Alert, Button, Stack, TextField } from '@mui/material';
 import type { User } from '@taskratchet/sdk';
 import { type FormEvent, useEffect, useState } from 'react';
 

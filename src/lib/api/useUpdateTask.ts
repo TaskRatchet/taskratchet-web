@@ -1,4 +1,4 @@
-import { type TaskInput,updateTask } from '@taskratchet/sdk';
+import { type TaskInput, updateTask } from '@taskratchet/sdk';
 import { useMutation, useQueryClient } from 'react-query';
 import { toast } from 'react-toastify';
 

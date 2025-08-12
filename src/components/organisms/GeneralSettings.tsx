@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Autocomplete,Stack, TextField } from '@mui/material';
+import { Autocomplete, Stack, TextField } from '@mui/material';
 import { getMe } from '@taskratchet/sdk';
 import { type FormEvent, useEffect, useState } from 'react';
 

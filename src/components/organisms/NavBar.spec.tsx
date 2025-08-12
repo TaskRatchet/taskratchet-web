@@ -1,7 +1,7 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
-import { describe,expect, it, type Mock, vi } from 'vitest';
+import { describe, expect, it, type Mock, vi } from 'vitest';
 
 import { useSession } from '../../lib/api/useSession';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';

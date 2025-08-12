@@ -1,4 +1,4 @@
-import { describe,expect, it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { sortTasks } from './sortTasks';
 import { makeTask } from './test/makeTask';

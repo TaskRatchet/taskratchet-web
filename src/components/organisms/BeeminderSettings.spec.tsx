@@ -1,7 +1,7 @@
 import { getMe, updateMe } from '@taskratchet/sdk';
-import { type RenderResult, screen,waitFor } from '@testing-library/react';
+import { type RenderResult, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach,describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { loadMe } from '../../lib/test/loadMe';

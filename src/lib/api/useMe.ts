@@ -1,4 +1,4 @@
-import { getMe,type User } from '@taskratchet/sdk';
+import { getMe, type User } from '@taskratchet/sdk';
 import type { UseQueryOptions } from 'react-query';
 import { type QueryObserverResult, useQuery } from 'react-query';
 

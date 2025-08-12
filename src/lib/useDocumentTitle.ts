@@ -1,4 +1,4 @@
-import { useEffect,useRef } from 'react';
+import { useEffect, useRef } from 'react';
 
 // https://dev.to/luispa/how-to-add-a-dynamic-title-on-your-react-app-1l7k
 function useDocumentTitle(title: string, prevailOnUnmount = false) {

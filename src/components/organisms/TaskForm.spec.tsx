@@ -1,7 +1,7 @@
 import { render, type RenderResult, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import TaskForm from './TaskForm';
 

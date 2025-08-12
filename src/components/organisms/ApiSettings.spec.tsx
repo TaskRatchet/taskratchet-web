@@ -1,7 +1,7 @@
 import { getApiToken } from '@taskratchet/sdk';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect,it } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { loadMe } from '../../lib/test/loadMe';
