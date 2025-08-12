@@ -4,7 +4,6 @@ import userEvent from '@testing-library/user-event';
 import { toast } from 'react-toastify';
 import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
 
-import * as browser from '../../lib/browser';
 import { getUnloadMessage } from '../../lib/getUnloadMessage';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { loadTasksApiData } from '../../lib/test/loadTasksApiData';

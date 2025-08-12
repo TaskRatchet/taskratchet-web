@@ -2,9 +2,8 @@ import { editTask, updateTask } from '@taskratchet/sdk';
 import { waitFor } from '@testing-library/react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import * as browser from '../../lib/browser';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { queryTaskCheckbox } from '../../lib/test/queries';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';

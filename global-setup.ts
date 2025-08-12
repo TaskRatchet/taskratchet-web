@@ -3,8 +3,8 @@ import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, expect, vi } from 'vitest';
 import createFetchMock from 'vitest-fetch-mock';
-import * as browser from './src/lib/browser';
 
+import * as browser from './src/lib/browser';
 import { redirectToCheckout } from './src/lib/stripe';
 
 afterEach(() => {
