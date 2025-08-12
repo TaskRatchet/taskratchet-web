@@ -15,14 +15,7 @@ import {
 import { Today, Menu } from '@mui/icons-material';
 import LoadingIndicator from '../molecules/LoadingIndicator';
 import FeedbackButton from './FeedbackButton';
-import {
-	SignedOut,
-	SignInButton,
-	SignedIn,
-	UserButton,
-	useUser,
-	useClerk,
-} from '@clerk/clerk-react';
+import { SignedIn, UserButton, useUser, useClerk } from '@clerk/clerk-react';
 import { setAuthToken } from '@taskratchet/sdk';
 
 interface NavBarProps {
