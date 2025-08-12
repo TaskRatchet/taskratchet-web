@@ -1,7 +1,6 @@
 import { fixupConfigRules, fixupPluginRules } from '@eslint/compat';
 import react from 'eslint-plugin-react';
 import typescriptEslint from '@typescript-eslint/eslint-plugin';
-import regex from 'eslint-plugin-regex';
 import globals from 'globals';
 import tsParser from '@typescript-eslint/parser';
 import path from 'node:path';
@@ -36,7 +35,6 @@ export default [
 		plugins: {
 			react: fixupPluginRules(react),
 			'@typescript-eslint': fixupPluginRules(typescriptEslint),
-			regex,
 			lodash,
 			'testing-library': fixupPluginRules({
 				rules: testingLibrary.rules,
@@ -70,35 +68,6 @@ export default [
 		rules: {
 			'lodash/import-scope': 'error',
 			'react/react-in-jsx-scope': 'off',
-			'regex/required': [
-				'error',
-				[
-					{
-						regex: 'describe.+from.+vitest',
-						message: 'Import `describe` explicitly.',
-
-						files: {
-							inspect: '\\.(test|spec)\\.tsx?$',
-						},
-					},
-					{
-						regex: 'it.+from.+vitest',
-						message: 'Import `it` explicitly.',
-
-						files: {
-							inspect: '\\.(test|spec)\\.tsx?$',
-						},
-					},
-					{
-						regex: 'expect.+from.+vitest',
-						message: 'Import `expect` explicitly.',
-
-						files: {
-							inspect: '\\.(test|spec)\\.tsx?$',
-						},
-					},
-				],
-			],
 		},
 	},
 	{
