@@ -8,9 +8,6 @@ import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import GeneralSettings from './GeneralSettings';
 
-vi.mock('../../lib/api/getMe');
-vi.mock('../../lib/api/updateMe');
-
 describe('general settings', () => {
 	it('displays loading indicator on save', async () => {
 		loadMe();
