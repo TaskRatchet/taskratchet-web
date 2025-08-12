@@ -5,6 +5,8 @@
   "scripts": {
     "dev": "vite",
     "start": "vite",
+    "preview": "vite preview",
+    "build": "vite build",
     "preinstall": "npx only-allow pnpm",
     "checkTs": "tsc --noEmit",
     "format": "prettier --write .",
