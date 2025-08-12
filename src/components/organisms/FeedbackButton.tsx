@@ -1,5 +1,5 @@
-import { IconButton, Tooltip } from '@mui/material';
 import FeedbackIcon from '@mui/icons-material/Feedback';
+import { IconButton, Tooltip } from '@mui/material';
 
 export default function FeedbackButton() {
 	return (

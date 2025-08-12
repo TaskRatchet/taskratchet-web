@@ -1,9 +1,10 @@
+import { Box } from '@mui/material';
 import { useState } from 'react';
+
+import { useCloseWarning } from '../../lib/useCloseWarning';
+import useDocumentTitle from '../../lib/useDocumentTitle';
 import PlusFab from '../organisms/PlusFab';
 import TaskList from '../organisms/TaskList';
-import { useCloseWarning } from '../../lib/useCloseWarning';
-import { Box } from '@mui/material';
-import useDocumentTitle from '../../lib/useDocumentTitle';
 
 interface TasksProps {
 	lastToday: Date | undefined;

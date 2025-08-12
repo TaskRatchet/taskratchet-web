@@ -1,6 +1,7 @@
-import useIsDue from './useIsDue';
+import { describe, expect, it, vi } from 'vitest';
+
 import { makeTask } from './test/makeTask';
-import { expect, it, describe, vi } from 'vitest';
+import useIsDue from './useIsDue';
 
 describe('useIsDue', () => {
 	it('returns is due', () => {

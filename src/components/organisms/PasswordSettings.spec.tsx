@@ -1,10 +1,11 @@
+import { updatePassword } from '@taskratchet/sdk';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe,expect, it } from 'vitest';
+
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import PasswordSettings from './PasswordSettings';
-import userEvent from '@testing-library/user-event';
-import { screen } from '@testing-library/react';
-import { expect, it, describe } from 'vitest';
-import loadControlledPromise from '../../lib/test/loadControlledPromise';
-import { updatePassword } from '@taskratchet/sdk';
 
 describe('password settings', () => {
 	it('requires passwords to match', async () => {

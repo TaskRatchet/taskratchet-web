@@ -1,17 +1,18 @@
 import {
-	ThemeProvider,
 	createTheme,
-	useMediaQuery,
 	CssBaseline,
+	ThemeProvider,
+	useMediaQuery,
 } from '@mui/material';
+import type { LinkProps } from '@mui/material/Link';
 import React from 'react';
 import {
 	Link as RouterLink,
 	type LinkProps as RouterLinkProps,
 	type To,
 } from 'react-router-dom';
-import type { LinkProps } from '@mui/material/Link';
 import { ToastContainer } from 'react-toastify';
+
 import { COLORS } from '../../constants';
 
 type Props = Omit<RouterLinkProps, 'to'> & { href: To };

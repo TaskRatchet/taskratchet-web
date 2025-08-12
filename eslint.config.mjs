@@ -10,6 +10,7 @@ import { FlatCompat } from '@eslint/eslintrc';
 import testingLibrary from 'eslint-plugin-testing-library';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
 import reactHooks from 'eslint-plugin-react-hooks';
+import simpleImportSort from 'eslint-plugin-simple-import-sort';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -40,17 +41,15 @@ export default [
 			'testing-library': fixupPluginRules({
 				rules: testingLibrary.rules,
 			}),
+			'simple-import-sort': simpleImportSort,
 		},
-
 		languageOptions: {
 			globals: {
 				...globals.browser,
 			},
-
 			parser: tsParser,
 			ecmaVersion: 'latest',
 			sourceType: 'module',
-
 			parserOptions: {
 				ecmaFeatures: {
 					jsx: true,
@@ -59,15 +58,15 @@ export default [
 				project: './tsconfig.json',
 			},
 		},
-
 		settings: {
 			react: {
 				version: 'detect',
 			},
 		},
-
 		rules: {
 			'react/react-in-jsx-scope': 'off',
+			'simple-import-sort/imports': 'error',
+			'simple-import-sort/exports': 'error',
 		},
 	},
 	{
@@ -79,7 +78,6 @@ export default [
 			'**/global-setup.ts',
 			'src/lib/test/**/*',
 		],
-
 		rules: {
 			'@typescript-eslint/no-explicit-any': 'off',
 			'@typescript-eslint/no-unsafe-return': 'off',

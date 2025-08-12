@@ -1,8 +1,9 @@
-import { describe, it, expect } from 'vitest';
-import { useAddTask } from './useAddTask';
 import { addTask } from '@taskratchet/sdk';
 import { renderHook, waitFor } from '@testing-library/react';
+import { describe, expect,it } from 'vitest';
+
 import { TestWrapper } from '../test/renderWithQueryProvider';
+import { useAddTask } from './useAddTask';
 
 describe('useAddTask', () => {
 	it('should be defined', () => {

@@ -1,6 +1,7 @@
-import useDifferenceToNow from './useDifferenceToNow';
+import { describe, expect, it, vi } from 'vitest';
+
 import { makeTask } from './test/makeTask';
-import { expect, it, describe, vi } from 'vitest';
+import useDifferenceToNow from './useDifferenceToNow';
 
 describe('useDifferenceToNow', () => {
 	it('handles future due', () => {

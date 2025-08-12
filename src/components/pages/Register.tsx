@@ -1,13 +1,14 @@
-import Box from '@mui/material/Box';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
-import Alert from '@mui/material/Alert';
-import Stack from '@mui/material/Stack';
 import { LoadingButton } from '@mui/lab';
+import Alert from '@mui/material/Alert';
+import Autocomplete from '@mui/material/Autocomplete';
+import Box from '@mui/material/Box';
+import Stack from '@mui/material/Stack';
+import TextField from '@mui/material/TextField';
 import { useState } from 'react';
+
+import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { useTimezones } from '../../lib/api/useTimezones';
 import useUpdateMe from '../../lib/api/useUpdateMe';
-import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { redirectToCheckout } from '../../lib/stripe';
 
 function getErrorMessage(error: unknown): string {

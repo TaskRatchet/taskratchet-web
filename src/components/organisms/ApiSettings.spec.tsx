@@ -1,11 +1,12 @@
+import { getApiToken } from '@taskratchet/sdk';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe, expect,it } from 'vitest';
+
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
-import userEvent from '@testing-library/user-event';
-import { screen } from '@testing-library/react';
 import ApiSettings from './ApiSettings';
-import { describe, it, expect } from 'vitest';
-import loadControlledPromise from '../../lib/test/loadControlledPromise';
-import { getApiToken } from '@taskratchet/sdk';
 
 describe('API settings', () => {
 	it('displays loading indicator on request click', async () => {

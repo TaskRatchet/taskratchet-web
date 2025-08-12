@@ -1,14 +1,15 @@
-import Task from './Task';
+import { editTask, updateTask } from '@taskratchet/sdk';
+import { waitFor } from '@testing-library/react';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach,describe, expect, it, vi } from 'vitest';
+
+import * as browser from '../../lib/browser';
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { queryTaskCheckbox } from '../../lib/test/queries';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
-import userEvent from '@testing-library/user-event';
-import { waitFor } from '@testing-library/react';
-import * as browser from '../../lib/browser';
-import { screen } from '@testing-library/react';
-import { vi, expect, it, describe, beforeEach } from 'vitest';
-import { queryTaskCheckbox } from '../../lib/test/queries';
-import loadControlledPromise from '../../lib/test/loadControlledPromise';
-import { editTask, updateTask } from '@taskratchet/sdk';
+import Task from './Task';
 
 vi.mock('../../lib/api/updateTask');
 vi.mock('../../lib/api/getMe');

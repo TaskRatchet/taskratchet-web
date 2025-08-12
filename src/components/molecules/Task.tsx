@@ -1,8 +1,6 @@
-import React, { type Ref, Suspense } from 'react';
 import './Task.scss';
-import * as browser from '../../lib/browser';
-import TaskMenu from './TaskMenu';
-import { useSetComplete } from '../../lib/api/useSetComplete';
+
+import EventBusyIcon from '@mui/icons-material/EventBusy';
 import {
 	Box,
 	Checkbox,
@@ -11,9 +9,12 @@ import {
 	ListItemText,
 } from '@mui/material';
 import { red } from '@mui/material/colors';
+import React, { type Ref, Suspense } from 'react';
 
-import EventBusyIcon from '@mui/icons-material/EventBusy';
+import { useSetComplete } from '../../lib/api/useSetComplete';
+import * as browser from '../../lib/browser';
 import useIsDue from '../../lib/useIsDue';
+import TaskMenu from './TaskMenu';
 
 const LazyDiffToNow = React.lazy(() => import('../atoms/diffToNow'));
 

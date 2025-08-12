@@ -1,7 +1,4 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import React from 'react';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import {
 	Badge,
 	Checkbox,
@@ -10,6 +7,10 @@ import {
 	MenuList,
 	Tooltip,
 } from '@mui/material';
+import Menu from '@mui/material/Menu';
+import MenuItem from '@mui/material/MenuItem';
+import React from 'react';
+
 import useFilters from '../../lib/useFilters';
 
 export default function FilterButton(): JSX.Element {

@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
-import { usePref } from './usePref';
+
 import { getCookie } from './getCookie';
+import { usePref } from './usePref';
 
 const DEFAULT_FILTERS = {
 	pending: true,

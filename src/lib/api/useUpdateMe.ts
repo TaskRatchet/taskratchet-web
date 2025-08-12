@@ -1,9 +1,9 @@
+import { type MeInput, updateMe } from '@taskratchet/sdk';
 import {
+	type UseBaseMutationResult,
 	useMutation,
 	useQueryClient,
-	type UseBaseMutationResult,
 } from 'react-query';
-import { type MeInput, updateMe } from '@taskratchet/sdk';
 
 export default function useUpdateMe(): UseBaseMutationResult<
 	Response,

@@ -1,9 +1,10 @@
 import { Dialog, DialogContent, DialogTitle } from '@mui/material';
-import TaskForm from './TaskForm';
 import { useState } from 'react';
-import { useTimezone } from '../../lib/api/useTimezone';
+
 import { useAddTask } from '../../lib/api/useAddTask';
+import { useTimezone } from '../../lib/api/useTimezone';
 import * as browser from '../../lib/browser';
+import TaskForm from './TaskForm';
 
 const getDefaultDue = () => {
 	const due = browser.getNowDate();

@@ -1,12 +1,13 @@
-import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
-import { describe, it, expect, vi } from 'vitest';
+import { getCheckoutSession, updateMe } from '@taskratchet/sdk';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import PaymentSettings from './PaymentSettings';
-import { loadMe } from '../../lib/test/loadMe';
+import { describe, expect, it, vi } from 'vitest';
+
 import { redirectToCheckout } from '../../lib/stripe';
 import loadControlledPromise from '../../lib/test/loadControlledPromise';
-import { getCheckoutSession, updateMe } from '@taskratchet/sdk';
+import { loadMe } from '../../lib/test/loadMe';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import PaymentSettings from './PaymentSettings';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');

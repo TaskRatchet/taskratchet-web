@@ -1,5 +1,5 @@
-import { useMutation } from 'react-query';
 import { updatePassword } from '@taskratchet/sdk';
+import { useMutation } from 'react-query';
 
 export function useUpdatePassword(): {
 	updatePassword: (oldPass: string, newPass: string) => void;

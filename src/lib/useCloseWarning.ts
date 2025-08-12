@@ -1,5 +1,6 @@
-import { useQueryClient } from 'react-query';
 import { useBeforeunload } from 'react-beforeunload';
+import { useQueryClient } from 'react-query';
+
 import { getUnloadMessage } from './getUnloadMessage';
 
 // TODO: consider using react-router prompt instead

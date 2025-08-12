@@ -1,26 +1,28 @@
-import { useEffect, useRef, useState } from 'react';
 import './App.scss';
-import {
-	BrowserRouter as Router,
-	Routes,
-	Route,
-	useLocation,
-} from 'react-router-dom';
-import Authenticated from './components/pages/Authenticated';
-import ResetPassword from './components/pages/ResetPassword';
 import 'react-toastify/dist/ReactToastify.css';
-import { IS_PRODUCTION } from './tr_constants';
-import { QueryClientProvider } from 'react-query';
-import NavBar from './components/organisms/NavBar';
-import * as browser from './lib/browser';
-import { Box, Container, Stack, Alert, Link } from '@mui/material';
-import getQueryClient from './lib/getQueryClient';
-import Account from './components/pages/Account';
-import Tasks from './components/pages/Tasks';
-import Register from './components/pages/Register';
-import AndTheme from './components/HOCs/AndTheme';
+
 import { ClerkProvider } from '@clerk/clerk-react';
 import { dark } from '@clerk/themes';
+import { Alert, Box, Container, Link,Stack } from '@mui/material';
+import { useEffect, useRef, useState } from 'react';
+import { QueryClientProvider } from 'react-query';
+import {
+	BrowserRouter as Router,
+	Route,
+	Routes,
+	useLocation,
+} from 'react-router-dom';
+
+import AndTheme from './components/HOCs/AndTheme';
+import NavBar from './components/organisms/NavBar';
+import Account from './components/pages/Account';
+import Authenticated from './components/pages/Authenticated';
+import Register from './components/pages/Register';
+import ResetPassword from './components/pages/ResetPassword';
+import Tasks from './components/pages/Tasks';
+import * as browser from './lib/browser';
+import getQueryClient from './lib/getQueryClient';
+import { IS_PRODUCTION } from './tr_constants';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 

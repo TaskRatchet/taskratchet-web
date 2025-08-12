@@ -1,9 +1,10 @@
-import { type FormEvent, useEffect, useState } from 'react';
-import { useTimezones } from '../../lib/api/useTimezones';
-import { Stack, TextField, Autocomplete } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import useUpdateMe from '../../lib/api/useUpdateMe';
+import { Autocomplete,Stack, TextField } from '@mui/material';
 import { getMe } from '@taskratchet/sdk';
+import { type FormEvent, useEffect, useState } from 'react';
+
+import { useTimezones } from '../../lib/api/useTimezones';
+import useUpdateMe from '../../lib/api/useUpdateMe';
 
 export default function GeneralSettings(): JSX.Element {
 	const updateMe = useUpdateMe();

@@ -1,13 +1,14 @@
-import { type RenderResult, waitFor, screen } from '@testing-library/react';
-import BeeminderSettings from './BeeminderSettings';
-import { loadMe } from '../../lib/test/loadMe';
-import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
-import { loadUrlParams } from '../../lib/test/loadUrlParams';
-import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
-import userEvent from '@testing-library/user-event';
-import { vi, expect, it, describe, beforeEach } from 'vitest';
-import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { getMe, updateMe } from '@taskratchet/sdk';
+import { type RenderResult, screen,waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach,describe, expect, it, vi } from 'vitest';
+
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
+import { loadMe } from '../../lib/test/loadMe';
+import { loadUrlParams } from '../../lib/test/loadUrlParams';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import { withMutedReactQueryLogger } from '../../lib/test/withMutedReactQueryLogger';
+import BeeminderSettings from './BeeminderSettings';
 
 vi.mock('../../lib/LegacyApi');
 vi.mock('react-toastify');

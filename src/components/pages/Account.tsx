@@ -1,10 +1,11 @@
-import BeeminderSettings from '../organisms/BeeminderSettings';
+import { Box } from '@mui/material';
+
+import useDocumentTitle from '../../lib/useDocumentTitle';
 import ApiSettings from '../organisms/ApiSettings';
+import BeeminderSettings from '../organisms/BeeminderSettings';
 import GeneralSettings from '../organisms/GeneralSettings';
 import PasswordSettings from '../organisms/PasswordSettings';
 import PaymentSettings from '../organisms/PaymentSettings';
-import { Box } from '@mui/material';
-import useDocumentTitle from '../../lib/useDocumentTitle';
 
 const Account = (): JSX.Element => {
 	useDocumentTitle('Account | TaskRatchet');

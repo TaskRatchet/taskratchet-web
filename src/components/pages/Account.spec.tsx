@@ -1,12 +1,13 @@
-import { screen } from '@testing-library/react';
-import Account from './Account';
-import { loadMe } from '../../lib/test/loadMe';
-import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
-import { loadTimezones } from '../../lib/test/loadTimezones';
-import userEvent from '@testing-library/user-event';
-import { useGetApiToken } from '../../lib/api/useGetApiToken';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getCheckoutSession } from '@taskratchet/sdk';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { beforeEach,describe, expect, it, vi } from 'vitest';
+
+import { useGetApiToken } from '../../lib/api/useGetApiToken';
+import { loadMe } from '../../lib/test/loadMe';
+import { loadTimezones } from '../../lib/test/loadTimezones';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import Account from './Account';
 
 vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/getMe');

@@ -1,12 +1,13 @@
-import { vi } from 'vitest';
-import { makeResponse } from './makeResponse';
 import {
-	type User,
 	addTask,
 	getMe,
 	getTasks,
 	updateTask,
+	type User,
 } from '@taskratchet/sdk';
+import { vi } from 'vitest';
+
+import { makeResponse } from './makeResponse';
 import { makeTask } from './makeTask';
 
 export const loadTasksApiData = ({

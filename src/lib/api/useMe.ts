@@ -1,6 +1,6 @@
-import { type QueryObserverResult, useQuery } from 'react-query';
+import { getMe,type User } from '@taskratchet/sdk';
 import type { UseQueryOptions } from 'react-query';
-import { type User, getMe } from '@taskratchet/sdk';
+import { type QueryObserverResult, useQuery } from 'react-query';
 
 export function useMe(
 	queryOptions: UseQueryOptions<User> | undefined = {},

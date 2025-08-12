@@ -6,8 +6,9 @@ import {
 	DialogTitle,
 	MenuItem,
 } from '@mui/material';
-import { useSetUncle } from '../../lib/api/useSetUncle';
 import { useState } from 'react';
+
+import { useSetUncle } from '../../lib/api/useSetUncle';
 
 export default function UncleButton({
 	task,

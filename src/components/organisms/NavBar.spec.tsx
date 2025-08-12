@@ -1,10 +1,11 @@
-import NavBar from './NavBar';
-import { useSession } from '../../lib/api/useSession';
-import userEvent from '@testing-library/user-event';
 import { screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
-import { vi, type Mock, expect, it, describe } from 'vitest';
+import { describe,expect, it, type Mock, vi } from 'vitest';
+
+import { useSession } from '../../lib/api/useSession';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import NavBar from './NavBar';
 
 vi.mock('../../lib/api/useSession');
 

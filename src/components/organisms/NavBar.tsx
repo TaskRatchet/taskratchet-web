@@ -1,8 +1,5 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useLocation, useNavigate } from 'react-router-dom';
-import NavDrawer from '../molecules/NavDrawer';
-import FilterButton from '../molecules/FilterButton';
+import { SignedIn, useClerk,UserButton, useUser } from '@clerk/clerk-react';
+import { Menu,Today } from '@mui/icons-material';
 import {
 	AppBar,
 	Box,
@@ -12,11 +9,15 @@ import {
 	Tooltip,
 	Typography,
 } from '@mui/material';
-import { Today, Menu } from '@mui/icons-material';
-import LoadingIndicator from '../molecules/LoadingIndicator';
-import FeedbackButton from './FeedbackButton';
-import { SignedIn, UserButton, useUser, useClerk } from '@clerk/clerk-react';
 import { setAuthToken } from '@taskratchet/sdk';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+
+import FilterButton from '../molecules/FilterButton';
+import LoadingIndicator from '../molecules/LoadingIndicator';
+import NavDrawer from '../molecules/NavDrawer';
+import FeedbackButton from './FeedbackButton';
 
 interface NavBarProps {
 	onTodayClick?: () => void;

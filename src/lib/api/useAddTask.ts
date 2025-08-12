@@ -1,10 +1,10 @@
+import { addTask } from '@taskratchet/sdk';
 import {
 	useMutation,
 	type UseMutationResult,
 	useQueryClient,
 } from 'react-query';
 import { toast } from 'react-toastify';
-import { addTask } from '@taskratchet/sdk';
 
 interface Input {
 	task: string;

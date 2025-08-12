@@ -1,11 +1,12 @@
+import { Alert, AlertTitle, Box, Button,ListSubheader } from '@mui/material';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { sortTasks } from '../../lib/sortTasks';
+import ReactList from 'react-list';
+
 import { useTasks } from '../../lib/api/useTasks';
 import createListItems from '../../lib/createListItems';
-import ReactList from 'react-list';
-import { Alert, AlertTitle, Box, ListSubheader, Button } from '@mui/material';
-import Task from '../molecules/Task';
+import { sortTasks } from '../../lib/sortTasks';
 import useFilters from '../../lib/useFilters';
+import Task from '../molecules/Task';
 
 interface TaskListProps {
 	lastToday?: Date;

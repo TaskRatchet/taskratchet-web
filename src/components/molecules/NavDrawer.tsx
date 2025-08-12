@@ -1,4 +1,6 @@
-import { Link } from 'react-router-dom';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import HelpIcon from '@mui/icons-material/Help';
+import LogoutIcon from '@mui/icons-material/Logout';
 import {
 	Divider,
 	Drawer,
@@ -8,11 +10,10 @@ import {
 	ListItemIcon,
 	ListItemText,
 } from '@mui/material';
-import LogoutIcon from '@mui/icons-material/Logout';
-import HelpIcon from '@mui/icons-material/Help';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import { useSession } from '../../lib/api/useSession';
 import { logout } from '@taskratchet/sdk';
+import { Link } from 'react-router-dom';
+
+import { useSession } from '../../lib/api/useSession';
 
 export default function NavDrawer({
 	isOpen,

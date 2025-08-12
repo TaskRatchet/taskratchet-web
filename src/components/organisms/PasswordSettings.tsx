@@ -1,7 +1,8 @@
-import { type FormEvent, useState } from 'react';
-import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
-import { Stack, TextField } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
+import { Stack, TextField } from '@mui/material';
+import { type FormEvent, useState } from 'react';
+
+import { useUpdatePassword } from '../../lib/api/useUpdatePassword';
 
 export default function PasswordSettings(): JSX.Element {
 	const [oldPassword, setOldPassword] = useState<string>('');

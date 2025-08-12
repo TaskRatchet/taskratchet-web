@@ -1,9 +1,10 @@
-import createFetchMock from 'vitest-fetch-mock';
-import { vi, beforeEach, expect, afterEach } from 'vitest';
+import { getCheckoutSession } from '@taskratchet/sdk';
 import * as matchers from '@testing-library/jest-dom/matchers';
 import { cleanup } from '@testing-library/react';
+import { afterEach,beforeEach, expect, vi } from 'vitest';
+import createFetchMock from 'vitest-fetch-mock';
+
 import { redirectToCheckout } from './src/lib/stripe';
-import { getCheckoutSession } from '@taskratchet/sdk';
 
 afterEach(() => {
 	cleanup();

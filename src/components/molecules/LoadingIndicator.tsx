@@ -1,5 +1,5 @@
-import { useIsFetching } from 'react-query';
 import { LinearProgress } from '@mui/material';
+import { useIsFetching } from 'react-query';
 
 const LoadingIndicator = (): JSX.Element | null => {
 	const isFetching = useIsFetching();

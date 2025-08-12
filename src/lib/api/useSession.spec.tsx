@@ -1,7 +1,8 @@
-import { useSession } from './useSession';
-import { renderHook } from '@testing-library/react';
 import { getSession } from '@taskratchet/sdk';
-import { expect, it, describe, vi } from 'vitest';
+import { renderHook } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+
+import { useSession } from './useSession';
 
 describe('useSession', () => {
 	it('should return the session', () => {

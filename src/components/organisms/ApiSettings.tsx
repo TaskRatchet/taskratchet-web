@@ -1,5 +1,3 @@
-import { useGetApiToken } from '../../lib/api/useGetApiToken';
-import { useMe } from '../../lib/api/useMe';
 import { LoadingButton } from '@mui/lab';
 import {
 	Alert,
@@ -13,6 +11,9 @@ import {
 	TableContainer,
 	TableRow,
 } from '@mui/material';
+
+import { useGetApiToken } from '../../lib/api/useGetApiToken';
+import { useMe } from '../../lib/api/useMe';
 
 export default function ApiSettings(): JSX.Element {
 	const me = useMe();

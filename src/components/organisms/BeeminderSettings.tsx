@@ -1,11 +1,12 @@
-import { type FormEvent, useEffect, useState } from 'react';
-import { IS_PRODUCTION } from '../../tr_constants';
-import { useMe } from '../../lib/api/useMe';
-import * as browser from '../../lib/browser';
-import { Stack, TextField, Alert, Button } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-import useUpdateMe from '../../lib/api/useUpdateMe';
+import { Alert, Button,Stack, TextField } from '@mui/material';
 import type { User } from '@taskratchet/sdk';
+import { type FormEvent, useEffect, useState } from 'react';
+
+import { useMe } from '../../lib/api/useMe';
+import useUpdateMe from '../../lib/api/useUpdateMe';
+import * as browser from '../../lib/browser';
+import { IS_PRODUCTION } from '../../tr_constants';
 
 const beeminderClientId: string = IS_PRODUCTION
 		? '1w70sy12t1106s9ptod11ex21'

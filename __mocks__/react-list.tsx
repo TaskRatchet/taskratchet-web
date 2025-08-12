@@ -1,5 +1,5 @@
 import { forwardRef } from 'react';
-import { vi, beforeEach } from 'vitest';
+import { beforeEach,vi } from 'vitest';
 
 declare module 'react-list' {
 	const __listRef: {

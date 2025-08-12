@@ -1,9 +1,10 @@
-import React, { type MouseEvent } from 'react';
-import { IconButton, Menu } from '@mui/material';
 import { MoreVert } from '@mui/icons-material';
+import { IconButton, Menu } from '@mui/material';
+import React, { type MouseEvent } from 'react';
+
+import TaskCopy from '../organisms/TaskCopy';
 import TaskEdit from '../organisms/TaskEdit';
 import UncleButton from '../organisms/UncleButton';
-import TaskCopy from '../organisms/TaskCopy';
 
 export default function TaskMenu({ task }: { task: TaskType }): JSX.Element {
 	const [anchorEl, setAnchorEl] = React.useState<Element | null>(null);

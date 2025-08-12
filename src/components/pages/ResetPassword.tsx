@@ -1,8 +1,9 @@
+import { Box, Button, Input, Stack } from '@mui/material';
+import { resetPassword } from '@taskratchet/sdk';
 import { type FormEvent, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { Box, Input, Button, Stack } from '@mui/material';
+
 import useDocumentTitle from '../../lib/useDocumentTitle';
-import { resetPassword } from '@taskratchet/sdk';
 
 function ResetPassword(): JSX.Element {
 	const useToken = () => {

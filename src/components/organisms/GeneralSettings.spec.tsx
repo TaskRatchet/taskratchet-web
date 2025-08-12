@@ -1,11 +1,12 @@
+import { updateMe } from '@taskratchet/sdk';
+import { screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { describe,expect, it, vi } from 'vitest';
+
+import loadControlledPromise from '../../lib/test/loadControlledPromise';
 import { loadMe } from '../../lib/test/loadMe';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import GeneralSettings from './GeneralSettings';
-import userEvent from '@testing-library/user-event';
-import { screen } from '@testing-library/react';
-import { vi, expect, it, describe } from 'vitest';
-import loadControlledPromise from '../../lib/test/loadControlledPromise';
-import { updateMe } from '@taskratchet/sdk';
 
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateMe');

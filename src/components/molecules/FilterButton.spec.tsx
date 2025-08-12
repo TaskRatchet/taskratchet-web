@@ -1,9 +1,10 @@
-import FilterButton from './FilterButton';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import { describe,expect, it } from 'vitest';
+
 import { setCookie } from '../../lib/setCookie';
-import { expect, it, describe } from 'vitest';
+import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
+import FilterButton from './FilterButton';
 
 describe('FilterButton', () => {
 	it('uses local storage', async () => {

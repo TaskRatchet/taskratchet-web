@@ -1,5 +1,5 @@
-import { useInfiniteQuery, type UseInfiniteQueryResult } from 'react-query';
 import { getTasks } from '@taskratchet/sdk';
+import { useInfiniteQuery, type UseInfiniteQueryResult } from 'react-query';
 
 const PAGE_SIZE = 20;
 
