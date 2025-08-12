@@ -9,6 +9,7 @@ import js from '@eslint/js';
 import { FlatCompat } from '@eslint/eslintrc';
 import testingLibrary from 'eslint-plugin-testing-library';
 import eslintConfigPrettier from 'eslint-config-prettier/flat';
+import reactHooks from 'eslint-plugin-react-hooks';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -26,11 +27,11 @@ export default [
 		compat.extends(
 			'eslint:recommended',
 			'plugin:react/recommended',
-			'plugin:react-hooks/recommended',
 			'plugin:@typescript-eslint/recommended',
 			'plugin:@typescript-eslint/recommended-requiring-type-checking',
 		),
 	),
+	reactHooks.configs['recommended-latest'],
 	eslintConfigPrettier,
 	{
 		plugins: {
