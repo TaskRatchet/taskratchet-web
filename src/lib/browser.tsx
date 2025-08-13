@@ -32,6 +32,9 @@ export function getNowTime(): number {
 }
 
 export function getUrlParams(): ParsedQuery {
+	if (typeof window === 'undefined' || !window.location) {
+		return {} as ParsedQuery;
+	}
 	return queryString.parse(window.location.search);
 }
 
