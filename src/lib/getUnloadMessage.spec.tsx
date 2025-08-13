@@ -1,13 +1,11 @@
 import { updateTask } from '@taskratchet/sdk';
 import { render } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
 import { useUpdateTask } from './api/useUpdateTask';
 import { getUnloadMessage } from './getUnloadMessage';
 import loadControlledPromise from './test/loadControlledPromise';
-
-vi.mock('./api/updateTask');
 
 const queryClient = new QueryClient({
 	defaultOptions: {
