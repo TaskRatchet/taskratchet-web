@@ -9,7 +9,7 @@ import {
 	ListItemText,
 } from '@mui/material';
 import { red } from '@mui/material/colors';
-import React, { type Ref, Suspense } from 'react';
+import React, { Suspense } from 'react';
 
 import { useSetComplete } from '../../lib/api/useSetComplete';
 import * as browser from '../../lib/browser';
@@ -20,7 +20,6 @@ const LazyDiffToNow = React.lazy(() => import('../atoms/diffToNow'));
 
 interface TaskProps {
 	task: TaskType;
-	ref_?: Ref<HTMLDivElement>;
 }
 
 const Task = ({ task }: TaskProps): JSX.Element => {
