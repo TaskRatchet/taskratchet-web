@@ -39,6 +39,7 @@ export function getUrlParams(): ParsedQuery {
 }
 
 export function prefersDarkMode(): boolean {
-	if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return false;
+	if (typeof window === 'undefined' || typeof window.matchMedia !== 'function')
+		return false;
 	return window.matchMedia('(prefers-color-scheme: dark)').matches;
 }
