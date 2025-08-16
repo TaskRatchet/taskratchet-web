@@ -1,7 +1,14 @@
 import queryString, { type ParsedQuery } from 'query-string';
 
 function getLanguages(): string[] {
-	return navigator.languages.slice();
+	if (typeof navigator !== 'undefined' && Array.isArray(navigator.languages) && navigator.languages.length > 0) {
+		return navigator.languages.slice();
+	}
+	// Fallback for SSR/tests/older browsers
+	if (typeof navigator !== 'undefined' && typeof navigator.language === 'string') {
+		return [navigator.language];
+	}
+	return ['en-US'];
 }
 
 export function getString(date: Date): string {
