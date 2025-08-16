@@ -1,11 +1,18 @@
 import queryString, { type ParsedQuery } from 'query-string';
 
 function getLanguages(): string[] {
-	if (typeof navigator !== 'undefined' && Array.isArray(navigator.languages) && navigator.languages.length > 0) {
-		return navigator.languages.slice();
+	if (
+		typeof navigator !== 'undefined' &&
+		Array.isArray(navigator.languages) &&
+		navigator.languages.length > 0
+	) {
+		return navigator.languages.slice() as string[];
 	}
 	// Fallback for SSR/tests/older browsers
-	if (typeof navigator !== 'undefined' && typeof navigator.language === 'string') {
+	if (
+		typeof navigator !== 'undefined' &&
+		typeof navigator.language === 'string'
+	) {
 		return [navigator.language];
 	}
 	return ['en-US'];
