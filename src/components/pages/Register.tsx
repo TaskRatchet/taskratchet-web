@@ -48,9 +48,12 @@ function Register(): JSX.Element {
 				checkout_session_id: checkoutSession.id,
 			},
 			{
-				onSuccess: () => {
-					void redirectToCheckout(checkoutSession.id);
-				},
+onSuccess: () => {
+  redirectToCheckout(checkoutSession.id).catch((error) => {
+    console.error('Failed to redirect to checkout:', error);
+    // Consider showing user-friendly error message
+  });
+},
 			},
 		);
 	};
