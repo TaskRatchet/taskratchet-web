@@ -1,5 +1,11 @@
+import { loadStripe } from '@stripe/stripe-js';
+
 export async function redirectToCheckout(sessionId: string): Promise<void> {
-	const stripe = window.Stripe(window.stripe_key);
+	const stripe = await loadStripe(import.meta.env.VITE_STRIPE_KEY);
+
+	if (!stripe) {
+		throw new Error('Stripe not loaded');
+	}
 
 	const result = await stripe.redirectToCheckout({
 		sessionId,
