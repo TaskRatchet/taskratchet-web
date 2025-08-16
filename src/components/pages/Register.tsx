@@ -26,9 +26,10 @@ function getErrorMessage(error: unknown): string {
 
 function Register(): JSX.Element {
 	const updateMe = useUpdateMe();
-	const { data: timezones } = useTimezones();
+	const timezones = useTimezones();
 	const [timezone, setTimezone] = useState<string>('');
 	const checkoutSession = useCheckoutSession();
+	const isCheckoutLoading = checkoutSession === null;
 
 	const submit = (event: React.FormEvent<HTMLFormElement>) => {
 		event.preventDefault();
@@ -38,7 +39,7 @@ function Register(): JSX.Element {
 				timezone: !!timezone,
 				checkoutSession: !!checkoutSession,
 			});
-			return; // Early return instead of throwing
+			return;
 		}
 
 		updateMe.mutate(
@@ -61,12 +62,22 @@ function Register(): JSX.Element {
 					<h1>Complete Registration</h1>
 
 					<Autocomplete
-						options={timezones || []}
+						disabled={timezones.isLoading}
+						options={timezones.data || []}
 						value={timezone || null}
 						onChange={(_e, v) => v && setTimezone(v)}
 						sx={{ width: 300 }}
 						renderInput={(p) => (
-							<TextField {...p} label={'Timezone'} required />
+							<TextField
+								{...p}
+								label={'Timezone'}
+								required
+								helperText={
+									timezones.isError
+										? getErrorMessage(timezones.error)
+										: undefined
+								}
+							/>
 						)}
 					/>
 
@@ -78,6 +89,7 @@ function Register(): JSX.Element {
 
 					<LoadingButton
 						type={'submit'}
+						disabled={isCheckoutLoading || timezones.isLoading || !timezone}
 						loading={updateMe.isLoading}
 						variant="outlined"
 					>
