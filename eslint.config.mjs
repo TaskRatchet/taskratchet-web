@@ -22,7 +22,7 @@ const compat = new FlatCompat({
 
 export default [
 	{
-		ignores: ['public', '**/eslint.config.mjs', 'dist', 'src/env.d.ts'],
+		ignores: ['public', '**/eslint.config.mjs', 'dist'],
 	},
 	...fixupConfigRules(
 		compat.extends(
