@@ -22,17 +22,12 @@ import ResetPassword from './components/pages/ResetPassword';
 import Tasks from './components/pages/Tasks';
 import * as browser from './lib/browser';
 import getQueryClient from './lib/getQueryClient';
-import { IS_PRODUCTION } from './tr_constants';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
 if (!PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
 }
-
-window.stripe_key = IS_PRODUCTION
-	? 'pk_live_inP66DVvlOOA4r3CpaD73dFo00oWsfSpLd'
-	: 'pk_test_JNeCMPdZ5zUUb5PV9D1bf9Dz00qqwCo9wp';
 
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
