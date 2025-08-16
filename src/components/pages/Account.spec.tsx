@@ -9,12 +9,6 @@ import { loadTimezones } from '../../lib/test/loadTimezones';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import Account from './Account';
 
-vi.mock('../../lib/api/getTimezones');
-vi.mock('../../lib/api/getMe');
-vi.mock('../../lib/api/updateMe');
-vi.mock('../../lib/api/getCheckoutSession');
-vi.mock('../../lib/api/fetch1');
-vi.mock('../../lib/api/updatePassword');
 vi.mock('../../lib/api/useGetApiToken');
 
 describe('account page', () => {
