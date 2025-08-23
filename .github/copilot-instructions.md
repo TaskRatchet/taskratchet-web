@@ -22,6 +22,7 @@ TaskRatchet is a task management application that helps users commit to completi
 ## Development Environment
 
 ### Setup Commands
+
 ```bash
 nvm use          # Use correct Node.js version
 pnpm install     # Install dependencies (never use npm/yarn)
@@ -32,6 +33,7 @@ pnpm build       # Build for production
 ```
 
 ### Code Quality Standards
+
 - **Zero warnings policy**: `eslint --max-warnings 0`
 - **Type safety**: All code must be properly typed
 - **Test coverage**: Components should have corresponding test files
@@ -40,6 +42,7 @@ pnpm build       # Build for production
 ## Architecture Patterns
 
 ### Atomic Design Structure
+
 The project follows atomic design principles with a clear component hierarchy:
 
 ```
@@ -51,11 +54,13 @@ src/react/components/
 ```
 
 ### Component Naming Conventions
+
 - Use PascalCase for component files: `TaskEdit.tsx`
 - Include corresponding test files: `TaskEdit.spec.tsx`
 - Use descriptive, domain-specific names: `TaskForm`, `BeeminderSettings`
 
 ### File Organization
+
 ```
 ComponentName.tsx       # Main component
 ComponentName.spec.tsx  # Test file
@@ -66,6 +71,7 @@ index.ts               # Barrel exports (when appropriate)
 ## API Integration Patterns
 
 ### TaskRatchet SDK Usage
+
 ```typescript
 import { getMe, editTask, addTask } from '@taskratchet/sdk';
 
@@ -74,15 +80,16 @@ const user = await getMe();
 ```
 
 ### React Query Patterns
+
 ```typescript
 // Custom hooks for API operations
 const useEditTask = () => {
-  return useMutation({
-    mutationFn: ({ id, due, cents }) => editTask(id, due, cents),
-    onSuccess: () => {
-      // Invalidate related queries
-    }
-  });
+	return useMutation({
+		mutationFn: ({ id, due, cents }) => editTask(id, due, cents),
+		onSuccess: () => {
+			// Invalidate related queries
+		},
+	});
 };
 
 // Query hooks for data fetching
@@ -92,26 +99,28 @@ const { data: tasks, isLoading } = useTasks();
 ## Core Domain Types
 
 ### Task Management Types
+
 ```typescript
 type TaskType = {
-  id: string;
-  task: string;           // Task description
-  due: number;           // Unix timestamp
-  cents: number;         // Stake amount in cents
-  complete: boolean;
-  status: 'pending' | 'complete' | 'expired';
-  chargeStatus?: 'notified' | 'authorized' | 'captured';
-  contested?: boolean;
+	id: string;
+	task: string; // Task description
+	due: number; // Unix timestamp
+	cents: number; // Stake amount in cents
+	complete: boolean;
+	status: 'pending' | 'complete' | 'expired';
+	chargeStatus?: 'notified' | 'authorized' | 'captured';
+	contested?: boolean;
 };
 
 type TaskInput = {
-  task: string;
-  due: number;
-  cents: number;
+	task: string;
+	due: number;
+	cents: number;
 };
 ```
 
 ### Status Types
+
 - **pending**: Task is active and can be completed
 - **complete**: Task has been marked as done
 - **expired**: Task deadline has passed without completion
@@ -119,6 +128,7 @@ type TaskInput = {
 ## Component Development Guidelines
 
 ### Material-UI Usage
+
 ```typescript
 // Prefer Material-UI components over custom HTML
 import { Button, TextField, Dialog } from '@mui/material';
@@ -132,6 +142,7 @@ import { LoadingButton } from '@mui/lab';
 ```
 
 ### Form Handling Patterns
+
 ```typescript
 // State management for forms
 const [task, setTask] = useState<string>('');
@@ -141,42 +152,45 @@ const [error, setError] = useState<string>('');
 
 // Validation patterns
 if (cents < 100) {
-  setError('Minimum stakes is $1.00');
-  return;
+	setError('Minimum stakes is $1.00');
+	return;
 }
 ```
 
 ### Error Handling
+
 ```typescript
 // Display user-friendly error messages
 const errorMessage = editTask.error?.message ?? '';
 // Validate business rules
 if (cents < task.cents) {
-  setError('Stakes cannot be less than the original task');
-  return;
+	setError('Stakes cannot be less than the original task');
+	return;
 }
 ```
 
 ## Testing Guidelines
 
 ### Test File Structure
+
 ```typescript
 import { describe, it, expect } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { TestWrapper } from '../test/renderWithQueryProvider';
 
 describe('ComponentName', () => {
-  it('should handle the main functionality', () => {
-    // Test implementation
-  });
+	it('should handle the main functionality', () => {
+		// Test implementation
+	});
 });
 ```
 
 ### Common Testing Patterns
+
 ```typescript
 // Render with React Query wrapper
 const { result } = renderHook(useEditTask, {
-  wrapper: TestWrapper,
+	wrapper: TestWrapper,
 });
 
 // Test user interactions
@@ -185,11 +199,12 @@ await user.click(button);
 
 // Test async operations
 await waitFor(() => {
-  expect(mockFunction).toHaveBeenCalledWith(expectedArgs);
+	expect(mockFunction).toHaveBeenCalledWith(expectedArgs);
 });
 ```
 
 ### Mock Patterns
+
 - Use `vitest-fetch-mock` for API mocking
 - Mock external dependencies in `__mocks__` directory
 - Use controlled promises for async testing
@@ -197,11 +212,13 @@ await waitFor(() => {
 ## Business Logic Guidelines
 
 ### Financial Stakes
+
 - Stakes are stored in cents (minimum 100 = $1.00)
 - Display as dollars: `${task.cents / 100}`
 - Validation: ensure cents >= 100
 
 ### Date/Time Handling
+
 ```typescript
 import dayjs from 'dayjs';
 
@@ -213,6 +230,7 @@ const dateString = browser.getDateString(new Date(task.due * 1000));
 ```
 
 ### Task Operations
+
 - **Create**: Users can create tasks with description, due date, and stakes
 - **Edit**: Can only increase stakes and move due date earlier
 - **Complete**: Mark tasks as done (only pending tasks)
@@ -221,10 +239,11 @@ const dateString = browser.getDateString(new Date(task.due * 1000));
 ## Common Patterns
 
 ### Loading States
+
 ```typescript
 const mutation = useEditTask();
 
-<LoadingButton 
+<LoadingButton
   loading={mutation.isLoading}
   type="submit"
 >
@@ -233,6 +252,7 @@ const mutation = useEditTask();
 ```
 
 ### Conditional Rendering
+
 ```typescript
 // Check task status before rendering actions
 {task.status === 'pending' && (
@@ -241,6 +261,7 @@ const mutation = useEditTask();
 ```
 
 ### Navigation
+
 ```typescript
 import { Link } from 'react-router-dom';
 
