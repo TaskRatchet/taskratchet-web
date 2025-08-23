@@ -149,8 +149,7 @@ if (cents < 100) {
 ### Error Handling
 ```typescript
 // Display user-friendly error messages
-const error = editTask.error?.message || error || '';
-
+const errorMessage = editTask.error?.message ?? '';
 // Validate business rules
 if (cents < task.cents) {
   setError('Stakes cannot be less than the original task');
