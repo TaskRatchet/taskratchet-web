@@ -15,6 +15,7 @@ import {
 
 import AndTheme from './components/HOCs/AndTheme';
 import NavBar from './components/organisms/NavBar';
+import PaymentMethodAlert from './components/organisms/PaymentMethodAlert';
 import Authenticated from './components/pages/Authenticated';
 import Register from './components/pages/Register';
 import ResetPassword from './components/pages/ResetPassword';
@@ -68,6 +69,7 @@ export function App(): JSX.Element {
 									minHeight: 1,
 								}}
 							>
+								<PaymentMethodAlert />
 								<Routes>
 									<Route
 										path={'/success'}
