@@ -44,11 +44,10 @@ describe('settings page', () => {
 	});
 
 	it('displays response data', async () => {
+		const mutate = vi.fn();
 		vi.mocked(useResetApiToken).mockReturnValue({
 			isLoading: false,
-			mutate: () => {
-				/* noop */
-			},
+			mutate,
 			data: 'the_token',
 		} as any);
 
@@ -57,5 +56,6 @@ describe('settings page', () => {
 		await userEvent.click(await screen.findByText('Request API token'));
 
 		await screen.findByText('the_token');
+		expect(mutate).toHaveBeenCalledTimes(1);
 	});
 });
