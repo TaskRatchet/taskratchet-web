@@ -3,6 +3,7 @@ import { Alert, Button } from '@mui/material';
 import { getCheckoutSession, updateMe } from '@taskratchet/sdk';
 import { useCallback, useState } from 'react';
 
+import { STRIPE_CANCEL_URL, STRIPE_SUCCESS_URL } from '../../constants';
 import { useMe } from '../../lib/api/useMe';
 import { redirectToCheckout } from '../../lib/stripe';
 
@@ -15,7 +16,10 @@ export default function PaymentSettings(): JSX.Element {
 		setError('');
 		setLoading(true);
 		try {
-			const { id } = await getCheckoutSession();
+			const { id } = await getCheckoutSession({
+				success_url: STRIPE_SUCCESS_URL,
+				cancel_url: STRIPE_CANCEL_URL,
+			});
 			await updateMe({
 				checkout_session_id: id,
 			});
