@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { useResetApiToken } from '../../lib/api/useResetApiToken';
 import { loadMe } from '../../lib/test/loadMe';
-import { loadTimezones } from '../../lib/test/loadTimezones';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import Settings from './Settings';
 
@@ -27,7 +26,6 @@ describe('settings page', () => {
 	});
 
 	it('includes Beeminder integration settings', async () => {
-		loadTimezones();
 		loadMe({});
 
 		renderWithQueryProvider(<Settings />);

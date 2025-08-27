@@ -17,7 +17,6 @@ vi.mock('../../lib/api/fetch1');
 vi.mock('../../lib/api/getTasks');
 vi.mock('../../lib/api/getMe');
 vi.mock('../../lib/api/updateTask');
-vi.mock('../../lib/api/getTimezones');
 vi.mock('../../lib/api/addTask');
 vi.mock('../../lib/LegacyApi');
 vi.mock('../../lib/getUnloadMessage');
@@ -115,16 +114,6 @@ describe('tasks page', () => {
 		await userEvent.click(getAddButton());
 
 		expect(addTask).not.toHaveBeenCalled();
-	});
-
-	it('displays timezone', async () => {
-		loadTasksApiData({ me: { timezone: 'the_timezone' } });
-
-		const { openForm } = renderTasksPage();
-
-		await openForm();
-
-		await screen.findByText('the_timezone');
 	});
 
 	it('tells api task is complete', async () => {

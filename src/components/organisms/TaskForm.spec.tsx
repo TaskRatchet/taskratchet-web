@@ -12,7 +12,6 @@ interface RenderComponentProps {
 	task?: string;
 	due?: number;
 	cents?: number;
-	timezone?: string;
 	error?: string;
 	onChange?: (updates: Partial<TaskInput>) => void;
 	onCancel?: () => void;
@@ -25,7 +24,6 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 		task = '',
 		due = new Date('1/1/2022, 11:59 PM').getTime() / 1000,
 		cents = 500,
-		timezone = '',
 		error = '',
 		onChange = () => undefined,
 		onCancel = () => undefined,
@@ -39,7 +37,6 @@ const renderComponent = (props: RenderComponentProps = {}) => {
 				task,
 				due,
 				cents,
-				timezone,
 				error,
 				onChange,
 				onCancel,

@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogTitle } from '@mui/material';
 import { useState } from 'react';
 
 import { useAddTask } from '../../lib/api/useAddTask';
-import { useTimezone } from '../../lib/api/useTimezone';
 import * as browser from '../../lib/browser';
 import TaskForm from './TaskForm';
 
@@ -27,7 +26,6 @@ export default function TaskAdd({
 	onSave: (t: TaskType) => void;
 	baseTask?: TaskType;
 }): JSX.Element {
-	const timezone = useTimezone() || '';
 	const addTask = useAddTask(onSave);
 	const [task, setTask] = useState<string>(baseTask?.task || '');
 	const [due, setDue] = useState<number>(() => {
@@ -80,7 +78,6 @@ export default function TaskAdd({
 					task={task}
 					due={due}
 					cents={cents}
-					timezone={timezone}
 					error={error}
 					onChange={onChange}
 					onCancel={onClose}
