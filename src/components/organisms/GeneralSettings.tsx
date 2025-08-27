@@ -1,25 +1,21 @@
 import { LoadingButton } from '@mui/lab';
-import { Autocomplete, Stack, TextField } from '@mui/material';
+import { Stack, TextField } from '@mui/material';
 import { getMe } from '@taskratchet/sdk';
 import { type FormEvent, useEffect, useState } from 'react';
 
-import { useTimezones } from '../../lib/api/useTimezones';
 import useUpdateMe from '../../lib/api/useUpdateMe';
 
 export default function GeneralSettings(): JSX.Element {
 	const updateMe = useUpdateMe();
-	const { data: timezones } = useTimezones();
 	const [name, setName] = useState<string>('');
 	const [email, setEmail] = useState<string>('');
-	const [timezone, setTimezone] = useState<string>('');
 
 	useEffect(() => {
 		void getMe().then((me) => {
-			const { name = '', email = '', timezone = '' } = me || {};
+			const { name = '', email = '' } = me || {};
 
 			setName(name);
 			setEmail(email);
-			setTimezone(timezone);
 		});
 	}, []);
 
@@ -33,7 +29,6 @@ export default function GeneralSettings(): JSX.Element {
 		updateMe.mutate({
 			name: prepareValue(name),
 			email: prepareValue(email),
-			timezone: prepareValue(timezone),
 		});
 	};
 
@@ -51,14 +46,6 @@ export default function GeneralSettings(): JSX.Element {
 					value={email}
 					onChange={(e) => setEmail(e.target.value)}
 					type={'email'}
-				/>
-
-				<Autocomplete
-					options={timezones || []}
-					value={timezone || null}
-					onChange={(_e, v) => v && setTimezone(v)}
-					sx={{ width: 300 }}
-					renderInput={(p) => <TextField {...p} label={'Timezone'} />}
 				/>
 
 				<LoadingButton

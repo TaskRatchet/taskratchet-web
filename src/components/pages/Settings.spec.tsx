@@ -61,20 +61,6 @@ describe('settings page', () => {
 		await screen.findByDisplayValue('the_email');
 	});
 
-	it('loads timezone', async () => {
-		loadTimezones(['first', 'America/Indiana/Knox', 'third']);
-
-		loadMe({
-			json: {
-				timezone: 'America/Indiana/Knox',
-			},
-		});
-
-		renderWithQueryProvider(<Settings />);
-
-		await screen.findByDisplayValue('America/Indiana/Knox');
-	});
-
 	it('has token request button', async () => {
 		renderWithQueryProvider(<Settings />);
 
