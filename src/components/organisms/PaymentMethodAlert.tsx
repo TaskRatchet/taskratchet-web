@@ -29,7 +29,7 @@ export default function PaymentMethodAlert() {
 		return (
 			<Alert variant="outlined" severity="warning">
 				<AlertTitle>Missing Payment Method</AlertTitle>
-				<p>You need to add a payment method to use this feature.</p>
+				<Typography>You need to add a payment method to use this feature.</Typography>
 				<LoadingButton
 					component="button"
 					onClick={onClick}
