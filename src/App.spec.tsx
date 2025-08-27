@@ -21,7 +21,6 @@ vi.mock('react-list');
 vi.mock('./lib/getQueryClient');
 vi.mock('@mui/x-date-pickers');
 
-
 const openForm = () => userEvent.click(screen.getByLabelText('add'));
 
 function renderPage() {
