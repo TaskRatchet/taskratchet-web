@@ -14,3 +14,6 @@ export const COLORS = {
 		darker: '#005257',
 	},
 };
+
+export const STRIPE_SUCCESS_URL = 'https://app.taskratchet.com/success';
+export const STRIPE_CANCEL_URL = 'https://app.taskratchet.com/cancel';
