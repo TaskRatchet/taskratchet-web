@@ -37,30 +37,6 @@ describe('settings page', () => {
 		).toBeInTheDocument();
 	});
 
-	it('loads name', async () => {
-		loadMe({
-			json: {
-				name: 'the_name',
-			},
-		});
-
-		renderWithQueryProvider(<Settings />);
-
-		await screen.findByDisplayValue('the_name');
-	});
-
-	it('loads email', async () => {
-		loadMe({
-			json: {
-				email: 'the_email',
-			},
-		});
-
-		renderWithQueryProvider(<Settings />);
-
-		await screen.findByDisplayValue('the_email');
-	});
-
 	it('has token request button', async () => {
 		renderWithQueryProvider(<Settings />);
 

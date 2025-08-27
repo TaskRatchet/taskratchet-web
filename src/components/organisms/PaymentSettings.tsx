@@ -24,6 +24,7 @@ export default function PaymentSettings(): JSX.Element {
 			) : (
 				<LoadingButton
 					loading={loading}
+					variant="outlined"
 					onClick={() => {
 						void (async () => {
 							setLoading(true);

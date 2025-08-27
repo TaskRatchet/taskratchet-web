@@ -95,7 +95,9 @@ const BeeminderSettings = (): JSX.Element => {
 					</Stack>
 				</form>
 			) : (
-				<Button href={beeminderAuthUrl}>Enable Beeminder integration</Button>
+				<Button href={beeminderAuthUrl} variant="outlined">
+					Enable Beeminder integration
+				</Button>
 			)}
 		</>
 	);

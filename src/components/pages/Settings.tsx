@@ -3,8 +3,6 @@ import { Box } from '@mui/material';
 import useDocumentTitle from '../../lib/useDocumentTitle';
 import ApiSettings from '../organisms/ApiSettings';
 import BeeminderSettings from '../organisms/BeeminderSettings';
-import GeneralSettings from '../organisms/GeneralSettings';
-import PasswordSettings from '../organisms/PasswordSettings';
 import PaymentSettings from '../organisms/PaymentSettings';
 
 const Settings = (): JSX.Element => {
@@ -13,12 +11,6 @@ const Settings = (): JSX.Element => {
 	return (
 		<Box sx={{ p: 2 }}>
 			<h1>Settings</h1>
-
-			<GeneralSettings />
-
-			<h2>Reset Password</h2>
-
-			<PasswordSettings />
 
 			<h2>Update Payment Details</h2>
 
