@@ -69,10 +69,12 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 	return (
 		<>
 			{isFetched && !tasks.length && (
-				<Alert severity="info">
-					<AlertTitle>Nothing here!</AlertTitle>
-					Maybe add a task?
-				</Alert>
+				<Box sx={{ p: 2 }}>
+					<Alert severity="info">
+						<AlertTitle>Nothing here!</AlertTitle>
+						Maybe add a task?
+					</Alert>
+				</Box>
 			)}
 			<ReactList
 				initialIndex={index}
