@@ -76,6 +76,11 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 					</Alert>
 				</Box>
 			)}
+			{!isFetched && isFetching && (
+				<Box sx={{ p: 2 }}>
+					<p>Loading tasks...</p>
+				</Box>
+			)}
 			<ReactList
 				initialIndex={index}
 				itemRenderer={(i: number) => {
@@ -116,9 +121,9 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 						</Button>
 					</Box>
 				) : (
-					<div className="organism-taskList__noMore">
+					<Box className="organism-taskList__noMore" sx={{ p: 2 }}>
 						<p>No more tasks to load</p>
-					</div>
+					</Box>
 				))}
 		</>
 	);
