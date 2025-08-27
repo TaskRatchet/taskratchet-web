@@ -4,7 +4,6 @@ import {
 	Box,
 	Button,
 	InputAdornment,
-	Link,
 	Stack,
 	TextField,
 } from '@mui/material';
@@ -18,7 +17,6 @@ interface TaskFormProps {
 	task: string;
 	due?: number;
 	cents: number;
-	timezone: string;
 	error: string;
 	onChange: (updates: Partial<TaskInput>) => void;
 	onCancel: () => void;
@@ -36,7 +34,6 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 		task,
 		due,
 		cents,
-		timezone,
 		error,
 		onChange,
 		onCancel,
@@ -98,14 +95,6 @@ const TaskForm = (props: TaskFormProps): JSX.Element => {
 				) : (
 					''
 				)}
-
-				<Link
-					href={'https://taskratchet.com/help/timezones.html'}
-					target={'_blank'}
-					rel={'noopener noreferrer'}
-				>
-					{timezone}
-				</Link>
 
 				<Stack direction={'row'} spacing={2} justifyContent="end">
 					<Button onClick={onCancel} variant="outlined">

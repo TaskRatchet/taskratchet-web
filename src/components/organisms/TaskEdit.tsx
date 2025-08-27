@@ -2,7 +2,6 @@ import { Dialog, DialogContent, DialogTitle, MenuItem } from '@mui/material';
 import { useState } from 'react';
 
 import useEditTask from '../../lib/api/useEditTask';
-import { useTimezone } from '../../lib/api/useTimezone';
 import TaskForm from './TaskForm';
 
 const TaskEdit = ({
@@ -12,7 +11,6 @@ const TaskEdit = ({
 	task: TaskType;
 	onOpen?: () => void;
 }): JSX.Element => {
-	const timezone = useTimezone() || '';
 	const [due, setDue] = useState<number>(task.due);
 	const [cents, setCents] = useState<number>(task.cents);
 	const [error, setError] = useState<string>('');
@@ -69,7 +67,6 @@ const TaskEdit = ({
 						task={task.task}
 						due={due}
 						cents={cents}
-						timezone={timezone}
 						error={editTask.error?.message || error || ''}
 						onChange={onChange}
 						onCancel={() => setIsOpen(false)}
