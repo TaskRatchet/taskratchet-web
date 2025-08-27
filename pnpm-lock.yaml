@@ -36,8 +36,8 @@ importers:
         specifier: ^7.8.0
         version: 7.8.0
       '@taskratchet/sdk':
-        specifier: ^5.0.0
-        version: 5.0.0
+        specifier: ^6.0.0
+        version: 6.0.0
       dayjs:
         specifier: ^1.11.13
         version: 1.11.13
@@ -1366,8 +1366,8 @@ packages:
     resolution: {integrity: sha512-DNXRfYUgkZlrniQORbA/wH8CdFRhiBSE0R56gYU0V5vvpJ9WZwvGrz9tBAZmfq2aTgw6SK7mNpmTizGzLWVezw==}
     engines: {node: '>=12.16'}
 
-  '@taskratchet/sdk@5.0.0':
-    resolution: {integrity: sha512-AxKqpjKVFINFkEcIXwjYb4aUdx4T9KvD4dYHbC3yMKGL8TE/Yk2g2hMbxKjj0qrjC/Zi0ni6H7TwBba2Oc0TWg==}
+  '@taskratchet/sdk@6.0.0':
+    resolution: {integrity: sha512-BmuHxKNwOiUpW6+13GYy4Nqb8ZbuS8FxC9oIeko2uoLn+pnRQwtUeMhao7A7xynjJjKxd5RbFXhG2nA2ZUHqrQ==}
 
   '@testing-library/dom@10.4.0':
     resolution: {integrity: sha512-pemlzrSESWbdAloYml3bAJMEfNh1Z7EduzqPKprCH5S341frlpYnUEW0H72dLxa6IsYr+mPno20GiSm+h9dEdQ==}
@@ -4492,7 +4492,7 @@ snapshots:
 
   '@stripe/stripe-js@7.8.0': {}
 
-  '@taskratchet/sdk@5.0.0':
+  '@taskratchet/sdk@6.0.0':
     dependencies:
       firebase: 10.14.1
     transitivePeerDependencies:
