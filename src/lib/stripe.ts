@@ -1,7 +1,15 @@
 import { loadStripe } from '@stripe/stripe-js';
 
 export async function redirectToCheckout(sessionId: string): Promise<void> {
-	const stripe = await loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
+	const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+
+	if (!stripeKey) {
+		throw new Error(
+			'VITE_STRIPE_PUBLISHABLE_KEY environment variable is not configured',
+		);
+	}
+
+	const stripe = await loadStripe(stripeKey);
 
 	if (!stripe) {
 		throw new Error('Stripe not loaded');
