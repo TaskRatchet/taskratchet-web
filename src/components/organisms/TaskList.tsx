@@ -96,8 +96,9 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 				type={'variable'}
 				ref={listRef}
 			/>
-			{hasNextPage ? (
-				isFetched && (
+			{isFetched &&
+				tasks.length > 0 &&
+				(hasNextPage ? (
 					<Box
 						className="organism-taskList__loadMore"
 						sx={{ textAlign: 'center', marginTop: 2 }}
@@ -112,12 +113,11 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 							Load more tasks
 						</Button>
 					</Box>
-				)
-			) : (
-				<div className="organism-taskList__noMore">
-					<p>No more tasks to load</p>
-				</div>
-			)}
+				) : (
+					<div className="organism-taskList__noMore">
+						<p>No more tasks to load</p>
+					</div>
+				))}
 		</>
 	);
 };
