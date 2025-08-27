@@ -1,4 +1,4 @@
-import { getApiToken } from '@taskratchet/sdk';
+import { resetApiToken } from '@taskratchet/sdk';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it } from 'vitest';
@@ -12,7 +12,7 @@ describe('API settings', () => {
 	it('displays loading indicator on request click', async () => {
 		loadMe({});
 
-		const { resolve } = loadControlledPromise(getApiToken);
+		const { resolve } = loadControlledPromise(resetApiToken);
 
 		renderWithQueryProvider(<ApiSettings />);
 

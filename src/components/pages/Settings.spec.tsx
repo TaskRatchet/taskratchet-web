@@ -3,19 +3,19 @@ import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { useGetApiToken } from '../../lib/api/useGetApiToken';
+import { useResetApiToken } from '../../lib/api/useResetApiToken';
 import { loadMe } from '../../lib/test/loadMe';
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import Settings from './Settings';
 
-vi.mock('../../lib/api/useGetApiToken');
+vi.mock('../../lib/api/useResetApiToken');
 
 describe('settings page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		loadMe({});
-		vi.mocked(useGetApiToken).mockReturnValue({
+		vi.mocked(useResetApiToken).mockReturnValue({
 			isLoading: false,
 			mutate: () => {
 				/* noop */
@@ -82,7 +82,7 @@ describe('settings page', () => {
 	});
 
 	it('displays response data', async () => {
-		vi.mocked(useGetApiToken).mockReturnValue({
+		vi.mocked(useResetApiToken).mockReturnValue({
 			isLoading: false,
 			mutate: () => {
 				/* noop */

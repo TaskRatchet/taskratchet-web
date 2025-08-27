@@ -12,12 +12,12 @@ import {
 	TableRow,
 } from '@mui/material';
 
-import { useGetApiToken } from '../../lib/api/useGetApiToken';
 import { useMe } from '../../lib/api/useMe';
+import { useResetApiToken } from '../../lib/api/useResetApiToken';
 
 export default function ApiSettings(): JSX.Element {
 	const me = useMe();
-	const getApiToken = useGetApiToken();
+	const resetApiToken = useResetApiToken();
 
 	return (
 		<Stack spacing={2} alignItems={'start'}>
@@ -50,15 +50,15 @@ export default function ApiSettings(): JSX.Element {
 						</TableRow>
 						<TableRow>
 							<TableCell>API Token</TableCell>
-							<TableCell>{getApiToken.data || '—'}</TableCell>
+							<TableCell>{resetApiToken.data || '—'}</TableCell>
 						</TableRow>
 					</TableBody>
 				</Table>
 			</TableContainer>
 
 			<LoadingButton
-				loading={getApiToken.isLoading}
-				onClick={() => getApiToken.mutate()}
+				loading={resetApiToken.isLoading}
+				onClick={() => resetApiToken.mutate()}
 				variant="outlined"
 			>
 				Request API token
