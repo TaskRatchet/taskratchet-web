@@ -4,7 +4,7 @@ export async function redirectToCheckout(sessionId: string): Promise<void> {
 	const stripeKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
 
 	if (!stripeKey) {
-		throw new Error('Stripe key not found');
+		throw new Error('VITE_STRIPE_PUBLISHABLE_KEY environment variable is not configured');
 	}
 
 	const stripe = await loadStripe(stripeKey);
