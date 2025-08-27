@@ -37,6 +37,7 @@ export default function PaymentMethodAlert() {
 					onClick={onClick}
 					disabled={isCheckoutLoading}
 					variant="outlined"
+					sx={{ mt: 2 }}
 				>
 					Add Payment Method
 				</LoadingButton>
