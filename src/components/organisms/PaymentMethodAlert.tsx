@@ -30,7 +30,7 @@ export default function PaymentMethodAlert() {
 			<Alert variant="outlined" severity="warning">
 				<AlertTitle>Missing Payment Method</AlertTitle>
 				<Typography>
-					You need to add a payment method to use this feature.
+					You need to add a payment method to use TaskRatchet.
 				</Typography>
 				<LoadingButton
 					component="button"
