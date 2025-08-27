@@ -27,7 +27,7 @@ export default function PaymentMethodAlert() {
 
 	if (isMissingPaymentMethod) {
 		return (
-			<Alert variant="outlined" severity="warning">
+			<Alert variant="outlined" severity="warning" sx={{ m: 2 }}>
 				<AlertTitle>Missing Payment Method</AlertTitle>
 				<Typography>
 					You need to add a payment method to use TaskRatchet.
