@@ -30,10 +30,8 @@ export default function ApiSettings(): JSX.Element {
 					it.
 				</p>
 
-				<p>We don&apos;t store your token, so save it somewhere safe.</p>
-
 				<Link
-					href="https://taskratchet.com/help/api.html"
+					href="https://docs.taskratchet.com/api-v2.html"
 					target={'_blank'}
 					rel="noreferrer"
 				>
