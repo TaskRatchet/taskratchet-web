@@ -1,13 +1,10 @@
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
-import { describe, expect, it, type Mock, vi } from 'vitest';
+import { describe, expect, it } from 'vitest';
 
-import { useSession } from '../../lib/api/useSession';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
 import NavBar from './NavBar';
-
-vi.mock('../../lib/api/useSession');
 
 function renderComponent() {
 	return renderWithQueryProvider(
@@ -18,13 +15,7 @@ function renderComponent() {
 }
 
 describe('NavBar', () => {
-	const mockUseSession = useSession as Mock;
-
 	it('displays email', async () => {
-		mockUseSession.mockReturnValue({
-			email: 'the_email',
-		});
-
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));
@@ -33,20 +24,12 @@ describe('NavBar', () => {
 	});
 
 	it('initially hides Logout button', () => {
-		mockUseSession.mockReturnValue({
-			email: 'the_email',
-		});
-
 		renderComponent();
 
 		expect(screen.queryByText('Logout')).not.toBeInTheDocument();
 	});
 
 	it('displays Logout button when menu activated', async () => {
-		mockUseSession.mockReturnValue({
-			email: 'the_email',
-		});
-
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));
@@ -55,10 +38,6 @@ describe('NavBar', () => {
 	});
 
 	it('deactivates menu when backdrop clicked', async () => {
-		mockUseSession.mockReturnValue({
-			email: 'the_email',
-		});
-
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));
@@ -73,8 +52,6 @@ describe('NavBar', () => {
 	});
 
 	it('does not display logout link if no session', async () => {
-		mockUseSession.mockReturnValue(null);
-
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));
@@ -89,10 +66,6 @@ describe('NavBar', () => {
 	});
 
 	it('closes drawer on navigate', async () => {
-		mockUseSession.mockReturnValue({
-			email: 'the_email',
-		});
-
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));

@@ -3,10 +3,9 @@ import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient } from 'react-query';
 import { MemoryRouter } from 'react-router-dom';
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { App } from './App';
-import { useSession } from './lib/api/useSession';
 import getQueryClient from './lib/getQueryClient';
 import { loadTasksApiData } from './lib/test/loadTasksApiData';
 import { makeTask } from './lib/test/makeTask';
@@ -16,22 +15,16 @@ vi.mock('./lib/api/getTasks');
 vi.mock('./lib/api/getMe');
 vi.mock('./lib/api/updateTask');
 vi.mock('./lib/api/addTask');
-vi.mock('./lib/api/useSession');
 vi.mock('./components/molecules/LoadingIndicator');
 vi.mock('react-ga');
 vi.mock('react-list');
 vi.mock('./lib/getQueryClient');
 vi.mock('@mui/x-date-pickers');
 
-const mockUseSession = useSession as Mock;
 
 const openForm = () => userEvent.click(screen.getByLabelText('add'));
 
 function renderPage() {
-	mockUseSession.mockReturnValue({
-		email: 'the_email',
-	});
-
 	return renderWithQueryProvider(
 		<MemoryRouter initialEntries={['/']}>
 			<App />
