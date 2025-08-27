@@ -12,18 +12,19 @@ export default function PaymentSettings(): JSX.Element {
 	const [error, setError] = useState<string>('');
 
 	const handleAdd = useCallback(async () => {
+		setError('');
+		setLoading(true);
 		try {
-			setLoading(true);
 			const { id } = await getCheckoutSession();
 			await updateMe({
 				checkout_session_id: id,
 			});
 			await redirectToCheckout(id);
-			setLoading(false);
 		} catch (error) {
-			setLoading(false);
 			setError('Failed to add payment method');
 			console.error(error);
+		} finally {
+			setLoading(false);
 		}
 	}, []);
 
