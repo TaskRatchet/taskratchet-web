@@ -1,8 +1,8 @@
-/// <reference path="../.astro/types.d.ts" />
+/// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-	readonly PUBLIC_WEB3FORMS_ACCESS_KEY: string;
-	readonly PUBLIC_STRIPE_KEY: string;
+	readonly VITE_STRIPE_PUBLISHABLE_KEY: string;
+	readonly VITE_CLERK_PUBLISHABLE_KEY: string;
 }
 
 interface ImportMeta {

@@ -1,9 +1,29 @@
 {
-	"extends": "astro/tsconfigs/strict",
 	"compilerOptions": {
+		"target": "ES2020",
+		"lib": ["ES2020", "DOM", "DOM.Iterable"],
+		"module": "ESNext",
+		"moduleResolution": "bundler",
+		"allowImportingTsExtensions": true,
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"noEmit": true,
 		"jsx": "react-jsx",
 		"jsxImportSource": "react",
-		"types": ["@testing-library/jest-dom"]
+
+		"strict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"noUncheckedIndexedAccess": true,
+
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true,
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+
+		"types": ["@testing-library/jest-dom", "vitest/globals"]
 	},
-	"exclude": ["dist"]
+	"include": ["src/**/*", "**/*.ts", "**/*.tsx"],
+	"exclude": ["dist", "node_modules"]
 }

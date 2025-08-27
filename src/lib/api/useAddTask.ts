@@ -1,0 +1,65 @@
+import { addTask } from '@taskratchet/sdk';
+import {
+	useMutation,
+	type UseMutationResult,
+	useQueryClient,
+} from 'react-query';
+import { toast } from 'react-toastify';
+
+interface Input {
+	task: string;
+	due: number;
+	cents: number;
+}
+
+export function useAddTask(
+	onSave: (t: TaskType) => void,
+): UseMutationResult<TaskType, Error, Input> {
+	const queryClient = useQueryClient();
+
+	return useMutation(
+		(input: Input) =>
+			addTask({
+				...input,
+				due: Math.round(input.due),
+			}),
+		{
+			onMutate: async (newTask: Input) => {
+				await queryClient.cancelQueries('tasks');
+
+				const snapshot:
+					| {
+							pages: TaskType[][];
+							pageParams?: number[];
+					  }
+					| undefined = queryClient.getQueryData('tasks');
+
+				if (!snapshot) return { snapshot: undefined };
+
+				const t = {
+					status: 'pending',
+					isNew: true,
+					...newTask,
+				} as TaskType;
+
+				onSave(t);
+				queryClient.setQueryData('tasks', {
+					...snapshot,
+					pages: [...snapshot.pages, [t]],
+				});
+
+				return { snapshot };
+			},
+			onError: (error: Error, _newTask: Input, context) => {
+				const { snapshot = null } = context || {};
+				if (snapshot !== null) {
+					queryClient.setQueryData('tasks', snapshot);
+				}
+				toast(error.toString());
+			},
+			onSettled: async () => {
+				await queryClient.invalidateQueries('tasks');
+			},
+		},
+	);
+}

@@ -16,6 +16,8 @@ jobs:
           cache: 'pnpm'
       - run: pnpm install
       - run: pnpm run test
+        env:
+          VITE_CLERK_PUBLISHABLE_KEY: 'the_vite_clerk_publishable_key'
   audit:
     runs-on: ubuntu-latest
     steps:
@@ -97,3 +99,16 @@ jobs:
           node-version-file: '.nvmrc'
           cache: 'pnpm'
       - run: pnpm dlx prettier --check .
+  knip:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: '.nvmrc'
+          cache: 'pnpm'
+      - run: pnpm install
+      - run: pnpm knip
