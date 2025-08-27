@@ -87,6 +87,7 @@ export function App(): JSX.Element {
 												<Alert severity="error">
 													Your payment method could not be saved. Please contact{' '}
 													<Link
+														component="a"
 														href="mailto:support@taskratchet.com"
 														target={'_blank'}
 														rel="noopener noreferrer"
