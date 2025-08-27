@@ -69,7 +69,7 @@ describe('NavBar', () => {
 		renderComponent();
 
 		await userEvent.click(await screen.findByLabelText('menu'));
-		await userEvent.click(await screen.findByText('Account'));
+		await userEvent.click(await screen.findByText('Settings'));
 
 		await waitFor(() => {
 			expect(screen.queryByText('Logout')).not.toBeInTheDocument();

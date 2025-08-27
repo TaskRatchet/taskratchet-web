@@ -26,8 +26,8 @@
 			"url": "/"
 		},
 		{
-			"name": "Account",
-			"url": "/account"
+			"name": "Settings",
+			"url": "/settings"
 		}
 	],
 	"screenshots": [

@@ -15,10 +15,10 @@ import {
 
 import AndTheme from './components/HOCs/AndTheme';
 import NavBar from './components/organisms/NavBar';
-import Account from './components/pages/Account';
 import Authenticated from './components/pages/Authenticated';
 import Register from './components/pages/Register';
 import ResetPassword from './components/pages/ResetPassword';
+import Settings from './components/pages/Settings';
 import Tasks from './components/pages/Tasks';
 import * as browser from './lib/browser';
 import getQueryClient from './lib/getQueryClient';
@@ -100,10 +100,10 @@ export function App(): JSX.Element {
 									/>
 
 									<Route
-										path={'/account'}
+										path={'/settings'}
 										element={
 											<Authenticated>
-												<Account />
+												<Settings />
 											</Authenticated>
 										}
 									/>

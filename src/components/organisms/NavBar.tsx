@@ -97,7 +97,7 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 					<Tooltip title={'Settings'}>
 						<IconButton
 							component="a"
-							href="/account"
+							href="/settings"
 							target="_blank"
 							rel="noopener noreferrer"
 							edge="start"

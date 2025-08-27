@@ -7,12 +7,12 @@ import GeneralSettings from '../organisms/GeneralSettings';
 import PasswordSettings from '../organisms/PasswordSettings';
 import PaymentSettings from '../organisms/PaymentSettings';
 
-const Account = (): JSX.Element => {
-	useDocumentTitle('Account | TaskRatchet');
+const Settings = (): JSX.Element => {
+	useDocumentTitle('Settings | TaskRatchet');
 
 	return (
 		<Box sx={{ p: 2 }}>
-			<h1>Account</h1>
+			<h1>Settings</h1>
 
 			<GeneralSettings />
 
@@ -35,4 +35,4 @@ const Account = (): JSX.Element => {
 	);
 };
 
-export default Account;
+export default Settings;

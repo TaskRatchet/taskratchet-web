@@ -265,8 +265,8 @@ const mutation = useEditTask();
 ```typescript
 import { Link } from 'react-router-dom';
 
-<Button component={Link} to="/account">
-  Account
+<Button component={Link} to="/settings">
+  Settings
 </Button>
 ```
 

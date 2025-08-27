@@ -12,8 +12,8 @@ const beeminderClientId: string = IS_PRODUCTION
 		? '1w70sy12t1106s9ptod11ex21'
 		: '29k46vimhtdeptt616tuhmp2r',
 	beeminderRedirect: string = IS_PRODUCTION
-		? 'https://app.taskratchet.com/account'
-		: 'https://staging.taskratchet.com/account',
+		? 'https://app.taskratchet.com/settings'
+		: 'https://staging.taskratchet.com/settings',
 	beeminderAuthUrl: string =
 		`https://www.beeminder.com/apps/authorize?client_id=${beeminderClientId}` +
 		`&redirect_uri=${encodeURIComponent(

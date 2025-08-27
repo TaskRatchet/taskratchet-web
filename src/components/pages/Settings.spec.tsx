@@ -7,11 +7,11 @@ import { useGetApiToken } from '../../lib/api/useGetApiToken';
 import { loadMe } from '../../lib/test/loadMe';
 import { loadTimezones } from '../../lib/test/loadTimezones';
 import { renderWithQueryProvider } from '../../lib/test/renderWithQueryProvider';
-import Account from './Account';
+import Settings from './Settings';
 
 vi.mock('../../lib/api/useGetApiToken');
 
-describe('account page', () => {
+describe('settings page', () => {
 	beforeEach(() => {
 		vi.resetAllMocks();
 		loadMe({});
@@ -30,7 +30,7 @@ describe('account page', () => {
 		loadTimezones();
 		loadMe({});
 
-		renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Settings />);
 
 		expect(
 			await screen.findByText('Enable Beeminder integration'),
@@ -44,7 +44,7 @@ describe('account page', () => {
 			},
 		});
 
-		renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Settings />);
 
 		await screen.findByDisplayValue('the_name');
 	});
@@ -56,7 +56,7 @@ describe('account page', () => {
 			},
 		});
 
-		renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Settings />);
 
 		await screen.findByDisplayValue('the_email');
 	});
@@ -70,13 +70,13 @@ describe('account page', () => {
 			},
 		});
 
-		renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Settings />);
 
 		await screen.findByDisplayValue('America/Indiana/Knox');
 	});
 
 	it('has token request button', async () => {
-		renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Settings />);
 
 		await screen.findByText('Request API token');
 	});
@@ -90,7 +90,7 @@ describe('account page', () => {
 			data: 'the_token',
 		} as any);
 
-		renderWithQueryProvider(<Account />);
+		renderWithQueryProvider(<Settings />);
 
 		await userEvent.click(await screen.findByText('Request API token'));
 
