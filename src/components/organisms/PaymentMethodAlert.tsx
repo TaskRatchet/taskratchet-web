@@ -1,5 +1,5 @@
 import { LoadingButton } from '@mui/lab';
-import { Alert, AlertTitle } from '@mui/material';
+import { Alert, AlertTitle, Typography } from '@mui/material';
 
 import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
 import { useMe } from '../../lib/api/useMe';
@@ -29,7 +29,9 @@ export default function PaymentMethodAlert() {
 		return (
 			<Alert variant="outlined" severity="warning">
 				<AlertTitle>Missing Payment Method</AlertTitle>
-				<Typography>You need to add a payment method to use this feature.</Typography>
+				<Typography>
+					You need to add a payment method to use this feature.
+				</Typography>
 				<LoadingButton
 					component="button"
 					onClick={onClick}
