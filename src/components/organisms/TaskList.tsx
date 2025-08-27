@@ -70,7 +70,7 @@ const TaskList = ({ lastToday, newTask }: TaskListProps): JSX.Element => {
 		<>
 			{isFetched && !tasks.length && (
 				<Box sx={{ p: 2 }}>
-					<Alert variant="filled" severity="info">
+					<Alert variant="outlined" severity="info">
 						<AlertTitle>Nothing here!</AlertTitle>
 						Maybe add a task?
 					</Alert>
