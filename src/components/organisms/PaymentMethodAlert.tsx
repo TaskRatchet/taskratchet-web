@@ -13,7 +13,7 @@ export default function PaymentMethodAlert() {
 
 	const onClick = () => {
 		if (!checkoutSession) {
-			console.error('Registration form submitted without required data:', {
+			console.error('Payment method setup failed without required data:', {
 				checkoutSession: !!checkoutSession,
 			});
 			return;
