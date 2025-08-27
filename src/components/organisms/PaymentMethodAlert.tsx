@@ -1,15 +1,26 @@
 import { LoadingButton } from '@mui/lab';
 import { Alert, AlertTitle, Typography } from '@mui/material';
+import { getMe } from '@taskratchet/sdk';
+import { useEffect, useState } from 'react';
 
 import { useCheckoutSession } from '../../lib/api/useCheckoutSession';
-import { useMe } from '../../lib/api/useMe';
 import { redirectToCheckout } from '../../lib/stripe';
 
 export default function PaymentMethodAlert() {
-	const me = useMe();
-	const isMissingPaymentMethod = me.isFetched && !me.data?.has_stripe_customer;
+	const [isMissingPaymentMethod, setIsMissingPaymentMethod] =
+		useState<boolean>(false);
 	const checkoutSession = useCheckoutSession();
 	const isCheckoutLoading = checkoutSession === null;
+
+	useEffect(() => {
+		getMe()
+			.then((me) => {
+				setIsMissingPaymentMethod(!me.has_stripe_customer);
+			})
+			.catch((e) => {
+				console.error(e);
+			});
+	}, []);
 
 	const onClick = () => {
 		if (!checkoutSession) {
