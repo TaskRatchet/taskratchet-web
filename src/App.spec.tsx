@@ -1,4 +1,4 @@
-import { addTask, getTasks } from '@taskratchet/sdk';
+import { addTask, getMe, getTasks } from '@taskratchet/sdk';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient } from 'react-query';
@@ -45,6 +45,11 @@ describe('App', () => {
 				},
 			}),
 		);
+		vi.mocked(getMe).mockResolvedValue({
+			id: 'user-1',
+			email: 'user@example.com',
+			has_stripe_customer: false,
+		} as any);
 	});
 
 	it('has filter entries', async () => {
