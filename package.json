@@ -25,7 +25,7 @@
     "@mui/material": "^5.18.0",
     "@mui/x-date-pickers": "^7.29.4",
     "@stripe/stripe-js": "^7.8.0",
-    "@taskratchet/sdk": "^6.0.0",
+    "@taskratchet/sdk": "^6.0.1",
     "dayjs": "^1.11.13",
     "humanize-duration": "^3.33.0",
     "query-string": "^9.2.2",
