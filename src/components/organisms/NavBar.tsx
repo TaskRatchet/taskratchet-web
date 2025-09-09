@@ -11,7 +11,7 @@ import {
 	Tooltip,
 	Typography,
 } from '@mui/material';
-import { setAuthToken } from '@taskratchet/sdk';
+import { setAuthTokenGetter } from '@taskratchet/sdk';
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -34,13 +34,11 @@ export default function NavBar({ onTodayClick }: NavBarProps): JSX.Element {
 	const clerk = useClerk();
 
 	useEffect(() => {
-		if (!isSignedIn || !user) {
-			setAuthToken(null);
-			return;
-		}
-
-		void clerk.session?.getToken().then((t) => {
-			setAuthToken(t ?? null);
+		setAuthTokenGetter(async () => {
+			if (!isSignedIn || !user) {
+				return null;
+			}
+			return (await clerk.session?.getToken()) ?? null;
 		});
 	}, [isSignedIn, user, clerk]);
 
