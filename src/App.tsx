@@ -122,9 +122,15 @@ export function App(): JSX.Element {
 										element={<Register />}
 									/>
 
-									<Route path={'/login'} element={<RedirectToSignIn />} />
+									<Route
+										path={'/login'}
+										element={<RedirectToSignIn redirectUrl={'/'} />}
+									/>
 
-									<Route path={'/register'} element={<RedirectToSignUp />} />
+									<Route
+										path={'/register'}
+										element={<RedirectToSignUp redirectUrl={'/'} />}
+									/>
 
 									<Route
 										path={'/'}
