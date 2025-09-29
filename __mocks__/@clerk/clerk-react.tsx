@@ -31,4 +31,5 @@ export const useUser = vi.fn(() => ({
 
 export const useClerk = vi.fn(() => ({
 	session: null,
+	addListener: vi.fn(() => vi.fn()),
 }));

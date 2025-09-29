@@ -8,7 +8,7 @@ import {
 } from '@clerk/clerk-react';
 import { dark } from '@clerk/themes';
 import { Alert, Box, Container, Link, Stack } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import {
 	BrowserRouter as Router,
@@ -27,6 +27,7 @@ import Settings from './components/pages/Settings';
 import Tasks from './components/pages/Tasks';
 import * as browser from './lib/browser';
 import getQueryClient from './lib/getQueryClient';
+import { useOnClerkEvent } from './lib/useOnClerkEvent';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -39,6 +40,12 @@ export function App(): JSX.Element {
 	const ref = useRef<HTMLElement>();
 	const location = useLocation();
 	const queryClient = getQueryClient();
+
+	const onClerkEvent = useCallback(() => {
+		void queryClient.invalidateQueries();
+	}, [queryClient]);
+
+	useOnClerkEvent(onClerkEvent);
 
 	const handleTodayClick = () => {
 		setLastToday(browser.getNowDate());
