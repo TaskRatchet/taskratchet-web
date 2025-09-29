@@ -1,7 +1,11 @@
 import './App.scss';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { ClerkProvider } from '@clerk/clerk-react';
+import {
+	ClerkProvider,
+	RedirectToSignIn,
+	RedirectToSignUp,
+} from '@clerk/clerk-react';
 import { dark } from '@clerk/themes';
 import { Alert, Box, Container, Link, Stack } from '@mui/material';
 import { useEffect, useRef, useState } from 'react';
@@ -117,6 +121,10 @@ export function App(): JSX.Element {
 										path={'/complete-registration'}
 										element={<Register />}
 									/>
+
+									<Route path={'/login'} element={<RedirectToSignIn />} />
+
+									<Route path={'/register'} element={<RedirectToSignUp />} />
 
 									<Route
 										path={'/'}

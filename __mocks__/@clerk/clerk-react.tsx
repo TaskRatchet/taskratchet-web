@@ -12,6 +12,10 @@ export function RedirectToSignIn(): JSX.Element {
 	return <div>Redirecting...</div>;
 }
 
+export function RedirectToSignUp(): JSX.Element {
+	return <div>Redirecting...</div>;
+}
+
 export function SignedIn(): JSX.Element {
 	return <div>Signed In</div>;
 }
