@@ -34,6 +34,15 @@ if (!PUBLISHABLE_KEY) {
 	throw new Error('Missing Publishable Key');
 }
 
+/**
+ * Root application component that configures providers, global layout, and routes.
+ *
+ * Renders authentication and data providers, the theme wrapper, navigation bar, and the app's route tree
+ * (including payment result pages, settings, auth redirects, and the main tasks view). Tracks the last
+ * "today" selection and scrolls the main content to top when the route changes.
+ *
+ * @returns The root JSX element containing auth and query providers, theme wrapper, navigation, and routes.
+ */
 export function App(): JSX.Element {
 	const [lastToday, setLastToday] = useState<Date>();
 	const ref = useRef<HTMLElement>();
