@@ -27,6 +27,7 @@ import Settings from './components/pages/Settings';
 import Tasks from './components/pages/Tasks';
 import * as browser from './lib/browser';
 import getQueryClient from './lib/getQueryClient';
+import { useOnClerkEvent } from './lib/useOnClerkEvent';
 
 const PUBLISHABLE_KEY = import.meta.env.VITE_CLERK_PUBLISHABLE_KEY;
 
@@ -39,6 +40,10 @@ export function App(): JSX.Element {
 	const ref = useRef<HTMLElement>();
 	const location = useLocation();
 	const queryClient = getQueryClient();
+
+	useOnClerkEvent(() => {
+		void queryClient.invalidateQueries();
+	});
 
 	const handleTodayClick = () => {
 		setLastToday(browser.getNowDate());
