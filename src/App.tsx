@@ -8,7 +8,7 @@ import {
 } from '@clerk/clerk-react';
 import { dark } from '@clerk/themes';
 import { Alert, Box, Container, Link, Stack } from '@mui/material';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { QueryClientProvider } from 'react-query';
 import {
 	BrowserRouter as Router,
@@ -41,9 +41,11 @@ export function App(): JSX.Element {
 	const location = useLocation();
 	const queryClient = getQueryClient();
 
-	useOnClerkEvent(() => {
+	const onClerkEvent = useCallback(() => {
 		void queryClient.invalidateQueries();
-	});
+	}, [queryClient]);
+
+	useOnClerkEvent(onClerkEvent);
 
 	const handleTodayClick = () => {
 		setLastToday(browser.getNowDate());
