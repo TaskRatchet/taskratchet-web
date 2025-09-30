@@ -62,105 +62,102 @@ export function App(): JSX.Element {
 	}, [location]);
 
 	return (
-		<ClerkProvider
-			publishableKey={PUBLISHABLE_KEY}
-			appearance={{
-				theme: browser.prefersDarkMode() ? dark : undefined,
-			}}
-		>
-			<QueryClientProvider client={queryClient}>
-				<AndTheme>
-					<Stack sx={{ height: '100vh' }}>
-						<NavBar onTodayClick={handleTodayClick} />
-						<Box ref={ref} overflow={'scroll'} flexGrow={1}>
-							<Container
-								maxWidth={'sm'}
-								disableGutters
-								sx={{
-									minHeight: 1,
-								}}
-							>
-								<PaymentMethodAlert />
-								<Routes>
-									<Route
-										path={'/success'}
-										element={
-											<Box sx={{ p: 2 }}>
-												<Alert severity="success">
-													Your payment method has been saved successfully.
-												</Alert>
-											</Box>
-										}
-									/>
+		<QueryClientProvider client={queryClient}>
+			<AndTheme>
+				<Stack sx={{ height: '100vh' }}>
+					<NavBar onTodayClick={handleTodayClick} />
+					<Box ref={ref} overflow={'scroll'} flexGrow={1}>
+						<Container
+							maxWidth={'sm'}
+							disableGutters
+							sx={{
+								minHeight: 1,
+							}}
+						>
+							<PaymentMethodAlert />
+							<Routes>
+								<Route
+									path={'/success'}
+									element={
+										<Box sx={{ p: 2 }}>
+											<Alert severity="success">
+												Your payment method has been saved successfully.
+											</Alert>
+										</Box>
+									}
+								/>
 
-									<Route
-										path={'/cancel'}
-										element={
-											<Box sx={{ p: 2 }}>
-												<Alert severity="error">
-													Your payment method could not be saved. Please contact{' '}
-													<Link
-														component="a"
-														href="mailto:support@taskratchet.com"
-														target={'_blank'}
-														rel="noopener noreferrer"
-													>
-														support@taskratchet.com
-													</Link>{' '}
-													for assistance.
-												</Alert>
-											</Box>
-										}
-									/>
+								<Route
+									path={'/cancel'}
+									element={
+										<Box sx={{ p: 2 }}>
+											<Alert severity="error">
+												Your payment method could not be saved. Please contact{' '}
+												<Link
+													component="a"
+													href="mailto:support@taskratchet.com"
+													target={'_blank'}
+													rel="noopener noreferrer"
+												>
+													support@taskratchet.com
+												</Link>{' '}
+												for assistance.
+											</Alert>
+										</Box>
+									}
+								/>
 
-									<Route
-										path={'/settings'}
-										element={
-											<Authenticated>
-												<Settings />
-											</Authenticated>
-										}
-									/>
+								<Route
+									path={'/settings'}
+									element={
+										<Authenticated>
+											<Settings />
+										</Authenticated>
+									}
+								/>
 
-									<Route path={'/reset'} element={<ResetPassword />} />
+								<Route path={'/reset'} element={<ResetPassword />} />
 
-									<Route
-										path={'/complete-registration'}
-										element={<Register />}
-									/>
+								<Route path={'/complete-registration'} element={<Register />} />
 
-									<Route
-										path={'/login'}
-										element={<RedirectToSignIn redirectUrl={'/'} />}
-									/>
+								<Route
+									path={'/login'}
+									element={<RedirectToSignIn redirectUrl={'/'} />}
+								/>
 
-									<Route
-										path={'/register'}
-										element={<RedirectToSignUp redirectUrl={'/'} />}
-									/>
+								<Route
+									path={'/register'}
+									element={<RedirectToSignUp redirectUrl={'/'} />}
+								/>
 
-									<Route
-										path={'/'}
-										element={
-											<Authenticated>
-												<Tasks lastToday={lastToday} />
-											</Authenticated>
-										}
-									/>
-								</Routes>
-							</Container>
-						</Box>
-					</Stack>
-				</AndTheme>
-			</QueryClientProvider>
-		</ClerkProvider>
+								<Route
+									path={'/'}
+									element={
+										<Authenticated>
+											<Tasks lastToday={lastToday} />
+										</Authenticated>
+									}
+								/>
+							</Routes>
+						</Container>
+					</Box>
+				</Stack>
+			</AndTheme>
+		</QueryClientProvider>
 	);
 }
 
 export default function AppWithRouter(): JSX.Element {
 	return (
 		<Router>
-			<App />
+			<ClerkProvider
+				publishableKey={PUBLISHABLE_KEY}
+				appearance={{
+					theme: browser.prefersDarkMode() ? dark : undefined,
+				}}
+			>
+				<App />
+			</ClerkProvider>
 		</Router>
 	);
 }
